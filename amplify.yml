@@ -1,0 +1,20 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        # Reproduzierbare Installation aus dem Lockfile
+        - npm ci
+    build:
+      commands:
+        # Führt "tsc -b && vite build" aus (siehe package.json)
+        - npm run build
+  artifacts:
+    # Vite legt den fertigen Build in dist/ ab
+    baseDirectory: dist
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
+      - ~/.npm/**/*
