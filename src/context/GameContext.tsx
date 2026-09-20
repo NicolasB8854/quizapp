@@ -194,7 +194,7 @@ function initLiveFor(modeId: GameModeId, teams: Team[]): LiveGame | null {
   }
 }
 
-function reducer(state: GameState, action: GameAction): GameState {
+export function reducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
     case 'SET_TEAM_NAME': {
       const teams = state.draft.teams.map((t) =>
