@@ -213,17 +213,18 @@ describe('questions', () => {
       expect(picked?.id).toBe(pool[0].id)
     })
 
-    it("preferredLevel 'bisschen': bevorzugt leichte Fragen für Topics mit Level-Vielfalt", () => {
+    it("preferredLevel 'bisschen': bevorzugt leichte und mittlere Fragen gegenüber schweren", () => {
       vi.restoreAllMocks()
-      const counts = { leicht: 0, mittel: 0, schwer: 0 }
-      for (let i = 0; i < 500; i++) {
+      const counts = { leicht: 0, mittel: 0, schwer: 0, experten: 0 }
+      for (let i = 0; i < 800; i++) {
         const picked = pickQuestion('film', new Set(), 'bisschen')
         if (picked) counts[picked.difficulty as keyof typeof counts]++
       }
-      // 'film' hat je genau 1 Frage pro Difficulty im Bestand.
-      // Bei 60/30/10-Verteilung (bisschen): leicht dominiert klar.
-      expect(counts.leicht).toBeGreaterThan(counts.mittel)
-      expect(counts.mittel).toBeGreaterThan(counts.schwer)
+      // Bei level=bisschen: leicht 60, mittel 30, schwer 10, experten 0.
+      // Kombiniert (leicht + mittel) sollte klar dominieren, schwer/experten selten.
+      const easyish = counts.leicht + counts.mittel
+      const hardish = counts.schwer + counts.experten
+      expect(easyish).toBeGreaterThan(hardish * 3)
     })
   })
 
@@ -265,9 +266,11 @@ describe('questions', () => {
     })
 
     it('leerer Shared-Bucket fällt automatisch auf individual/wildcard', () => {
-      // Games hat keine TF-Fragen → shared-Bucket ist leer, individual-Bucket auch,
-      // Wildcard trägt alles.
-      const picked = pickTrueFalse(new Set(), {
+      // Alle TF-Fragen zu 'games' excluden → der shared-Bucket ist frisch leer,
+      // aber es gibt keine individuellen Interessen. Fallback muss auf wildcard fallen.
+      const gamesTF = getTrueFalsePool().filter((q) => q.topic === 'games')
+      const excluded = new Set(gamesTF.map((q) => q.id))
+      const picked = pickTrueFalse(excluded, {
         shared: new Set(['games']),
         individual: new Set(),
         levelPerTopic: new Map(),

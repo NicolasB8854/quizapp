@@ -764,11 +764,12 @@ function initDuel(teams: Team[]): DuelLive {
 }
 
 /**
- * Punktejagd: 5×3-Board (Prototyp-Grenze wegen Katalog-Kapazität, siehe Kommentar am Typ).
+ * Punktejagd: 5×4-Board. Nach Session P ist der Katalog groß genug, um alle vier
+ * Difficulty-Stufen mit Wiederholung zu vermeiden.
  */
 const BOARD_COLUMNS = 5
-const BOARD_VALUES = [100, 200, 300] as const
-const BOARD_LEVELS: PlayerInterest['level'][] = ['bisschen', 'gut', 'nerd']
+const BOARD_VALUES = [100, 200, 300, 400] as const
+const BOARD_LEVELS: PlayerInterest['level'][] = ['bisschen', 'gut', 'gut', 'nerd']
 
 /** Wählt die Topics für das Board — bevorzugt Interessen, füllt sonst nach Katalog auf. */
 function pickBoardTopics(profile: ReturnType<typeof computeInterestProfile>): Topic[] {

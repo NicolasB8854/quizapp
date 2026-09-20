@@ -952,11 +952,11 @@ describe('reducer — Punktejagd (Session L)', () => {
     return s
   }
 
-  it('START_PLAYING initialisiert 5×3-Board mit 5 Topics und 3 Werten', () => {
+  it('START_PLAYING initialisiert 5×4-Board mit 5 Topics und 4 Werten', () => {
     const s = bootBoard()
     if (s.live?.kind !== 'category-board') throw new Error('unreachable')
     expect(s.live.boardTopics).toHaveLength(5)
-    expect(s.live.cellValues).toEqual([100, 200, 300])
+    expect(s.live.cellValues).toEqual([100, 200, 300, 400])
     expect(s.live.phase).toBe('pick-cell')
     expect(s.live.playedCells).toEqual([])
     expect(s.live.scores).toEqual({ 'team-a': 0, 'team-b': 0 })
