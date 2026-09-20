@@ -27,10 +27,11 @@ import {
   usePointsLadder,
   useCategoryBoard,
   useDuel,
+  useElimination,
 } from '@/context/GameContext'
 import { TOPICS, TOPICS_BY_ID } from '@/data/topics'
 import { MODES_BY_ID } from '@/data/modes'
-import type { Team } from '@/types/round'
+import type { Player, Team } from '@/types/round'
 import type { TrueFalseQuestion } from '@/types/question'
 import { cn } from '@/lib/classnames'
 
@@ -47,6 +48,7 @@ export default function GamePage() {
   const ladderLive = usePointsLadder()
   const boardLive = useCategoryBoard()
   const duelLive = useDuel()
+  const eliminationLive = useElimination()
 
   useEffect(() => {
     if (state.phase === 'setup')      navigate('/setup', { replace: true })
@@ -78,9 +80,16 @@ export default function GamePage() {
       ? round.teams.find((t) => t.id !== duelLive.buzzingTeamId)?.id ?? null
       : null
     : null
+  const eliminationCurrentTeamId = eliminationLive?.activePlayerId
+    ? round.players.find((p) => p.id === eliminationLive.activePlayerId)?.teamId ?? null
+    : null
   const currentTeamId = cdLive
     ? round.teams[cdLive.currentTeamIndex]?.id ?? null
-    : sprinterLive?.activeTeamId ?? boardCurrentTeamId ?? duelCurrentTeamId ?? null
+    : sprinterLive?.activeTeamId
+      ?? boardCurrentTeamId
+      ?? duelCurrentTeamId
+      ?? eliminationCurrentTeamId
+      ?? null
 
   return (
     <ScreenLayout variant="stage" hideNav hideFooter contentClassName="px-0">
@@ -135,6 +144,8 @@ export default function GamePage() {
               <CategoryBoardStage />
             ) : duelLive ? (
               <DuelStage />
+            ) : eliminationLive ? (
+              <EliminationStage />
             ) : null}
           </div>
           {/* Score-Sidebar */}
@@ -1936,6 +1947,307 @@ function DuelStage() {
           onNext={() => dispatch({ type: 'DUEL_NEXT' })}
         />
       )}
+    </div>
+  )
+}
+
+// ---------- Elimination -----------------------------------------------------
+
+function EliminationStage() {
+  const { state, dispatch } = useGame()
+  const elim = useElimination()
+  if (!elim || !state.round) return null
+
+  const teams = state.round.teams
+  const eliminatedSet = new Set(elim.eliminatedIds)
+
+  // Empty-Fall: kein Content — direkt weiter.
+  if (elim.phase === 'empty') {
+    return (
+      <div className="animate-titleIn text-center py-10">
+        <div className="eyebrow">Elimination übersprungen</div>
+        <h1 className="mt-3 font-display font-bold uppercase text-3xl md:text-5xl tracking-tight">
+          Keine Fragen im Katalog
+        </h1>
+        <p className="mt-3 text-ink-muted max-w-lg mx-auto">
+          Für die Elimination-Runde braucht es Multiple-Choice-Fragen. Wir überspringen
+          den Modus für diese Runde.
+        </p>
+        <div className="mt-6 flex justify-center">
+          <Button
+            variant="primary"
+            size="lg"
+            trailing={<ArrowRight className="h-5 w-5" />}
+            onClick={() => dispatch({ type: 'ELIM_NEXT' })}
+          >
+            Weiter
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  // Finished-Screen: Sieger und Bonus.
+  if (elim.phase === 'finished') {
+    const winner = teams.find((t) => t.id === elim.winnerTeamId)
+    const winnerHex = winner?.color === 'purple' ? '#7C5CFF' : winner ? '#27D8FF' : '#FF6E5C'
+    return (
+      <div className="animate-titleIn text-center py-6">
+        <div className="eyebrow inline-flex items-center gap-2 justify-center" style={{ color: '#FF6E5C' }}>
+          Elimination · Runde vorbei
+        </div>
+        <h1 className="mt-3 font-display font-bold uppercase text-4xl md:text-6xl tracking-tight">
+          {winner ? `${winner.name} überlebt` : 'Gleichstand'}
+        </h1>
+        {winner ? (
+          <p className="mt-3 text-ink-muted">
+            <span style={{ color: winnerHex }} className="font-semibold">
+              {winner.name}
+            </span>{' '}
+            bekommt +{elim.survivorBonus} Bonus.
+          </p>
+        ) : (
+          <p className="mt-3 text-ink-muted">
+            Kein Team steht mehr — kein Bonus vergeben.
+          </p>
+        )}
+
+        <div className="mt-6 max-w-md mx-auto">
+          <EliminationRing
+            teams={teams}
+            playerOrder={elim.playerOrder}
+            eliminatedSet={eliminatedSet}
+            activePlayerId={null}
+            players={state.round.players}
+          />
+        </div>
+
+        <div className="mt-6 flex justify-center">
+          <Button
+            variant="primary"
+            size="lg"
+            trailing={<ArrowRight className="h-5 w-5" />}
+            onClick={() => dispatch({ type: 'ELIM_NEXT' })}
+          >
+            Modus beenden
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  // Answering/Revealed: Frage-Screen mit Ring darunter.
+  const activePlayer = state.round.players.find((p) => p.id === elim.activePlayerId)
+  const activeTeam = activePlayer && teams.find((t) => t.id === activePlayer.teamId)
+  const teamHex = activeTeam?.color === 'purple' ? '#7C5CFF' : '#27D8FF'
+  const activeName = (activePlayer?.name.trim()) || `Spieler ${elim.currentPlayerIndex + 1}`
+
+  return (
+    <div className="animate-titleIn">
+      {/* Aktive Spieler-Kachel */}
+      {activeTeam && (
+        <div className="flex justify-center mb-6">
+          <div
+            className="inline-flex items-center gap-4 rounded-2xl px-6 py-3 border-2"
+            style={{
+              borderColor: `${teamHex}CC`,
+              background: 'rgba(11,16,32,0.7)',
+              boxShadow: `0 0 0 1px ${teamHex}55, 0 0 24px -4px ${teamHex}AA`,
+            }}
+          >
+            <span
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full font-display font-bold border-2"
+              style={{
+                borderColor: `${teamHex}80`,
+                color: teamHex,
+                background: `${teamHex}18`,
+              }}
+            >
+              {activeName.slice(0, 2).toUpperCase()}
+            </span>
+            <div className="text-left">
+              <div className="eyebrow" style={{ color: teamHex }}>
+                {activeTeam.name}
+              </div>
+              <div className="font-display font-bold text-white text-lg md:text-xl">
+                {activeName}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Frage */}
+      {elim.activeQuestion && (
+        <div
+          className="rounded-card border p-6 md:p-8 text-center"
+          style={{
+            borderColor: 'rgba(255,110,92,0.35)',
+            background: 'rgba(11,16,32,0.55)',
+            boxShadow: '0 0 0 1px rgba(255,110,92,0.25), 0 0 24px rgba(255,110,92,0.2)',
+          }}
+        >
+          <h2 className="font-display font-bold text-white leading-tight text-2xl md:text-4xl">
+            {elim.activeQuestion.question}
+          </h2>
+        </div>
+      )}
+
+      {/* Antworten oder Reveal */}
+      {elim.phase === 'answering' && (
+        <div className="mt-6 md:mt-8 grid md:grid-cols-2 gap-3 md:gap-4">
+          {elim.shuffledOptions.map((option, idx) => (
+            <AnswerOption
+              key={`elim-${elim.currentPlayerIndex}-${idx}`}
+              letter={LETTERS[idx]}
+              status="idle"
+              onClick={() => dispatch({ type: 'ELIM_ANSWER', renderedIndex: idx })}
+            >
+              {option}
+            </AnswerOption>
+          ))}
+        </div>
+      )}
+
+      {elim.phase === 'revealed' && elim.activeQuestion && (
+        <EliminationRevealPanel
+          question={elim.activeQuestion}
+          correctOption={elim.shuffledOptions[elim.correctRenderedIndex]}
+          outcome={elim.lastOutcome}
+          activeName={activeName}
+          pointsPerCorrect={elim.pointsPerCorrect}
+          onNext={() => dispatch({ type: 'ELIM_NEXT' })}
+        />
+      )}
+
+      {/* Ring der Spieler */}
+      <div className="mt-8">
+        <EliminationRing
+          teams={teams}
+          playerOrder={elim.playerOrder}
+          eliminatedSet={eliminatedSet}
+          activePlayerId={elim.activePlayerId}
+          players={state.round.players}
+        />
+      </div>
+    </div>
+  )
+}
+
+interface EliminationRingProps {
+  teams: Team[]
+  players: Player[]
+  playerOrder: string[]
+  eliminatedSet: Set<string>
+  activePlayerId: string | null
+}
+
+function EliminationRing({
+  teams,
+  players,
+  playerOrder,
+  eliminatedSet,
+  activePlayerId,
+}: EliminationRingProps) {
+  return (
+    <div className="rounded-card border border-white/[0.08] bg-navy-800/40 p-3 md:p-4">
+      <div className="eyebrow mb-2 text-center">Ring</div>
+      <div className="flex flex-wrap justify-center gap-2">
+        {playerOrder.map((pid, idx) => {
+          const p = players.find((pp) => pp.id === pid)
+          if (!p) return null
+          const team = teams.find((t) => t.id === p.teamId)
+          const hex = team?.color === 'purple' ? '#7C5CFF' : '#27D8FF'
+          const isEliminated = eliminatedSet.has(pid)
+          const isActive = activePlayerId === pid
+          const name = p.name.trim() || `Spieler ${idx + 1}`
+          return (
+            <div
+              key={pid}
+              className={cn(
+                'inline-flex items-center gap-1.5 h-8 rounded-full px-3 text-[11px] font-medium border transition-all',
+                isEliminated
+                  ? 'border-white/[0.06] bg-navy-900/50 text-ink-faint line-through opacity-60'
+                  : 'text-ink',
+              )}
+              style={
+                !isEliminated
+                  ? {
+                      borderColor: isActive ? `${hex}CC` : `${hex}66`,
+                      background: `${hex}18`,
+                      boxShadow: isActive ? `0 0 16px -4px ${hex}AA` : undefined,
+                    }
+                  : undefined
+              }
+            >
+              <span style={{ color: !isEliminated ? hex : undefined }}>●</span>
+              <span>{name}</span>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+interface EliminationRevealProps {
+  question: import('@/types/question').MultipleChoiceQuestion
+  correctOption: string
+  outcome: 'correct' | 'wrong' | null
+  activeName: string
+  pointsPerCorrect: number
+  onNext: () => void
+}
+
+function EliminationRevealPanel({
+  question,
+  correctOption,
+  outcome,
+  activeName,
+  pointsPerCorrect,
+  onNext,
+}: EliminationRevealProps) {
+  const explanationText = question.explanation ?? question.gmNote
+  const wasCorrect = outcome === 'correct'
+  return (
+    <div
+      className={cn(
+        'mt-6 rounded-card border p-5 md:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4',
+        wasCorrect ? 'bg-correct/10 border-correct/40' : 'bg-wrong/10 border-wrong/40',
+      )}
+    >
+      <div className="min-w-0">
+        <div
+          className={cn(
+            'text-[11px] font-bold uppercase tracking-[0.22em]',
+            wasCorrect ? 'text-correct' : 'text-wrong',
+          )}
+        >
+          {wasCorrect
+            ? `+ ${pointsPerCorrect} — ${activeName} bleibt drin`
+            : `${activeName} scheidet aus`}
+        </div>
+        {!wasCorrect && (
+          <div className="mt-1 text-sm">
+            <span className="text-ink-muted">Richtig wäre: </span>
+            <span className="font-semibold text-correct">{correctOption}</span>
+          </div>
+        )}
+        {explanationText && (
+          <p className="mt-2 text-sm text-ink-muted leading-relaxed max-w-2xl">
+            <span className="font-semibold text-ink">Auflösung: </span>
+            {explanationText}
+          </p>
+        )}
+      </div>
+      <Button
+        variant="primary"
+        size="lg"
+        trailing={<ArrowRight className="h-5 w-5" />}
+        onClick={onNext}
+      >
+        Weiter
+      </Button>
     </div>
   )
 }

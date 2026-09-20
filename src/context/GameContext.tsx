@@ -233,6 +233,29 @@ export interface DuelLive {
   usedQuestionIds: string[]
 }
 
+/**
+ * Elimination: alle Spieler beider Teams stehen im Ring, bekommen reihum eine
+ * MC-Frage. Fehler → Ausscheiden. Modus endet, sobald nur noch Spieler eines
+ * Teams stehen — deren Team bekommt einen Bonus.
+ */
+export interface EliminationLive {
+  kind: 'elimination'
+  playerOrder: string[]
+  eliminatedIds: string[]
+  currentPlayerIndex: number
+  activePlayerId: string | null
+  activeQuestion: MultipleChoiceQuestion | null
+  shuffledOptions: string[]
+  correctRenderedIndex: number
+  phase: 'answering' | 'revealed' | 'finished' | 'empty'
+  lastOutcome: 'correct' | 'wrong' | null
+  winnerTeamId: string | null
+  scores: Record<string, number>
+  usedQuestionIds: string[]
+  pointsPerCorrect: number
+  survivorBonus: number
+}
+
 export type LiveGame =
   | CategoryDuelLive
   | FlashLive
@@ -242,6 +265,7 @@ export type LiveGame =
   | PointsLadderLive
   | CategoryBoardLive
   | DuelLive
+  | EliminationLive
 
 // ---------- Draft (Setup-Phase) ----------------------------------------------
 
@@ -303,6 +327,8 @@ export type GameAction =
   | { type: 'DUEL_BUZZER'; teamId: string }
   | { type: 'DUEL_ANSWER'; renderedIndex: number }
   | { type: 'DUEL_NEXT' }
+  | { type: 'ELIM_ANSWER'; renderedIndex: number }
+  | { type: 'ELIM_NEXT' }
   | { type: 'ADD_PLAYER'; teamId: string }
   | { type: 'REMOVE_PLAYER'; playerId: string }
   | { type: 'SET_PLAYER_NAME'; playerId: string; name: string }
@@ -527,6 +553,103 @@ function initSpotlight(teams: Team[], players: readonly Player[]): SpotlightLive
     scores,
     usedQuestionIds: [],
     pointsPerCorrect: 500,
+  }
+}
+
+/**
+ * Elimination: Punkte pro Richtig und Bonus für letzten Stehenden.
+ */
+const ELIM_POINTS = 100
+const ELIM_SURVIVOR_BONUS = 500
+
+/**
+ * Team-alternierende Reihenfolge über alle Spieler — analog Spotlight, aber
+ * ohne Interessen-Filter. Team A p0, Team B p0, Team A p1, Team B p1, ...
+ */
+function buildEliminationOrder(
+  teams: readonly Team[],
+  players: readonly Player[],
+): string[] {
+  const perTeam = teams.map((team) =>
+    players.filter((p) => p.teamId === team.id),
+  )
+  const maxLen = Math.max(0, ...perTeam.map((list) => list.length))
+  const order: string[] = []
+  for (let i = 0; i < maxLen; i++) {
+    for (const list of perTeam) {
+      if (i < list.length) order.push(list[i].id)
+    }
+  }
+  return order
+}
+
+function initElimination(teams: Team[], players: readonly Player[]): EliminationLive {
+  const scores = Object.fromEntries(teams.map((t) => [t.id, 0]))
+  const playerOrder = buildEliminationOrder(teams, players)
+  if (playerOrder.length === 0) {
+    return {
+      kind: 'elimination',
+      playerOrder: [],
+      eliminatedIds: [],
+      currentPlayerIndex: 0,
+      activePlayerId: null,
+      activeQuestion: null,
+      shuffledOptions: [],
+      correctRenderedIndex: 0,
+      phase: 'empty',
+      lastOutcome: null,
+      winnerTeamId: null,
+      scores,
+      usedQuestionIds: [],
+      pointsPerCorrect: ELIM_POINTS,
+      survivorBonus: ELIM_SURVIVOR_BONUS,
+    }
+  }
+
+  const firstPlayerId = playerOrder[0]
+  const excluded = new Set<string>()
+  for (const id of readAskedQuestionIds()) excluded.add(id)
+  const question = pickAnyMultipleChoice(excluded)
+  if (!question) {
+    return {
+      kind: 'elimination',
+      playerOrder,
+      eliminatedIds: [],
+      currentPlayerIndex: 0,
+      activePlayerId: firstPlayerId,
+      activeQuestion: null,
+      shuffledOptions: [],
+      correctRenderedIndex: 0,
+      phase: 'empty',
+      lastOutcome: null,
+      winnerTeamId: null,
+      scores,
+      usedQuestionIds: [],
+      pointsPerCorrect: ELIM_POINTS,
+      survivorBonus: ELIM_SURVIVOR_BONUS,
+    }
+  }
+
+  const shuffle = shuffleWithMapping(
+    question.options,
+    `elim:0:${firstPlayerId}:${question.id}`,
+  )
+  return {
+    kind: 'elimination',
+    playerOrder,
+    eliminatedIds: [],
+    currentPlayerIndex: 0,
+    activePlayerId: firstPlayerId,
+    activeQuestion: question,
+    shuffledOptions: shuffle.shuffled,
+    correctRenderedIndex: shuffle.renderedIndexOf(question.correctIndex),
+    phase: 'answering',
+    lastOutcome: null,
+    winnerTeamId: null,
+    scores,
+    usedQuestionIds: [],
+    pointsPerCorrect: ELIM_POINTS,
+    survivorBonus: ELIM_SURVIVOR_BONUS,
   }
 }
 
@@ -777,6 +900,8 @@ function initLiveFor(
       return initCategoryBoard(teams, players)
     case 'duel-1v1':
       return initDuel(teams)
+    case 'elimination':
+      return initElimination(teams, players)
     default:
       // Alle anderen Modi sind in v0.1 als `planned` markiert und lassen sich im Setup
       // gar nicht auswählen. Falls doch: null → Reducer springt in FINISH_MODE.
@@ -1247,6 +1372,147 @@ export function reducer(state: GameState, action: GameAction): GameState {
       return {
         ...state,
         live: { ...advancedBase, activeQuestion: nextQuestion },
+      }
+    }
+
+    case 'ELIM_ANSWER': {
+      if (!state.round || !state.live || state.live.kind !== 'elimination') return state
+      const live = state.live
+      if (live.phase !== 'answering' || !live.activePlayerId || !live.activeQuestion) return state
+      const activePlayer = state.round.players.find((p) => p.id === live.activePlayerId)
+      if (!activePlayer) return state
+      const wasCorrect = action.renderedIndex === live.correctRenderedIndex
+      const nextScores = wasCorrect
+        ? {
+            ...live.scores,
+            [activePlayer.teamId]: (live.scores[activePlayer.teamId] ?? 0) + live.pointsPerCorrect,
+          }
+        : live.scores
+      return {
+        ...state,
+        live: {
+          ...live,
+          phase: 'revealed',
+          lastOutcome: wasCorrect ? 'correct' : 'wrong',
+          scores: nextScores,
+        },
+      }
+    }
+
+    case 'ELIM_NEXT': {
+      if (!state.round || !state.live || state.live.kind !== 'elimination') return state
+      const live = state.live
+      // Empty-Fall: direkt in FINISH_MODE.
+      if (live.phase === 'empty') return reducer(state, { type: 'FINISH_MODE' })
+      // Finished-Fall: schließt den Modus.
+      if (live.phase === 'finished') return reducer(state, { type: 'FINISH_MODE' })
+      if (live.phase !== 'revealed') return state
+      if (!live.activePlayerId || !live.activeQuestion) return state
+
+      const usedQuestionIds = [...live.usedQuestionIds, live.activeQuestion.id]
+      const activePlayerId = live.activePlayerId
+      const activePlayer = state.round.players.find((p) => p.id === activePlayerId)
+      if (!activePlayer) return state
+
+      // Bei falscher Antwort: Spieler eliminieren.
+      const eliminatedIds =
+        live.lastOutcome === 'wrong'
+          ? [...live.eliminatedIds, activePlayerId]
+          : live.eliminatedIds
+
+      // Verbleibende Spieler ermitteln.
+      const remainingIds = live.playerOrder.filter((id) => !eliminatedIds.includes(id))
+      const remainingTeams = new Set(
+        remainingIds
+          .map((id) => state.round!.players.find((p) => p.id === id)?.teamId)
+          .filter((v): v is string => !!v),
+      )
+
+      // End-Kriterium: nur noch ein Team übrig (oder gar keiner).
+      if (remainingTeams.size <= 1) {
+        const winnerTeamId = remainingTeams.size === 1 ? [...remainingTeams][0] : null
+        const scoresWithBonus = winnerTeamId
+          ? {
+              ...live.scores,
+              [winnerTeamId]: (live.scores[winnerTeamId] ?? 0) + live.survivorBonus,
+            }
+          : live.scores
+        return {
+          ...state,
+          live: {
+            ...live,
+            usedQuestionIds,
+            eliminatedIds,
+            phase: 'finished',
+            winnerTeamId,
+            scores: scoresWithBonus,
+            activeQuestion: null,
+            shuffledOptions: [],
+            correctRenderedIndex: 0,
+            lastOutcome: null,
+          },
+        }
+      }
+
+      // Nächster nicht-eliminierter Spieler in rotierender Reihenfolge.
+      let nextIndex = (live.currentPlayerIndex + 1) % live.playerOrder.length
+      let nextPlayerId = live.playerOrder[nextIndex]
+      // Skip eliminated (garantiert findet — remainingIds ist non-empty).
+      let safety = 0
+      while (eliminatedIds.includes(nextPlayerId) && safety < live.playerOrder.length) {
+        nextIndex = (nextIndex + 1) % live.playerOrder.length
+        nextPlayerId = live.playerOrder[nextIndex]
+        safety++
+      }
+
+      // Nächste Frage ziehen.
+      const excluded = new Set(usedQuestionIds)
+      for (const id of readAskedQuestionIds()) excluded.add(id)
+      const nextQuestion = pickAnyMultipleChoice(excluded)
+      if (!nextQuestion) {
+        // Kein MC mehr → Modus mit aktuellem Stand beenden.
+        const winnerTeamId = remainingTeams.size === 1 ? [...remainingTeams][0] : null
+        const scoresWithBonus = winnerTeamId
+          ? {
+              ...live.scores,
+              [winnerTeamId]: (live.scores[winnerTeamId] ?? 0) + live.survivorBonus,
+            }
+          : live.scores
+        return {
+          ...state,
+          live: {
+            ...live,
+            usedQuestionIds,
+            eliminatedIds,
+            phase: 'finished',
+            winnerTeamId,
+            scores: scoresWithBonus,
+            activeQuestion: null,
+            shuffledOptions: [],
+            correctRenderedIndex: 0,
+            lastOutcome: null,
+          },
+        }
+      }
+
+      const shuffle = shuffleWithMapping(
+        nextQuestion.options,
+        `elim:${nextIndex}:${nextPlayerId}:${nextQuestion.id}`,
+      )
+      return {
+        ...state,
+        live: {
+          ...live,
+          usedQuestionIds,
+          eliminatedIds,
+          currentPlayerIndex: nextIndex,
+          activePlayerId: nextPlayerId,
+          activeQuestion: nextQuestion,
+          shuffledOptions: shuffle.shuffled,
+          correctRenderedIndex: shuffle.renderedIndexOf(nextQuestion.correctIndex),
+          phase: 'answering',
+          lastOutcome: null,
+        },
       }
     }
 
@@ -1928,6 +2194,11 @@ export function useCategoryBoard(): CategoryBoardLive | null {
 export function useDuel(): DuelLive | null {
   const { state } = useGame()
   return state.live && state.live.kind === 'duel-1v1' ? state.live : null
+}
+
+export function useElimination(): EliminationLive | null {
+  const { state } = useGame()
+  return state.live && state.live.kind === 'elimination' ? state.live : null
 }
 
 // Convenience für Dispatch ohne Boilerplate.

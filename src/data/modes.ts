@@ -61,6 +61,18 @@ export const MODES: GameMode[] = [
     status: 'planned',
   },
   {
+    id: 'elimination',
+    name: 'Elimination',
+    chipLabel: 'Ausdauer',
+    tagline: 'Wer falsch antwortet, setzt sich. Letzter bringt den Bonus.',
+    description:
+      'Alle Spieler stehen im Ring, reihum eine Frage. Fehler → Ausscheiden. Wenn nur noch ein Team steht, gibt es einen Team-Bonus.',
+    estimatedMinutes: 10,
+    scoresMatchPoint: true,
+    accent: 'sprinter',
+    status: 'ready',
+  },
+  {
     id: 'duel-1v1',
     name: 'Duell 1:1',
     chipLabel: 'Direkt',

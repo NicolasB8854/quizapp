@@ -506,6 +506,142 @@ describe('reducer — Player-Ebene (Session D + E)', () => {
   })
 })
 
+describe('reducer — Elimination (Session N)', () => {
+  function bootElim(): ReturnType<typeof reducer> {
+    let s = reducer(INITIAL_STATE, {
+      type: 'SET_MODE_SELECTION',
+      modeIds: ['elimination'],
+    })
+    s = reducer(s, { type: 'GO_TO_LOBBY' })
+    s = reducer(s, { type: 'START_PLAYING' })
+    return s
+  }
+
+  it('START_PLAYING legt einen Ring aus allen Default-Spielern an', () => {
+    const s = bootElim()
+    if (s.live?.kind !== 'elimination') throw new Error('unreachable')
+    expect(s.live.playerOrder.length).toBe(4)
+    expect(s.live.phase).toBe('answering')
+    expect(s.live.currentPlayerIndex).toBe(0)
+    expect(s.live.eliminatedIds).toEqual([])
+    expect(s.live.activePlayerId).toBe(s.live.playerOrder[0])
+    expect(s.live.scores).toEqual({ 'team-a': 0, 'team-b': 0 })
+  })
+
+  it('ELIM_ANSWER richtig: Punkte fürs Team, phase revealed', () => {
+    let s = bootElim()
+    if (s.live?.kind !== 'elimination') throw new Error('unreachable')
+    const activeId = s.live.activePlayerId!
+    const active = s.round!.players.find((p) => p.id === activeId)!
+    const points = s.live.pointsPerCorrect
+    s = reducer(s, {
+      type: 'ELIM_ANSWER',
+      renderedIndex: s.live.correctRenderedIndex,
+    })
+    if (s.live?.kind !== 'elimination') throw new Error('unreachable')
+    expect(s.live.phase).toBe('revealed')
+    expect(s.live.lastOutcome).toBe('correct')
+    expect(s.live.scores[active.teamId]).toBe(points)
+  })
+
+  it('ELIM_ANSWER falsch: keine Punkte, Spieler wird beim NEXT eliminiert', () => {
+    let s = bootElim()
+    if (s.live?.kind !== 'elimination') throw new Error('unreachable')
+    const activeId = s.live.activePlayerId!
+    const wrongIdx = (s.live.correctRenderedIndex + 1) % s.live.shuffledOptions.length
+    s = reducer(s, { type: 'ELIM_ANSWER', renderedIndex: wrongIdx })
+    if (s.live?.kind !== 'elimination') throw new Error('unreachable')
+    expect(s.live.lastOutcome).toBe('wrong')
+    // Vor NEXT: noch nicht in eliminatedIds.
+    expect(s.live.eliminatedIds).not.toContain(activeId)
+    s = reducer(s, { type: 'ELIM_NEXT' })
+    if (s.live?.kind !== 'elimination') throw new Error('unreachable')
+    expect(s.live.eliminatedIds).toContain(activeId)
+  })
+
+  it('ELIM_NEXT geht zum nächsten nicht-eliminierten Spieler', () => {
+    let s = bootElim()
+    if (s.live?.kind !== 'elimination') throw new Error('unreachable')
+    const firstId = s.live.activePlayerId!
+    // Erste Antwort richtig, dann NEXT.
+    s = reducer(s, {
+      type: 'ELIM_ANSWER',
+      renderedIndex: s.live.correctRenderedIndex,
+    })
+    s = reducer(s, { type: 'ELIM_NEXT' })
+    if (s.live?.kind !== 'elimination') throw new Error('unreachable')
+    expect(s.live.phase).toBe('answering')
+    expect(s.live.currentPlayerIndex).toBe(1)
+    expect(s.live.activePlayerId).not.toBe(firstId)
+  })
+
+  it('Nur noch ein Team steht: phase finished, Bonus fürs überlebende Team', () => {
+    let s = bootElim()
+    if (s.live?.kind !== 'elimination') throw new Error('unreachable')
+    const bonus = s.live.survivorBonus
+    const wrongIdx = (s.live.correctRenderedIndex + 1) % s.live.shuffledOptions.length
+
+    // Die beiden Team-B-Spieler falsch, Team-A-Spieler richtig — alternierend.
+    // Order: A1, B1, A2, B2 (Team-alternierend aus buildEliminationOrder).
+    // Wir wollen: B1 raus, dann B2 raus → nur Team A übrig.
+    // Runde 1: A1 (aktiv) → richtig → NEXT
+    s = reducer(s, {
+      type: 'ELIM_ANSWER',
+      renderedIndex: s.live.correctRenderedIndex,
+    })
+    s = reducer(s, { type: 'ELIM_NEXT' })
+    // Runde 2: B1 → falsch → NEXT
+    if (s.live?.kind !== 'elimination') throw new Error('unreachable')
+    const wrongIdx2 = (s.live.correctRenderedIndex + 1) % s.live.shuffledOptions.length
+    s = reducer(s, { type: 'ELIM_ANSWER', renderedIndex: wrongIdx2 })
+    s = reducer(s, { type: 'ELIM_NEXT' })
+    // Runde 3: A2 → richtig → NEXT
+    if (s.live?.kind !== 'elimination') throw new Error('unreachable')
+    s = reducer(s, {
+      type: 'ELIM_ANSWER',
+      renderedIndex: s.live.correctRenderedIndex,
+    })
+    s = reducer(s, { type: 'ELIM_NEXT' })
+    // Runde 4: B2 → falsch → NEXT → nur noch Team A, finished
+    if (s.live?.kind !== 'elimination') throw new Error('unreachable')
+    const wrongIdx4 = (s.live.correctRenderedIndex + 1) % s.live.shuffledOptions.length
+    s = reducer(s, { type: 'ELIM_ANSWER', renderedIndex: wrongIdx4 })
+    s = reducer(s, { type: 'ELIM_NEXT' })
+
+    if (s.live?.kind !== 'elimination') throw new Error('unreachable')
+    // Fake unused reference to satisfy compiler (wrongIdx above).
+    void wrongIdx
+    expect(s.live.phase).toBe('finished')
+    expect(s.live.winnerTeamId).toBe('team-a')
+    // Bonus ist im Score enthalten.
+    expect(s.live.scores['team-a']).toBeGreaterThanOrEqual(bonus)
+  })
+
+  it('finished-Phase: ELIM_NEXT schließt Modus → scoreboard mit Match-Punkt', () => {
+    let s = bootElim()
+    if (s.live?.kind !== 'elimination') throw new Error('unreachable')
+    // Setze künstlich phase=finished mit Team A als Sieger via Test-Ablauf oben.
+    // Kürzerer Weg: alle Team-B-Spieler in Folge falsch, alle Team-A richtig.
+    // Aus buildEliminationOrder ist die Reihenfolge A1, B1, A2, B2.
+    // A1 richtig → NEXT → B1 falsch → NEXT → A2 richtig → NEXT → B2 falsch → NEXT → finished
+    for (const outcome of ['correct', 'wrong', 'correct', 'wrong'] as const) {
+      if (s.live?.kind !== 'elimination') throw new Error('unreachable')
+      const idx =
+        outcome === 'correct'
+          ? s.live.correctRenderedIndex
+          : (s.live.correctRenderedIndex + 1) % s.live.shuffledOptions.length
+      s = reducer(s, { type: 'ELIM_ANSWER', renderedIndex: idx })
+      s = reducer(s, { type: 'ELIM_NEXT' })
+    }
+    if (s.live?.kind !== 'elimination') throw new Error('unreachable')
+    expect(s.live.phase).toBe('finished')
+    // Ein weiteres NEXT schließt den Modus.
+    s = reducer(s, { type: 'ELIM_NEXT' })
+    expect(s.phase).toBe('scoreboard')
+    expect(s.matchPoints['team-a']).toBe(1)
+  })
+})
+
 describe('reducer — Duell 1:1 (Session M)', () => {
   function bootDuel(): ReturnType<typeof reducer> {
     let s = reducer(INITIAL_STATE, {
