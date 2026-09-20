@@ -25,6 +25,7 @@ import {
   useAroundCorner,
   useSprinter,
   usePointsLadder,
+  useCategoryBoard,
 } from '@/context/GameContext'
 import { TOPICS, TOPICS_BY_ID } from '@/data/topics'
 import { MODES_BY_ID } from '@/data/modes'
@@ -43,6 +44,7 @@ export default function GamePage() {
   const cornerLive = useAroundCorner()
   const sprinterLive = useSprinter()
   const ladderLive = usePointsLadder()
+  const boardLive = useCategoryBoard()
 
   useEffect(() => {
     if (state.phase === 'setup')      navigate('/setup', { replace: true })
@@ -57,10 +59,19 @@ export default function GamePage() {
   const mode = currentModeId ? MODES_BY_ID[currentModeId] : null
 
   // „Am Zug"-Markierung: Themen-Battle nutzt currentTeamIndex, Sprinter das
-  // activeTeamId. Blitzrunde und Klick! haben kein aktives Team.
+  // activeTeamId, Punktejagd wechselt je nach Phase (cellPicker / buzzer / opponent).
+  const boardCurrentTeamId = boardLive
+    ? boardLive.phase === 'pick-cell'
+      ? boardLive.cellPickerTeamId
+      : boardLive.phase === 'primary-answer'
+      ? boardLive.buzzingTeamId
+      : boardLive.phase === 'steal-answer'
+      ? round.teams.find((t) => t.id !== boardLive.buzzingTeamId)?.id ?? null
+      : null
+    : null
   const currentTeamId = cdLive
     ? round.teams[cdLive.currentTeamIndex]?.id ?? null
-    : sprinterLive?.activeTeamId ?? null
+    : sprinterLive?.activeTeamId ?? boardCurrentTeamId ?? null
 
   return (
     <ScreenLayout variant="stage" hideNav hideFooter contentClassName="px-0">
@@ -111,6 +122,8 @@ export default function GamePage() {
               <SprinterStage />
             ) : ladderLive ? (
               <PointsLadderStage />
+            ) : boardLive ? (
+              <CategoryBoardStage />
             ) : null}
           </div>
           {/* Score-Sidebar */}
@@ -1418,6 +1431,293 @@ function LadderRevealPanel({
           {isLast ? 'Modus beenden' : 'Nächste Stufe'}
         </Button>
       </div>
+    </div>
+  )
+}
+
+// ---------- Punktejagd (Kategorienbrett) -------------------------------------
+
+function CategoryBoardStage() {
+  const { state, dispatch } = useGame()
+  const board = useCategoryBoard()
+  if (!board || !state.round) return null
+
+  const teams = state.round.teams
+  const playedSet = new Set(board.playedCells.map((c) => `${c.topic}:${c.valueIndex}`))
+  const totalCells = board.boardTopics.length * board.cellValues.length
+
+  // pick-cell: das Board.
+  if (board.phase === 'pick-cell') {
+    const picker = teams.find((t) => t.id === board.cellPickerTeamId)
+    const pickerHex = picker?.color === 'purple' ? '#7C5CFF' : picker ? '#27D8FF' : '#F0B23A'
+    return (
+      <div className="animate-titleIn">
+        <div className="text-center mb-6 md:mb-8">
+          <div className="eyebrow" style={{ color: '#F0B23A' }}>
+            Punktejagd · {board.playedCells.length}/{totalCells} Felder
+          </div>
+          <h1 className="mt-2 font-display font-bold uppercase text-3xl md:text-5xl tracking-tight">
+            {picker ? `${picker.name} wählt` : 'Ein Feld wählen'}
+          </h1>
+          {picker && (
+            <p className="mt-2 text-sm text-ink-muted">
+              Klick auf ein offenes Feld —{' '}
+              <span style={{ color: pickerHex }} className="font-semibold">
+                {picker.name}
+              </span>{' '}
+              spielt auf diese Frage. Wer zuerst summt, antwortet.
+            </p>
+          )}
+        </div>
+
+        <div className="grid grid-cols-5 gap-2 md:gap-3">
+          {/* Kolonnen-Header */}
+          {board.boardTopics.map((topic) => {
+            const t = TOPICS_BY_ID[topic]
+            return (
+              <div
+                key={`h-${topic}`}
+                className="rounded-lg border border-mode-board/30 bg-mode-board/10 p-2 md:p-3 text-center"
+              >
+                <div className="text-lg md:text-2xl" aria-hidden>{t.emoji}</div>
+                <div className="mt-0.5 text-[10px] md:text-xs font-display font-semibold uppercase tracking-wider text-mode-board leading-tight">
+                  {t.label}
+                </div>
+              </div>
+            )
+          })}
+          {/* Zellen */}
+          {board.cellValues.map((val, rowIdx) =>
+            board.boardTopics.map((topic) => {
+              const key = `${topic}:${rowIdx}`
+              const isPlayed = playedSet.has(key)
+              return (
+                <button
+                  key={`c-${key}`}
+                  type="button"
+                  disabled={isPlayed}
+                  onClick={() =>
+                    dispatch({
+                      type: 'BOARD_PICK_CELL',
+                      topic,
+                      valueIndex: rowIdx,
+                    })
+                  }
+                  className={cn(
+                    'aspect-[4/3] rounded-lg border flex items-center justify-center',
+                    'font-display font-extrabold tabular-nums',
+                    'text-2xl md:text-4xl transition-all',
+                    isPlayed
+                      ? 'border-white/[0.06] bg-navy-800/30 text-ink-faint cursor-not-allowed'
+                      : 'border-mode-board/40 bg-mode-board/10 text-mode-board hover:bg-mode-board/25 hover:border-mode-board/70 hover:-translate-y-0.5 shadow-[0_0_18px_-6px_rgba(240,178,58,0.5)]',
+                  )}
+                >
+                  {isPlayed ? '—' : val}
+                </button>
+              )
+            }),
+          )}
+        </div>
+      </div>
+    )
+  }
+
+  // Frage-Phasen.
+  if (!board.activeCell || !board.activeQuestion) return null
+  const topic = TOPICS_BY_ID[board.activeCell.topic]
+  const value = board.cellValues[board.activeCell.valueIndex] ?? 0
+  const buzzingTeam = teams.find((t) => t.id === board.buzzingTeamId)
+  const opponent = buzzingTeam
+    ? teams.find((t) => t.id !== buzzingTeam.id)
+    : null
+  const activeTeam =
+    board.phase === 'steal-answer' ? opponent : buzzingTeam
+  const activeTeamHex =
+    activeTeam?.color === 'purple' ? '#7C5CFF' : activeTeam ? '#27D8FF' : '#F0B23A'
+
+  return (
+    <div className="animate-titleIn">
+      {/* Header: Topic + Wert */}
+      <div className="flex justify-center">
+        <div
+          className="relative inline-flex items-center gap-3 rounded-2xl px-6 py-3 border-2"
+          style={{
+            borderColor: 'rgba(240,178,58,0.6)',
+            background: 'rgba(11,16,32,0.7)',
+            boxShadow: '0 0 0 1px rgba(240,178,58,0.4), 0 0 24px rgba(240,178,58,0.4)',
+          }}
+        >
+          <span className="text-3xl md:text-4xl" aria-hidden>{topic.emoji}</span>
+          <span className="font-display font-bold uppercase tracking-[0.24em] text-white text-lg md:text-2xl">
+            {topic.label}
+          </span>
+          <span className="font-display font-extrabold text-mode-board tabular-nums text-3xl md:text-4xl">
+            {value}
+          </span>
+        </div>
+      </div>
+
+      {/* Frage */}
+      <div
+        className="mt-8 md:mt-10 rounded-card border p-6 md:p-8 text-center"
+        style={{
+          borderColor: 'rgba(240,178,58,0.35)',
+          background: 'rgba(11,16,32,0.55)',
+          boxShadow:
+            '0 0 0 1px rgba(240,178,58,0.25), 0 0 24px rgba(240,178,58,0.2)',
+        }}
+      >
+        <h2 className="font-display font-bold text-white leading-tight text-2xl md:text-4xl">
+          {board.activeQuestion.question}
+        </h2>
+      </div>
+
+      {/* Phasen-Interaktion */}
+      {board.phase === 'awaiting-buzz' && (
+        <div className="mt-6 md:mt-8">
+          <p className="text-center text-sm text-ink-muted mb-4">
+            Wer hat zuerst gesummt? Master markiert:
+          </p>
+          <div className="grid grid-cols-2 gap-3 md:gap-4">
+            {teams.map((team) => {
+              const hex = team.color === 'purple' ? '#7C5CFF' : '#27D8FF'
+              return (
+                <button
+                  key={team.id}
+                  type="button"
+                  onClick={() => dispatch({ type: 'BOARD_BUZZER', teamId: team.id })}
+                  className={cn(
+                    'h-14 rounded-card border-2 font-display font-bold uppercase tracking-widest text-sm',
+                    'transition-all hover:brightness-110',
+                  )}
+                  style={{
+                    borderColor: `${hex}80`,
+                    background: `${hex}22`,
+                    color: hex,
+                  }}
+                >
+                  {team.name}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      {(board.phase === 'primary-answer' || board.phase === 'steal-answer') && (
+        <div className="mt-6 md:mt-8">
+          <p className="text-center text-sm text-ink-muted mb-4">
+            {board.phase === 'primary-answer'
+              ? 'Auswahl für '
+              : 'Steal für '}
+            <span style={{ color: activeTeamHex }} className="font-semibold">
+              {activeTeam?.name ?? '—'}
+            </span>
+          </p>
+          <div className="grid md:grid-cols-2 gap-3 md:gap-4">
+            {board.shuffledOptions.map((option, idx) => (
+              <AnswerOption
+                key={`board-${board.activeCell?.topic}-${idx}`}
+                letter={LETTERS[idx]}
+                status="idle"
+                onClick={() =>
+                  dispatch({ type: 'BOARD_ANSWER', renderedIndex: idx })
+                }
+              >
+                {option}
+              </AnswerOption>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {board.phase === 'revealed' && buzzingTeam && (
+        <BoardRevealPanel
+          question={board.activeQuestion}
+          correctOption={board.shuffledOptions[board.correctRenderedIndex]}
+          primaryOutcome={board.primaryOutcome}
+          stealOutcome={board.stealOutcome}
+          value={value}
+          buzzingTeamName={buzzingTeam.name}
+          opponentTeamName={opponent?.name ?? '—'}
+          isBoardDone={board.playedCells.length + 1 >= totalCells}
+          onNext={() => dispatch({ type: 'BOARD_NEXT' })}
+        />
+      )}
+    </div>
+  )
+}
+
+interface BoardRevealProps {
+  question: import('@/types/question').MultipleChoiceQuestion
+  correctOption: string
+  primaryOutcome: 'correct' | 'wrong' | null
+  stealOutcome: 'correct' | 'wrong' | null
+  value: number
+  buzzingTeamName: string
+  opponentTeamName: string
+  isBoardDone: boolean
+  onNext: () => void
+}
+
+function BoardRevealPanel({
+  question,
+  correctOption,
+  primaryOutcome,
+  stealOutcome,
+  value,
+  buzzingTeamName,
+  opponentTeamName,
+  isBoardDone,
+  onNext,
+}: BoardRevealProps) {
+  const explanationText = question.explanation ?? question.gmNote
+  const label =
+    primaryOutcome === 'correct'
+      ? `${buzzingTeamName}: + ${value} Punkte`
+      : stealOutcome === 'correct'
+      ? `${opponentTeamName} (Steal): + ${value} Punkte`
+      : 'Keine Punkte'
+  const tone = primaryOutcome === 'correct' || stealOutcome === 'correct'
+    ? 'positive'
+    : 'neutral'
+  return (
+    <div
+      className={cn(
+        'mt-6 rounded-card border p-5 md:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4',
+        tone === 'positive'
+          ? 'bg-correct/10 border-correct/40'
+          : 'bg-navy-800/60 border-white/10',
+      )}
+    >
+      <div className="min-w-0">
+        <div
+          className={cn(
+            'text-[11px] font-bold uppercase tracking-[0.22em]',
+            tone === 'positive' ? 'text-correct' : 'text-ink-muted',
+          )}
+        >
+          {label}
+        </div>
+        <div className="mt-1 text-sm">
+          <span className="text-ink-muted">Richtig war: </span>
+          <span className="font-semibold text-correct">{correctOption}</span>
+        </div>
+        {explanationText && (
+          <p className="mt-2 text-sm text-ink-muted leading-relaxed max-w-2xl">
+            <span className="font-semibold text-ink">Auflösung: </span>
+            {explanationText}
+          </p>
+        )}
+      </div>
+      <Button
+        variant="primary"
+        size="lg"
+        trailing={<ArrowRight className="h-5 w-5" />}
+        onClick={onNext}
+      >
+        {isBoardDone ? 'Modus beenden' : 'Zurück zum Board'}
+      </Button>
     </div>
   )
 }

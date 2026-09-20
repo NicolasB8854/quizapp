@@ -52,14 +52,14 @@ describe('reducer — Setup / Draft', () => {
 
   it('TOGGLE_MODE ignoriert planned-Modi', () => {
     const before = INITIAL_STATE.draft.selectedModes
-    const s = reducer(INITIAL_STATE, { type: 'TOGGLE_MODE', modeId: 'category-board' })
+    const s = reducer(INITIAL_STATE, { type: 'TOGGLE_MODE', modeId: 'pantomime' })
     expect(s.draft.selectedModes).toEqual(before)
   })
 
   it('SET_MODE_SELECTION ersetzt die Auswahl und filtert planned-IDs raus', () => {
     const s = reducer(INITIAL_STATE, {
       type: 'SET_MODE_SELECTION',
-      modeIds: ['flash', 'category-board', 'category-duel'],
+      modeIds: ['flash', 'pantomime', 'category-duel'],
     })
     expect(s.draft.selectedModes).toEqual(['flash', 'category-duel'])
   })
@@ -503,6 +503,174 @@ describe('reducer — Player-Ebene (Session D + E)', () => {
       s = reducer(s, { type: 'FLASH_NEXT' })
     }
     expect(topics).toEqual(['wissenschaft', 'wissenschaft'])
+  })
+})
+
+describe('reducer — Punktejagd (Session L)', () => {
+  function bootBoard(): ReturnType<typeof reducer> {
+    let s = reducer(INITIAL_STATE, {
+      type: 'SET_MODE_SELECTION',
+      modeIds: ['category-board'],
+    })
+    s = reducer(s, { type: 'GO_TO_LOBBY' })
+    s = reducer(s, { type: 'START_PLAYING' })
+    return s
+  }
+
+  it('START_PLAYING initialisiert 5×3-Board mit 5 Topics und 3 Werten', () => {
+    const s = bootBoard()
+    if (s.live?.kind !== 'category-board') throw new Error('unreachable')
+    expect(s.live.boardTopics).toHaveLength(5)
+    expect(s.live.cellValues).toEqual([100, 200, 300])
+    expect(s.live.phase).toBe('pick-cell')
+    expect(s.live.playedCells).toEqual([])
+    expect(s.live.scores).toEqual({ 'team-a': 0, 'team-b': 0 })
+    expect(s.live.cellPickerTeamId).toBe('team-a')
+  })
+
+  it('BOARD_PICK_CELL wählt Zelle und geht in awaiting-buzz', () => {
+    let s = bootBoard()
+    if (s.live?.kind !== 'category-board') throw new Error('unreachable')
+    const firstTopic = s.live.boardTopics[0]
+    s = reducer(s, { type: 'BOARD_PICK_CELL', topic: firstTopic, valueIndex: 0 })
+    if (s.live?.kind !== 'category-board') throw new Error('unreachable')
+    expect(s.live.phase).toBe('awaiting-buzz')
+    expect(s.live.activeCell).toEqual({ topic: firstTopic, valueIndex: 0 })
+    expect(s.live.activeQuestion).not.toBeNull()
+    expect(s.live.shuffledOptions).toHaveLength(4)
+  })
+
+  it('BOARD_PICK_CELL ignoriert bereits gespielte Zelle', () => {
+    let s = bootBoard()
+    if (s.live?.kind !== 'category-board') throw new Error('unreachable')
+    const t0 = s.live.boardTopics[0]
+    // Erste Zelle spielen und beenden.
+    s = reducer(s, { type: 'BOARD_PICK_CELL', topic: t0, valueIndex: 0 })
+    s = reducer(s, { type: 'BOARD_BUZZER', teamId: 'team-a' })
+    if (s.live?.kind !== 'category-board') throw new Error('unreachable')
+    s = reducer(s, {
+      type: 'BOARD_ANSWER',
+      renderedIndex: s.live.correctRenderedIndex,
+    })
+    s = reducer(s, { type: 'BOARD_NEXT' })
+    // Dieselbe Zelle nochmal wählen → no-op.
+    const before = s.live
+    s = reducer(s, { type: 'BOARD_PICK_CELL', topic: t0, valueIndex: 0 })
+    expect(s.live).toBe(before)
+  })
+
+  it('BOARD_BUZZER setzt buzzingTeamId und geht in primary-answer', () => {
+    let s = bootBoard()
+    if (s.live?.kind !== 'category-board') throw new Error('unreachable')
+    s = reducer(s, {
+      type: 'BOARD_PICK_CELL',
+      topic: s.live.boardTopics[0],
+      valueIndex: 0,
+    })
+    s = reducer(s, { type: 'BOARD_BUZZER', teamId: 'team-b' })
+    if (s.live?.kind !== 'category-board') throw new Error('unreachable')
+    expect(s.live.phase).toBe('primary-answer')
+    expect(s.live.buzzingTeamId).toBe('team-b')
+  })
+
+  it('BOARD_ANSWER richtig in primary: volle Punkte fürs Buzzer-Team', () => {
+    let s = bootBoard()
+    if (s.live?.kind !== 'category-board') throw new Error('unreachable')
+    const t = s.live.boardTopics[0]
+    s = reducer(s, { type: 'BOARD_PICK_CELL', topic: t, valueIndex: 1 })
+    s = reducer(s, { type: 'BOARD_BUZZER', teamId: 'team-a' })
+    if (s.live?.kind !== 'category-board') throw new Error('unreachable')
+    const value = s.live.cellValues[1]
+    s = reducer(s, {
+      type: 'BOARD_ANSWER',
+      renderedIndex: s.live.correctRenderedIndex,
+    })
+    if (s.live?.kind !== 'category-board') throw new Error('unreachable')
+    expect(s.live.phase).toBe('revealed')
+    expect(s.live.primaryOutcome).toBe('correct')
+    expect(s.live.scores['team-a']).toBe(value)
+    expect(s.live.scores['team-b']).toBe(0)
+  })
+
+  it('BOARD_ANSWER falsch in primary: geht in steal-answer, keine Punkte', () => {
+    let s = bootBoard()
+    if (s.live?.kind !== 'category-board') throw new Error('unreachable')
+    const t = s.live.boardTopics[0]
+    s = reducer(s, { type: 'BOARD_PICK_CELL', topic: t, valueIndex: 0 })
+    s = reducer(s, { type: 'BOARD_BUZZER', teamId: 'team-a' })
+    if (s.live?.kind !== 'category-board') throw new Error('unreachable')
+    const wrongIdx =
+      (s.live.correctRenderedIndex + 1) % s.live.shuffledOptions.length
+    s = reducer(s, { type: 'BOARD_ANSWER', renderedIndex: wrongIdx })
+    if (s.live?.kind !== 'category-board') throw new Error('unreachable')
+    expect(s.live.phase).toBe('steal-answer')
+    expect(s.live.primaryOutcome).toBe('wrong')
+    expect(s.live.scores['team-a']).toBe(0)
+    expect(s.live.scores['team-b']).toBe(0)
+  })
+
+  it('BOARD_ANSWER richtig in steal-answer: Gegenteam bekommt volle Punkte', () => {
+    let s = bootBoard()
+    if (s.live?.kind !== 'category-board') throw new Error('unreachable')
+    const t = s.live.boardTopics[0]
+    s = reducer(s, { type: 'BOARD_PICK_CELL', topic: t, valueIndex: 2 })
+    s = reducer(s, { type: 'BOARD_BUZZER', teamId: 'team-a' })
+    if (s.live?.kind !== 'category-board') throw new Error('unreachable')
+    const value = s.live.cellValues[2]
+    const correctIdx = s.live.correctRenderedIndex
+    const wrongIdx = (correctIdx + 1) % s.live.shuffledOptions.length
+    // Team A falsch.
+    s = reducer(s, { type: 'BOARD_ANSWER', renderedIndex: wrongIdx })
+    // Team B steal richtig.
+    s = reducer(s, { type: 'BOARD_ANSWER', renderedIndex: correctIdx })
+    if (s.live?.kind !== 'category-board') throw new Error('unreachable')
+    expect(s.live.phase).toBe('revealed')
+    expect(s.live.stealOutcome).toBe('correct')
+    expect(s.live.scores['team-a']).toBe(0)
+    expect(s.live.scores['team-b']).toBe(value)
+  })
+
+  it('BOARD_NEXT: playedCells++, Wahlrecht wechselt zum Gegenteam', () => {
+    let s = bootBoard()
+    if (s.live?.kind !== 'category-board') throw new Error('unreachable')
+    const t = s.live.boardTopics[0]
+    s = reducer(s, { type: 'BOARD_PICK_CELL', topic: t, valueIndex: 0 })
+    s = reducer(s, { type: 'BOARD_BUZZER', teamId: 'team-a' })
+    if (s.live?.kind !== 'category-board') throw new Error('unreachable')
+    s = reducer(s, {
+      type: 'BOARD_ANSWER',
+      renderedIndex: s.live.correctRenderedIndex,
+    })
+    s = reducer(s, { type: 'BOARD_NEXT' })
+    if (s.live?.kind !== 'category-board') throw new Error('unreachable')
+    expect(s.live.phase).toBe('pick-cell')
+    expect(s.live.playedCells).toHaveLength(1)
+    expect(s.live.playedCells[0]).toEqual({ topic: t, valueIndex: 0 })
+    // Wahlrecht ist auf team-b gewandert.
+    expect(s.live.cellPickerTeamId).toBe('team-b')
+    expect(s.live.activeQuestion).toBeNull()
+  })
+
+  it('Nach allen Zellen: BOARD_NEXT → FINISH_MODE → scoreboard', () => {
+    let s = bootBoard()
+    if (s.live?.kind !== 'category-board') throw new Error('unreachable')
+    const topics = s.live.boardTopics
+    const rowCount = s.live.cellValues.length
+    for (const topic of topics) {
+      for (let row = 0; row < rowCount; row++) {
+        s = reducer(s, { type: 'BOARD_PICK_CELL', topic, valueIndex: row })
+        s = reducer(s, { type: 'BOARD_BUZZER', teamId: 'team-a' })
+        if (s.live?.kind !== 'category-board') throw new Error('unreachable')
+        s = reducer(s, {
+          type: 'BOARD_ANSWER',
+          renderedIndex: s.live.correctRenderedIndex,
+        })
+        s = reducer(s, { type: 'BOARD_NEXT' })
+      }
+    }
+    expect(s.phase).toBe('scoreboard')
+    // Team A hat alle 15 Zellen richtig → Match-Punkt.
+    expect(s.matchPoints['team-a']).toBe(1)
   })
 })
 

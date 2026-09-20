@@ -181,6 +181,35 @@ export interface PointsLadderLive {
   usedQuestionIds: string[]
 }
 
+/**
+ * Punktejagd (Kategorienbrett): Grid aus Topic-Spalten × Wert-Zeilen. Teams wählen
+ * abwechselnd eine Zelle, die Frage wird verdeckt gezeigt, Master markiert wer
+ * gebuzzt hat, dieses Team antwortet zuerst. Fehler → das andere Team darf stealen.
+ *
+ * Prototyp-Layout: 5×3 (statt 5×4 im Konzept), damit die Difficulty-Ladder in jedem
+ * Topic ohne Frage-Wiederholung durchhält. Bei ≥4 MC-Fragen pro Topic kann auf
+ * 5×4 erweitert werden.
+ */
+export interface CategoryBoardLive {
+  kind: 'category-board'
+  boardTopics: Topic[]
+  cellValues: number[]
+  playedCells: Array<{ topic: Topic; valueIndex: number }>
+  phase: 'pick-cell' | 'awaiting-buzz' | 'primary-answer' | 'steal-answer' | 'revealed'
+  activeCell: { topic: Topic; valueIndex: number } | null
+  activeQuestion: MultipleChoiceQuestion | null
+  shuffledOptions: string[]
+  correctRenderedIndex: number
+  /** Team, das für die Primary-Antwort dran ist. */
+  buzzingTeamId: string | null
+  primaryOutcome: 'correct' | 'wrong' | null
+  stealOutcome: 'correct' | 'wrong' | null
+  scores: Record<string, number>
+  usedQuestionIds: string[]
+  /** Welches Team das nächste Zell-Wahlrecht hat (alterniert nach Answer). */
+  cellPickerTeamId: string | null
+}
+
 export type LiveGame =
   | CategoryDuelLive
   | FlashLive
@@ -188,6 +217,7 @@ export type LiveGame =
   | AroundCornerLive
   | SprinterLive
   | PointsLadderLive
+  | CategoryBoardLive
 
 // ---------- Draft (Setup-Phase) ----------------------------------------------
 
@@ -241,6 +271,10 @@ export type GameAction =
   | { type: 'LADDER_SET_ANSWER'; teamId: string; renderedIndex: number }
   | { type: 'LADDER_REVEAL' }
   | { type: 'LADDER_NEXT' }
+  | { type: 'BOARD_PICK_CELL'; topic: Topic; valueIndex: number }
+  | { type: 'BOARD_BUZZER'; teamId: string }
+  | { type: 'BOARD_ANSWER'; renderedIndex: number }
+  | { type: 'BOARD_NEXT' }
   | { type: 'ADD_PLAYER'; teamId: string }
   | { type: 'REMOVE_PLAYER'; playerId: string }
   | { type: 'SET_PLAYER_NAME'; playerId: string; name: string }
@@ -469,6 +503,58 @@ function initSpotlight(teams: Team[], players: readonly Player[]): SpotlightLive
 }
 
 /**
+ * Punktejagd: 5×3-Board (Prototyp-Grenze wegen Katalog-Kapazität, siehe Kommentar am Typ).
+ */
+const BOARD_COLUMNS = 5
+const BOARD_VALUES = [100, 200, 300] as const
+const BOARD_LEVELS: PlayerInterest['level'][] = ['bisschen', 'gut', 'nerd']
+
+/** Wählt die Topics für das Board — bevorzugt Interessen, füllt sonst nach Katalog auf. */
+function pickBoardTopics(profile: ReturnType<typeof computeInterestProfile>): Topic[] {
+  const interestOrdered: Topic[] = [
+    ...Array.from(profile.shared),
+    ...Array.from(profile.individual),
+  ]
+  const fallbackOrder: Topic[] = [
+    'film', 'serien', 'musik', 'games', 'geografie',
+    'geschichte', 'wissenschaft', 'sport', 'essen', 'technik',
+    'sprache', 'kurioses',
+  ]
+  const chosen: Topic[] = []
+  const seen = new Set<Topic>()
+  for (const t of [...interestOrdered, ...fallbackOrder]) {
+    if (chosen.length >= BOARD_COLUMNS) break
+    if (seen.has(t)) continue
+    seen.add(t)
+    chosen.push(t)
+  }
+  return chosen
+}
+
+function initCategoryBoard(teams: Team[], players: readonly Player[]): CategoryBoardLive {
+  const scores = Object.fromEntries(teams.map((t) => [t.id, 0]))
+  const profile = computeInterestProfile(players)
+  const boardTopics = pickBoardTopics(profile)
+  return {
+    kind: 'category-board',
+    boardTopics,
+    cellValues: [...BOARD_VALUES],
+    playedCells: [],
+    phase: 'pick-cell',
+    activeCell: null,
+    activeQuestion: null,
+    shuffledOptions: [],
+    correctRenderedIndex: 0,
+    buzzingTeamId: null,
+    primaryOutcome: null,
+    stealOutcome: null,
+    scores,
+    usedQuestionIds: [],
+    cellPickerTeamId: teams[0]?.id ?? null,
+  }
+}
+
+/**
  * Punkte-Leiter: Werte pro Stufe. Klassischer Millionär-Aufstieg, Prototyp-Höchstwert 5.000.
  */
 const LADDER_VALUES = [200, 500, 1000, 2500, 5000] as const
@@ -633,6 +719,8 @@ function initLiveFor(
       return initSprinter(teams)
     case 'points-ladder':
       return initPointsLadder(teams)
+    case 'category-board':
+      return initCategoryBoard(teams, players)
     default:
       // Alle anderen Modi sind in v0.1 als `planned` markiert und lassen sich im Setup
       // gar nicht auswählen. Falls doch: null → Reducer springt in FINISH_MODE.
@@ -1106,6 +1194,145 @@ export function reducer(state: GameState, action: GameAction): GameState {
       }
     }
 
+    case 'BOARD_PICK_CELL': {
+      if (!state.round || !state.live || state.live.kind !== 'category-board') return state
+      const live = state.live
+      if (live.phase !== 'pick-cell') return state
+      if (!live.boardTopics.includes(action.topic)) return state
+      if (action.valueIndex < 0 || action.valueIndex >= live.cellValues.length) return state
+      const alreadyPlayed = live.playedCells.some(
+        (c) => c.topic === action.topic && c.valueIndex === action.valueIndex,
+      )
+      if (alreadyPlayed) return state
+
+      const excluded = new Set(live.usedQuestionIds)
+      for (const id of readAskedQuestionIds()) excluded.add(id)
+      const preferredLevel = BOARD_LEVELS[action.valueIndex] ?? 'gut'
+      const question = pickQuestion(action.topic, excluded, preferredLevel)
+      if (!question) return state
+
+      const shuffle = shuffleWithMapping(
+        question.options,
+        `board:${action.topic}:${action.valueIndex}:${question.id}`,
+      )
+      return {
+        ...state,
+        live: {
+          ...live,
+          phase: 'awaiting-buzz',
+          activeCell: { topic: action.topic, valueIndex: action.valueIndex },
+          activeQuestion: question,
+          shuffledOptions: shuffle.shuffled,
+          correctRenderedIndex: shuffle.renderedIndexOf(question.correctIndex),
+          buzzingTeamId: null,
+          primaryOutcome: null,
+          stealOutcome: null,
+        },
+      }
+    }
+
+    case 'BOARD_BUZZER': {
+      if (!state.round || !state.live || state.live.kind !== 'category-board') return state
+      const live = state.live
+      if (live.phase !== 'awaiting-buzz') return state
+      if (!state.round.teams.some((t) => t.id === action.teamId)) return state
+      return {
+        ...state,
+        live: {
+          ...live,
+          phase: 'primary-answer',
+          buzzingTeamId: action.teamId,
+        },
+      }
+    }
+
+    case 'BOARD_ANSWER': {
+      if (!state.round || !state.live || state.live.kind !== 'category-board') return state
+      const live = state.live
+      if (!live.activeCell || !live.activeQuestion) return state
+      const value = live.cellValues[live.activeCell.valueIndex] ?? 0
+      const wasCorrect = action.renderedIndex === live.correctRenderedIndex
+
+      if (live.phase === 'primary-answer') {
+        if (!live.buzzingTeamId) return state
+        if (wasCorrect) {
+          const scores = {
+            ...live.scores,
+            [live.buzzingTeamId]: (live.scores[live.buzzingTeamId] ?? 0) + value,
+          }
+          return {
+            ...state,
+            live: { ...live, phase: 'revealed', primaryOutcome: 'correct', scores },
+          }
+        }
+        // Fehler → Steal-Phase für das Gegenteam.
+        return {
+          ...state,
+          live: { ...live, phase: 'steal-answer', primaryOutcome: 'wrong' },
+        }
+      }
+
+      if (live.phase === 'steal-answer') {
+        const opponent = state.round.teams.find((t) => t.id !== live.buzzingTeamId)
+        if (!opponent) return state
+        if (wasCorrect) {
+          const scores = {
+            ...live.scores,
+            [opponent.id]: (live.scores[opponent.id] ?? 0) + value,
+          }
+          return {
+            ...state,
+            live: { ...live, phase: 'revealed', stealOutcome: 'correct', scores },
+          }
+        }
+        return {
+          ...state,
+          live: { ...live, phase: 'revealed', stealOutcome: 'wrong' },
+        }
+      }
+
+      return state
+    }
+
+    case 'BOARD_NEXT': {
+      if (!state.round || !state.live || state.live.kind !== 'category-board') return state
+      const live = state.live
+      if (live.phase !== 'revealed' || !live.activeCell) return state
+
+      const playedCells = [...live.playedCells, live.activeCell]
+      const usedQuestionIds = live.activeQuestion
+        ? [...live.usedQuestionIds, live.activeQuestion.id]
+        : live.usedQuestionIds
+      const totalCells = live.boardTopics.length * live.cellValues.length
+      const isBoardDone = playedCells.length >= totalCells
+
+      // Zell-Wahlrecht wechselt zum Gegenteam.
+      const nextPickerId = state.round.teams.find(
+        (t) => t.id !== live.cellPickerTeamId,
+      )?.id ?? live.cellPickerTeamId
+
+      const advancedBase: CategoryBoardLive = {
+        ...live,
+        playedCells,
+        usedQuestionIds,
+        phase: 'pick-cell',
+        activeCell: null,
+        activeQuestion: null,
+        shuffledOptions: [],
+        correctRenderedIndex: 0,
+        buzzingTeamId: null,
+        primaryOutcome: null,
+        stealOutcome: null,
+        cellPickerTeamId: nextPickerId,
+      }
+
+      if (isBoardDone) {
+        return reducer({ ...state, live: advancedBase }, { type: 'FINISH_MODE' })
+      }
+
+      return { ...state, live: advancedBase }
+    }
+
     case 'LADDER_SET_ANSWER': {
       if (!state.live || state.live.kind !== 'points-ladder') return state
       if (state.live.phase !== 'answering') return state
@@ -1498,6 +1725,11 @@ export function useSprinter(): SprinterLive | null {
 export function usePointsLadder(): PointsLadderLive | null {
   const { state } = useGame()
   return state.live && state.live.kind === 'points-ladder' ? state.live : null
+}
+
+export function useCategoryBoard(): CategoryBoardLive | null {
+  const { state } = useGame()
+  return state.live && state.live.kind === 'category-board' ? state.live : null
 }
 
 // Convenience für Dispatch ohne Boilerplate.

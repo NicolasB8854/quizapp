@@ -40,13 +40,13 @@ export const MODES: GameMode[] = [
     id: 'category-board',
     name: 'Punktejagd',
     chipLabel: 'Klassiker',
-    tagline: 'Fünf Kategorien, vier Punktwerte, hohes Tempo.',
+    tagline: 'Fünf Kategorien, drei Punktwerte, klare Ansage.',
     description:
-      '5×4-Board mit steigenden Werten. Wer zuerst summt, antwortet. Fehler geben der Gegenseite die Chance.',
-    estimatedMinutes: 25,
+      '5×3-Board mit steigenden Werten. Wer zuerst summt, antwortet. Fehler geben der Gegenseite die Chance.',
+    estimatedMinutes: 20,
     scoresMatchPoint: true,
     accent: 'board',
-    status: 'planned',
+    status: 'ready',
   },
   {
     id: 'experts',
