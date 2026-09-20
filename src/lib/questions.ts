@@ -13,6 +13,7 @@ import type {
   Topic,
   TrueFalseQuestion,
 } from '@/types/question'
+import type { InterestProfile } from './interestProfile'
 
 // JSON-Import ist untypisiert — hier einmal narrowen.
 const ALL_QUESTIONS = rawQuestions as unknown as Question[]
@@ -49,35 +50,79 @@ export function getTrueFalsePool(): TrueFalseQuestion[] {
 }
 
 /**
+ * Gewichtete Buckets (Session E): 60% shared, 30% individual, 10% wildcard.
+ *
+ * Diese Verteilung ist die pragmatische Kurzform der 30/30/25/15-Formel aus
+ * konzept-v2.md, Kapitel 6. Ohne dedizierte „general vs. shared-interest"-
+ * Klassifizierung in der DB kollabieren wir general in wildcard und heben shared
+ * gegenüber individual an, damit gemeinsame Themen die Runde tragen.
+ */
+const FLASH_WEIGHTS = { shared: 60, individual: 30, wildcard: 10 } as const
+
+/**
  * Zieht die nächste ungenutzte True-False-Behauptung.
  *
- * Optionaler `allowedTopics`-Filter für die Personalisierung: Fragen werden zuerst aus
- * den bevorzugten Topics gezogen. Fallback-Kaskade:
- *  1. Nicht-verbrauchte Frage aus den Interessen  ← Best-Case
- *  2. Nicht-verbrauchte Frage aus dem gesamten Pool (Topic-Filter aufweichen)
- *  3. Beliebige Frage aus dem Pool (Duplicate-Check aufweichen)
+ * Ohne `profile` (oder mit leerem Profile): uniforme Auswahl aus dem Pool.
  *
- * Damit halten kurze Interessen-Listen die Blitzrunde nicht künstlich klein.
+ * Mit `profile`: gewichtete Wahl über drei Töpfe (shared / individual / wildcard).
+ * Leere Töpfe fallen weg, das verbleibende Gewicht wird proportional verteilt.
+ *
+ * Duplicate-Check: wird bevorzugt eingehalten. Wenn nach Ausschluss der `usedIds`
+ * gar nichts mehr übrig bleibt, greift der volle Pool als Fallback.
  */
 export function pickTrueFalse(
   usedIds: ReadonlySet<string>,
-  allowedTopics?: readonly Topic[],
+  profile?: InterestProfile,
 ): TrueFalseQuestion | null {
-  const pool = getTrueFalsePool()
-  if (pool.length === 0) return null
+  const fullPool = getTrueFalsePool()
+  if (fullPool.length === 0) return null
 
-  const hasFilter = allowedTopics !== undefined && allowedTopics.length > 0
-  if (hasFilter) {
-    const topicSet = new Set(allowedTopics)
-    const inTopics = pool.filter((q) => topicSet.has(q.topic))
-    const freshInTopics = inTopics.filter((q) => !usedIds.has(q.id))
-    if (freshInTopics.length > 0) {
-      return freshInTopics[Math.floor(Math.random() * freshInTopics.length)]
-    }
-    // Interessen im Pool sind entweder leer oder erschöpft — weiche Topic-Filter auf.
+  const fresh = fullPool.filter((q) => !usedIds.has(q.id))
+  const pool = fresh.length > 0 ? fresh : fullPool
+
+  const hasProfile =
+    profile !== undefined &&
+    (profile.shared.size > 0 || profile.individual.size > 0)
+
+  if (!hasProfile) {
+    return pool[Math.floor(Math.random() * pool.length)]
   }
 
-  const fresh = pool.filter((q) => !usedIds.has(q.id))
-  const candidates = fresh.length > 0 ? fresh : pool
-  return candidates[Math.floor(Math.random() * candidates.length)]
+  const sharedItems = pool.filter((q) => profile.shared.has(q.topic))
+  const individualItems = pool.filter((q) => profile.individual.has(q.topic))
+  const wildcardItems = pool.filter(
+    (q) => !profile.shared.has(q.topic) && !profile.individual.has(q.topic),
+  )
+
+  const picked = pickWeighted([
+    { weight: FLASH_WEIGHTS.shared, items: sharedItems },
+    { weight: FLASH_WEIGHTS.individual, items: individualItems },
+    { weight: FLASH_WEIGHTS.wildcard, items: wildcardItems },
+  ])
+  return picked ?? pool[Math.floor(Math.random() * pool.length)]
+}
+
+/**
+ * Gewichtete Zufallsauswahl über mehrere Töpfe. Leere Töpfe werden ignoriert und ihr
+ * Gewicht verfällt (bzw. entfällt aus der Summe). Innerhalb eines Topfes uniforme
+ * Auswahl.
+ */
+function pickWeighted<T>(
+  buckets: readonly { weight: number; items: readonly T[] }[],
+): T | null {
+  const nonEmpty = buckets.filter((b) => b.items.length > 0 && b.weight > 0)
+  if (nonEmpty.length === 0) return null
+  const total = nonEmpty.reduce((s, b) => s + b.weight, 0)
+  const r = Math.random() * total
+  let acc = 0
+  for (const bucket of nonEmpty) {
+    acc += bucket.weight
+    if (r < acc) {
+      return bucket.items[Math.floor(Math.random() * bucket.items.length)]
+    }
+  }
+  // Numerische Sicherheitsnetzknote — Math.random kann in seltenen Fällen r = total-eps
+  // liefern; wir fallen dann auf den letzten Bucket zurück.
+  const last = nonEmpty[nonEmpty.length - 1]
+  return last.items[Math.floor(Math.random() * last.items.length)]
 }

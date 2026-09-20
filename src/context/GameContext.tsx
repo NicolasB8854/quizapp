@@ -27,6 +27,7 @@ import type {
   GameModeId,
   GameResult,
   Player,
+  PlayerInterest,
   RoundConfig,
   Team,
 } from '@/types/round'
@@ -34,6 +35,10 @@ import type { MultipleChoiceQuestion, Topic, TrueFalseQuestion } from '@/types/q
 import { MODES_BY_ID } from '@/data/modes'
 import { pickQuestion, pickTrueFalse } from '@/lib/questions'
 import { markQuestionsAsked, readAskedQuestionIds } from '@/lib/questionHistory'
+import {
+  aggregatePlayerInterests,
+  computeInterestProfile,
+} from '@/lib/interestProfile'
 import { generateRoomCode } from '@/lib/roomCode'
 import { shuffleWithMapping } from '@/lib/shuffle'
 
@@ -122,7 +127,7 @@ export type GameAction =
   | { type: 'ADD_PLAYER'; teamId: string }
   | { type: 'REMOVE_PLAYER'; playerId: string }
   | { type: 'SET_PLAYER_NAME'; playerId: string; name: string }
-  | { type: 'SET_PLAYER_INTERESTS'; playerId: string; interests: Topic[] }
+  | { type: 'SET_PLAYER_INTERESTS'; playerId: string; interests: PlayerInterest[] }
   | { type: 'FINISH_MODE' }
   | { type: 'BACK_TO_SETUP' }
   | { type: 'RESET_ALL' }
@@ -171,24 +176,6 @@ function makeDefaultPlayers(teams: Team[]): Player[] {
   return players
 }
 
-/**
- * Aggregiert die Interessen aller Spieler zu einem Runden-Signal.
- * Union, dedupliziert, in stabiler Reihenfolge (nach erster Nennung).
- */
-function aggregatePlayerInterests(players: readonly Player[]): Topic[] {
-  const seen = new Set<Topic>()
-  const out: Topic[] = []
-  for (const p of players) {
-    for (const topic of p.interests) {
-      if (!seen.has(topic)) {
-        seen.add(topic)
-        out.push(topic)
-      }
-    }
-  }
-  return out
-}
-
 function countPlayersInTeam(players: readonly Player[], teamId: string): number {
   let n = 0
   for (const p of players) if (p.teamId === teamId) n += 1
@@ -214,11 +201,11 @@ function initCategoryDuel(teams: Team[]): CategoryDuelLive {
   }
 }
 
-function initFlash(teams: Team[], interests: readonly Topic[]): FlashLive | null {
+function initFlash(teams: Team[], players: readonly Player[]): FlashLive | null {
   // Erste Behauptung direkt ziehen — Blitzrunde ist linear, keine Vorauswahl.
   const excluded = new Set<string>()
   for (const id of readAskedQuestionIds()) excluded.add(id)
-  const first = pickTrueFalse(excluded, interests)
+  const first = pickTrueFalse(excluded, computeInterestProfile(players))
   if (!first) return null
 
   return {
@@ -237,13 +224,13 @@ function initFlash(teams: Team[], interests: readonly Topic[]): FlashLive | null
 function initLiveFor(
   modeId: GameModeId,
   teams: Team[],
-  interests: readonly Topic[] = [],
+  players: readonly Player[] = [],
 ): LiveGame | null {
   switch (modeId) {
     case 'category-duel':
       return initCategoryDuel(teams)
     case 'flash':
-      return initFlash(teams, interests)
+      return initFlash(teams, players)
     default:
       // Alle anderen Modi sind in v0.1 als `planned` markiert und lassen sich im Setup
       // gar nicht auswählen. Falls doch: null → Reducer springt in FINISH_MODE.
@@ -315,7 +302,7 @@ export function reducer(state: GameState, action: GameAction): GameState {
     case 'START_PLAYING': {
       if (!state.round) return state
       const firstModeId = state.round.gameModes[0]
-      const live = initLiveFor(firstModeId, state.round.teams, state.round.interests)
+      const live = initLiveFor(firstModeId, state.round.teams, state.round.players)
       return { ...state, phase: 'playing', currentModeIndex: 0, live }
     }
 
@@ -372,7 +359,10 @@ export function reducer(state: GameState, action: GameAction): GameState {
 
     case 'SET_PLAYER_INTERESTS': {
       if (!state.round || state.phase !== 'lobby') return state
-      const interests = Array.from(new Set(action.interests))
+      // Dedupliziert pro Topic — bei mehreren Einträgen zum selben Topic zählt der letzte.
+      const byTopic = new Map<Topic, PlayerInterest>()
+      for (const entry of action.interests) byTopic.set(entry.topic, entry)
+      const interests = Array.from(byTopic.values())
       const players = state.round.players.map((p) =>
         p.id === action.playerId ? { ...p, interests } : p,
       )
@@ -503,7 +493,10 @@ export function reducer(state: GameState, action: GameAction): GameState {
       // Nächste Behauptung ziehen (Duplicate-Check: Runde + Historie).
       const excluded = new Set(usedQuestionIds)
       for (const id of readAskedQuestionIds()) excluded.add(id)
-      const nextQuestion = pickTrueFalse(excluded, state.round.interests)
+      const nextQuestion = pickTrueFalse(
+        excluded,
+        computeInterestProfile(state.round.players),
+      )
       if (!nextQuestion) {
         // Pool leer — Modus vorzeitig beenden.
         return reducer({ ...state, live: advancedLive }, { type: 'FINISH_MODE' })
@@ -592,7 +585,7 @@ export function reducer(state: GameState, action: GameAction): GameState {
       }
 
       const nextModeId = state.round.gameModes[nextIndex]
-      const nextLive = initLiveFor(nextModeId, state.round.teams, state.round.interests)
+      const nextLive = initLiveFor(nextModeId, state.round.teams, state.round.players)
       return {
         ...state,
         results,

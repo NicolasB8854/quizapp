@@ -21,7 +21,8 @@ import { useGame, type GameAction } from '@/context/GameContext'
 import { MODES_BY_ID } from '@/data/modes'
 import { TOPICS, TOPICS_BY_ID } from '@/data/topics'
 import type { Topic } from '@/types/question'
-import type { Player, RoundConfig, Team } from '@/types/round'
+import type { Player, RoundConfig, SkillLevel, Team } from '@/types/round'
+import { computeInterestProfile } from '@/lib/interestProfile'
 import { cn } from '@/lib/classnames'
 
 export default function LobbyPage() {
@@ -394,7 +395,9 @@ interface PlayerRowProps {
 }
 
 function PlayerRow({ player, placeholderIndex, canRemove, teamAccentHex, dispatch }: PlayerRowProps) {
-  const selectedInterests = new Set(player.interests)
+  const levelByTopic = new Map<string, SkillLevel>()
+  for (const { topic, level } of player.interests) levelByTopic.set(topic, level)
+
   return (
     <div className="rounded-lg border border-white/[0.06] bg-navy-900/60 p-3">
       <div className="flex items-center gap-2">
@@ -425,38 +428,109 @@ function PlayerRow({ player, placeholderIndex, canRemove, teamAccentHex, dispatc
       </div>
       <div className="mt-2 flex flex-wrap gap-1.5">
         {TOPICS.map((topic) => {
-          const isOn = selectedInterests.has(topic.id)
+          const level = levelByTopic.get(topic.id)
           return (
-            <button
+            <InterestChip
               key={topic.id}
-              type="button"
+              emoji={topic.emoji}
+              label={topic.label}
+              level={level}
               onClick={() => {
-                const next = isOn
-                  ? player.interests.filter((t) => t !== topic.id)
-                  : [...player.interests, topic.id]
+                const nextLvl = nextLevel(level)
+                let interests = player.interests
+                if (nextLvl === null) {
+                  interests = interests.filter((i) => i.topic !== topic.id)
+                } else if (level) {
+                  interests = interests.map((i) =>
+                    i.topic === topic.id ? { topic: topic.id, level: nextLvl } : i,
+                  )
+                } else {
+                  interests = [...interests, { topic: topic.id, level: nextLvl }]
+                }
                 dispatch({
                   type: 'SET_PLAYER_INTERESTS',
                   playerId: player.id,
-                  interests: next,
+                  interests,
                 })
               }}
-              aria-pressed={isOn}
-              title={topic.label}
-              className={cn(
-                'inline-flex items-center gap-1 h-7 rounded-full px-2.5',
-                'text-[11px] font-medium transition-all border',
-                isOn
-                  ? 'bg-brand-purple/25 border-brand-purple/70 text-brand-purple-soft'
-                  : 'bg-navy-800/70 border-white/10 text-ink-muted hover:border-white/25 hover:text-ink',
-              )}
-            >
-              <span aria-hidden>{topic.emoji}</span>
-              <span>{topic.label}</span>
-            </button>
+            />
           )
         })}
       </div>
+      <div className="mt-2 text-[10px] uppercase tracking-[0.22em] text-ink-faint">
+        Tippen zyklt: aus → bisschen → gut → nerd → aus.
+      </div>
     </div>
+  )
+}
+
+// ---------- Interest-Chip mit Level-Cycle ------------------------------------
+
+const LEVEL_LABEL: Record<SkillLevel, string> = {
+  bisschen: 'bisschen',
+  gut: 'gut',
+  nerd: 'nerd',
+}
+
+const LEVEL_STYLE: Record<SkillLevel, string> = {
+  bisschen: 'bg-brand-purple/10 border-brand-purple/40 text-brand-purple-soft',
+  gut: 'bg-brand-purple/25 border-brand-purple/70 text-brand-purple-soft',
+  nerd:
+    'bg-brand-purple/40 border-brand-purple/90 text-white shadow-[0_0_18px_-4px_rgba(124,92,255,0.9)]',
+}
+
+const LEVEL_DOTS: Record<SkillLevel, number> = { bisschen: 1, gut: 2, nerd: 3 }
+
+function nextLevel(current: SkillLevel | undefined): SkillLevel | null {
+  if (!current) return 'bisschen'
+  if (current === 'bisschen') return 'gut'
+  if (current === 'gut') return 'nerd'
+  return null
+}
+
+interface InterestChipProps {
+  emoji: string
+  label: string
+  level: SkillLevel | undefined
+  onClick: () => void
+}
+
+function InterestChip({ emoji, label, level, onClick }: InterestChipProps) {
+  const off = !level
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={!off}
+      title={level ? `${label} · ${LEVEL_LABEL[level]}` : label}
+      className={cn(
+        'inline-flex items-center gap-1.5 h-7 rounded-full px-2.5',
+        'text-[11px] font-medium transition-all border',
+        off
+          ? 'bg-navy-800/70 border-white/10 text-ink-muted hover:border-white/25 hover:text-ink'
+          : LEVEL_STYLE[level],
+      )}
+    >
+      <span aria-hidden>{emoji}</span>
+      <span>{label}</span>
+      {level && <LevelDots count={LEVEL_DOTS[level]} />}
+    </button>
+  )
+}
+
+function LevelDots({ count }: { count: number }) {
+  return (
+    <span className="ml-1 inline-flex items-center gap-0.5" aria-hidden>
+      {[0, 1, 2].map((i) => (
+        <span
+          key={i}
+          className={cn(
+            'h-1 w-1 rounded-full',
+            i < count ? 'bg-current opacity-90' : 'bg-current opacity-25',
+          )}
+        />
+      ))}
+    </span>
   )
 }
 
@@ -467,20 +541,10 @@ interface PreviewPanelProps {
 }
 
 function InterestsPreviewPanel({ round }: PreviewPanelProps) {
-  // Zähle, wie oft jedes Topic gewählt wurde. Ab 2 → shared, sonst individual.
-  const counts = new Map<Topic, number>()
-  for (const p of round.players) {
-    for (const t of p.interests) {
-      counts.set(t, (counts.get(t) ?? 0) + 1)
-    }
-  }
-  const shared: Topic[] = []
-  const individual: Topic[] = []
-  for (const [t, n] of counts) {
-    if (n >= 2) shared.push(t)
-    else individual.push(t)
-  }
-  const totalInterests = counts.size
+  const profile = computeInterestProfile(round.players)
+  const shared: Topic[] = Array.from(profile.shared)
+  const individual: Topic[] = Array.from(profile.individual)
+  const totalInterests = shared.length + individual.length
   const playersWithInterests = round.players.filter((p) => p.interests.length > 0).length
 
   if (totalInterests === 0) {
@@ -504,11 +568,17 @@ function InterestsPreviewPanel({ round }: PreviewPanelProps) {
       style={{ boxShadow: '0 0 24px -8px rgba(124,92,255,0.55)' }}
     >
       <div className="flex items-center justify-between gap-4 mb-3">
-        <div className="eyebrow inline-flex items-center gap-2 text-brand-purple-soft">
-          <Sparkles className="h-3.5 w-3.5" />
-          Euer Mix für heute
+        <div>
+          <div className="eyebrow inline-flex items-center gap-2 text-brand-purple-soft">
+            <Sparkles className="h-3.5 w-3.5" />
+            Euer Mix für heute
+          </div>
+          <p className="mt-1 text-[11px] text-ink-muted">
+            Gemeinsame Interessen tragen die Blitzrunde (60%), individuelle bekommen 30%,
+            Wildcards 10%.
+          </p>
         </div>
-        <div className="text-[11px] uppercase tracking-[0.22em] text-ink-muted">
+        <div className="text-[11px] uppercase tracking-[0.22em] text-ink-muted whitespace-nowrap">
           <span className="text-ink font-semibold tabular-nums">{playersWithInterests}</span>
           {' / '}
           <span className="tabular-nums">{round.players.length}</span> mit Präferenz
@@ -522,13 +592,12 @@ function InterestsPreviewPanel({ round }: PreviewPanelProps) {
           </div>
           <div className="flex flex-wrap gap-1.5">
             {shared.map((t) => (
-              <span
+              <ProfileTopicChip
                 key={t}
-                className="inline-flex items-center gap-1 h-7 rounded-full px-2.5 text-[11px] font-medium border border-brand-cyan/40 bg-brand-cyan/15 text-brand-cyan-soft"
-              >
-                <span aria-hidden>{TOPICS_BY_ID[t].emoji}</span>
-                <span>{TOPICS_BY_ID[t].label}</span>
-              </span>
+                topicId={t}
+                level={profile.levelPerTopic.get(t)}
+                tone="shared"
+              />
             ))}
           </div>
         </div>
@@ -541,17 +610,43 @@ function InterestsPreviewPanel({ round }: PreviewPanelProps) {
           </div>
           <div className="flex flex-wrap gap-1.5">
             {individual.map((t) => (
-              <span
+              <ProfileTopicChip
                 key={t}
-                className="inline-flex items-center gap-1 h-7 rounded-full px-2.5 text-[11px] font-medium border border-white/10 bg-navy-900/60 text-ink-muted"
-              >
-                <span aria-hidden>{TOPICS_BY_ID[t].emoji}</span>
-                <span>{TOPICS_BY_ID[t].label}</span>
-              </span>
+                topicId={t}
+                level={profile.levelPerTopic.get(t)}
+                tone="individual"
+              />
             ))}
           </div>
         </div>
       )}
     </div>
+  )
+}
+
+interface ProfileTopicChipProps {
+  topicId: Topic
+  level: SkillLevel | undefined
+  tone: 'shared' | 'individual'
+}
+
+function ProfileTopicChip({ topicId, level, tone }: ProfileTopicChipProps) {
+  const topic = TOPICS_BY_ID[topicId]
+  const tint =
+    tone === 'shared'
+      ? 'border-brand-cyan/40 bg-brand-cyan/15 text-brand-cyan-soft'
+      : 'border-white/10 bg-navy-900/60 text-ink-muted'
+  return (
+    <span
+      className={cn(
+        'inline-flex items-center gap-1 h-7 rounded-full px-2.5 text-[11px] font-medium border',
+        tint,
+      )}
+      title={level ? `${topic.label} · ${LEVEL_LABEL[level]}` : topic.label}
+    >
+      <span aria-hidden>{topic.emoji}</span>
+      <span>{topic.label}</span>
+      {level && <LevelDots count={LEVEL_DOTS[level]} />}
+    </span>
   )
 }

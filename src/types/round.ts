@@ -51,20 +51,32 @@ export interface Team {
 }
 
 /**
+ * Selbsteinschätzung pro Interesse (siehe konzept-v2.md, Kapitel 2c „bisschen / gut / Nerd").
+ *
+ * Beeinflusst später die Fragen-Schwierigkeit für dieses Topic. In Session E dient sie
+ * primär als Signal im UI und in `computeInterestProfile`; der Difficulty-Match folgt
+ * in einer Folgestufe.
+ */
+export type SkillLevel = 'bisschen' | 'gut' | 'nerd'
+
+/** Ein einzelnes Spieler-Interesse mit Selbsteinschätzung. */
+export interface PlayerInterest {
+  topic: Topic
+  level: SkillLevel
+}
+
+/**
  * Spieler-Entität für die Personalisierung (siehe konzept-v2.md, Kapitel 2c und 8).
  *
  * Zuordnung zu einem Team über `teamId`. `name` kann leer sein — die UI zeigt dann
- * einen Platzhalter („Spieler 1"). `interests` sind die selbstgewählten Topics; leere
- * Liste = keine Präferenz.
- *
- * Selbsteinschätzung („bisschen/gut/Nerd") bewusst noch nicht enthalten — kommt zusammen
- * mit dem gewichteten Quiz Director (Session E).
+ * einen Platzhalter („Spieler 1"). `interests` sind die selbstgewählten Topics mit
+ * ihrer Selbsteinschätzung; leere Liste = keine Präferenz.
  */
 export interface Player {
   id: string
   name: string
   teamId: string
-  interests: import('./question').Topic[]
+  interests: PlayerInterest[]
 }
 
 export interface GameResult {

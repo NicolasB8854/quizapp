@@ -329,7 +329,10 @@ describe('reducer — Utility-Actions', () => {
   })
 })
 
-describe('reducer — Player-Ebene (Session D)', () => {
+// Helper: kompakter Interest-Eintrag mit Level 'gut' (Session E default).
+const gut = (topic: string) => ({ topic: topic as never, level: 'gut' as const })
+
+describe('reducer — Player-Ebene (Session D + E)', () => {
   it('GO_TO_LOBBY legt pro Team zwei Default-Player mit leeren Interessen an', () => {
     const s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
     expect(s.round?.players).toHaveLength(4)
@@ -344,27 +347,37 @@ describe('reducer — Player-Ebene (Session D)', () => {
     expect(s.round?.interests).toEqual([])
   })
 
-  it('SET_PLAYER_INTERESTS setzt die Spieler-Interessen und aggregiert round.interests', () => {
+  it('SET_PLAYER_INTERESTS setzt Spieler-Interessen und aggregiert round.interests', () => {
     let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
     const firstPlayer = s.round!.players[0]
     s = reducer(s, {
       type: 'SET_PLAYER_INTERESTS',
       playerId: firstPlayer.id,
-      interests: ['wissenschaft', 'sprache'],
+      interests: [gut('wissenschaft'), gut('sprache')],
     })
     expect(s.round?.interests).toEqual(['wissenschaft', 'sprache'])
-    expect(s.round?.players[0].interests).toEqual(['wissenschaft', 'sprache'])
+    expect(s.round?.players[0].interests).toEqual([
+      gut('wissenschaft'),
+      gut('sprache'),
+    ])
   })
 
-  it('SET_PLAYER_INTERESTS dedupliziert eingehende IDs', () => {
+  it('SET_PLAYER_INTERESTS dedupliziert pro Topic (letzter Eintrag gewinnt)', () => {
     let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
     const firstPlayer = s.round!.players[0]
     s = reducer(s, {
       type: 'SET_PLAYER_INTERESTS',
       playerId: firstPlayer.id,
-      interests: ['film', 'film', 'musik'],
+      interests: [
+        { topic: 'film' as never, level: 'bisschen' },
+        { topic: 'film' as never, level: 'nerd' },
+        gut('musik'),
+      ],
     })
-    expect(s.round?.players[0].interests).toEqual(['film', 'musik'])
+    expect(s.round?.players[0].interests).toEqual([
+      { topic: 'film', level: 'nerd' },
+      gut('musik'),
+    ])
   })
 
   it('Aggregation: gemeinsame Interessen zweier Spieler erscheinen nur einmal in round.interests', () => {
@@ -373,12 +386,12 @@ describe('reducer — Player-Ebene (Session D)', () => {
     s = reducer(s, {
       type: 'SET_PLAYER_INTERESTS',
       playerId: p1.id,
-      interests: ['film', 'musik'],
+      interests: [gut('film'), gut('musik')],
     })
     s = reducer(s, {
       type: 'SET_PLAYER_INTERESTS',
       playerId: p2.id,
-      interests: ['musik', 'wissenschaft'],
+      interests: [gut('musik'), gut('wissenschaft')],
     })
     expect(s.round?.interests).toEqual(['film', 'musik', 'wissenschaft'])
   })
@@ -390,7 +403,7 @@ describe('reducer — Player-Ebene (Session D)', () => {
     s = reducer(s, {
       type: 'SET_PLAYER_INTERESTS',
       playerId: firstPlayer.id,
-      interests: ['film', 'musik'],
+      interests: [gut('film'), gut('musik')],
     })
     expect(s.round?.interests).toEqual(before)
     expect(s.round?.players[0].interests).toEqual([])
@@ -412,7 +425,6 @@ describe('reducer — Player-Ebene (Session D)', () => {
     s = reducer(s, { type: 'REMOVE_PLAYER', playerId: teamAPlayers[0].id })
     let remaining = s.round!.players.filter((p) => p.teamId === 'team-a')
     expect(remaining).toHaveLength(1)
-    // Zweiten Remove versuchen — muss abgelehnt werden (Min 1).
     s = reducer(s, { type: 'REMOVE_PLAYER', playerId: remaining[0].id })
     remaining = s.round!.players.filter((p) => p.teamId === 'team-a')
     expect(remaining).toHaveLength(1)
@@ -421,10 +433,17 @@ describe('reducer — Player-Ebene (Session D)', () => {
   it('REMOVE_PLAYER rechnet round.interests neu aus', () => {
     let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
     const [p1, p2] = s.round!.players
-    s = reducer(s, { type: 'SET_PLAYER_INTERESTS', playerId: p1.id, interests: ['film'] })
-    s = reducer(s, { type: 'SET_PLAYER_INTERESTS', playerId: p2.id, interests: ['musik'] })
+    s = reducer(s, {
+      type: 'SET_PLAYER_INTERESTS',
+      playerId: p1.id,
+      interests: [gut('film')],
+    })
+    s = reducer(s, {
+      type: 'SET_PLAYER_INTERESTS',
+      playerId: p2.id,
+      interests: [gut('musik')],
+    })
     expect(s.round?.interests).toEqual(['film', 'musik'])
-    // p1 entfernen — 'film' fällt aus der Aggregation.
     s = reducer(s, { type: 'REMOVE_PLAYER', playerId: p1.id })
     expect(s.round?.interests).toEqual(['musik'])
   })
@@ -432,10 +451,14 @@ describe('reducer — Player-Ebene (Session D)', () => {
   it('SET_PLAYER_NAME lässt Interessen und Aggregation in Ruhe', () => {
     let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
     const p1 = s.round!.players[0]
-    s = reducer(s, { type: 'SET_PLAYER_INTERESTS', playerId: p1.id, interests: ['film'] })
+    s = reducer(s, {
+      type: 'SET_PLAYER_INTERESTS',
+      playerId: p1.id,
+      interests: [gut('film')],
+    })
     s = reducer(s, { type: 'SET_PLAYER_NAME', playerId: p1.id, name: 'Alice' })
     expect(s.round?.players[0].name).toBe('Alice')
-    expect(s.round?.players[0].interests).toEqual(['film'])
+    expect(s.round?.players[0].interests).toEqual([gut('film')])
     expect(s.round?.interests).toEqual(['film'])
   })
 
@@ -446,10 +469,13 @@ describe('reducer — Player-Ebene (Session D)', () => {
     s = reducer(s, {
       type: 'SET_PLAYER_INTERESTS',
       playerId: firstPlayer.id,
-      interests: ['wissenschaft'],
+      interests: [gut('wissenschaft')],
     })
     s = reducer(s, { type: 'START_PLAYING' })
     if (s.live?.kind !== 'flash') throw new Error('unreachable')
+    // Math.random ist auf 0 gepinnt → im weighted pick landen wir im ersten Bucket
+    // (shared oder individual — hier: individual, weil nur ein Player Interesse hat).
+    // Beide Buckets liefern eine wissenschaft-Frage.
     expect(s.live.activeQuestion?.topic).toBe('wissenschaft')
   })
 
@@ -460,7 +486,7 @@ describe('reducer — Player-Ebene (Session D)', () => {
     s = reducer(s, {
       type: 'SET_PLAYER_INTERESTS',
       playerId: firstPlayer.id,
-      interests: ['wissenschaft'],
+      interests: [gut('wissenschaft')],
     })
     s = reducer(s, { type: 'START_PLAYING' })
     if (s.live?.kind !== 'flash') throw new Error('unreachable')
