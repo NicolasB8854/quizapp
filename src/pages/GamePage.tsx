@@ -28,6 +28,7 @@ import {
   useCategoryBoard,
   useDuel,
   useElimination,
+  useExperts,
 } from '@/context/GameContext'
 import { TOPICS, TOPICS_BY_ID } from '@/data/topics'
 import { MODES_BY_ID } from '@/data/modes'
@@ -49,6 +50,7 @@ export default function GamePage() {
   const boardLive = useCategoryBoard()
   const duelLive = useDuel()
   const eliminationLive = useElimination()
+  const expertsLive = useExperts()
 
   useEffect(() => {
     if (state.phase === 'setup')      navigate('/setup', { replace: true })
@@ -83,12 +85,23 @@ export default function GamePage() {
   const eliminationCurrentTeamId = eliminationLive?.activePlayerId
     ? round.players.find((p) => p.id === eliminationLive.activePlayerId)?.teamId ?? null
     : null
+  const expertsPlayerTeamId = expertsLive?.activePlayerId
+    ? round.players.find((p) => p.id === expertsLive.activePlayerId)?.teamId ?? null
+    : null
+  const expertsCurrentTeamId = expertsLive
+    ? expertsLive.phase === 'primary'
+      ? expertsPlayerTeamId
+      : expertsLive.phase === 'steal-answer'
+      ? round.teams.find((t) => t.id !== expertsPlayerTeamId)?.id ?? null
+      : null
+    : null
   const currentTeamId = cdLive
     ? round.teams[cdLive.currentTeamIndex]?.id ?? null
     : sprinterLive?.activeTeamId
       ?? boardCurrentTeamId
       ?? duelCurrentTeamId
       ?? eliminationCurrentTeamId
+      ?? expertsCurrentTeamId
       ?? null
 
   return (
@@ -146,6 +159,8 @@ export default function GamePage() {
               <DuelStage />
             ) : eliminationLive ? (
               <EliminationStage />
+            ) : expertsLive ? (
+              <ExpertsStage />
             ) : null}
           </div>
           {/* Score-Sidebar */}
@@ -2248,6 +2263,337 @@ function EliminationRevealPanel({
       >
         Weiter
       </Button>
+    </div>
+  )
+}
+
+// ---------- Fachrunde -------------------------------------------------------
+
+function ExpertsStage() {
+  const { state, dispatch } = useGame()
+  const experts = useExperts()
+  const [remainingSec, setRemainingSec] = useState<number>(0)
+
+  // Solo-Timer: läuft nur in phase='primary'.
+  useEffect(() => {
+    if (!experts || experts.phase !== 'primary' || experts.soloStartedAt == null) return
+    const startedAt = experts.soloStartedAt
+    const durationMs = experts.soloDurationSeconds * 1000
+    const compute = () =>
+      Math.max(0, Math.ceil((durationMs - (Date.now() - startedAt)) / 1000))
+    setRemainingSec(compute())
+    const interval = setInterval(() => {
+      const remaining = compute()
+      setRemainingSec(remaining)
+      if (remaining <= 0) {
+        clearInterval(interval)
+        dispatch({ type: 'EXPERTS_MARK_PRIMARY', outcome: 'timeout' })
+      }
+    }, 200)
+    return () => clearInterval(interval)
+  }, [experts?.phase, experts?.soloStartedAt, experts?.soloDurationSeconds, dispatch, experts])
+
+  if (!experts || !state.round) return null
+  const teams = state.round.teams
+
+  // Empty: Skip-Screen.
+  if (experts.phase === 'empty') {
+    return (
+      <div className="animate-titleIn text-center py-10">
+        <div className="eyebrow">Fachrunde übersprungen</div>
+        <h1 className="mt-3 font-display font-bold uppercase text-3xl md:text-5xl tracking-tight">
+          Keine Spieler oder Fächer
+        </h1>
+        <p className="mt-3 text-ink-muted max-w-lg mx-auto">
+          Für die Fachrunde muss mindestens ein Spieler ein Fach setzen. Wir überspringen
+          den Modus für diese Runde.
+        </p>
+        <div className="mt-6 flex justify-center">
+          <Button
+            variant="primary"
+            size="lg"
+            trailing={<ArrowRight className="h-5 w-5" />}
+            onClick={() => dispatch({ type: 'EXPERTS_NEXT' })}
+          >
+            Weiter
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  // Setup: Fach-Auswahl pro Spieler.
+  if (experts.phase === 'setup-experts') {
+    const chosenCount = Object.values(experts.expertise).filter((v) => v !== null).length
+    return (
+      <div className="animate-titleIn">
+        <div className="text-center mb-6 md:mb-8">
+          <div className="eyebrow" style={{ color: '#B78BFF' }}>
+            Fachrunde · Setup
+          </div>
+          <h1 className="mt-2 font-display font-bold uppercase text-3xl md:text-5xl tracking-tight">
+            Jeder wählt sein Fach
+          </h1>
+          <p className="mt-2 text-sm text-ink-muted max-w-lg mx-auto">
+            Jede:r Spieler:in bekommt später eine Frage aus seinem Fach.{' '}
+            {chosenCount === 0
+              ? 'Wählt mindestens eins.'
+              : `${chosenCount} von ${experts.playerOrder.length} Fächern gesetzt.`}
+          </p>
+        </div>
+
+        <div className="space-y-4">
+          {experts.playerOrder.map((pid, idx) => {
+            const p = state.round!.players.find((pp) => pp.id === pid)
+            if (!p) return null
+            const team = teams.find((t) => t.id === p.teamId)!
+            const teamHex = team.color === 'purple' ? '#7C5CFF' : '#27D8FF'
+            const chosen = experts.expertise[pid]
+            const name = p.name.trim() || `Spieler ${idx + 1}`
+            return (
+              <div
+                key={pid}
+                className="rounded-card border border-white/[0.08] bg-navy-800/60 p-4 md:p-5"
+              >
+                <div className="flex items-center gap-3 mb-3">
+                  <span
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-full font-display font-bold text-xs border-2"
+                    style={{
+                      borderColor: `${teamHex}80`,
+                      color: teamHex,
+                      background: `${teamHex}18`,
+                    }}
+                  >
+                    {name.slice(0, 2).toUpperCase()}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="eyebrow" style={{ color: teamHex }}>
+                      {team.name}
+                    </div>
+                    <div className="font-display font-semibold text-ink">{name}</div>
+                  </div>
+                  {chosen && (
+                    <span className="text-[11px] uppercase tracking-[0.22em] text-brand-purple-soft whitespace-nowrap">
+                      {TOPICS_BY_ID[chosen].label}
+                    </span>
+                  )}
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {TOPICS.map((topic) => {
+                    const isOn = chosen === topic.id
+                    return (
+                      <button
+                        key={topic.id}
+                        type="button"
+                        onClick={() =>
+                          dispatch({
+                            type: 'EXPERTS_SET_EXPERTISE',
+                            playerId: pid,
+                            topic: topic.id,
+                          })
+                        }
+                        className={cn(
+                          'inline-flex items-center gap-1 h-7 rounded-full px-2.5',
+                          'text-[11px] font-medium transition-all border',
+                          isOn
+                            ? 'bg-mode-experts/25 border-mode-experts/80 text-mode-experts'
+                            : 'bg-navy-800/70 border-white/10 text-ink-muted hover:border-white/25 hover:text-ink',
+                        )}
+                      >
+                        <span aria-hidden>{topic.emoji}</span>
+                        <span>{topic.label}</span>
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+
+        <div className="mt-6 flex justify-end">
+          <Button
+            variant="primary"
+            size="lg"
+            disabled={chosenCount === 0}
+            trailing={<ArrowRight className="h-5 w-5" />}
+            onClick={() => dispatch({ type: 'EXPERTS_START_ROUND' })}
+          >
+            Fachrunde starten
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  // Frage-Phasen.
+  if (!experts.activePlayerId || !experts.activeQuestion) return null
+  const activePlayer = state.round.players.find((p) => p.id === experts.activePlayerId)
+  if (!activePlayer) return null
+  const activeTeam = teams.find((t) => t.id === activePlayer.teamId)!
+  const opponent = teams.find((t) => t.id !== activePlayer.teamId)!
+  const topicId = experts.expertise[experts.activePlayerId]!
+  const topicDef = TOPICS_BY_ID[topicId]
+  const teamHex = activeTeam.color === 'purple' ? '#7C5CFF' : '#27D8FF'
+  const activeName = activePlayer.name.trim() || `Spieler ${experts.currentIndex + 1}`
+  const stealPoints = Math.floor(experts.pointsPerCorrect / 2)
+  const timerCritical = remainingSec <= 5
+  const timerHex = timerCritical ? '#FF5C7A' : '#B78BFF'
+
+  return (
+    <div className="animate-titleIn">
+      {/* Progress */}
+      <div className="text-center mb-3">
+        <div className="eyebrow" style={{ color: '#B78BFF' }}>
+          Fachrunde · Spieler {experts.currentIndex + 1} von {experts.playerOrder.length}
+        </div>
+      </div>
+
+      {/* Aktive Spieler-Kachel + Timer */}
+      <div className="flex flex-col md:flex-row items-center justify-between gap-3 mb-6">
+        <div
+          className="inline-flex items-center gap-3 rounded-2xl px-5 py-3 border-2"
+          style={{
+            borderColor: `${teamHex}CC`,
+            background: 'rgba(11,16,32,0.7)',
+            boxShadow: `0 0 24px -6px ${teamHex}AA`,
+          }}
+        >
+          <span
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full font-display font-bold border-2"
+            style={{
+              borderColor: `${teamHex}80`,
+              color: teamHex,
+              background: `${teamHex}18`,
+            }}
+          >
+            {activeName.slice(0, 2).toUpperCase()}
+          </span>
+          <div className="text-left">
+            <div className="eyebrow" style={{ color: teamHex }}>
+              {activeTeam.name}
+            </div>
+            <div className="font-display font-bold text-white text-lg md:text-xl">
+              {activeName}
+            </div>
+          </div>
+          <div className="ml-4 pl-4 border-l border-white/10 inline-flex items-center gap-1.5">
+            <span aria-hidden className="text-lg">{topicDef.emoji}</span>
+            <span className="text-sm font-medium text-mode-experts">{topicDef.label}</span>
+          </div>
+        </div>
+
+        {experts.phase === 'primary' && experts.soloStartedAt != null && (
+          <div
+            className="inline-flex items-center gap-3 rounded-full px-5 py-2.5 border-2 tabular-nums"
+            style={{
+              borderColor: `${timerHex}99`,
+              background: 'rgba(11,16,32,0.7)',
+              boxShadow: `0 0 24px -8px ${timerHex}CC`,
+            }}
+          >
+            <Timer className="h-5 w-5" style={{ color: timerHex }} />
+            <span
+              className="font-display font-extrabold text-2xl md:text-3xl"
+              style={{ color: timerHex, textShadow: `0 0 18px ${timerHex}55` }}
+            >
+              {String(remainingSec).padStart(2, '0')}
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Frage */}
+      <div
+        className="rounded-card border p-6 md:p-8 text-center"
+        style={{
+          borderColor: 'rgba(183,139,255,0.35)',
+          background: 'rgba(11,16,32,0.55)',
+          boxShadow:
+            '0 0 0 1px rgba(183,139,255,0.25), 0 0 24px rgba(183,139,255,0.2)',
+        }}
+      >
+        <div className="eyebrow" style={{ color: '#B78BFF' }}>
+          {experts.phase === 'primary'
+            ? `${activeName} antwortet frei`
+            : experts.phase === 'steal-answer'
+            ? `Steal für ${opponent.name} · ${stealPoints} Punkte`
+            : 'Auflösung'}
+        </div>
+        <h2 className="mt-3 font-display font-bold text-white leading-tight text-2xl md:text-4xl">
+          {experts.activeQuestion.question}
+        </h2>
+      </div>
+
+      {/* Phasen-Interaktion */}
+      {experts.phase === 'primary' && (
+        <div className="mt-6 md:mt-8">
+          <p className="text-center text-sm text-ink-muted mb-4">
+            Optionen bleiben verdeckt — Antwort mündlich. Master markiert:
+          </p>
+          <div className="grid grid-cols-2 gap-3 md:gap-4 max-w-xl mx-auto">
+            <button
+              type="button"
+              onClick={() =>
+                dispatch({ type: 'EXPERTS_MARK_PRIMARY', outcome: 'correct' })
+              }
+              className="h-14 rounded-card border font-display font-bold uppercase tracking-widest text-sm border-correct/60 bg-correct/15 text-correct hover:bg-correct/25 transition-colors"
+            >
+              Richtig
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                dispatch({ type: 'EXPERTS_MARK_PRIMARY', outcome: 'wrong' })
+              }
+              className="h-14 rounded-card border font-display font-bold uppercase tracking-widest text-sm border-wrong/60 bg-wrong/15 text-wrong hover:bg-wrong/25 transition-colors"
+            >
+              Falsch
+            </button>
+          </div>
+        </div>
+      )}
+
+      {experts.phase === 'steal-answer' && (
+        <div className="mt-6 md:mt-8">
+          <p className="text-center text-sm text-ink-muted mb-4">
+            <span style={{ color: opponent.color === 'purple' ? '#7C5CFF' : '#27D8FF' }} className="font-semibold">
+              {opponent.name}
+            </span>{' '}
+            wählt eine Option — {stealPoints} Punkte bei Treffer.
+          </p>
+          <div className="grid md:grid-cols-2 gap-3 md:gap-4">
+            {experts.shuffledOptions.map((option, idx) => (
+              <AnswerOption
+                key={`experts-steal-${experts.currentIndex}-${idx}`}
+                letter={LETTERS[idx]}
+                status="idle"
+                onClick={() =>
+                  dispatch({ type: 'EXPERTS_STEAL_ANSWER', renderedIndex: idx })
+                }
+              >
+                {option}
+              </AnswerOption>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {experts.phase === 'revealed' && (
+        <SpotlightRevealPanel
+          question={experts.activeQuestion}
+          correctOption={experts.shuffledOptions[experts.correctRenderedIndex]}
+          primaryOutcome={
+            experts.primaryOutcome === 'correct' ? 'correct' : 'wrong'
+          }
+          stealOutcome={experts.stealOutcome}
+          primaryPoints={experts.pointsPerCorrect}
+          stealPoints={stealPoints}
+          activeTeamName={activeTeam.name}
+          opponentTeamName={opponent.name}
+          onNext={() => dispatch({ type: 'EXPERTS_NEXT' })}
+        />
+      )}
     </div>
   )
 }

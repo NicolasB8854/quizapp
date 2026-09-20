@@ -256,6 +256,32 @@ export interface EliminationLive {
   survivorBonus: number
 }
 
+/**
+ * Fachrunde: pro Spieler ein Fach (Topic), Solo-Antwort mit Timer,
+ * bei Fehler/Timeout Steal für das Gegenteam (halbe Punkte).
+ * Konzept-Kern: „Setup-Screen für Fachgebiete kein Hardcoding auf Personen".
+ */
+export interface ExpertsLive {
+  kind: 'experts'
+  playerOrder: string[]
+  currentIndex: number
+  activePlayerId: string | null
+  activeQuestion: MultipleChoiceQuestion | null
+  shuffledOptions: string[]
+  correctRenderedIndex: number
+  phase: 'setup-experts' | 'primary' | 'steal-answer' | 'revealed' | 'empty'
+  /** Fach pro Spieler; `null` solange nicht gewählt. Persistiert im Setup. */
+  expertise: Record<string, Topic | null>
+  /** Timer-Anker für die Solo-Phase (ms since epoch). UI zeigt den Countdown. */
+  soloStartedAt: number | null
+  soloDurationSeconds: number
+  primaryOutcome: 'correct' | 'wrong' | 'timeout' | null
+  stealOutcome: 'correct' | 'wrong' | null
+  scores: Record<string, number>
+  usedQuestionIds: string[]
+  pointsPerCorrect: number
+}
+
 export type LiveGame =
   | CategoryDuelLive
   | FlashLive
@@ -266,6 +292,7 @@ export type LiveGame =
   | CategoryBoardLive
   | DuelLive
   | EliminationLive
+  | ExpertsLive
 
 // ---------- Draft (Setup-Phase) ----------------------------------------------
 
@@ -329,6 +356,11 @@ export type GameAction =
   | { type: 'DUEL_NEXT' }
   | { type: 'ELIM_ANSWER'; renderedIndex: number }
   | { type: 'ELIM_NEXT' }
+  | { type: 'EXPERTS_SET_EXPERTISE'; playerId: string; topic: Topic }
+  | { type: 'EXPERTS_START_ROUND' }
+  | { type: 'EXPERTS_MARK_PRIMARY'; outcome: 'correct' | 'wrong' | 'timeout' }
+  | { type: 'EXPERTS_STEAL_ANSWER'; renderedIndex: number }
+  | { type: 'EXPERTS_NEXT' }
   | { type: 'ADD_PLAYER'; teamId: string }
   | { type: 'REMOVE_PLAYER'; playerId: string }
   | { type: 'SET_PLAYER_NAME'; playerId: string; name: string }
@@ -553,6 +585,58 @@ function initSpotlight(teams: Team[], players: readonly Player[]): SpotlightLive
     scores,
     usedQuestionIds: [],
     pointsPerCorrect: 500,
+  }
+}
+
+/**
+ * Fachrunde: Punkte, Timer, halbe Punkte beim Steal.
+ */
+const EXPERTS_POINTS = 500
+const EXPERTS_TIMER_SECONDS = 20
+
+function initExperts(teams: Team[], players: readonly Player[]): ExpertsLive {
+  const scores = Object.fromEntries(teams.map((t) => [t.id, 0]))
+  const playerOrder = buildEliminationOrder(teams, players)
+  // Wenn keine Spieler vorhanden → sofort Empty. Interessen spielen hier keine Rolle,
+  // aber der buildEliminationOrder liefert eine faire Team-Alternation.
+  if (playerOrder.length === 0) {
+    return {
+      kind: 'experts',
+      playerOrder: [],
+      currentIndex: 0,
+      activePlayerId: null,
+      activeQuestion: null,
+      shuffledOptions: [],
+      correctRenderedIndex: 0,
+      phase: 'empty',
+      expertise: {},
+      soloStartedAt: null,
+      soloDurationSeconds: EXPERTS_TIMER_SECONDS,
+      primaryOutcome: null,
+      stealOutcome: null,
+      scores,
+      usedQuestionIds: [],
+      pointsPerCorrect: EXPERTS_POINTS,
+    }
+  }
+  // Setup-Phase: alle Spieler bekommen expertise:null als Startwert.
+  return {
+    kind: 'experts',
+    playerOrder,
+    currentIndex: 0,
+    activePlayerId: null,
+    activeQuestion: null,
+    shuffledOptions: [],
+    correctRenderedIndex: 0,
+    phase: 'setup-experts',
+    expertise: Object.fromEntries(playerOrder.map((id) => [id, null])),
+    soloStartedAt: null,
+    soloDurationSeconds: EXPERTS_TIMER_SECONDS,
+    primaryOutcome: null,
+    stealOutcome: null,
+    scores,
+    usedQuestionIds: [],
+    pointsPerCorrect: EXPERTS_POINTS,
   }
 }
 
@@ -902,6 +986,8 @@ function initLiveFor(
       return initDuel(teams)
     case 'elimination':
       return initElimination(teams, players)
+    case 'experts':
+      return initExperts(teams, players)
     default:
       // Alle anderen Modi sind in v0.1 als `planned` markiert und lassen sich im Setup
       // gar nicht auswählen. Falls doch: null → Reducer springt in FINISH_MODE.
@@ -1372,6 +1458,199 @@ export function reducer(state: GameState, action: GameAction): GameState {
       return {
         ...state,
         live: { ...advancedBase, activeQuestion: nextQuestion },
+      }
+    }
+
+    case 'EXPERTS_SET_EXPERTISE': {
+      if (!state.round || !state.live || state.live.kind !== 'experts') return state
+      const live = state.live
+      if (live.phase !== 'setup-experts') return state
+      if (!(action.playerId in live.expertise)) return state
+      return {
+        ...state,
+        live: {
+          ...live,
+          expertise: { ...live.expertise, [action.playerId]: action.topic },
+        },
+      }
+    }
+
+    case 'EXPERTS_START_ROUND': {
+      if (!state.round || !state.live || state.live.kind !== 'experts') return state
+      const live = state.live
+      if (live.phase !== 'setup-experts') return state
+
+      const activeOrder = live.playerOrder.filter((id) => live.expertise[id] !== null)
+      if (activeOrder.length === 0) {
+        // Kein Spieler hat ein Fach → Modus überspringen.
+        return reducer(
+          {
+            ...state,
+            live: { ...live, phase: 'empty', playerOrder: [] },
+          },
+          { type: 'FINISH_MODE' },
+        )
+      }
+
+      const firstPlayerId = activeOrder[0]
+      const topic = live.expertise[firstPlayerId]!
+      const excluded = new Set<string>()
+      for (const id of readAskedQuestionIds()) excluded.add(id)
+      const player = state.round.players.find((p) => p.id === firstPlayerId)
+      const level = player ? getPlayerLevelForTopic(player, topic) : undefined
+      const question = pickQuestion(topic, excluded, level)
+
+      if (!question) {
+        // Kein Content für dieses Fach → weiterspringen.
+        return reducer(
+          { ...state, live: { ...live, phase: 'empty', playerOrder: activeOrder } },
+          { type: 'FINISH_MODE' },
+        )
+      }
+
+      const shuffle = shuffleWithMapping(
+        question.options,
+        `experts:${firstPlayerId}:${question.id}`,
+      )
+      return {
+        ...state,
+        live: {
+          ...live,
+          playerOrder: activeOrder,
+          currentIndex: 0,
+          activePlayerId: firstPlayerId,
+          activeQuestion: question,
+          shuffledOptions: shuffle.shuffled,
+          correctRenderedIndex: shuffle.renderedIndexOf(question.correctIndex),
+          phase: 'primary',
+          soloStartedAt: Date.now(),
+          primaryOutcome: null,
+          stealOutcome: null,
+        },
+      }
+    }
+
+    case 'EXPERTS_MARK_PRIMARY': {
+      if (!state.round || !state.live || state.live.kind !== 'experts') return state
+      const live = state.live
+      if (live.phase !== 'primary' || !live.activePlayerId) return state
+      const player = state.round.players.find((p) => p.id === live.activePlayerId)
+      if (!player) return state
+
+      if (action.outcome === 'correct') {
+        const scores = {
+          ...live.scores,
+          [player.teamId]: (live.scores[player.teamId] ?? 0) + live.pointsPerCorrect,
+        }
+        return {
+          ...state,
+          live: {
+            ...live,
+            phase: 'revealed',
+            primaryOutcome: 'correct',
+            soloStartedAt: null,
+            scores,
+          },
+        }
+      }
+      // wrong oder timeout → Steal.
+      return {
+        ...state,
+        live: {
+          ...live,
+          phase: 'steal-answer',
+          primaryOutcome: action.outcome,
+          soloStartedAt: null,
+        },
+      }
+    }
+
+    case 'EXPERTS_STEAL_ANSWER': {
+      if (!state.round || !state.live || state.live.kind !== 'experts') return state
+      const live = state.live
+      if (live.phase !== 'steal-answer' || !live.activePlayerId) return state
+      const player = state.round.players.find((p) => p.id === live.activePlayerId)
+      if (!player) return state
+      const opponent = state.round.teams.find((t) => t.id !== player.teamId)
+      if (!opponent) return state
+      const wasCorrect = action.renderedIndex === live.correctRenderedIndex
+      const stealPoints = Math.floor(live.pointsPerCorrect / 2)
+      const scores = wasCorrect
+        ? {
+            ...live.scores,
+            [opponent.id]: (live.scores[opponent.id] ?? 0) + stealPoints,
+          }
+        : live.scores
+      return {
+        ...state,
+        live: {
+          ...live,
+          phase: 'revealed',
+          stealOutcome: wasCorrect ? 'correct' : 'wrong',
+          scores,
+        },
+      }
+    }
+
+    case 'EXPERTS_NEXT': {
+      if (!state.round || !state.live || state.live.kind !== 'experts') return state
+      const live = state.live
+      if (live.phase === 'empty') return reducer(state, { type: 'FINISH_MODE' })
+      if (live.phase !== 'revealed') return state
+
+      const usedQuestionIds = live.activeQuestion
+        ? [...live.usedQuestionIds, live.activeQuestion.id]
+        : live.usedQuestionIds
+      const nextIndex = live.currentIndex + 1
+      const isModeDone = nextIndex >= live.playerOrder.length
+
+      const advancedBase: ExpertsLive = {
+        ...live,
+        usedQuestionIds,
+        currentIndex: nextIndex,
+        activePlayerId: null,
+        activeQuestion: null,
+        shuffledOptions: [],
+        correctRenderedIndex: 0,
+        phase: 'primary',
+        soloStartedAt: null,
+        primaryOutcome: null,
+        stealOutcome: null,
+      }
+
+      if (isModeDone) {
+        return reducer({ ...state, live: advancedBase }, { type: 'FINISH_MODE' })
+      }
+
+      const nextPlayerId = live.playerOrder[nextIndex]
+      const topic = live.expertise[nextPlayerId]
+      const nextPlayer = state.round.players.find((p) => p.id === nextPlayerId)
+      if (!topic || !nextPlayer) {
+        return reducer({ ...state, live: advancedBase }, { type: 'EXPERTS_NEXT' })
+      }
+
+      const excluded = new Set(usedQuestionIds)
+      for (const id of readAskedQuestionIds()) excluded.add(id)
+      const level = getPlayerLevelForTopic(nextPlayer, topic)
+      const nextQuestion = pickQuestion(topic, excluded, level)
+      if (!nextQuestion) {
+        return reducer({ ...state, live: advancedBase }, { type: 'EXPERTS_NEXT' })
+      }
+
+      const shuffle = shuffleWithMapping(
+        nextQuestion.options,
+        `experts:${nextPlayerId}:${nextQuestion.id}`,
+      )
+      return {
+        ...state,
+        live: {
+          ...advancedBase,
+          activePlayerId: nextPlayerId,
+          activeQuestion: nextQuestion,
+          shuffledOptions: shuffle.shuffled,
+          correctRenderedIndex: shuffle.renderedIndexOf(nextQuestion.correctIndex),
+          soloStartedAt: Date.now(),
+        },
       }
     }
 
@@ -2199,6 +2478,11 @@ export function useDuel(): DuelLive | null {
 export function useElimination(): EliminationLive | null {
   const { state } = useGame()
   return state.live && state.live.kind === 'elimination' ? state.live : null
+}
+
+export function useExperts(): ExpertsLive | null {
+  const { state } = useGame()
+  return state.live && state.live.kind === 'experts' ? state.live : null
 }
 
 // Convenience für Dispatch ohne Boilerplate.

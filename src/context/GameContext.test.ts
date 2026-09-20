@@ -506,6 +506,162 @@ describe('reducer — Player-Ebene (Session D + E)', () => {
   })
 })
 
+describe('reducer — Fachrunde (Session O)', () => {
+  function bootExperts(): ReturnType<typeof reducer> {
+    let s = reducer(INITIAL_STATE, {
+      type: 'SET_MODE_SELECTION',
+      modeIds: ['experts'],
+    })
+    s = reducer(s, { type: 'GO_TO_LOBBY' })
+    s = reducer(s, { type: 'START_PLAYING' })
+    return s
+  }
+
+  it('START_PLAYING startet in setup-experts mit leeren Fächern', () => {
+    const s = bootExperts()
+    if (s.live?.kind !== 'experts') throw new Error('unreachable')
+    expect(s.live.phase).toBe('setup-experts')
+    expect(s.live.playerOrder).toHaveLength(4)
+    // Alle Fächer sind null.
+    expect(Object.values(s.live.expertise).every((v) => v === null)).toBe(true)
+    expect(s.live.soloStartedAt).toBeNull()
+  })
+
+  it('EXPERTS_SET_EXPERTISE speichert Fach pro Spieler', () => {
+    let s = bootExperts()
+    if (s.live?.kind !== 'experts') throw new Error('unreachable')
+    const pid = s.live.playerOrder[0]
+    s = reducer(s, {
+      type: 'EXPERTS_SET_EXPERTISE',
+      playerId: pid,
+      topic: 'wissenschaft',
+    })
+    if (s.live?.kind !== 'experts') throw new Error('unreachable')
+    expect(s.live.expertise[pid]).toBe('wissenschaft')
+  })
+
+  it('EXPERTS_START_ROUND: mit ≥1 Fach → primary, Timer läuft, erste Frage im Fach', () => {
+    let s = bootExperts()
+    if (s.live?.kind !== 'experts') throw new Error('unreachable')
+    const pid = s.live.playerOrder[0]
+    s = reducer(s, {
+      type: 'EXPERTS_SET_EXPERTISE',
+      playerId: pid,
+      topic: 'wissenschaft',
+    })
+    s = reducer(s, { type: 'EXPERTS_START_ROUND' })
+    if (s.live?.kind !== 'experts') throw new Error('unreachable')
+    expect(s.live.phase).toBe('primary')
+    expect(s.live.activePlayerId).toBe(pid)
+    expect(s.live.activeQuestion?.topic).toBe('wissenschaft')
+    expect(s.live.soloStartedAt).not.toBeNull()
+    // playerOrder wurde auf die mit Fach reduziert.
+    expect(s.live.playerOrder).toEqual([pid])
+  })
+
+  it('EXPERTS_START_ROUND ohne jedes Fach → FINISH_MODE', () => {
+    let s = bootExperts()
+    s = reducer(s, { type: 'EXPERTS_START_ROUND' })
+    expect(s.phase).toBe('scoreboard')
+  })
+
+  it('EXPERTS_MARK_PRIMARY correct: volle Punkte, phase revealed', () => {
+    let s = bootExperts()
+    if (s.live?.kind !== 'experts') throw new Error('unreachable')
+    const pid = s.live.playerOrder.find((id) => {
+      const p = s.round!.players.find((pp) => pp.id === id)!
+      return p.teamId === 'team-a'
+    })!
+    s = reducer(s, {
+      type: 'EXPERTS_SET_EXPERTISE',
+      playerId: pid,
+      topic: 'wissenschaft',
+    })
+    s = reducer(s, { type: 'EXPERTS_START_ROUND' })
+    if (s.live?.kind !== 'experts') throw new Error('unreachable')
+    const points = s.live.pointsPerCorrect
+
+    s = reducer(s, { type: 'EXPERTS_MARK_PRIMARY', outcome: 'correct' })
+    if (s.live?.kind !== 'experts') throw new Error('unreachable')
+    expect(s.live.phase).toBe('revealed')
+    expect(s.live.primaryOutcome).toBe('correct')
+    expect(s.live.scores['team-a']).toBe(points)
+    expect(s.live.soloStartedAt).toBeNull()
+  })
+
+  it('EXPERTS_MARK_PRIMARY wrong: geht in steal-answer', () => {
+    let s = bootExperts()
+    if (s.live?.kind !== 'experts') throw new Error('unreachable')
+    const pid = s.live.playerOrder[0]
+    s = reducer(s, {
+      type: 'EXPERTS_SET_EXPERTISE',
+      playerId: pid,
+      topic: 'wissenschaft',
+    })
+    s = reducer(s, { type: 'EXPERTS_START_ROUND' })
+    s = reducer(s, { type: 'EXPERTS_MARK_PRIMARY', outcome: 'wrong' })
+    if (s.live?.kind !== 'experts') throw new Error('unreachable')
+    expect(s.live.phase).toBe('steal-answer')
+    expect(s.live.primaryOutcome).toBe('wrong')
+  })
+
+  it('EXPERTS_MARK_PRIMARY timeout: geht in steal-answer', () => {
+    let s = bootExperts()
+    if (s.live?.kind !== 'experts') throw new Error('unreachable')
+    const pid = s.live.playerOrder[0]
+    s = reducer(s, {
+      type: 'EXPERTS_SET_EXPERTISE',
+      playerId: pid,
+      topic: 'wissenschaft',
+    })
+    s = reducer(s, { type: 'EXPERTS_START_ROUND' })
+    s = reducer(s, { type: 'EXPERTS_MARK_PRIMARY', outcome: 'timeout' })
+    if (s.live?.kind !== 'experts') throw new Error('unreachable')
+    expect(s.live.phase).toBe('steal-answer')
+    expect(s.live.primaryOutcome).toBe('timeout')
+  })
+
+  it('EXPERTS_STEAL_ANSWER richtig: Gegenteam bekommt halbe Punkte', () => {
+    let s = bootExperts()
+    if (s.live?.kind !== 'experts') throw new Error('unreachable')
+    const teamAPlayer = s.round!.players.find((p) => p.teamId === 'team-a')!
+    s = reducer(s, {
+      type: 'EXPERTS_SET_EXPERTISE',
+      playerId: teamAPlayer.id,
+      topic: 'wissenschaft',
+    })
+    s = reducer(s, { type: 'EXPERTS_START_ROUND' })
+    if (s.live?.kind !== 'experts') throw new Error('unreachable')
+    const halfPoints = Math.floor(s.live.pointsPerCorrect / 2)
+    const correctIdx = s.live.correctRenderedIndex
+
+    s = reducer(s, { type: 'EXPERTS_MARK_PRIMARY', outcome: 'wrong' })
+    s = reducer(s, { type: 'EXPERTS_STEAL_ANSWER', renderedIndex: correctIdx })
+    if (s.live?.kind !== 'experts') throw new Error('unreachable')
+    expect(s.live.phase).toBe('revealed')
+    expect(s.live.stealOutcome).toBe('correct')
+    expect(s.live.scores['team-b']).toBe(halfPoints)
+    expect(s.live.scores['team-a']).toBe(0)
+  })
+
+  it('Nach letztem Spieler: FINISH_MODE → scoreboard mit Match-Punkt', () => {
+    let s = bootExperts()
+    if (s.live?.kind !== 'experts') throw new Error('unreachable')
+    const teamAPlayer = s.round!.players.find((p) => p.teamId === 'team-a')!
+    // Nur ein Fach setzen → Order-Länge 1.
+    s = reducer(s, {
+      type: 'EXPERTS_SET_EXPERTISE',
+      playerId: teamAPlayer.id,
+      topic: 'wissenschaft',
+    })
+    s = reducer(s, { type: 'EXPERTS_START_ROUND' })
+    s = reducer(s, { type: 'EXPERTS_MARK_PRIMARY', outcome: 'correct' })
+    s = reducer(s, { type: 'EXPERTS_NEXT' })
+    expect(s.phase).toBe('scoreboard')
+    expect(s.matchPoints['team-a']).toBe(1)
+  })
+})
+
 describe('reducer — Elimination (Session N)', () => {
   function bootElim(): ReturnType<typeof reducer> {
     let s = reducer(INITIAL_STATE, {

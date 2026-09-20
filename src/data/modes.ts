@@ -54,11 +54,11 @@ export const MODES: GameMode[] = [
     chipLabel: 'Expertise',
     tagline: 'Jede:r bringt ein eigenes Fachgebiet mit.',
     description:
-      'Vor Rundenstart legt jede:r Spieler:in ein Fachgebiet fest. 20 Sekunden Solo-Zeit, dann Buzzer-Steal für die Gegenseite.',
+      'Vor Rundenstart legt jede:r Spieler:in ein Fachgebiet fest. 20 Sekunden Solo-Zeit, dann Buzzer-Steal für die Gegenseite (halbe Punkte).',
     estimatedMinutes: 20,
     scoresMatchPoint: true,
     accent: 'experts',
-    status: 'planned',
+    status: 'ready',
   },
   {
     id: 'elimination',
