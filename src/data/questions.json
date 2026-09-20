@@ -443,5 +443,171 @@
     "correctIndex": 1,
     "gmNote": "Rund 22 Monate. Kälber wiegen bei der Geburt schon etwa 120 kg.",
     "status": "approved"
+  },
+
+  {
+    "id": "q-flash-01",
+    "type": "true-false",
+    "category": "kurioses",
+    "topic": "kurioses",
+    "difficulty": "leicht",
+    "question": "Die Chinesische Mauer ist mit bloßem Auge aus dem Weltall sichtbar.",
+    "correctAnswer": false,
+    "explanation": "Ein hartnäckiger Mythos. Astronaut:innen bestätigen: die Mauer ist zu schmal, um aus dem Orbit ohne Hilfsmittel erkannt zu werden.",
+    "status": "approved"
+  },
+  {
+    "id": "q-flash-02",
+    "type": "true-false",
+    "category": "allgemeinbildung",
+    "topic": "wissenschaft",
+    "difficulty": "leicht",
+    "question": "Menschen nutzen nur etwa zehn Prozent ihres Gehirns.",
+    "correctAnswer": false,
+    "explanation": "Auch im Alltag sind fast alle Hirnregionen aktiv. Der 10-%-Mythos ist popkulturell hartnäckig, wissenschaftlich aber widerlegt.",
+    "status": "approved"
+  },
+  {
+    "id": "q-flash-03",
+    "type": "true-false",
+    "category": "allgemeinbildung",
+    "topic": "sprache",
+    "difficulty": "leicht",
+    "question": "Die Amtssprache Brasiliens ist Portugiesisch.",
+    "correctAnswer": true,
+    "explanation": "Als einzige Amtssprache — Erbe der portugiesischen Kolonialzeit. Alle Nachbarländer sind spanischsprachig.",
+    "status": "approved"
+  },
+  {
+    "id": "q-flash-04",
+    "type": "true-false",
+    "category": "allgemeinbildung",
+    "topic": "wissenschaft",
+    "difficulty": "mittel",
+    "question": "Ein Tag auf der Venus dauert länger als ein Jahr auf der Venus.",
+    "correctAnswer": true,
+    "explanation": "Venus rotiert extrem langsam (243 Erdtage pro Umdrehung), umläuft die Sonne aber in nur 225 Erdtagen.",
+    "status": "approved"
+  },
+  {
+    "id": "q-flash-05",
+    "type": "true-false",
+    "category": "allgemeinbildung",
+    "topic": "geschichte",
+    "difficulty": "mittel",
+    "question": "Napoleon Bonaparte war für seine Zeit ungewöhnlich klein.",
+    "correctAnswer": false,
+    "explanation": "Er war rund 1,68 m — Durchschnittsgröße im Frankreich seiner Zeit. Der Mythos entstand durch Verwechslung französischer und englischer Zolleinheiten sowie britische Karikaturen.",
+    "status": "approved"
+  },
+  {
+    "id": "q-flash-06",
+    "type": "true-false",
+    "category": "alltag-lifestyle",
+    "topic": "essen",
+    "difficulty": "mittel",
+    "question": "Die Cashew-Nuss wächst außerhalb der eigentlichen Frucht.",
+    "correctAnswer": true,
+    "explanation": "Sie hängt außen am Cashew-Apfel und ist botanisch der Kern einer Steinfrucht — nicht die Frucht selbst.",
+    "status": "approved"
+  },
+  {
+    "id": "q-flash-07",
+    "type": "true-false",
+    "category": "kurioses",
+    "topic": "kurioses",
+    "difficulty": "mittel",
+    "question": "Der Große Panda gehört biologisch zur Familie der Bären.",
+    "correctAnswer": true,
+    "explanation": "Lange umstritten, seit DNA-Analysen in den 1980ern klar: Ursidae. Der Kleine Panda hingegen bekam sogar eine eigene Familie.",
+    "status": "approved"
+  },
+  {
+    "id": "q-flash-08",
+    "type": "true-false",
+    "category": "allgemeinbildung",
+    "topic": "geografie",
+    "difficulty": "leicht",
+    "question": "Der Eiffelturm ist bis heute der höchste Turm der Welt.",
+    "correctAnswer": false,
+    "explanation": "Mit 330 m längst überholt. Der Burj Khalifa (828 m) und der Tokyo Skytree (634 m) sind deutlich höher, dazu diverse Fernsehtürme.",
+    "status": "approved"
+  },
+  {
+    "id": "q-flash-09",
+    "type": "true-false",
+    "category": "popkultur",
+    "topic": "film",
+    "difficulty": "schwer",
+    "question": "Der Name „James Bond“ stammt von einem Ornithologen.",
+    "correctAnswer": true,
+    "explanation": "Ian Fleming nahm den Namen aus dem Vogelbuch „Birds of the West Indies“ des US-Ornithologen James Bond — bewusst unauffällig gewählt.",
+    "status": "approved"
+  },
+  {
+    "id": "q-flash-10",
+    "type": "true-false",
+    "category": "allgemeinbildung",
+    "topic": "wissenschaft",
+    "difficulty": "mittel",
+    "question": "Fledermäuse sind blind und orientieren sich ausschließlich per Echoortung.",
+    "correctAnswer": false,
+    "explanation": "Sie sehen sogar recht gut, viele Arten farbig. Echoortung ergänzt die Sicht in der Nacht, ersetzt sie aber nicht.",
+    "status": "approved"
+  },
+  {
+    "id": "q-flash-11",
+    "type": "true-false",
+    "category": "allgemeinbildung",
+    "topic": "geografie",
+    "difficulty": "leicht",
+    "question": "Die Transsibirische Eisenbahn ist die längste durchgehende Bahnstrecke der Welt.",
+    "correctAnswer": true,
+    "explanation": "Moskau – Wladiwostok, rund 9.288 Kilometer, sieben Zeitzonen. Reine Fahrzeit ohne Aufenthalte: etwa sechs Tage.",
+    "status": "approved"
+  },
+  {
+    "id": "q-flash-12",
+    "type": "true-false",
+    "category": "allgemeinbildung",
+    "topic": "sprache",
+    "difficulty": "schwer",
+    "question": "Auf das englische Wort „orange“ gibt es kein einziges perfekt reimendes Wort in der Alltagssprache.",
+    "correctAnswer": true,
+    "explanation": "Berühmte Reim-Falle. Einzige technische Ausnahme: „sporange“ (Sporenbehälter), praktisch aber ungebräuchlich.",
+    "status": "approved"
+  },
+  {
+    "id": "q-flash-13",
+    "type": "true-false",
+    "category": "allgemeinbildung",
+    "topic": "wissenschaft",
+    "difficulty": "leicht",
+    "question": "Ein Blitz schlägt nie zweimal an derselben Stelle ein.",
+    "correctAnswer": false,
+    "explanation": "Doch, sogar häufig. Hohe Gebäude wie das Empire State Building werden pro Jahr zweistellig oft getroffen.",
+    "status": "approved"
+  },
+  {
+    "id": "q-flash-14",
+    "type": "true-false",
+    "category": "allgemeinbildung",
+    "topic": "geografie",
+    "difficulty": "schwer",
+    "question": "Australien ist an seiner breitesten Stelle breiter als der Durchmesser des Mondes.",
+    "correctAnswer": true,
+    "explanation": "Australien misst rund 4.000 km, der Mond hat etwa 3.474 km Durchmesser. Sitzt bei der ersten Nennung selten.",
+    "status": "approved"
+  },
+  {
+    "id": "q-flash-15",
+    "type": "true-false",
+    "category": "allgemeinbildung",
+    "topic": "geschichte",
+    "difficulty": "mittel",
+    "question": "Isaac Newton wurde tatsächlich von einem herabfallenden Apfel am Kopf getroffen.",
+    "correctAnswer": false,
+    "explanation": "Er sah nur einen Apfel fallen — laut eigener Erzählung im Garten seiner Mutter. Die Kopftreffer-Version ist eine spätere Verzierung.",
+    "status": "approved"
   }
 ]

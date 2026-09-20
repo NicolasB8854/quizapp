@@ -94,7 +94,7 @@ export const MODES: GameMode[] = [
     estimatedMinutes: 8,
     scoresMatchPoint: true,
     accent: 'flash',
-    status: 'planned',
+    status: 'ready',
   },
 ]
 

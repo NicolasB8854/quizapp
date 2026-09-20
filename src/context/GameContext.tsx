@@ -29,9 +29,9 @@ import type {
   RoundConfig,
   Team,
 } from '@/types/round'
-import type { MultipleChoiceQuestion, Topic } from '@/types/question'
+import type { MultipleChoiceQuestion, Topic, TrueFalseQuestion } from '@/types/question'
 import { MODES_BY_ID } from '@/data/modes'
-import { pickQuestion } from '@/lib/questions'
+import { pickQuestion, pickTrueFalse } from '@/lib/questions'
 import { markQuestionsAsked, readAskedQuestionIds } from '@/lib/questionHistory'
 import { generateRoomCode } from '@/lib/roomCode'
 import { shuffleWithMapping } from '@/lib/shuffle'
@@ -60,7 +60,24 @@ export interface CategoryDuelLive {
   usedQuestionIds: string[]
 }
 
-export type LiveGame = CategoryDuelLive
+/**
+ * Blitzrunde: 10 Wahr/Falsch-Behauptungen. Beide Teams antworten unabhängig, dann
+ * Auflösung. Punkte pro Team-Treffer — kein Turn-Based-Muster wie im Themen-Battle.
+ */
+export interface FlashLive {
+  kind: 'flash'
+  totalStatements: number
+  pointsPerCorrect: number
+  currentIndex: number
+  activeQuestion: TrueFalseQuestion | null
+  phase: 'answering' | 'revealed'
+  /** Aktuelle Runden-Antworten pro Team. `null` = noch nicht gewählt. */
+  teamAnswers: Record<string, boolean | null>
+  scores: Record<string, number>
+  usedQuestionIds: string[]
+}
+
+export type LiveGame = CategoryDuelLive | FlashLive
 
 // ---------- Draft (Setup-Phase) ----------------------------------------------
 
@@ -92,11 +109,15 @@ export interface GameState {
 export type GameAction =
   | { type: 'SET_TEAM_NAME'; teamId: string; name: string }
   | { type: 'TOGGLE_MODE'; modeId: GameModeId }
+  | { type: 'SET_MODE_SELECTION'; modeIds: GameModeId[] }
   | { type: 'GO_TO_LOBBY' }
   | { type: 'START_PLAYING' }
   | { type: 'CD_PICK_TOPIC'; topic: Topic }
   | { type: 'CD_SELECT_ANSWER'; renderedIndex: number }
   | { type: 'CD_NEXT_TURN' }
+  | { type: 'FLASH_SET_ANSWER'; teamId: string; answer: boolean }
+  | { type: 'FLASH_REVEAL' }
+  | { type: 'FLASH_NEXT' }
   | { type: 'FINISH_MODE' }
   | { type: 'BACK_TO_SETUP' }
   | { type: 'RESET_ALL' }
@@ -140,10 +161,32 @@ function initCategoryDuel(teams: Team[]): CategoryDuelLive {
   }
 }
 
+function initFlash(teams: Team[]): FlashLive | null {
+  // Erste Behauptung direkt ziehen — Blitzrunde ist linear, keine Vorauswahl.
+  const excluded = new Set<string>()
+  for (const id of readAskedQuestionIds()) excluded.add(id)
+  const first = pickTrueFalse(excluded)
+  if (!first) return null
+
+  return {
+    kind: 'flash',
+    totalStatements: 10,
+    pointsPerCorrect: 100,
+    currentIndex: 0,
+    activeQuestion: first,
+    phase: 'answering',
+    teamAnswers: Object.fromEntries(teams.map((t) => [t.id, null])),
+    scores: Object.fromEntries(teams.map((t) => [t.id, 0])),
+    usedQuestionIds: [],
+  }
+}
+
 function initLiveFor(modeId: GameModeId, teams: Team[]): LiveGame | null {
   switch (modeId) {
     case 'category-duel':
       return initCategoryDuel(teams)
+    case 'flash':
+      return initFlash(teams)
     default:
       // Alle anderen Modi sind in v0.1 als `planned` markiert und lassen sich im Setup
       // gar nicht auswählen. Falls doch: null → Reducer springt in FINISH_MODE.
@@ -170,6 +213,16 @@ function reducer(state: GameState, action: GameAction): GameState {
         ? state.draft.selectedModes.filter((m) => m !== action.modeId)
         : [...state.draft.selectedModes, action.modeId]
       return { ...state, draft: { ...state.draft, selectedModes } }
+    }
+
+    case 'SET_MODE_SELECTION': {
+      // Ersetzt die komplette Auswahl. Wird vom Free-Flow genutzt, um Single-Select
+      // umzusetzen (SetupPage schickt genau eine Mode-ID).
+      const validated = action.modeIds.filter((id) => {
+        const mode = MODES_BY_ID[id]
+        return mode?.status === 'ready'
+      })
+      return { ...state, draft: { ...state.draft, selectedModes: validated } }
     }
 
     case 'GO_TO_LOBBY': {
@@ -258,6 +311,83 @@ function reducer(state: GameState, action: GameAction): GameState {
       }
     }
 
+    case 'FLASH_SET_ANSWER': {
+      if (!state.live || state.live.kind !== 'flash') return state
+      if (state.live.phase !== 'answering') return state
+      if (!(action.teamId in state.live.teamAnswers)) return state
+      return {
+        ...state,
+        live: {
+          ...state.live,
+          teamAnswers: {
+            ...state.live.teamAnswers,
+            [action.teamId]: action.answer,
+          },
+        },
+      }
+    }
+
+    case 'FLASH_REVEAL': {
+      if (!state.live || state.live.kind !== 'flash') return state
+      if (state.live.phase !== 'answering') return state
+      if (!state.live.activeQuestion) return state
+      // Nur auflösen, wenn beide Teams eine Antwort gewählt haben.
+      const allAnswered = Object.values(state.live.teamAnswers).every((a) => a !== null)
+      if (!allAnswered) return state
+
+      const correct = state.live.activeQuestion.correctAnswer
+      const nextScores = { ...state.live.scores }
+      for (const [teamId, answer] of Object.entries(state.live.teamAnswers)) {
+        if (answer === correct) {
+          nextScores[teamId] = (nextScores[teamId] ?? 0) + state.live.pointsPerCorrect
+        }
+      }
+      return {
+        ...state,
+        live: { ...state.live, phase: 'revealed', scores: nextScores },
+      }
+    }
+
+    case 'FLASH_NEXT': {
+      if (!state.round || !state.live || state.live.kind !== 'flash') return state
+      if (state.live.phase !== 'revealed') return state
+
+      const usedQuestionIds = state.live.activeQuestion
+        ? [...state.live.usedQuestionIds, state.live.activeQuestion.id]
+        : state.live.usedQuestionIds
+      const nextIndex = state.live.currentIndex + 1
+      const isModeDone = nextIndex >= state.live.totalStatements
+
+      const advancedLive: FlashLive = {
+        ...state.live,
+        usedQuestionIds,
+        currentIndex: nextIndex,
+        activeQuestion: null,
+        phase: 'answering',
+        teamAnswers: Object.fromEntries(
+          state.round.teams.map((t) => [t.id, null]),
+        ),
+      }
+
+      if (isModeDone) {
+        return reducer({ ...state, live: advancedLive }, { type: 'FINISH_MODE' })
+      }
+
+      // Nächste Behauptung ziehen (Duplicate-Check: Runde + Historie).
+      const excluded = new Set(usedQuestionIds)
+      for (const id of readAskedQuestionIds()) excluded.add(id)
+      const nextQuestion = pickTrueFalse(excluded)
+      if (!nextQuestion) {
+        // Pool leer — Modus vorzeitig beenden.
+        return reducer({ ...state, live: advancedLive }, { type: 'FINISH_MODE' })
+      }
+
+      return {
+        ...state,
+        live: { ...advancedLive, activeQuestion: nextQuestion },
+      }
+    }
+
     case 'CD_NEXT_TURN': {
       if (!state.round || !state.live || state.live.kind !== 'category-duel') return state
       if (state.live.phase !== 'revealed') return state
@@ -295,8 +425,9 @@ function reducer(state: GameState, action: GameAction): GameState {
     case 'FINISH_MODE': {
       if (!state.round || !state.live) return state
       const modeId = state.round.gameModes[state.currentModeIndex]
-      const scores = state.live.kind === 'category-duel' ? state.live.scores : {}
-      const questionsUsed = state.live.kind === 'category-duel' ? state.live.usedQuestionIds : []
+      // Alle Live-Varianten haben `scores` und `usedQuestionIds` in der gleichen Form.
+      const scores = state.live.scores
+      const questionsUsed = state.live.usedQuestionIds
 
       // Modus-Sieger: das Team mit den meisten Punkten dieses Modus. Bei Gleichstand kein
       // Matchpunkt — beide behalten ihre Gesamt-Matchpunkte.
@@ -374,8 +505,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
   // Duplicate-Check-Historie: sobald eine Frage tatsächlich gespielt wurde,
   // merken wir sie in `localStorage`. Der Reducer schreibt selbst nicht, damit er
   // pure bleibt; hier reagieren wir nur auf State-Änderungen.
-  const liveUsedQuestionIds =
-    state.live?.kind === 'category-duel' ? state.live.usedQuestionIds : undefined
+  const liveUsedQuestionIds = state.live?.usedQuestionIds
   useEffect(() => {
     if (liveUsedQuestionIds && liveUsedQuestionIds.length > 0) {
       markQuestionsAsked(liveUsedQuestionIds)
@@ -417,10 +547,15 @@ export function useGame(): GameContextValue {
   return ctx
 }
 
-// Kleiner Convenience-Hook, um nur den `live`-Slot als category-duel-typisiert zu holen.
+// Convenience-Hooks, die je nach Modus den `live`-Slot typisiert zurückgeben.
 export function useCategoryDuel(): CategoryDuelLive | null {
   const { state } = useGame()
   return state.live && state.live.kind === 'category-duel' ? state.live : null
+}
+
+export function useFlash(): FlashLive | null {
+  const { state } = useGame()
+  return state.live && state.live.kind === 'flash' ? state.live : null
 }
 
 // Convenience für Dispatch ohne Boilerplate.

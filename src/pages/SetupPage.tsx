@@ -91,7 +91,7 @@ export default function SetupPage() {
               </h2>
               <p className="mt-2 text-ink-muted text-sm max-w-2xl">
                 {flow === 'free'
-                  ? 'Ein Modus, direkte Runde. Weitere Formate landen als eigenständige Bausteine im Katalog.'
+                  ? 'Ein Modus, direkte Runde. Genau ein Format wählen — zweimal tippen wechselt oder deaktiviert.'
                   : 'Mehrere Modi hintereinander. Pro Modus gibt es einen Sieg — wer die meisten Modi gewinnt, gewinnt den Abend.'}
               </p>
             </div>
@@ -109,7 +109,22 @@ export default function SetupPage() {
                 key={mode.id}
                 mode={mode}
                 selected={state.draft.selectedModes.includes(mode.id)}
-                onToggle={() => dispatch({ type: 'TOGGLE_MODE', modeId: mode.id })}
+                onToggle={() => {
+                  // Freies Spiel = genau ein Modus. Klick auf denselben leert die Auswahl,
+                  // Klick auf anderen ersetzt. Kuratierter Abend behält die Multi-Toggle-
+                  // Semantik für den Match-Tracker.
+                  if (flow === 'free') {
+                    const isAlreadyOnly =
+                      state.draft.selectedModes.length === 1 &&
+                      state.draft.selectedModes[0] === mode.id
+                    dispatch({
+                      type: 'SET_MODE_SELECTION',
+                      modeIds: isAlreadyOnly ? [] : [mode.id],
+                    })
+                  } else {
+                    dispatch({ type: 'TOGGLE_MODE', modeId: mode.id })
+                  }
+                }}
               />
             ))}
           </div>

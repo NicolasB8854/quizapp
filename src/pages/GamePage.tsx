@@ -12,23 +12,25 @@
 
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { X, ArrowRight, Crown } from 'lucide-react'
+import { X, ArrowRight, Crown, Check, XCircle } from 'lucide-react'
 import { ScreenLayout } from '@/components/ScreenLayout'
 import { Button } from '@/components/Button'
 import { AnswerOption, type AnswerStatus } from '@/components/AnswerOption'
 import { TopicTile } from '@/components/TopicTile'
-import { useGame, useCategoryDuel } from '@/context/GameContext'
+import { useGame, useCategoryDuel, useFlash } from '@/context/GameContext'
 import { TOPICS, TOPICS_BY_ID } from '@/data/topics'
 import { MODES_BY_ID } from '@/data/modes'
 import type { Team } from '@/types/round'
+import type { TrueFalseQuestion } from '@/types/question'
 import { cn } from '@/lib/classnames'
 
 const LETTERS = ['A', 'B', 'C', 'D']
 
 export default function GamePage() {
   const navigate = useNavigate()
-  const { state, dispatch, currentTeam, currentModeId } = useGame()
-  const live = useCategoryDuel()
+  const { state, dispatch, currentModeId } = useGame()
+  const cdLive = useCategoryDuel()
+  const flashLive = useFlash()
 
   useEffect(() => {
     if (state.phase === 'setup')      navigate('/setup', { replace: true })
@@ -36,10 +38,15 @@ export default function GamePage() {
     if (state.phase === 'scoreboard') navigate('/scoreboard', { replace: true })
   }, [state.phase, navigate])
 
-  if (!state.round || !live || !currentTeam) return null
+  if (!state.round || !state.live) return null
 
   const round = state.round
+  const live = state.live
   const mode = currentModeId ? MODES_BY_ID[currentModeId] : null
+
+  // „Am Zug"-Markierung gibt es nur im Themen-Battle. In der Blitzrunde antworten
+  // beide Teams parallel — deshalb hier `null`.
+  const currentTeamId = cdLive ? round.teams[cdLive.currentTeamIndex]?.id ?? null : null
 
   return (
     <ScreenLayout variant="stage" hideNav hideFooter contentClassName="px-0">
@@ -76,16 +83,20 @@ export default function GamePage() {
       {/* Bühne */}
       <div className="mx-auto max-w-7xl w-full px-6 md:px-10 mt-6 md:mt-10 pb-14">
         <div className="grid lg:grid-cols-[minmax(0,1fr)_320px] gap-6 md:gap-8">
-          {/* Content-Spalte */}
+          {/* Content-Spalte — je nach Live-Modus */}
           <div>
-            {live.phase === 'pick-topic' ? <TopicGrid /> : <QuestionStage />}
+            {cdLive ? (
+              cdLive.phase === 'pick-topic' ? <TopicGrid /> : <QuestionStage />
+            ) : flashLive ? (
+              <FlashStage />
+            ) : null}
           </div>
           {/* Score-Sidebar */}
           <ScoreSidebar
             teams={round.teams}
             scores={live.scores}
             matchPoints={state.matchPoints}
-            currentTeamId={currentTeam.id}
+            currentTeamId={currentTeamId}
           />
         </div>
       </div>
@@ -271,13 +282,249 @@ function QuestionStage() {
   )
 }
 
+// ---------- Blitzrunde -------------------------------------------------------
+
+function FlashStage() {
+  const { dispatch, state } = useGame()
+  const flash = useFlash()
+  if (!flash || !flash.activeQuestion || !state.round) return null
+
+  const question = flash.activeQuestion
+  const teams = state.round.teams
+  const allAnswered = Object.values(flash.teamAnswers).every((a) => a !== null)
+  const isRevealed = flash.phase === 'revealed'
+
+  return (
+    <div className="animate-titleIn">
+      {/* Progress + Titel */}
+      <div className="text-center mb-6 md:mb-8">
+        <div className="eyebrow">
+          Behauptung {flash.currentIndex + 1} von {flash.totalStatements}
+        </div>
+        <h1 className="mt-2 font-display font-bold uppercase text-3xl md:text-5xl tracking-tight">
+          Wahr oder Falsch?
+        </h1>
+        <p className="mt-2 text-ink-muted text-sm">
+          Beide Teams tippen unabhängig. Dann wird aufgedeckt.
+        </p>
+      </div>
+
+      {/* Behauptung */}
+      <div
+        className="rounded-card border p-6 md:p-8 text-center"
+        style={{
+          borderColor: 'rgba(255,61,139,0.4)',
+          background: 'rgba(11,16,32,0.6)',
+          boxShadow:
+            '0 0 0 1px rgba(255,61,139,0.25), 0 0 28px rgba(255,61,139,0.25)',
+        }}
+      >
+        <h2 className="font-display font-bold text-white leading-tight text-2xl md:text-4xl">
+          {question.question}
+        </h2>
+      </div>
+
+      {/* Team-Auswahl */}
+      <div className="mt-6 md:mt-8 grid md:grid-cols-2 gap-4">
+        {teams.map((team) => (
+          <TeamAnswerBox
+            key={team.id}
+            team={team}
+            answer={flash.teamAnswers[team.id]}
+            correctAnswer={question.correctAnswer}
+            revealed={isRevealed}
+            onPick={(a) =>
+              dispatch({ type: 'FLASH_SET_ANSWER', teamId: team.id, answer: a })
+            }
+          />
+        ))}
+      </div>
+
+      {/* Aktion: Aufdecken oder Weiter */}
+      {!isRevealed ? (
+        <div className="mt-6 flex flex-col md:flex-row items-center justify-between gap-3">
+          <div className="text-sm text-ink-muted">
+            {allAnswered
+              ? 'Beide Teams haben getippt. Bereit für die Auflösung.'
+              : 'Warte auf beide Team-Antworten.'}
+          </div>
+          <Button
+            variant="primary"
+            size="lg"
+            disabled={!allAnswered}
+            onClick={() => dispatch({ type: 'FLASH_REVEAL' })}
+          >
+            Aufdecken
+          </Button>
+        </div>
+      ) : (
+        <FlashRevealPanel
+          question={question}
+          pointsPerCorrect={flash.pointsPerCorrect}
+          onNext={() => dispatch({ type: 'FLASH_NEXT' })}
+        />
+      )}
+    </div>
+  )
+}
+
+interface TeamAnswerBoxProps {
+  team: Team
+  answer: boolean | null
+  correctAnswer: boolean
+  revealed: boolean
+  onPick: (a: boolean) => void
+}
+
+function TeamAnswerBox({ team, answer, correctAnswer, revealed, onPick }: TeamAnswerBoxProps) {
+  const teamHex = team.color === 'purple' ? '#7C5CFF' : '#27D8FF'
+  const wasCorrect = revealed && answer !== null && answer === correctAnswer
+
+  return (
+    <div
+      className="rounded-card border p-5"
+      style={{
+        borderColor: revealed
+          ? wasCorrect
+            ? 'rgba(63,217,139,0.5)'
+            : 'rgba(255,92,122,0.5)'
+          : `${teamHex}55`,
+        background: 'rgba(11,16,32,0.55)',
+        boxShadow: revealed
+          ? wasCorrect
+            ? '0 0 24px rgba(63,217,139,0.35)'
+            : '0 0 24px rgba(255,92,122,0.35)'
+          : undefined,
+      }}
+    >
+      <div className="flex items-center justify-between mb-3">
+        <div className="min-w-0">
+          <div className="eyebrow" style={{ color: teamHex }}>
+            {team.name}
+          </div>
+          <div className="mt-0.5 font-display font-semibold text-sm text-ink-muted">
+            {revealed
+              ? wasCorrect
+                ? 'Richtig'
+                : answer === null
+                ? 'Keine Antwort'
+                : 'Daneben'
+              : answer === null
+              ? 'Bitte tippen'
+              : 'Bereit'}
+          </div>
+        </div>
+        {revealed &&
+          (wasCorrect ? (
+            <Check className="h-6 w-6 text-correct" aria-label="Richtig" />
+          ) : (
+            <XCircle className="h-6 w-6 text-wrong" aria-label="Daneben" />
+          ))}
+      </div>
+
+      <div className="grid grid-cols-2 gap-2">
+        <FlashChoice
+          label="Wahr"
+          isSelected={answer === true}
+          isCorrect={correctAnswer === true}
+          revealed={revealed}
+          onClick={() => onPick(true)}
+        />
+        <FlashChoice
+          label="Falsch"
+          isSelected={answer === false}
+          isCorrect={correctAnswer === false}
+          revealed={revealed}
+          onClick={() => onPick(false)}
+        />
+      </div>
+    </div>
+  )
+}
+
+interface FlashChoiceProps {
+  label: string
+  isSelected: boolean
+  isCorrect: boolean
+  revealed: boolean
+  onClick: () => void
+}
+
+function FlashChoice({ label, isSelected, isCorrect, revealed, onClick }: FlashChoiceProps) {
+  // Vor dem Reveal: gewählte Option leuchtet in Team-Akzent (via ring).
+  // Nach dem Reveal: richtige Antwort grün, falsche gewählte rot, andere gedimmt.
+  const disabled = revealed
+  let stateClass = 'border-white/15 bg-navy-800/70 hover:border-white/30'
+  if (!revealed && isSelected) {
+    stateClass = 'border-brand-purple/70 bg-brand-purple/15 text-white'
+  } else if (revealed && isCorrect) {
+    stateClass = 'border-correct/60 bg-correct/15 text-correct'
+  } else if (revealed && isSelected && !isCorrect) {
+    stateClass = 'border-wrong/60 bg-wrong/15 text-wrong'
+  } else if (revealed) {
+    stateClass = 'border-white/10 bg-navy-800/40 text-ink-muted opacity-60'
+  }
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={onClick}
+      className={cn(
+        'h-14 rounded-card border font-display font-bold uppercase tracking-widest text-sm',
+        'transition-colors disabled:cursor-not-allowed',
+        stateClass,
+      )}
+    >
+      {label}
+    </button>
+  )
+}
+
+interface FlashRevealPanelProps {
+  question: TrueFalseQuestion
+  pointsPerCorrect: number
+  onNext: () => void
+}
+
+function FlashRevealPanel({ question, pointsPerCorrect, onNext }: FlashRevealPanelProps) {
+  const correctLabel = question.correctAnswer ? 'Wahr' : 'Falsch'
+  const explanation = question.explanation ?? question.gmNote
+  return (
+    <div className="mt-6 rounded-card border border-white/10 bg-navy-800/60 p-5 md:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="min-w-0">
+        <div className="text-[11px] font-bold uppercase tracking-[0.22em] text-brand-purple-soft">
+          Auflösung
+        </div>
+        <div className="mt-1 font-display font-bold text-xl md:text-2xl">
+          <span className="text-correct">{correctLabel}</span>
+          <span className="text-ink-muted"> · {pointsPerCorrect} Punkte pro Treffer</span>
+        </div>
+        {explanation && (
+          <p className="mt-2 text-sm text-ink-muted leading-relaxed max-w-2xl">
+            {explanation}
+          </p>
+        )}
+      </div>
+      <Button
+        variant="primary"
+        size="lg"
+        trailing={<ArrowRight className="h-5 w-5" />}
+        onClick={onNext}
+      >
+        Weiter
+      </Button>
+    </div>
+  )
+}
+
 // ---------- Sidebar & Header-Deko --------------------------------------------
 
 interface SidebarProps {
   teams: Team[]
   scores: Record<string, number>
   matchPoints: Record<string, number>
-  currentTeamId: string
+  /** `null` z. B. in der Blitzrunde, wo beide Teams parallel spielen. */
+  currentTeamId: string | null
 }
 
 function ScoreSidebar({ teams, scores, matchPoints, currentTeamId }: SidebarProps) {

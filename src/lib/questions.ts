@@ -11,6 +11,7 @@ import type {
   MultipleChoiceQuestion,
   Question,
   Topic,
+  TrueFalseQuestion,
 } from '@/types/question'
 
 // JSON-Import ist untypisiert — hier einmal narrowen.
@@ -35,6 +36,26 @@ export function pickQuestion(
   usedIds: ReadonlySet<string>,
 ): MultipleChoiceQuestion | null {
   const pool = getMultipleChoiceByTopic(topic)
+  if (pool.length === 0) return null
+  const fresh = pool.filter((q) => !usedIds.has(q.id))
+  const candidates = fresh.length > 0 ? fresh : pool
+  return candidates[Math.floor(Math.random() * candidates.length)]
+}
+
+// ---------- Blitzrunde: True-False ---------------------------------------------
+
+export function getTrueFalsePool(): TrueFalseQuestion[] {
+  return ALL_QUESTIONS.filter((q): q is TrueFalseQuestion => q.type === 'true-false')
+}
+
+/**
+ * Zieht die nächste ungenutzte True-False-Behauptung. Anders als `pickQuestion` ohne
+ * Topic-Filter — Blitzrunde ist bewusst breit.
+ */
+export function pickTrueFalse(
+  usedIds: ReadonlySet<string>,
+): TrueFalseQuestion | null {
+  const pool = getTrueFalsePool()
   if (pool.length === 0) return null
   const fresh = pool.filter((q) => !usedIds.has(q.id))
   const candidates = fresh.length > 0 ? fresh : pool
