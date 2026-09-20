@@ -26,6 +26,7 @@ import {
 import type {
   GameModeId,
   GameResult,
+  Player,
   RoundConfig,
   Team,
 } from '@/types/round'
@@ -118,7 +119,10 @@ export type GameAction =
   | { type: 'FLASH_SET_ANSWER'; teamId: string; answer: boolean }
   | { type: 'FLASH_REVEAL' }
   | { type: 'FLASH_NEXT' }
-  | { type: 'SET_ROUND_INTERESTS'; interests: Topic[] }
+  | { type: 'ADD_PLAYER'; teamId: string }
+  | { type: 'REMOVE_PLAYER'; playerId: string }
+  | { type: 'SET_PLAYER_NAME'; playerId: string; name: string }
+  | { type: 'SET_PLAYER_INTERESTS'; playerId: string; interests: Topic[] }
   | { type: 'FINISH_MODE' }
   | { type: 'BACK_TO_SETUP' }
   | { type: 'RESET_ALL' }
@@ -141,6 +145,54 @@ export const INITIAL_STATE: GameState = {
   matchPoints: {},
   currentModeIndex: 0,
   live: null,
+}
+
+// ---------- Helper: Player-Handling ------------------------------------------
+
+/** Grenzen pro Team, siehe konzept-v2.md „2–4 Personen pro Team". */
+const MIN_PLAYERS_PER_TEAM = 1
+const MAX_PLAYERS_PER_TEAM = 4
+const DEFAULT_PLAYERS_PER_TEAM = 2
+
+function newPlayerId(): string {
+  if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
+    return `player-${crypto.randomUUID()}`
+  }
+  return `player-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+}
+
+function makeDefaultPlayers(teams: Team[]): Player[] {
+  const players: Player[] = []
+  for (const team of teams) {
+    for (let i = 0; i < DEFAULT_PLAYERS_PER_TEAM; i++) {
+      players.push({ id: newPlayerId(), name: '', teamId: team.id, interests: [] })
+    }
+  }
+  return players
+}
+
+/**
+ * Aggregiert die Interessen aller Spieler zu einem Runden-Signal.
+ * Union, dedupliziert, in stabiler Reihenfolge (nach erster Nennung).
+ */
+function aggregatePlayerInterests(players: readonly Player[]): Topic[] {
+  const seen = new Set<Topic>()
+  const out: Topic[] = []
+  for (const p of players) {
+    for (const topic of p.interests) {
+      if (!seen.has(topic)) {
+        seen.add(topic)
+        out.push(topic)
+      }
+    }
+  }
+  return out
+}
+
+function countPlayersInTeam(players: readonly Player[], teamId: string): number {
+  let n = 0
+  for (const p of players) if (p.teamId === teamId) n += 1
+  return n
 }
 
 // ---------- Reducer -----------------------------------------------------------
@@ -237,6 +289,7 @@ export function reducer(state: GameState, action: GameAction): GameState {
         name: t.name.trim() || (t.color === 'purple' ? 'Team Nova' : 'Team Pulsar'),
         color: t.color,
       }))
+      const players = makeDefaultPlayers(teams)
       const round: RoundConfig = {
         id: `round-${Date.now()}`,
         name: `Game Night vom ${new Date().toLocaleDateString('de-DE')}`,
@@ -245,7 +298,8 @@ export function reducer(state: GameState, action: GameAction): GameState {
         teams,
         bestOf: Math.max(1, state.draft.selectedModes.length),
         gameModes: [...state.draft.selectedModes],
-        interests: [],
+        players,
+        interests: aggregatePlayerInterests(players),
       }
       return {
         ...state,
@@ -265,15 +319,70 @@ export function reducer(state: GameState, action: GameAction): GameState {
       return { ...state, phase: 'playing', currentModeIndex: 0, live }
     }
 
-    case 'SET_ROUND_INTERESTS': {
-      // Nur in der Lobby änderbar — während des Spiels würden neue Interessen die
-      // aktuelle Fragenauswahl unter dem Modus wegziehen.
+    case 'ADD_PLAYER': {
       if (!state.round || state.phase !== 'lobby') return state
-      // Dedupliziert, damit doppelte Topic-IDs den Filter nicht verzerren.
-      const interests = Array.from(new Set(action.interests))
+      if (countPlayersInTeam(state.round.players, action.teamId) >= MAX_PLAYERS_PER_TEAM) {
+        return state
+      }
+      const newPlayer: Player = {
+        id: newPlayerId(),
+        name: '',
+        teamId: action.teamId,
+        interests: [],
+      }
+      const players = [...state.round.players, newPlayer]
       return {
         ...state,
-        round: { ...state.round, interests },
+        round: {
+          ...state.round,
+          players,
+          interests: aggregatePlayerInterests(players),
+        },
+      }
+    }
+
+    case 'REMOVE_PLAYER': {
+      if (!state.round || state.phase !== 'lobby') return state
+      const target = state.round.players.find((p) => p.id === action.playerId)
+      if (!target) return state
+      if (
+        countPlayersInTeam(state.round.players, target.teamId) <= MIN_PLAYERS_PER_TEAM
+      ) {
+        return state
+      }
+      const players = state.round.players.filter((p) => p.id !== action.playerId)
+      return {
+        ...state,
+        round: {
+          ...state.round,
+          players,
+          interests: aggregatePlayerInterests(players),
+        },
+      }
+    }
+
+    case 'SET_PLAYER_NAME': {
+      if (!state.round || state.phase !== 'lobby') return state
+      const players = state.round.players.map((p) =>
+        p.id === action.playerId ? { ...p, name: action.name } : p,
+      )
+      // Namen fließen nicht in interests → keine Aggregat-Neurechnung nötig.
+      return { ...state, round: { ...state.round, players } }
+    }
+
+    case 'SET_PLAYER_INTERESTS': {
+      if (!state.round || state.phase !== 'lobby') return state
+      const interests = Array.from(new Set(action.interests))
+      const players = state.round.players.map((p) =>
+        p.id === action.playerId ? { ...p, interests } : p,
+      )
+      return {
+        ...state,
+        round: {
+          ...state.round,
+          players,
+          interests: aggregatePlayerInterests(players),
+        },
       }
     }
 

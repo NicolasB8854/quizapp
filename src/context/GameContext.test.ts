@@ -329,46 +329,123 @@ describe('reducer — Utility-Actions', () => {
   })
 })
 
-describe('reducer — Interessen (Session C)', () => {
-  it('SET_ROUND_INTERESTS in der Lobby setzt round.interests', () => {
-    let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
-    s = reducer(s, {
-      type: 'SET_ROUND_INTERESTS',
-      interests: ['wissenschaft', 'sprache'],
-    })
-    expect(s.round?.interests).toEqual(['wissenschaft', 'sprache'])
-  })
-
-  it('SET_ROUND_INTERESTS dedupliziert', () => {
-    let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
-    s = reducer(s, {
-      type: 'SET_ROUND_INTERESTS',
-      interests: ['film', 'film', 'musik'],
-    })
-    expect(s.round?.interests).toEqual(['film', 'musik'])
-  })
-
-  it('SET_ROUND_INTERESTS wird während des Spiels ignoriert', () => {
-    let s = bootIntoPlaying('flash')
-    const before = s.round?.interests
-    s = reducer(s, {
-      type: 'SET_ROUND_INTERESTS',
-      interests: ['film', 'musik'],
-    })
-    expect(s.round?.interests).toEqual(before)
-  })
-
-  it('GO_TO_LOBBY startet mit leeren Interessen', () => {
+describe('reducer — Player-Ebene (Session D)', () => {
+  it('GO_TO_LOBBY legt pro Team zwei Default-Player mit leeren Interessen an', () => {
     const s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    expect(s.round?.players).toHaveLength(4)
+    const perTeam = new Map<string, number>()
+    for (const p of s.round!.players) {
+      perTeam.set(p.teamId, (perTeam.get(p.teamId) ?? 0) + 1)
+      expect(p.name).toBe('')
+      expect(p.interests).toEqual([])
+    }
+    expect(perTeam.get('team-a')).toBe(2)
+    expect(perTeam.get('team-b')).toBe(2)
     expect(s.round?.interests).toEqual([])
   })
 
-  it('Blitzrunde: erste Frage kommt aus einem Interest-Topic (wenn verfügbar)', () => {
-    // Setup: Blitz + wissenschaft-Interesse
+  it('SET_PLAYER_INTERESTS setzt die Spieler-Interessen und aggregiert round.interests', () => {
+    let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    const firstPlayer = s.round!.players[0]
+    s = reducer(s, {
+      type: 'SET_PLAYER_INTERESTS',
+      playerId: firstPlayer.id,
+      interests: ['wissenschaft', 'sprache'],
+    })
+    expect(s.round?.interests).toEqual(['wissenschaft', 'sprache'])
+    expect(s.round?.players[0].interests).toEqual(['wissenschaft', 'sprache'])
+  })
+
+  it('SET_PLAYER_INTERESTS dedupliziert eingehende IDs', () => {
+    let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    const firstPlayer = s.round!.players[0]
+    s = reducer(s, {
+      type: 'SET_PLAYER_INTERESTS',
+      playerId: firstPlayer.id,
+      interests: ['film', 'film', 'musik'],
+    })
+    expect(s.round?.players[0].interests).toEqual(['film', 'musik'])
+  })
+
+  it('Aggregation: gemeinsame Interessen zweier Spieler erscheinen nur einmal in round.interests', () => {
+    let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    const [p1, p2] = s.round!.players
+    s = reducer(s, {
+      type: 'SET_PLAYER_INTERESTS',
+      playerId: p1.id,
+      interests: ['film', 'musik'],
+    })
+    s = reducer(s, {
+      type: 'SET_PLAYER_INTERESTS',
+      playerId: p2.id,
+      interests: ['musik', 'wissenschaft'],
+    })
+    expect(s.round?.interests).toEqual(['film', 'musik', 'wissenschaft'])
+  })
+
+  it('Player-Actions werden während des Spiels ignoriert', () => {
+    let s = bootIntoPlaying('flash')
+    const firstPlayer = s.round!.players[0]
+    const before = s.round?.interests
+    s = reducer(s, {
+      type: 'SET_PLAYER_INTERESTS',
+      playerId: firstPlayer.id,
+      interests: ['film', 'musik'],
+    })
+    expect(s.round?.interests).toEqual(before)
+    expect(s.round?.players[0].interests).toEqual([])
+  })
+
+  it('ADD_PLAYER fügt einen leeren Spieler zum Team hinzu, respektiert Max 4', () => {
+    let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    s = reducer(s, { type: 'ADD_PLAYER', teamId: 'team-a' })
+    s = reducer(s, { type: 'ADD_PLAYER', teamId: 'team-a' })
+    s = reducer(s, { type: 'ADD_PLAYER', teamId: 'team-a' })
+    // 2 default + 2 zusätzliche = 4 (Max) — der dritte Add wird geschluckt.
+    const teamACount = s.round!.players.filter((p) => p.teamId === 'team-a').length
+    expect(teamACount).toBe(4)
+  })
+
+  it('REMOVE_PLAYER entfernt, respektiert Min 1 pro Team', () => {
+    let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    const teamAPlayers = s.round!.players.filter((p) => p.teamId === 'team-a')
+    s = reducer(s, { type: 'REMOVE_PLAYER', playerId: teamAPlayers[0].id })
+    let remaining = s.round!.players.filter((p) => p.teamId === 'team-a')
+    expect(remaining).toHaveLength(1)
+    // Zweiten Remove versuchen — muss abgelehnt werden (Min 1).
+    s = reducer(s, { type: 'REMOVE_PLAYER', playerId: remaining[0].id })
+    remaining = s.round!.players.filter((p) => p.teamId === 'team-a')
+    expect(remaining).toHaveLength(1)
+  })
+
+  it('REMOVE_PLAYER rechnet round.interests neu aus', () => {
+    let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    const [p1, p2] = s.round!.players
+    s = reducer(s, { type: 'SET_PLAYER_INTERESTS', playerId: p1.id, interests: ['film'] })
+    s = reducer(s, { type: 'SET_PLAYER_INTERESTS', playerId: p2.id, interests: ['musik'] })
+    expect(s.round?.interests).toEqual(['film', 'musik'])
+    // p1 entfernen — 'film' fällt aus der Aggregation.
+    s = reducer(s, { type: 'REMOVE_PLAYER', playerId: p1.id })
+    expect(s.round?.interests).toEqual(['musik'])
+  })
+
+  it('SET_PLAYER_NAME lässt Interessen und Aggregation in Ruhe', () => {
+    let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    const p1 = s.round!.players[0]
+    s = reducer(s, { type: 'SET_PLAYER_INTERESTS', playerId: p1.id, interests: ['film'] })
+    s = reducer(s, { type: 'SET_PLAYER_NAME', playerId: p1.id, name: 'Alice' })
+    expect(s.round?.players[0].name).toBe('Alice')
+    expect(s.round?.players[0].interests).toEqual(['film'])
+    expect(s.round?.interests).toEqual(['film'])
+  })
+
+  it('Blitzrunde: erste Frage kommt aus einem Interest-Topic der Spieler', () => {
     let s = reducer(INITIAL_STATE, { type: 'SET_MODE_SELECTION', modeIds: ['flash'] })
     s = reducer(s, { type: 'GO_TO_LOBBY' })
+    const firstPlayer = s.round!.players[0]
     s = reducer(s, {
-      type: 'SET_ROUND_INTERESTS',
+      type: 'SET_PLAYER_INTERESTS',
+      playerId: firstPlayer.id,
       interests: ['wissenschaft'],
     })
     s = reducer(s, { type: 'START_PLAYING' })
@@ -379,15 +456,15 @@ describe('reducer — Interessen (Session C)', () => {
   it('Blitzrunde: nächste Frage bleibt nach Möglichkeit im Interest-Topic', () => {
     let s = reducer(INITIAL_STATE, { type: 'SET_MODE_SELECTION', modeIds: ['flash'] })
     s = reducer(s, { type: 'GO_TO_LOBBY' })
+    const firstPlayer = s.round!.players[0]
     s = reducer(s, {
-      type: 'SET_ROUND_INTERESTS',
+      type: 'SET_PLAYER_INTERESTS',
+      playerId: firstPlayer.id,
       interests: ['wissenschaft'],
     })
     s = reducer(s, { type: 'START_PLAYING' })
     if (s.live?.kind !== 'flash') throw new Error('unreachable')
 
-    // Zwei Runden vollständig durchziehen und prüfen, dass beide Fragen wissenschaft
-    // sind (Pool hat vier wissenschaft-TF-Fragen, also reicht das).
     const topics: string[] = []
     for (let i = 0; i < 2; i++) {
       if (s.live?.kind !== 'flash') throw new Error('unreachable')

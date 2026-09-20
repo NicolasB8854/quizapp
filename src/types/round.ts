@@ -50,6 +50,23 @@ export interface Team {
   color: 'purple' | 'cyan'  // MVP: zwei Teams, feste Marken-Zweifarben
 }
 
+/**
+ * Spieler-Entität für die Personalisierung (siehe konzept-v2.md, Kapitel 2c und 8).
+ *
+ * Zuordnung zu einem Team über `teamId`. `name` kann leer sein — die UI zeigt dann
+ * einen Platzhalter („Spieler 1"). `interests` sind die selbstgewählten Topics; leere
+ * Liste = keine Präferenz.
+ *
+ * Selbsteinschätzung („bisschen/gut/Nerd") bewusst noch nicht enthalten — kommt zusammen
+ * mit dem gewichteten Quiz Director (Session E).
+ */
+export interface Player {
+  id: string
+  name: string
+  teamId: string
+  interests: import('./question').Topic[]
+}
+
 export interface GameResult {
   gameModeId: GameModeId
   scores: Record<string, number>  // teamId → score
@@ -66,9 +83,15 @@ export interface RoundConfig {
   bestOf: number              // z. B. 5 → wer zuerst ceil(5/2) = 3 Matchpunkte hat, gewinnt
   gameModes: GameModeId[]     // Ablauf-Reihenfolge
   /**
-   * Personalisierungs-Signal aus der Lobby (siehe konzept-v2.md, Kapitel 6 „Quiz Director").
-   * Leeres Array = kein Filter, alle Topics gleich gewichtet. Nicht-leeres Array =
-   * Fragen werden bevorzugt aus diesen Topics gezogen (mit Fallback bei leerem Pool).
+   * Spielerprofile (siehe konzept-v2.md, Kapitel 8). In der Lobby wählt jeder Spieler
+   * seine Interessen. `round.interests` wird daraus aggregiert (Union aller
+   * player.interests) und ist die Datenquelle für den Quiz Director.
+   */
+  players: Player[]
+  /**
+   * Aggregiertes Personalisierungs-Signal (siehe konzept-v2.md, Kapitel 6 „Quiz Director").
+   * Union aller `players[i].interests`. Leeres Array = kein Filter, alle Topics gleich
+   * gewichtet. Wird vom Reducer bei Player-Änderungen neu berechnet.
    */
   interests: Topic[]
 }
