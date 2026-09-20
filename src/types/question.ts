@@ -1,7 +1,7 @@
 /**
  * Fragen-Schema für alle Modi.
  *
- * Design-Prinzipien:
+ * Design-Prinzipien (siehe steering/project-context.md):
  * - Multiple-Choice-Optionen als Array, damit bei Bedarf 2/3/4 Optionen unterstützt werden.
  * - `correctIndex` referenziert die richtige Option (0-basiert). App shufflet die Optionen
  *   beim Rendern, damit ABCD-Balance keine Rolle spielt (Learning aus Runde 6).
@@ -23,10 +23,29 @@ export type Category =
   | 'spezialgebiet'
   | 'kurioses'
 
+/**
+ * Feinkategorien für das Themen-Battle-Grid (12 Kacheln).
+ * Jede Frage verweist über `topic` auf genau eine Feinkategorie.
+ */
+export type Topic =
+  | 'film'
+  | 'serien'
+  | 'musik'
+  | 'games'
+  | 'geografie'
+  | 'geschichte'
+  | 'wissenschaft'
+  | 'sport'
+  | 'essen'
+  | 'technik'
+  | 'sprache'
+  | 'kurioses'
+
 export interface BaseQuestion {
   id: string
   type: QuestionType
   category: Category
+  topic: Topic
   subCategory?: string
   difficulty: Difficulty
   question: string
@@ -34,10 +53,10 @@ export interface BaseQuestion {
   source?: string
   timeReference?: {
     isTimeSensitive: boolean
-    referenceDate?: string // ISO-Datum, wenn zeitkritisch
+    referenceDate?: string
   }
   tags?: string[]
-  usedInRounds?: string[] // z. B. ["round-1", "round-6"]
+  usedInRounds?: string[]
   author?: string
   status?: 'draft' | 'reviewed' | 'approved' | 'retired'
 }
@@ -51,7 +70,7 @@ export interface MultipleChoiceQuestion extends BaseQuestion {
 export interface OpenQuestion extends BaseQuestion {
   type: 'open'
   answer: string
-  acceptableVariants?: string[] // z. B. Schreibweisen-Varianten
+  acceptableVariants?: string[]
 }
 
 export interface TrueFalseQuestion extends BaseQuestion {
@@ -61,7 +80,7 @@ export interface TrueFalseQuestion extends BaseQuestion {
 
 export interface WarmupRiddleQuestion extends BaseQuestion {
   type: 'warmup-riddle'
-  hints: string[] // in Reveal-Reihenfolge
+  hints: string[]
   solution: string
 }
 
