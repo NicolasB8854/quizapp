@@ -506,6 +506,149 @@ describe('reducer — Player-Ebene (Session D + E)', () => {
   })
 })
 
+describe('reducer — Duell 1:1 (Session M)', () => {
+  function bootDuel(): ReturnType<typeof reducer> {
+    let s = reducer(INITIAL_STATE, {
+      type: 'SET_MODE_SELECTION',
+      modeIds: ['duel-1v1'],
+    })
+    s = reducer(s, { type: 'GO_TO_LOBBY' })
+    s = reducer(s, { type: 'START_PLAYING' })
+    return s
+  }
+
+  it('START_PLAYING startet in setup-duel mit leerer Vertreter-Wahl', () => {
+    const s = bootDuel()
+    if (s.live?.kind !== 'duel-1v1') throw new Error('unreachable')
+    expect(s.live.phase).toBe('setup-duel')
+    expect(s.live.currentIndex).toBe(0)
+    expect(s.live.totalDuels).toBe(5)
+    expect(s.live.duelPlayers).toEqual({ 'team-a': null, 'team-b': null })
+    expect(s.live.scores).toEqual({ 'team-a': 0, 'team-b': 0 })
+  })
+
+  it('DUEL_SET_PLAYER validiert Team-Zugehörigkeit', () => {
+    let s = bootDuel()
+    const teamAPlayer = s.round!.players.find((p) => p.teamId === 'team-a')!
+    // Falsches Team → no-op.
+    const before = s.live
+    s = reducer(s, {
+      type: 'DUEL_SET_PLAYER',
+      teamId: 'team-b',
+      playerId: teamAPlayer.id,
+    })
+    expect(s.live).toBe(before)
+  })
+
+  it('DUEL_SET_PLAYER für beide Teams schaltet automatisch auf awaiting-buzz', () => {
+    let s = bootDuel()
+    const teamA = s.round!.players.find((p) => p.teamId === 'team-a')!
+    const teamB = s.round!.players.find((p) => p.teamId === 'team-b')!
+
+    s = reducer(s, { type: 'DUEL_SET_PLAYER', teamId: 'team-a', playerId: teamA.id })
+    if (s.live?.kind !== 'duel-1v1') throw new Error('unreachable')
+    expect(s.live.phase).toBe('setup-duel')
+
+    s = reducer(s, { type: 'DUEL_SET_PLAYER', teamId: 'team-b', playerId: teamB.id })
+    if (s.live?.kind !== 'duel-1v1') throw new Error('unreachable')
+    expect(s.live.phase).toBe('awaiting-buzz')
+    expect(s.live.activeQuestion).not.toBeNull()
+    expect(s.live.shuffledOptions).toHaveLength(4)
+  })
+
+  it('DUEL_BUZZER + DUEL_ANSWER richtig: volle Punkte für Buzzer-Team', () => {
+    let s = bootDuel()
+    const [pA, pB] = [
+      s.round!.players.find((p) => p.teamId === 'team-a')!,
+      s.round!.players.find((p) => p.teamId === 'team-b')!,
+    ]
+    s = reducer(s, { type: 'DUEL_SET_PLAYER', teamId: 'team-a', playerId: pA.id })
+    s = reducer(s, { type: 'DUEL_SET_PLAYER', teamId: 'team-b', playerId: pB.id })
+    s = reducer(s, { type: 'DUEL_BUZZER', teamId: 'team-a' })
+    if (s.live?.kind !== 'duel-1v1') throw new Error('unreachable')
+    const value = s.live.pointsPerCorrect
+
+    s = reducer(s, {
+      type: 'DUEL_ANSWER',
+      renderedIndex: s.live.correctRenderedIndex,
+    })
+    if (s.live?.kind !== 'duel-1v1') throw new Error('unreachable')
+    expect(s.live.phase).toBe('revealed')
+    expect(s.live.primaryOutcome).toBe('correct')
+    expect(s.live.scores['team-a']).toBe(value)
+  })
+
+  it('DUEL_ANSWER falsch: geht in steal-answer, dann steal richtig → Gegenteam bekommt volle Punkte', () => {
+    let s = bootDuel()
+    const [pA, pB] = [
+      s.round!.players.find((p) => p.teamId === 'team-a')!,
+      s.round!.players.find((p) => p.teamId === 'team-b')!,
+    ]
+    s = reducer(s, { type: 'DUEL_SET_PLAYER', teamId: 'team-a', playerId: pA.id })
+    s = reducer(s, { type: 'DUEL_SET_PLAYER', teamId: 'team-b', playerId: pB.id })
+    s = reducer(s, { type: 'DUEL_BUZZER', teamId: 'team-a' })
+    if (s.live?.kind !== 'duel-1v1') throw new Error('unreachable')
+    const value = s.live.pointsPerCorrect
+    const correctIdx = s.live.correctRenderedIndex
+    const wrongIdx = (correctIdx + 1) % s.live.shuffledOptions.length
+
+    s = reducer(s, { type: 'DUEL_ANSWER', renderedIndex: wrongIdx })
+    if (s.live?.kind !== 'duel-1v1') throw new Error('unreachable')
+    expect(s.live.phase).toBe('steal-answer')
+    expect(s.live.primaryOutcome).toBe('wrong')
+
+    s = reducer(s, { type: 'DUEL_ANSWER', renderedIndex: correctIdx })
+    if (s.live?.kind !== 'duel-1v1') throw new Error('unreachable')
+    expect(s.live.phase).toBe('revealed')
+    expect(s.live.stealOutcome).toBe('correct')
+    expect(s.live.scores['team-b']).toBe(value)
+    expect(s.live.scores['team-a']).toBe(0)
+  })
+
+  it('DUEL_NEXT setzt Vertreter-Wahl zurück und zählt hoch', () => {
+    let s = bootDuel()
+    const [pA, pB] = [
+      s.round!.players.find((p) => p.teamId === 'team-a')!,
+      s.round!.players.find((p) => p.teamId === 'team-b')!,
+    ]
+    s = reducer(s, { type: 'DUEL_SET_PLAYER', teamId: 'team-a', playerId: pA.id })
+    s = reducer(s, { type: 'DUEL_SET_PLAYER', teamId: 'team-b', playerId: pB.id })
+    s = reducer(s, { type: 'DUEL_BUZZER', teamId: 'team-a' })
+    if (s.live?.kind !== 'duel-1v1') throw new Error('unreachable')
+    s = reducer(s, {
+      type: 'DUEL_ANSWER',
+      renderedIndex: s.live.correctRenderedIndex,
+    })
+    s = reducer(s, { type: 'DUEL_NEXT' })
+    if (s.live?.kind !== 'duel-1v1') throw new Error('unreachable')
+    expect(s.live.phase).toBe('setup-duel')
+    expect(s.live.currentIndex).toBe(1)
+    expect(s.live.duelPlayers).toEqual({ 'team-a': null, 'team-b': null })
+    expect(s.live.activeQuestion).toBeNull()
+  })
+
+  it('Nach 5 Duellen: FINISH_MODE → scoreboard, Sieger bekommt Match-Punkt', () => {
+    let s = bootDuel()
+    const pA = s.round!.players.find((p) => p.teamId === 'team-a')!
+    const pB = s.round!.players.find((p) => p.teamId === 'team-b')!
+
+    for (let i = 0; i < 5; i++) {
+      s = reducer(s, { type: 'DUEL_SET_PLAYER', teamId: 'team-a', playerId: pA.id })
+      s = reducer(s, { type: 'DUEL_SET_PLAYER', teamId: 'team-b', playerId: pB.id })
+      s = reducer(s, { type: 'DUEL_BUZZER', teamId: 'team-a' })
+      if (s.live?.kind !== 'duel-1v1') throw new Error('unreachable')
+      s = reducer(s, {
+        type: 'DUEL_ANSWER',
+        renderedIndex: s.live.correctRenderedIndex,
+      })
+      s = reducer(s, { type: 'DUEL_NEXT' })
+    }
+    expect(s.phase).toBe('scoreboard')
+    expect(s.matchPoints['team-a']).toBe(1)
+    expect(s.matchPoints['team-b'] ?? 0).toBe(0)
+  })
+})
+
 describe('reducer — Punktejagd (Session L)', () => {
   function bootBoard(): ReturnType<typeof reducer> {
     let s = reducer(INITIAL_STATE, {

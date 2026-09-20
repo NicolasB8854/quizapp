@@ -26,6 +26,7 @@ import {
   useSprinter,
   usePointsLadder,
   useCategoryBoard,
+  useDuel,
 } from '@/context/GameContext'
 import { TOPICS, TOPICS_BY_ID } from '@/data/topics'
 import { MODES_BY_ID } from '@/data/modes'
@@ -45,6 +46,7 @@ export default function GamePage() {
   const sprinterLive = useSprinter()
   const ladderLive = usePointsLadder()
   const boardLive = useCategoryBoard()
+  const duelLive = useDuel()
 
   useEffect(() => {
     if (state.phase === 'setup')      navigate('/setup', { replace: true })
@@ -59,7 +61,7 @@ export default function GamePage() {
   const mode = currentModeId ? MODES_BY_ID[currentModeId] : null
 
   // „Am Zug"-Markierung: Themen-Battle nutzt currentTeamIndex, Sprinter das
-  // activeTeamId, Punktejagd wechselt je nach Phase (cellPicker / buzzer / opponent).
+  // activeTeamId, Punktejagd wechselt je nach Phase, Duell nutzt buzzer/opponent.
   const boardCurrentTeamId = boardLive
     ? boardLive.phase === 'pick-cell'
       ? boardLive.cellPickerTeamId
@@ -69,9 +71,16 @@ export default function GamePage() {
       ? round.teams.find((t) => t.id !== boardLive.buzzingTeamId)?.id ?? null
       : null
     : null
+  const duelCurrentTeamId = duelLive
+    ? duelLive.phase === 'primary-answer'
+      ? duelLive.buzzingTeamId
+      : duelLive.phase === 'steal-answer'
+      ? round.teams.find((t) => t.id !== duelLive.buzzingTeamId)?.id ?? null
+      : null
+    : null
   const currentTeamId = cdLive
     ? round.teams[cdLive.currentTeamIndex]?.id ?? null
-    : sprinterLive?.activeTeamId ?? boardCurrentTeamId ?? null
+    : sprinterLive?.activeTeamId ?? boardCurrentTeamId ?? duelCurrentTeamId ?? null
 
   return (
     <ScreenLayout variant="stage" hideNav hideFooter contentClassName="px-0">
@@ -124,6 +133,8 @@ export default function GamePage() {
               <PointsLadderStage />
             ) : boardLive ? (
               <CategoryBoardStage />
+            ) : duelLive ? (
+              <DuelStage />
             ) : null}
           </div>
           {/* Score-Sidebar */}
@@ -1718,6 +1729,240 @@ function BoardRevealPanel({
       >
         {isBoardDone ? 'Modus beenden' : 'Zurück zum Board'}
       </Button>
+    </div>
+  )
+}
+
+// ---------- Duell 1:1 --------------------------------------------------------
+
+function DuelStage() {
+  const { state, dispatch } = useGame()
+  const duel = useDuel()
+  if (!duel || !state.round) return null
+
+  const teams = state.round.teams
+  const displayName = (playerId: string | null, fallback: string) => {
+    if (!playerId) return fallback
+    const p = state.round?.players.find((pp) => pp.id === playerId)
+    return p?.name.trim() || fallback
+  }
+
+  // Setup-Phase: Vertreter wählen.
+  if (duel.phase === 'setup-duel') {
+    return (
+      <div className="animate-titleIn">
+        <div className="text-center mb-6 md:mb-8">
+          <div className="eyebrow" style={{ color: '#27D8FF' }}>
+            Duell 1:1 · Runde {duel.currentIndex + 1} von {duel.totalDuels}
+          </div>
+          <h1 className="mt-2 font-display font-bold uppercase text-3xl md:text-5xl tracking-tight">
+            Wer geht ins Duell?
+          </h1>
+          <p className="mt-2 text-sm text-ink-muted max-w-md mx-auto">
+            Jedes Team schickt einen Vertreter. Wenn beide stehen, geht's los.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-4">
+          {teams.map((team) => {
+            const teamPlayers = state.round!.players.filter((p) => p.teamId === team.id)
+            const selectedId = duel.duelPlayers[team.id]
+            const teamHex = team.color === 'purple' ? '#7C5CFF' : '#27D8FF'
+            return (
+              <div
+                key={team.id}
+                className="rounded-card border p-4 md:p-5"
+                style={{
+                  borderColor: `${teamHex}66`,
+                  background: 'rgba(11,16,32,0.55)',
+                }}
+              >
+                <div className="eyebrow mb-3" style={{ color: teamHex }}>
+                  {team.name}
+                </div>
+                <div className="space-y-2">
+                  {teamPlayers.map((p, idx) => {
+                    const isSelected = selectedId === p.id
+                    return (
+                      <button
+                        key={p.id}
+                        type="button"
+                        onClick={() =>
+                          dispatch({
+                            type: 'DUEL_SET_PLAYER',
+                            teamId: team.id,
+                            playerId: p.id,
+                          })
+                        }
+                        className={cn(
+                          'w-full h-11 rounded-lg border px-3 flex items-center gap-3',
+                          'text-left text-sm font-medium transition-colors',
+                          isSelected
+                            ? 'bg-brand-purple/25 border-brand-purple/70 text-white'
+                            : 'bg-navy-800/70 border-white/10 text-ink hover:border-white/25',
+                        )}
+                      >
+                        <span
+                          className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold border"
+                          style={{
+                            borderColor: `${teamHex}55`,
+                            color: teamHex,
+                            background: `${teamHex}18`,
+                          }}
+                        >
+                          {(p.name.trim() || `S${idx + 1}`).slice(0, 2).toUpperCase()}
+                        </span>
+                        <span className="flex-1 truncate">
+                          {p.name.trim() || `Spieler ${idx + 1}`}
+                        </span>
+                        {isSelected && <Check className="h-4 w-4 text-brand-purple-soft" />}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    )
+  }
+
+  // Frage-Phasen: Header mit Vertreter-Duo, dann Frage.
+  const buzzingTeam = teams.find((t) => t.id === duel.buzzingTeamId)
+  const opponent = buzzingTeam ? teams.find((t) => t.id !== buzzingTeam.id) : null
+  const activeTeam = duel.phase === 'steal-answer' ? opponent : buzzingTeam
+  const activeHex =
+    activeTeam?.color === 'purple' ? '#7C5CFF' : activeTeam ? '#27D8FF' : '#27D8FF'
+
+  return (
+    <div className="animate-titleIn">
+      {/* Vertreter-Duo */}
+      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 md:gap-6 mb-6">
+        <DuelistCard
+          team={teams[0]}
+          playerName={displayName(duel.duelPlayers[teams[0].id], 'Spieler')}
+          isActive={activeTeam?.id === teams[0].id}
+        />
+        <div className="font-display font-extrabold text-2xl md:text-4xl text-ink-muted">
+          vs
+        </div>
+        <DuelistCard
+          team={teams[1]}
+          playerName={displayName(duel.duelPlayers[teams[1].id], 'Spieler')}
+          isActive={activeTeam?.id === teams[1].id}
+        />
+      </div>
+
+      {duel.activeQuestion && (
+        <div
+          className="rounded-card border p-6 md:p-8 text-center"
+          style={{
+            borderColor: 'rgba(39,216,255,0.35)',
+            background: 'rgba(11,16,32,0.6)',
+            boxShadow: '0 0 0 1px rgba(39,216,255,0.25), 0 0 24px rgba(39,216,255,0.2)',
+          }}
+        >
+          <h2 className="font-display font-bold text-white leading-tight text-2xl md:text-4xl">
+            {duel.activeQuestion.question}
+          </h2>
+        </div>
+      )}
+
+      {duel.phase === 'awaiting-buzz' && (
+        <div className="mt-6 md:mt-8">
+          <p className="text-center text-sm text-ink-muted mb-4">
+            Wer war schneller? Master markiert:
+          </p>
+          <div className="grid grid-cols-2 gap-3 md:gap-4">
+            {teams.map((team) => {
+              const hex = team.color === 'purple' ? '#7C5CFF' : '#27D8FF'
+              return (
+                <button
+                  key={team.id}
+                  type="button"
+                  onClick={() => dispatch({ type: 'DUEL_BUZZER', teamId: team.id })}
+                  className={cn(
+                    'h-14 rounded-card border-2 font-display font-bold uppercase tracking-widest text-sm',
+                    'transition-all hover:brightness-110',
+                  )}
+                  style={{
+                    borderColor: `${hex}80`,
+                    background: `${hex}22`,
+                    color: hex,
+                  }}
+                >
+                  {displayName(duel.duelPlayers[team.id], team.name)}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      {(duel.phase === 'primary-answer' || duel.phase === 'steal-answer') && duel.activeQuestion && (
+        <div className="mt-6 md:mt-8">
+          <p className="text-center text-sm text-ink-muted mb-4">
+            {duel.phase === 'primary-answer' ? 'Auswahl für ' : 'Steal für '}
+            <span style={{ color: activeHex }} className="font-semibold">
+              {activeTeam?.name ?? '—'}
+            </span>
+          </p>
+          <div className="grid md:grid-cols-2 gap-3 md:gap-4">
+            {duel.shuffledOptions.map((option, idx) => (
+              <AnswerOption
+                key={`duel-${duel.currentIndex}-${idx}`}
+                letter={LETTERS[idx]}
+                status="idle"
+                onClick={() => dispatch({ type: 'DUEL_ANSWER', renderedIndex: idx })}
+              >
+                {option}
+              </AnswerOption>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {duel.phase === 'revealed' && duel.activeQuestion && buzzingTeam && (
+        <BoardRevealPanel
+          question={duel.activeQuestion}
+          correctOption={duel.shuffledOptions[duel.correctRenderedIndex]}
+          primaryOutcome={duel.primaryOutcome}
+          stealOutcome={duel.stealOutcome}
+          value={duel.pointsPerCorrect}
+          buzzingTeamName={buzzingTeam.name}
+          opponentTeamName={opponent?.name ?? '—'}
+          isBoardDone={duel.currentIndex + 1 >= duel.totalDuels}
+          onNext={() => dispatch({ type: 'DUEL_NEXT' })}
+        />
+      )}
+    </div>
+  )
+}
+
+interface DuelistCardProps {
+  team: Team
+  playerName: string
+  isActive: boolean
+}
+
+function DuelistCard({ team, playerName, isActive }: DuelistCardProps) {
+  const teamHex = team.color === 'purple' ? '#7C5CFF' : '#27D8FF'
+  return (
+    <div
+      className="rounded-card border p-3 md:p-4 text-center transition-all"
+      style={{
+        borderColor: isActive ? `${teamHex}CC` : `${teamHex}55`,
+        background: 'rgba(11,16,32,0.6)',
+        boxShadow: isActive ? `0 0 24px -6px ${teamHex}AA` : undefined,
+      }}
+    >
+      <div className="eyebrow" style={{ color: teamHex }}>
+        {team.name}
+      </div>
+      <div className="mt-1 font-display font-bold text-white text-lg md:text-xl truncate">
+        {playerName}
+      </div>
     </div>
   )
 }

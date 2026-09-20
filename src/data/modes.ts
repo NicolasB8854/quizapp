@@ -61,6 +61,18 @@ export const MODES: GameMode[] = [
     status: 'planned',
   },
   {
+    id: 'duel-1v1',
+    name: 'Duell 1:1',
+    chipLabel: 'Direkt',
+    tagline: 'Vertreter gegen Vertreter — wer zuerst summt, antwortet.',
+    description:
+      'Fünf Duelle: jedes Team schickt einen Spieler. Buzzer entscheidet, wer die Frage bekommt. Fehler → das andere Team darf stealen.',
+    estimatedMinutes: 10,
+    scoresMatchPoint: true,
+    accent: 'duel',
+    status: 'ready',
+  },
+  {
     id: 'sprinter',
     name: 'Sprinter',
     chipLabel: 'Tempo',

@@ -210,6 +210,29 @@ export interface CategoryBoardLive {
   cellPickerTeamId: string | null
 }
 
+/**
+ * Duell 1:1: pro Duell schickt jedes Team einen Vertreter, direkte Buzzer-Runde
+ * zu einer MC-Frage quer durch alle Topics. Fehler → Steal für den anderen
+ * Vertreter. Fünf Duelle pro Modus.
+ */
+export interface DuelLive {
+  kind: 'duel-1v1'
+  totalDuels: number
+  currentIndex: number
+  /** Pro Duell: gewählter Vertreter je Team, `null` solange nicht gewählt. */
+  duelPlayers: Record<string, string | null>
+  phase: 'setup-duel' | 'awaiting-buzz' | 'primary-answer' | 'steal-answer' | 'revealed'
+  activeQuestion: MultipleChoiceQuestion | null
+  shuffledOptions: string[]
+  correctRenderedIndex: number
+  buzzingTeamId: string | null
+  primaryOutcome: 'correct' | 'wrong' | null
+  stealOutcome: 'correct' | 'wrong' | null
+  pointsPerCorrect: number
+  scores: Record<string, number>
+  usedQuestionIds: string[]
+}
+
 export type LiveGame =
   | CategoryDuelLive
   | FlashLive
@@ -218,6 +241,7 @@ export type LiveGame =
   | SprinterLive
   | PointsLadderLive
   | CategoryBoardLive
+  | DuelLive
 
 // ---------- Draft (Setup-Phase) ----------------------------------------------
 
@@ -275,6 +299,10 @@ export type GameAction =
   | { type: 'BOARD_BUZZER'; teamId: string }
   | { type: 'BOARD_ANSWER'; renderedIndex: number }
   | { type: 'BOARD_NEXT' }
+  | { type: 'DUEL_SET_PLAYER'; teamId: string; playerId: string }
+  | { type: 'DUEL_BUZZER'; teamId: string }
+  | { type: 'DUEL_ANSWER'; renderedIndex: number }
+  | { type: 'DUEL_NEXT' }
   | { type: 'ADD_PLAYER'; teamId: string }
   | { type: 'REMOVE_PLAYER'; playerId: string }
   | { type: 'SET_PLAYER_NAME'; playerId: string; name: string }
@@ -503,6 +531,32 @@ function initSpotlight(teams: Team[], players: readonly Player[]): SpotlightLive
 }
 
 /**
+ * Duell 1:1: Anzahl Duelle und Punktwert pro richtige Antwort.
+ */
+const DUEL_TOTAL = 5
+const DUEL_POINTS = 300
+
+function initDuel(teams: Team[]): DuelLive {
+  const scores = Object.fromEntries(teams.map((t) => [t.id, 0]))
+  return {
+    kind: 'duel-1v1',
+    totalDuels: DUEL_TOTAL,
+    currentIndex: 0,
+    duelPlayers: Object.fromEntries(teams.map((t) => [t.id, null])),
+    phase: 'setup-duel',
+    activeQuestion: null,
+    shuffledOptions: [],
+    correctRenderedIndex: 0,
+    buzzingTeamId: null,
+    primaryOutcome: null,
+    stealOutcome: null,
+    pointsPerCorrect: DUEL_POINTS,
+    scores,
+    usedQuestionIds: [],
+  }
+}
+
+/**
  * Punktejagd: 5×3-Board (Prototyp-Grenze wegen Katalog-Kapazität, siehe Kommentar am Typ).
  */
 const BOARD_COLUMNS = 5
@@ -721,6 +775,8 @@ function initLiveFor(
       return initPointsLadder(teams)
     case 'category-board':
       return initCategoryBoard(teams, players)
+    case 'duel-1v1':
+      return initDuel(teams)
     default:
       // Alle anderen Modi sind in v0.1 als `planned` markiert und lassen sich im Setup
       // gar nicht auswählen. Falls doch: null → Reducer springt in FINISH_MODE.
@@ -1192,6 +1248,143 @@ export function reducer(state: GameState, action: GameAction): GameState {
         ...state,
         live: { ...advancedBase, activeQuestion: nextQuestion },
       }
+    }
+
+    case 'DUEL_SET_PLAYER': {
+      if (!state.round || !state.live || state.live.kind !== 'duel-1v1') return state
+      const live = state.live
+      if (live.phase !== 'setup-duel') return state
+      if (!(action.teamId in live.duelPlayers)) return state
+      // Prüfen, ob der Spieler zum richtigen Team gehört.
+      const player = state.round.players.find((p) => p.id === action.playerId)
+      if (!player || player.teamId !== action.teamId) return state
+
+      const nextDuelPlayers = { ...live.duelPlayers, [action.teamId]: action.playerId }
+      const allSelected = Object.values(nextDuelPlayers).every((v) => v !== null)
+      if (!allSelected) {
+        return { ...state, live: { ...live, duelPlayers: nextDuelPlayers } }
+      }
+
+      // Beide Vertreter stehen — Frage laden und in awaiting-buzz übergehen.
+      const excluded = new Set(live.usedQuestionIds)
+      for (const id of readAskedQuestionIds()) excluded.add(id)
+      const question = pickAnyMultipleChoice(excluded)
+      if (!question) {
+        // Keine MC-Frage verfügbar — Duell überspringen (direkt in FINISH_MODE).
+        return reducer(
+          { ...state, live: { ...live, duelPlayers: nextDuelPlayers } },
+          { type: 'FINISH_MODE' },
+        )
+      }
+
+      const shuffle = shuffleWithMapping(
+        question.options,
+        `duel:${live.currentIndex}:${question.id}`,
+      )
+      return {
+        ...state,
+        live: {
+          ...live,
+          duelPlayers: nextDuelPlayers,
+          phase: 'awaiting-buzz',
+          activeQuestion: question,
+          shuffledOptions: shuffle.shuffled,
+          correctRenderedIndex: shuffle.renderedIndexOf(question.correctIndex),
+        },
+      }
+    }
+
+    case 'DUEL_BUZZER': {
+      if (!state.round || !state.live || state.live.kind !== 'duel-1v1') return state
+      const live = state.live
+      if (live.phase !== 'awaiting-buzz') return state
+      if (!(action.teamId in live.duelPlayers)) return state
+      return {
+        ...state,
+        live: { ...live, phase: 'primary-answer', buzzingTeamId: action.teamId },
+      }
+    }
+
+    case 'DUEL_ANSWER': {
+      if (!state.round || !state.live || state.live.kind !== 'duel-1v1') return state
+      const live = state.live
+      if (!live.activeQuestion) return state
+      const value = live.pointsPerCorrect
+      const wasCorrect = action.renderedIndex === live.correctRenderedIndex
+
+      if (live.phase === 'primary-answer') {
+        if (!live.buzzingTeamId) return state
+        if (wasCorrect) {
+          const scores = {
+            ...live.scores,
+            [live.buzzingTeamId]: (live.scores[live.buzzingTeamId] ?? 0) + value,
+          }
+          return {
+            ...state,
+            live: { ...live, phase: 'revealed', primaryOutcome: 'correct', scores },
+          }
+        }
+        return {
+          ...state,
+          live: { ...live, phase: 'steal-answer', primaryOutcome: 'wrong' },
+        }
+      }
+
+      if (live.phase === 'steal-answer') {
+        const opponent = state.round.teams.find((t) => t.id !== live.buzzingTeamId)
+        if (!opponent) return state
+        if (wasCorrect) {
+          const scores = {
+            ...live.scores,
+            [opponent.id]: (live.scores[opponent.id] ?? 0) + value,
+          }
+          return {
+            ...state,
+            live: { ...live, phase: 'revealed', stealOutcome: 'correct', scores },
+          }
+        }
+        return {
+          ...state,
+          live: { ...live, phase: 'revealed', stealOutcome: 'wrong' },
+        }
+      }
+
+      return state
+    }
+
+    case 'DUEL_NEXT': {
+      if (!state.round || !state.live || state.live.kind !== 'duel-1v1') return state
+      const live = state.live
+      if (live.phase !== 'revealed') return state
+
+      const usedQuestionIds = live.activeQuestion
+        ? [...live.usedQuestionIds, live.activeQuestion.id]
+        : live.usedQuestionIds
+      const nextIndex = live.currentIndex + 1
+      const isModeDone = nextIndex >= live.totalDuels
+
+      const advancedBase: DuelLive = {
+        ...live,
+        usedQuestionIds,
+        currentIndex: nextIndex,
+        // Vertreter für das nächste Duell wieder frei wählbar.
+        duelPlayers: Object.fromEntries(
+          state.round.teams.map((t) => [t.id, null]),
+        ),
+        phase: 'setup-duel',
+        activeQuestion: null,
+        shuffledOptions: [],
+        correctRenderedIndex: 0,
+        buzzingTeamId: null,
+        primaryOutcome: null,
+        stealOutcome: null,
+      }
+
+      if (isModeDone) {
+        return reducer({ ...state, live: advancedBase }, { type: 'FINISH_MODE' })
+      }
+
+      return { ...state, live: advancedBase }
     }
 
     case 'BOARD_PICK_CELL': {
@@ -1730,6 +1923,11 @@ export function usePointsLadder(): PointsLadderLive | null {
 export function useCategoryBoard(): CategoryBoardLive | null {
   const { state } = useGame()
   return state.live && state.live.kind === 'category-board' ? state.live : null
+}
+
+export function useDuel(): DuelLive | null {
+  const { state } = useGame()
+  return state.live && state.live.kind === 'duel-1v1' ? state.live : null
 }
 
 // Convenience für Dispatch ohne Boilerplate.
