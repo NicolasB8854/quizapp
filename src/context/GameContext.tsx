@@ -160,12 +160,34 @@ export interface SprinterLive {
   usedQuestionIds: string[]
 }
 
+/**
+ * Alles oder Nichts (Punkte-Leiter): fünf MC-Fragen mit stark steigenden Punktwerten.
+ * Beide Teams tippen unabhängig, Auflösung erfolgt gemeinsam. Die Difficulty steigt
+ * über die Stufen — leichter Einstieg, harter Endgewinn.
+ */
+export interface PointsLadderLive {
+  kind: 'points-ladder'
+  totalQuestions: number
+  /** Punkte pro Stufe, z. B. [200, 500, 1000, 2500, 5000]. */
+  ladder: number[]
+  currentIndex: number
+  activeQuestion: MultipleChoiceQuestion | null
+  shuffledOptions: string[]
+  correctRenderedIndex: number
+  /** Verdeckte Team-Antworten für die aktuelle Frage. */
+  teamAnswers: Record<string, number | null>
+  phase: 'answering' | 'revealed' | 'empty'
+  scores: Record<string, number>
+  usedQuestionIds: string[]
+}
+
 export type LiveGame =
   | CategoryDuelLive
   | FlashLive
   | SpotlightLive
   | AroundCornerLive
   | SprinterLive
+  | PointsLadderLive
 
 // ---------- Draft (Setup-Phase) ----------------------------------------------
 
@@ -216,6 +238,9 @@ export type GameAction =
   | { type: 'SPRINTER_SKIP' }
   | { type: 'SPRINTER_TIME_UP' }
   | { type: 'SPRINTER_START_NEXT_TEAM' }
+  | { type: 'LADDER_SET_ANSWER'; teamId: string; renderedIndex: number }
+  | { type: 'LADDER_REVEAL' }
+  | { type: 'LADDER_NEXT' }
   | { type: 'ADD_PLAYER'; teamId: string }
   | { type: 'REMOVE_PLAYER'; playerId: string }
   | { type: 'SET_PLAYER_NAME'; playerId: string; name: string }
@@ -443,6 +468,72 @@ function initSpotlight(teams: Team[], players: readonly Player[]): SpotlightLive
   }
 }
 
+/**
+ * Punkte-Leiter: Werte pro Stufe. Klassischer Millionär-Aufstieg, Prototyp-Höchstwert 5.000.
+ */
+const LADDER_VALUES = [200, 500, 1000, 2500, 5000] as const
+
+/**
+ * Difficulty-Präferenz pro Ladder-Stufe. Frühe Fragen leicht, spätere schwer.
+ * Nutzt DIFFICULTY_WEIGHTS aus Session H über `pickAnyMultipleChoice(_, level)`.
+ */
+const LADDER_LEVELS: PlayerInterest['level'][] = [
+  'bisschen',
+  'gut',
+  'gut',
+  'nerd',
+  'nerd',
+]
+
+function pickLadderQuestion(
+  usedIds: Set<string>,
+  index: number,
+): MultipleChoiceQuestion | null {
+  const level = LADDER_LEVELS[index] ?? 'gut'
+  return pickAnyMultipleChoice(usedIds, level)
+}
+
+function initPointsLadder(teams: Team[]): PointsLadderLive {
+  const scores = Object.fromEntries(teams.map((t) => [t.id, 0]))
+  const excluded = new Set<string>()
+  for (const id of readAskedQuestionIds()) excluded.add(id)
+  const first = pickLadderQuestion(excluded, 0)
+
+  if (!first) {
+    return {
+      kind: 'points-ladder',
+      totalQuestions: LADDER_VALUES.length,
+      ladder: [...LADDER_VALUES],
+      currentIndex: 0,
+      activeQuestion: null,
+      shuffledOptions: [],
+      correctRenderedIndex: 0,
+      teamAnswers: Object.fromEntries(teams.map((t) => [t.id, null])),
+      phase: 'empty',
+      scores,
+      usedQuestionIds: [],
+    }
+  }
+
+  const shuffle = shuffleWithMapping(
+    first.options,
+    `ladder:0:${first.id}`,
+  )
+  return {
+    kind: 'points-ladder',
+    totalQuestions: LADDER_VALUES.length,
+    ladder: [...LADDER_VALUES],
+    currentIndex: 0,
+    activeQuestion: first,
+    shuffledOptions: shuffle.shuffled,
+    correctRenderedIndex: shuffle.renderedIndexOf(first.correctIndex),
+    teamAnswers: Object.fromEntries(teams.map((t) => [t.id, null])),
+    phase: 'answering',
+    scores,
+    usedQuestionIds: [],
+  }
+}
+
 function initSprinter(teams: Team[]): SprinterLive {
   const scores = Object.fromEntries(teams.map((t) => [t.id, 0]))
   const excluded = new Set<string>()
@@ -540,6 +631,8 @@ function initLiveFor(
       return initAroundCorner(teams)
     case 'sprinter':
       return initSprinter(teams)
+    case 'points-ladder':
+      return initPointsLadder(teams)
     default:
       // Alle anderen Modi sind in v0.1 als `planned` markiert und lassen sich im Setup
       // gar nicht auswählen. Falls doch: null → Reducer springt in FINISH_MODE.
@@ -1013,6 +1106,95 @@ export function reducer(state: GameState, action: GameAction): GameState {
       }
     }
 
+    case 'LADDER_SET_ANSWER': {
+      if (!state.live || state.live.kind !== 'points-ladder') return state
+      if (state.live.phase !== 'answering') return state
+      if (!(action.teamId in state.live.teamAnswers)) return state
+      return {
+        ...state,
+        live: {
+          ...state.live,
+          teamAnswers: {
+            ...state.live.teamAnswers,
+            [action.teamId]: action.renderedIndex,
+          },
+        },
+      }
+    }
+
+    case 'LADDER_REVEAL': {
+      if (!state.live || state.live.kind !== 'points-ladder') return state
+      if (state.live.phase !== 'answering' || !state.live.activeQuestion) return state
+      // Nur auflösen, wenn beide Teams gewählt haben.
+      const allAnswered = Object.values(state.live.teamAnswers).every((a) => a !== null)
+      if (!allAnswered) return state
+
+      const value = state.live.ladder[state.live.currentIndex] ?? 0
+      const nextScores = { ...state.live.scores }
+      for (const [teamId, answer] of Object.entries(state.live.teamAnswers)) {
+        if (answer === state.live.correctRenderedIndex) {
+          nextScores[teamId] = (nextScores[teamId] ?? 0) + value
+        }
+      }
+      return {
+        ...state,
+        live: { ...state.live, phase: 'revealed', scores: nextScores },
+      }
+    }
+
+    case 'LADDER_NEXT': {
+      if (!state.round || !state.live || state.live.kind !== 'points-ladder') return state
+      // Empty-Fall: direkt in FINISH_MODE.
+      if (state.live.phase === 'empty') {
+        return reducer(state, { type: 'FINISH_MODE' })
+      }
+      if (state.live.phase !== 'revealed') return state
+
+      const usedQuestionIds = state.live.activeQuestion
+        ? [...state.live.usedQuestionIds, state.live.activeQuestion.id]
+        : state.live.usedQuestionIds
+      const nextIndex = state.live.currentIndex + 1
+      const isModeDone = nextIndex >= state.live.totalQuestions
+
+      const advancedBase: PointsLadderLive = {
+        ...state.live,
+        usedQuestionIds,
+        currentIndex: nextIndex,
+        activeQuestion: null,
+        shuffledOptions: [],
+        correctRenderedIndex: 0,
+        teamAnswers: Object.fromEntries(
+          state.round.teams.map((t) => [t.id, null]),
+        ),
+        phase: 'answering',
+      }
+
+      if (isModeDone) {
+        return reducer({ ...state, live: advancedBase }, { type: 'FINISH_MODE' })
+      }
+
+      const excluded = new Set(usedQuestionIds)
+      for (const id of readAskedQuestionIds()) excluded.add(id)
+      const nextQuestion = pickLadderQuestion(excluded, nextIndex)
+      if (!nextQuestion) {
+        return reducer({ ...state, live: advancedBase }, { type: 'FINISH_MODE' })
+      }
+
+      const shuffle = shuffleWithMapping(
+        nextQuestion.options,
+        `ladder:${nextIndex}:${nextQuestion.id}`,
+      )
+      return {
+        ...state,
+        live: {
+          ...advancedBase,
+          activeQuestion: nextQuestion,
+          shuffledOptions: shuffle.shuffled,
+          correctRenderedIndex: shuffle.renderedIndexOf(nextQuestion.correctIndex),
+        },
+      }
+    }
+
     case 'SPRINTER_ANSWER':
     case 'SPRINTER_SKIP': {
       if (!state.live || state.live.kind !== 'sprinter') return state
@@ -1311,6 +1493,11 @@ export function useAroundCorner(): AroundCornerLive | null {
 export function useSprinter(): SprinterLive | null {
   const { state } = useGame()
   return state.live && state.live.kind === 'sprinter' ? state.live : null
+}
+
+export function usePointsLadder(): PointsLadderLive | null {
+  const { state } = useGame()
+  return state.live && state.live.kind === 'points-ladder' ? state.live : null
 }
 
 // Convenience für Dispatch ohne Boilerplate.

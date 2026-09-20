@@ -52,14 +52,14 @@ describe('reducer — Setup / Draft', () => {
 
   it('TOGGLE_MODE ignoriert planned-Modi', () => {
     const before = INITIAL_STATE.draft.selectedModes
-    const s = reducer(INITIAL_STATE, { type: 'TOGGLE_MODE', modeId: 'points-ladder' })
+    const s = reducer(INITIAL_STATE, { type: 'TOGGLE_MODE', modeId: 'category-board' })
     expect(s.draft.selectedModes).toEqual(before)
   })
 
   it('SET_MODE_SELECTION ersetzt die Auswahl und filtert planned-IDs raus', () => {
     const s = reducer(INITIAL_STATE, {
       type: 'SET_MODE_SELECTION',
-      modeIds: ['flash', 'points-ladder', 'category-duel'],
+      modeIds: ['flash', 'category-board', 'category-duel'],
     })
     expect(s.draft.selectedModes).toEqual(['flash', 'category-duel'])
   })
@@ -503,6 +503,117 @@ describe('reducer — Player-Ebene (Session D + E)', () => {
       s = reducer(s, { type: 'FLASH_NEXT' })
     }
     expect(topics).toEqual(['wissenschaft', 'wissenschaft'])
+  })
+})
+
+describe('reducer — Alles oder Nichts (Session K)', () => {
+  function bootLadder(): ReturnType<typeof reducer> {
+    let s = reducer(INITIAL_STATE, {
+      type: 'SET_MODE_SELECTION',
+      modeIds: ['points-ladder'],
+    })
+    s = reducer(s, { type: 'GO_TO_LOBBY' })
+    s = reducer(s, { type: 'START_PLAYING' })
+    return s
+  }
+
+  it('START_PLAYING initialisiert Ladder mit 5 Stufen und erster Frage', () => {
+    const s = bootLadder()
+    if (s.live?.kind !== 'points-ladder') throw new Error('unreachable')
+    expect(s.live.phase).toBe('answering')
+    expect(s.live.currentIndex).toBe(0)
+    expect(s.live.totalQuestions).toBe(5)
+    expect(s.live.ladder).toEqual([200, 500, 1000, 2500, 5000])
+    expect(s.live.activeQuestion).not.toBeNull()
+    expect(s.live.teamAnswers).toEqual({ 'team-a': null, 'team-b': null })
+    expect(s.live.scores).toEqual({ 'team-a': 0, 'team-b': 0 })
+  })
+
+  it('LADDER_SET_ANSWER speichert die Wahl pro Team', () => {
+    let s = bootLadder()
+    if (s.live?.kind !== 'points-ladder') throw new Error('unreachable')
+    s = reducer(s, {
+      type: 'LADDER_SET_ANSWER',
+      teamId: 'team-a',
+      renderedIndex: 2,
+    })
+    if (s.live?.kind !== 'points-ladder') throw new Error('unreachable')
+    expect(s.live.teamAnswers['team-a']).toBe(2)
+    expect(s.live.teamAnswers['team-b']).toBeNull()
+  })
+
+  it('LADDER_REVEAL bleibt no-op solange nicht beide getippt haben', () => {
+    let s = bootLadder()
+    s = reducer(s, {
+      type: 'LADDER_SET_ANSWER',
+      teamId: 'team-a',
+      renderedIndex: 0,
+    })
+    const before = s.live
+    s = reducer(s, { type: 'LADDER_REVEAL' })
+    expect(s.live).toBe(before)
+  })
+
+  it('LADDER_REVEAL verteilt den Stufen-Wert pro richtiger Antwort', () => {
+    let s = bootLadder()
+    if (s.live?.kind !== 'points-ladder') throw new Error('unreachable')
+    const correctIdx = s.live.correctRenderedIndex
+    const value = s.live.ladder[0]
+
+    s = reducer(s, { type: 'LADDER_SET_ANSWER', teamId: 'team-a', renderedIndex: correctIdx })
+    s = reducer(s, { type: 'LADDER_SET_ANSWER', teamId: 'team-b', renderedIndex: correctIdx })
+    s = reducer(s, { type: 'LADDER_REVEAL' })
+    if (s.live?.kind !== 'points-ladder') throw new Error('unreachable')
+    expect(s.live.phase).toBe('revealed')
+    expect(s.live.scores['team-a']).toBe(value)
+    expect(s.live.scores['team-b']).toBe(value)
+  })
+
+  it('LADDER_NEXT geht zur nächsten Stufe und resettet Team-Antworten', () => {
+    let s = bootLadder()
+    if (s.live?.kind !== 'points-ladder') throw new Error('unreachable')
+    const firstQuestionId = s.live.activeQuestion!.id
+
+    s = reducer(s, { type: 'LADDER_SET_ANSWER', teamId: 'team-a', renderedIndex: 0 })
+    s = reducer(s, { type: 'LADDER_SET_ANSWER', teamId: 'team-b', renderedIndex: 0 })
+    s = reducer(s, { type: 'LADDER_REVEAL' })
+    s = reducer(s, { type: 'LADDER_NEXT' })
+    if (s.live?.kind !== 'points-ladder') throw new Error('unreachable')
+    expect(s.live.currentIndex).toBe(1)
+    expect(s.live.phase).toBe('answering')
+    expect(s.live.teamAnswers).toEqual({ 'team-a': null, 'team-b': null })
+    expect(s.live.usedQuestionIds).toContain(firstQuestionId)
+    expect(s.live.activeQuestion?.id).not.toBe(firstQuestionId)
+  })
+
+  it('LADDER_NEXT vor revealed ist no-op', () => {
+    let s = bootLadder()
+    const before = s.live
+    s = reducer(s, { type: 'LADDER_NEXT' })
+    expect(s.live).toBe(before)
+  })
+
+  it('Nach 5 Stufen: Team mit mehr Punkten bekommt Match-Punkt', () => {
+    let s = bootLadder()
+    if (s.live?.kind !== 'points-ladder') throw new Error('unreachable')
+    const total = s.live.totalQuestions
+    for (let i = 0; i < total; i++) {
+      if (s.live?.kind !== 'points-ladder') throw new Error('unreachable')
+      const correctIdx = s.live.correctRenderedIndex
+      const wrongIdx = (correctIdx + 1) % s.live.shuffledOptions.length
+      // Team A immer richtig, Team B immer falsch.
+      s = reducer(s, { type: 'LADDER_SET_ANSWER', teamId: 'team-a', renderedIndex: correctIdx })
+      s = reducer(s, { type: 'LADDER_SET_ANSWER', teamId: 'team-b', renderedIndex: wrongIdx })
+      s = reducer(s, { type: 'LADDER_REVEAL' })
+      s = reducer(s, { type: 'LADDER_NEXT' })
+    }
+    expect(s.phase).toBe('scoreboard')
+    expect(s.matchPoints['team-a']).toBe(1)
+    expect(s.matchPoints['team-b'] ?? 0).toBe(0)
+    // Team A hat alle 5 Stufen abgeräumt: 200 + 500 + 1000 + 2500 + 5000 = 9200.
+    const finalResult = s.results[0]
+    expect(finalResult?.scores['team-a']).toBe(9200)
+    expect(finalResult?.scores['team-b']).toBe(0)
   })
 })
 

@@ -12,12 +12,20 @@
 
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { X, ArrowRight, Crown, Check, XCircle, Lightbulb, Eye, Timer, SkipForward } from 'lucide-react'
+import { X, ArrowRight, Crown, Check, XCircle, Lightbulb, Eye, Timer, SkipForward, TrendingUp } from 'lucide-react'
 import { ScreenLayout } from '@/components/ScreenLayout'
 import { Button } from '@/components/Button'
 import { AnswerOption, type AnswerStatus } from '@/components/AnswerOption'
 import { TopicTile } from '@/components/TopicTile'
-import { useGame, useCategoryDuel, useFlash, useSpotlight, useAroundCorner, useSprinter } from '@/context/GameContext'
+import {
+  useGame,
+  useCategoryDuel,
+  useFlash,
+  useSpotlight,
+  useAroundCorner,
+  useSprinter,
+  usePointsLadder,
+} from '@/context/GameContext'
 import { TOPICS, TOPICS_BY_ID } from '@/data/topics'
 import { MODES_BY_ID } from '@/data/modes'
 import type { Team } from '@/types/round'
@@ -34,6 +42,7 @@ export default function GamePage() {
   const spotlightLive = useSpotlight()
   const cornerLive = useAroundCorner()
   const sprinterLive = useSprinter()
+  const ladderLive = usePointsLadder()
 
   useEffect(() => {
     if (state.phase === 'setup')      navigate('/setup', { replace: true })
@@ -100,6 +109,8 @@ export default function GamePage() {
               <AroundCornerStage />
             ) : sprinterLive ? (
               <SprinterStage />
+            ) : ladderLive ? (
+              <PointsLadderStage />
             ) : null}
           </div>
           {/* Score-Sidebar */}
@@ -1101,6 +1112,311 @@ function SprinterStage() {
           <SkipForward className="h-4 w-4" />
           Weiter (kein Punkt)
         </button>
+      </div>
+    </div>
+  )
+}
+
+// ---------- Alles oder Nichts (Punkte-Leiter) --------------------------------
+
+function PointsLadderStage() {
+  const { state, dispatch } = useGame()
+  const ladder = usePointsLadder()
+  if (!ladder || !state.round) return null
+
+  if (ladder.phase === 'empty') {
+    return (
+      <div className="animate-titleIn text-center py-10">
+        <div className="eyebrow">Alles oder Nichts übersprungen</div>
+        <h1 className="mt-3 font-display font-bold uppercase text-3xl md:text-5xl tracking-tight">
+          Keine Fragen im Katalog
+        </h1>
+        <p className="mt-3 text-ink-muted max-w-lg mx-auto">
+          Für die Punkte-Leiter braucht es Multiple-Choice-Fragen. Wir überspringen den
+          Modus für diese Runde.
+        </p>
+        <div className="mt-6 flex justify-center">
+          <Button
+            variant="primary"
+            size="lg"
+            trailing={<ArrowRight className="h-5 w-5" />}
+            onClick={() => dispatch({ type: 'LADDER_NEXT' })}
+          >
+            Weiter
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  if (!ladder.activeQuestion) return null
+  const currentValue = ladder.ladder[ladder.currentIndex] ?? 0
+  const allAnswered = Object.values(ladder.teamAnswers).every((a) => a !== null)
+  const isRevealed = ladder.phase === 'revealed'
+  const teams = state.round.teams
+
+  return (
+    <div className="animate-titleIn">
+      {/* Header mit Progress + Ladder-Stufen */}
+      <div className="text-center mb-4 md:mb-6">
+        <div className="eyebrow inline-flex items-center gap-2 justify-center">
+          <TrendingUp className="h-3.5 w-3.5" style={{ color: '#E9C46A' }} />
+          Alles oder Nichts · Stufe {ladder.currentIndex + 1} von {ladder.totalQuestions}
+        </div>
+        <div className="mt-3 inline-flex items-center gap-1.5">
+          {ladder.ladder.map((val, idx) => {
+            const isCurrent = idx === ladder.currentIndex
+            const isPast = idx < ladder.currentIndex
+            return (
+              <span
+                key={idx}
+                className={cn(
+                  'rounded-full font-display font-bold tabular-nums transition-all',
+                  isCurrent
+                    ? 'text-mode-ladder text-lg md:text-xl px-3 py-1'
+                    : 'text-xs md:text-sm px-2 py-0.5',
+                  isCurrent
+                    ? 'border-2 border-mode-ladder/60 bg-mode-ladder/15 shadow-[0_0_20px_-4px_rgba(233,196,106,0.7)]'
+                    : isPast
+                    ? 'text-ink-faint bg-navy-800/60 border border-white/[0.06]'
+                    : 'text-ink-muted bg-navy-800/50 border border-white/[0.08]',
+                )}
+              >
+                {val.toLocaleString('de-DE')}
+              </span>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Frage */}
+      <div
+        className="rounded-card border p-6 md:p-8 text-center"
+        style={{
+          borderColor: 'rgba(233,196,106,0.4)',
+          background: 'rgba(11,16,32,0.6)',
+          boxShadow:
+            '0 0 0 1px rgba(233,196,106,0.25), 0 0 28px rgba(233,196,106,0.25)',
+        }}
+      >
+        <div className="eyebrow" style={{ color: '#E9C46A' }}>
+          {currentValue.toLocaleString('de-DE')} Punkte pro Team
+        </div>
+        <h2 className="mt-2 font-display font-bold text-white leading-tight text-2xl md:text-4xl">
+          {ladder.activeQuestion.question}
+        </h2>
+      </div>
+
+      {/* Zwei Team-Panels */}
+      <div className="mt-6 md:mt-8 grid md:grid-cols-2 gap-4">
+        {teams.map((team) => (
+          <LadderTeamPanel
+            key={team.id}
+            team={team}
+            options={ladder.shuffledOptions}
+            selected={ladder.teamAnswers[team.id]}
+            correctIndex={ladder.correctRenderedIndex}
+            revealed={isRevealed}
+            onPick={(idx) =>
+              dispatch({
+                type: 'LADDER_SET_ANSWER',
+                teamId: team.id,
+                renderedIndex: idx,
+              })
+            }
+          />
+        ))}
+      </div>
+
+      {/* Aktion */}
+      {!isRevealed ? (
+        <div className="mt-6 flex flex-col md:flex-row items-center justify-between gap-3">
+          <div className="text-sm text-ink-muted">
+            {allAnswered
+              ? 'Beide Teams haben getippt. Bereit für die Auflösung.'
+              : 'Warte auf beide Team-Antworten.'}
+          </div>
+          <Button
+            variant="primary"
+            size="lg"
+            disabled={!allAnswered}
+            onClick={() => dispatch({ type: 'LADDER_REVEAL' })}
+          >
+            Aufdecken
+          </Button>
+        </div>
+      ) : (
+        <LadderRevealPanel
+          question={ladder.activeQuestion}
+          correctOption={ladder.shuffledOptions[ladder.correctRenderedIndex]}
+          teams={teams}
+          teamAnswers={ladder.teamAnswers}
+          correctIndex={ladder.correctRenderedIndex}
+          value={currentValue}
+          isLast={ladder.currentIndex + 1 >= ladder.totalQuestions}
+          onNext={() => dispatch({ type: 'LADDER_NEXT' })}
+        />
+      )}
+    </div>
+  )
+}
+
+interface LadderTeamPanelProps {
+  team: Team
+  options: string[]
+  selected: number | null
+  correctIndex: number
+  revealed: boolean
+  onPick: (renderedIndex: number) => void
+}
+
+function LadderTeamPanel({
+  team,
+  options,
+  selected,
+  correctIndex,
+  revealed,
+  onPick,
+}: LadderTeamPanelProps) {
+  const teamHex = team.color === 'purple' ? '#7C5CFF' : '#27D8FF'
+  return (
+    <div
+      className="rounded-card border p-4 md:p-5"
+      style={{ borderColor: `${teamHex}55`, background: 'rgba(11,16,32,0.55)' }}
+    >
+      <div className="eyebrow mb-2" style={{ color: teamHex }}>
+        {team.name}
+      </div>
+      <div className="grid grid-cols-1 gap-2">
+        {options.map((option, idx) => {
+          const isSelected = selected === idx
+          const isCorrect = idx === correctIndex
+          let cls = 'border-white/10 bg-navy-800/70 hover:border-white/25'
+          if (!revealed && isSelected) {
+            cls = 'border-brand-purple/70 bg-brand-purple/15 text-white'
+          } else if (revealed && isCorrect) {
+            cls = 'border-correct/60 bg-correct/15 text-correct'
+          } else if (revealed && isSelected && !isCorrect) {
+            cls = 'border-wrong/60 bg-wrong/15 text-wrong'
+          } else if (revealed) {
+            cls = 'border-white/10 bg-navy-800/40 text-ink-muted opacity-60'
+          }
+          return (
+            <button
+              key={idx}
+              type="button"
+              disabled={revealed}
+              onClick={() => onPick(idx)}
+              className={cn(
+                'group flex items-center gap-3 h-11 rounded-lg border px-3',
+                'text-left text-sm font-medium transition-colors',
+                'disabled:cursor-not-allowed',
+                cls,
+              )}
+            >
+              <span
+                className={cn(
+                  'inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full',
+                  'text-[10px] font-bold uppercase tracking-widest border',
+                  !revealed && isSelected
+                    ? 'border-brand-purple/70 bg-brand-purple/25 text-white'
+                    : 'border-white/15 text-ink-muted',
+                )}
+              >
+                {LETTERS[idx]}
+              </span>
+              <span className="min-w-0 flex-1 truncate">{option}</span>
+              {revealed && isSelected && (isCorrect ? (
+                <Check className="h-4 w-4 text-correct" />
+              ) : (
+                <XCircle className="h-4 w-4 text-wrong" />
+              ))}
+            </button>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+interface LadderRevealProps {
+  question: import('@/types/question').MultipleChoiceQuestion
+  correctOption: string
+  teams: Team[]
+  teamAnswers: Record<string, number | null>
+  correctIndex: number
+  value: number
+  isLast: boolean
+  onNext: () => void
+}
+
+function LadderRevealPanel({
+  question,
+  correctOption,
+  teams,
+  teamAnswers,
+  correctIndex,
+  value,
+  isLast,
+  onNext,
+}: LadderRevealProps) {
+  const explanationText = question.explanation ?? question.gmNote
+  return (
+    <div
+      className="mt-6 rounded-card border p-5 md:p-6"
+      style={{
+        borderColor: 'rgba(233,196,106,0.5)',
+        background: 'rgba(11,16,32,0.7)',
+        boxShadow: '0 0 24px -8px rgba(233,196,106,0.6)',
+      }}
+    >
+      <div className="text-[11px] font-bold uppercase tracking-[0.22em] mb-2" style={{ color: '#E9C46A' }}>
+        Auflösung
+      </div>
+      <div className="text-sm mb-3">
+        <span className="text-ink-muted">Richtig war: </span>
+        <span className="font-semibold text-correct">{correctOption}</span>
+      </div>
+      <div className="flex flex-wrap gap-2 mb-3">
+        {teams.map((team) => {
+          const answer = teamAnswers[team.id]
+          const wasCorrect = answer === correctIndex
+          const teamHex = team.color === 'purple' ? '#7C5CFF' : '#27D8FF'
+          return (
+            <div
+              key={team.id}
+              className={cn(
+                'inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs',
+                wasCorrect
+                  ? 'bg-correct/15 border border-correct/40 text-correct'
+                  : 'bg-navy-800/60 border border-white/10 text-ink-muted',
+              )}
+            >
+              <span style={{ color: teamHex }} className="font-semibold">
+                {team.name}
+              </span>
+              <span>
+                {wasCorrect ? `+ ${value.toLocaleString('de-DE')}` : 'keine Punkte'}
+              </span>
+            </div>
+          )
+        })}
+      </div>
+      {explanationText && (
+        <p className="text-sm text-ink-muted leading-relaxed max-w-2xl">
+          <span className="font-semibold text-ink">Erklärung: </span>
+          {explanationText}
+        </p>
+      )}
+      <div className="mt-5 flex justify-end">
+        <Button
+          variant="primary"
+          size="lg"
+          trailing={<ArrowRight className="h-5 w-5" />}
+          onClick={onNext}
+        >
+          {isLast ? 'Modus beenden' : 'Nächste Stufe'}
+        </Button>
       </div>
     </div>
   )

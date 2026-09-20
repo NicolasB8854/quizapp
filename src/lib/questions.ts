@@ -42,18 +42,24 @@ export function getAllMultipleChoice(): MultipleChoiceQuestion[] {
 }
 
 /**
- * Zieht die nächste ungenutzte Multiple-Choice-Frage aus dem gesamten Pool — für den
- * Sprinter, wo Fragen quer durch alle Topics jagen. Kein Topic- oder Difficulty-
- * Filter; Duplicate-Check und Fallback analog zu `pickQuestion`.
+ * Zieht die nächste ungenutzte Multiple-Choice-Frage aus dem gesamten Pool.
+ *
+ * Für Modi, die Fragen quer durch alle Topics jagen (Sprinter, Alles-oder-Nichts).
+ * Optional mit `preferredLevel` für Difficulty-Match — analog zu `pickQuestion`.
  */
 export function pickAnyMultipleChoice(
   usedIds: ReadonlySet<string>,
+  preferredLevel?: SkillLevel,
 ): MultipleChoiceQuestion | null {
   const pool = getAllMultipleChoice()
   if (pool.length === 0) return null
   const fresh = pool.filter((q) => !usedIds.has(q.id))
   const candidates = fresh.length > 0 ? fresh : pool
-  return candidates[Math.floor(Math.random() * candidates.length)]
+
+  if (!preferredLevel) {
+    return candidates[Math.floor(Math.random() * candidates.length)]
+  }
+  return pickByDifficulty(candidates, () => preferredLevel)
 }
 
 // ---------- Difficulty-Präferenz (Session H) ---------------------------------

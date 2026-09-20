@@ -90,6 +90,16 @@ describe('questions', () => {
       const picked = pickAnyMultipleChoice(excluded)
       expect(picked?.id).toBe(pool[0].id)
     })
+
+    it('mit preferredLevel=nerd bevorzugt schwere Fragen (Verteilungscheck)', () => {
+      vi.restoreAllMocks()
+      const counts: Record<string, number> = { leicht: 0, mittel: 0, schwer: 0 }
+      for (let i = 0; i < 400; i++) {
+        const picked = pickAnyMultipleChoice(new Set(), 'nerd')
+        if (picked) counts[picked.difficulty] = (counts[picked.difficulty] ?? 0) + 1
+      }
+      expect(counts.schwer).toBeGreaterThan(counts.leicht)
+    })
   })
 
   describe('pickWarmupRiddle (Session I)', () => {
