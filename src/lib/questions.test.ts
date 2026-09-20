@@ -1,9 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import {
+  getAllMultipleChoice,
   getAllQuestions,
   getMultipleChoiceByTopic,
   getTrueFalsePool,
   getWarmupRiddlePool,
+  pickAnyMultipleChoice,
   pickByDifficulty,
   pickQuestion,
   pickTrueFalse,
@@ -64,6 +66,29 @@ describe('questions', () => {
 
     it('gibt null zurück, wenn das Topic keine Fragen hat', () => {
       expect(pickQuestion('nonsense' as Topic, new Set())).toBeNull()
+    })
+  })
+
+  describe('pickAnyMultipleChoice (Session J)', () => {
+    it('zieht eine MC-Frage aus dem gesamten Pool', () => {
+      const picked = pickAnyMultipleChoice(new Set())
+      expect(picked).not.toBeNull()
+      expect(picked!.type).toBe('multiple-choice')
+    })
+
+    it('respektiert usedIds und fällt bei erschöpftem Pool auf den vollen zurück', () => {
+      const pool = getAllMultipleChoice()
+      const excluded = new Set([pool[0].id])
+      const picked = pickAnyMultipleChoice(excluded)
+      expect(picked).not.toBeNull()
+      expect(excluded.has(picked!.id)).toBe(false)
+    })
+
+    it('mit vollem Excluded fällt auf ersten Katalog-Eintrag zurück (Math.random=0)', () => {
+      const pool = getAllMultipleChoice()
+      const excluded = new Set(pool.map((q) => q.id))
+      const picked = pickAnyMultipleChoice(excluded)
+      expect(picked?.id).toBe(pool[0].id)
     })
   })
 

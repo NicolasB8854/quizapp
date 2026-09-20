@@ -38,7 +38,12 @@ import type {
   WarmupRiddleQuestion,
 } from '@/types/question'
 import { MODES_BY_ID } from '@/data/modes'
-import { pickQuestion, pickTrueFalse, pickWarmupRiddle } from '@/lib/questions'
+import {
+  pickAnyMultipleChoice,
+  pickQuestion,
+  pickTrueFalse,
+  pickWarmupRiddle,
+} from '@/lib/questions'
 import { markQuestionsAsked, readAskedQuestionIds } from '@/lib/questionHistory'
 import {
   aggregatePlayerInterests,
@@ -132,7 +137,35 @@ export interface AroundCornerLive {
   usedQuestionIds: string[]
 }
 
-export type LiveGame = CategoryDuelLive | FlashLive | SpotlightLive | AroundCornerLive
+/**
+ * Sprinter: 90-Sekunden-Sprint pro Team über Multiple-Choice-Fragen aus dem gesamten
+ * Pool. Richtig = Punkte, „Weiter"-Skip jederzeit erlaubt. Zwischen den Teams pausiert
+ * der Modus mit einem Score-Übersichts-Screen. Timer läuft im UI; der Reducer bekommt
+ * nur SPRINTER_TIME_UP wenn die Zeit abgelaufen ist.
+ */
+export interface SprinterLive {
+  kind: 'sprinter'
+  teamOrder: string[]
+  currentTeamIndex: number
+  activeTeamId: string | null
+  activeQuestion: MultipleChoiceQuestion | null
+  shuffledOptions: string[]
+  correctRenderedIndex: number
+  phase: 'answering' | 'between-teams'
+  /** Zeitstempel des Sprint-Starts. UI berechnet remaining. */
+  sprintStartedAt: number | null
+  sprintDurationSeconds: number
+  pointsPerCorrect: number
+  scores: Record<string, number>
+  usedQuestionIds: string[]
+}
+
+export type LiveGame =
+  | CategoryDuelLive
+  | FlashLive
+  | SpotlightLive
+  | AroundCornerLive
+  | SprinterLive
 
 // ---------- Draft (Setup-Phase) ----------------------------------------------
 
@@ -179,6 +212,10 @@ export type GameAction =
   | { type: 'AC_REVEAL_HINT' }
   | { type: 'AC_REVEAL_SOLUTION' }
   | { type: 'AC_NEXT' }
+  | { type: 'SPRINTER_ANSWER'; renderedIndex: number }
+  | { type: 'SPRINTER_SKIP' }
+  | { type: 'SPRINTER_TIME_UP' }
+  | { type: 'SPRINTER_START_NEXT_TEAM' }
   | { type: 'ADD_PLAYER'; teamId: string }
   | { type: 'REMOVE_PLAYER'; playerId: string }
   | { type: 'SET_PLAYER_NAME'; playerId: string; name: string }
@@ -406,6 +443,54 @@ function initSpotlight(teams: Team[], players: readonly Player[]): SpotlightLive
   }
 }
 
+function initSprinter(teams: Team[]): SprinterLive {
+  const scores = Object.fromEntries(teams.map((t) => [t.id, 0]))
+  const excluded = new Set<string>()
+  for (const id of readAskedQuestionIds()) excluded.add(id)
+  const firstTeam = teams[0]
+  const first = pickAnyMultipleChoice(excluded)
+
+  if (!first) {
+    // Kein MC-Content im Katalog — zwischen-Teams-Phase, wird beim ersten
+    // START_NEXT_TEAM in FINISH_MODE laufen.
+    return {
+      kind: 'sprinter',
+      teamOrder: teams.map((t) => t.id),
+      currentTeamIndex: 0,
+      activeTeamId: null,
+      activeQuestion: null,
+      shuffledOptions: [],
+      correctRenderedIndex: 0,
+      phase: 'between-teams',
+      sprintStartedAt: null,
+      sprintDurationSeconds: 90,
+      pointsPerCorrect: 100,
+      scores,
+      usedQuestionIds: [],
+    }
+  }
+
+  const shuffle = shuffleWithMapping(
+    first.options,
+    `sprinter:${firstTeam.id}:0:${first.id}`,
+  )
+  return {
+    kind: 'sprinter',
+    teamOrder: teams.map((t) => t.id),
+    currentTeamIndex: 0,
+    activeTeamId: firstTeam.id,
+    activeQuestion: first,
+    shuffledOptions: shuffle.shuffled,
+    correctRenderedIndex: shuffle.renderedIndexOf(first.correctIndex),
+    phase: 'answering',
+    sprintStartedAt: Date.now(),
+    sprintDurationSeconds: 90,
+    pointsPerCorrect: 100,
+    scores,
+    usedQuestionIds: [],
+  }
+}
+
 function initAroundCorner(teams: Team[]): AroundCornerLive {
   const scores = Object.fromEntries(teams.map((t) => [t.id, 0]))
   const excluded = new Set<string>()
@@ -453,6 +538,8 @@ function initLiveFor(
       return initSpotlight(teams, players)
     case 'around-corner':
       return initAroundCorner(teams)
+    case 'sprinter':
+      return initSprinter(teams)
     default:
       // Alle anderen Modi sind in v0.1 als `planned` markiert und lassen sich im Setup
       // gar nicht auswählen. Falls doch: null → Reducer springt in FINISH_MODE.
@@ -926,6 +1013,121 @@ export function reducer(state: GameState, action: GameAction): GameState {
       }
     }
 
+    case 'SPRINTER_ANSWER':
+    case 'SPRINTER_SKIP': {
+      if (!state.live || state.live.kind !== 'sprinter') return state
+      const live = state.live
+      if (live.phase !== 'answering' || !live.activeQuestion) return state
+
+      const wasCorrect =
+        action.type === 'SPRINTER_ANSWER' &&
+        action.renderedIndex === live.correctRenderedIndex
+      const teamId = live.activeTeamId
+      const nextScores = wasCorrect && teamId
+        ? { ...live.scores, [teamId]: (live.scores[teamId] ?? 0) + live.pointsPerCorrect }
+        : live.scores
+
+      const usedQuestionIds = [...live.usedQuestionIds, live.activeQuestion.id]
+      const excluded = new Set(usedQuestionIds)
+      for (const id of readAskedQuestionIds()) excluded.add(id)
+      const nextQuestion = pickAnyMultipleChoice(excluded)
+
+      if (!nextQuestion) {
+        // Pool leer — Sprint für dieses Team beenden.
+        return reducer(
+          {
+            ...state,
+            live: { ...live, scores: nextScores, usedQuestionIds },
+          },
+          { type: 'SPRINTER_TIME_UP' },
+        )
+      }
+
+      const shuffle = shuffleWithMapping(
+        nextQuestion.options,
+        `sprinter:${live.activeTeamId}:${usedQuestionIds.length}:${nextQuestion.id}`,
+      )
+      return {
+        ...state,
+        live: {
+          ...live,
+          scores: nextScores,
+          usedQuestionIds,
+          activeQuestion: nextQuestion,
+          shuffledOptions: shuffle.shuffled,
+          correctRenderedIndex: shuffle.renderedIndexOf(nextQuestion.correctIndex),
+        },
+      }
+    }
+
+    case 'SPRINTER_TIME_UP': {
+      if (!state.round || !state.live || state.live.kind !== 'sprinter') return state
+      const live = state.live
+      if (live.phase !== 'answering') return state
+
+      const isLastTeam = live.currentTeamIndex >= live.teamOrder.length - 1
+      const stopped: SprinterLive = {
+        ...live,
+        phase: 'between-teams',
+        sprintStartedAt: null,
+        activeQuestion: null,
+        shuffledOptions: [],
+        correctRenderedIndex: 0,
+      }
+
+      if (isLastTeam) {
+        return reducer({ ...state, live: stopped }, { type: 'FINISH_MODE' })
+      }
+
+      return { ...state, live: stopped }
+    }
+
+    case 'SPRINTER_START_NEXT_TEAM': {
+      if (!state.round || !state.live || state.live.kind !== 'sprinter') return state
+      const live = state.live
+      if (live.phase !== 'between-teams') return state
+      const nextIndex = live.currentTeamIndex + 1
+      if (nextIndex >= live.teamOrder.length) return state
+
+      const nextTeamId = live.teamOrder[nextIndex]
+      const excluded = new Set(live.usedQuestionIds)
+      for (const id of readAskedQuestionIds()) excluded.add(id)
+      const nextQuestion = pickAnyMultipleChoice(excluded)
+
+      if (!nextQuestion) {
+        // Katalog ist leergefahren — direkt in FINISH_MODE.
+        return reducer(
+          {
+            ...state,
+            live: {
+              ...live,
+              currentTeamIndex: nextIndex,
+              activeTeamId: nextTeamId,
+            },
+          },
+          { type: 'FINISH_MODE' },
+        )
+      }
+
+      const shuffle = shuffleWithMapping(
+        nextQuestion.options,
+        `sprinter:${nextTeamId}:0:${nextQuestion.id}`,
+      )
+      return {
+        ...state,
+        live: {
+          ...live,
+          currentTeamIndex: nextIndex,
+          activeTeamId: nextTeamId,
+          phase: 'answering',
+          sprintStartedAt: Date.now(),
+          activeQuestion: nextQuestion,
+          shuffledOptions: shuffle.shuffled,
+          correctRenderedIndex: shuffle.renderedIndexOf(nextQuestion.correctIndex),
+        },
+      }
+    }
+
     case 'CD_NEXT_TURN': {
       if (!state.round || !state.live || state.live.kind !== 'category-duel') return state
       if (state.live.phase !== 'revealed') return state
@@ -1104,6 +1306,11 @@ export function useSpotlight(): SpotlightLive | null {
 export function useAroundCorner(): AroundCornerLive | null {
   const { state } = useGame()
   return state.live && state.live.kind === 'around-corner' ? state.live : null
+}
+
+export function useSprinter(): SprinterLive | null {
+  const { state } = useGame()
+  return state.live && state.live.kind === 'sprinter' ? state.live : null
 }
 
 // Convenience für Dispatch ohne Boilerplate.

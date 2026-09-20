@@ -506,6 +506,135 @@ describe('reducer — Player-Ebene (Session D + E)', () => {
   })
 })
 
+describe('reducer — Sprinter (Session J)', () => {
+  function bootSprinter(): ReturnType<typeof reducer> {
+    let s = reducer(INITIAL_STATE, {
+      type: 'SET_MODE_SELECTION',
+      modeIds: ['sprinter'],
+    })
+    s = reducer(s, { type: 'GO_TO_LOBBY' })
+    s = reducer(s, { type: 'START_PLAYING' })
+    return s
+  }
+
+  it('START_PLAYING setzt Team A auf answering mit erster Frage und laufender Uhr', () => {
+    const s = bootSprinter()
+    if (s.live?.kind !== 'sprinter') throw new Error('unreachable')
+    expect(s.live.phase).toBe('answering')
+    expect(s.live.currentTeamIndex).toBe(0)
+    expect(s.live.activeTeamId).toBe('team-a')
+    expect(s.live.activeQuestion).not.toBeNull()
+    expect(s.live.shuffledOptions).toHaveLength(4)
+    expect(s.live.sprintStartedAt).not.toBeNull()
+    expect(s.live.scores).toEqual({ 'team-a': 0, 'team-b': 0 })
+  })
+
+  it('SPRINTER_ANSWER richtig: Punkte + neue Frage, Score-Wechsel nur für aktives Team', () => {
+    let s = bootSprinter()
+    if (s.live?.kind !== 'sprinter') throw new Error('unreachable')
+    const firstQuestionId = s.live.activeQuestion!.id
+    const correctIdx = s.live.correctRenderedIndex
+    const points = s.live.pointsPerCorrect
+
+    s = reducer(s, { type: 'SPRINTER_ANSWER', renderedIndex: correctIdx })
+    if (s.live?.kind !== 'sprinter') throw new Error('unreachable')
+    expect(s.live.scores['team-a']).toBe(points)
+    expect(s.live.scores['team-b']).toBe(0)
+    expect(s.live.activeQuestion?.id).not.toBe(firstQuestionId)
+    expect(s.live.usedQuestionIds).toContain(firstQuestionId)
+    expect(s.live.phase).toBe('answering')
+  })
+
+  it('SPRINTER_ANSWER falsch: kein Punkt, aber Frage wechselt', () => {
+    let s = bootSprinter()
+    if (s.live?.kind !== 'sprinter') throw new Error('unreachable')
+    const firstQuestionId = s.live.activeQuestion!.id
+    const wrongIdx =
+      (s.live.correctRenderedIndex + 1) % s.live.shuffledOptions.length
+
+    s = reducer(s, { type: 'SPRINTER_ANSWER', renderedIndex: wrongIdx })
+    if (s.live?.kind !== 'sprinter') throw new Error('unreachable')
+    expect(s.live.scores['team-a']).toBe(0)
+    expect(s.live.activeQuestion?.id).not.toBe(firstQuestionId)
+  })
+
+  it('SPRINTER_SKIP: kein Punkt, Frage wechselt', () => {
+    let s = bootSprinter()
+    if (s.live?.kind !== 'sprinter') throw new Error('unreachable')
+    const firstQuestionId = s.live.activeQuestion!.id
+
+    s = reducer(s, { type: 'SPRINTER_SKIP' })
+    if (s.live?.kind !== 'sprinter') throw new Error('unreachable')
+    expect(s.live.scores['team-a']).toBe(0)
+    expect(s.live.activeQuestion?.id).not.toBe(firstQuestionId)
+    expect(s.live.usedQuestionIds).toContain(firstQuestionId)
+  })
+
+  it('SPRINTER_TIME_UP für Team 1: geht in between-teams-Phase', () => {
+    let s = bootSprinter()
+    s = reducer(s, { type: 'SPRINTER_TIME_UP' })
+    if (s.live?.kind !== 'sprinter') throw new Error('unreachable')
+    expect(s.live.phase).toBe('between-teams')
+    expect(s.live.sprintStartedAt).toBeNull()
+    expect(s.live.activeQuestion).toBeNull()
+    // Team-Index bleibt bei 0 — Wechsel passiert erst mit START_NEXT_TEAM.
+    expect(s.live.currentTeamIndex).toBe(0)
+  })
+
+  it('SPRINTER_START_NEXT_TEAM: wechselt zu Team B mit frischer Frage und laufender Uhr', () => {
+    let s = bootSprinter()
+    s = reducer(s, { type: 'SPRINTER_TIME_UP' })
+    s = reducer(s, { type: 'SPRINTER_START_NEXT_TEAM' })
+    if (s.live?.kind !== 'sprinter') throw new Error('unreachable')
+    expect(s.live.currentTeamIndex).toBe(1)
+    expect(s.live.activeTeamId).toBe('team-b')
+    expect(s.live.phase).toBe('answering')
+    expect(s.live.sprintStartedAt).not.toBeNull()
+    expect(s.live.activeQuestion).not.toBeNull()
+  })
+
+  it('SPRINTER_TIME_UP für Team 2 löst FINISH_MODE aus → scoreboard', () => {
+    let s = bootSprinter()
+    // Team A treffen einmal, dann Zeit rum.
+    if (s.live?.kind !== 'sprinter') throw new Error('unreachable')
+    const teamACorrect = s.live.correctRenderedIndex
+    s = reducer(s, { type: 'SPRINTER_ANSWER', renderedIndex: teamACorrect })
+    s = reducer(s, { type: 'SPRINTER_TIME_UP' })
+    s = reducer(s, { type: 'SPRINTER_START_NEXT_TEAM' })
+    // Team B keine Punkte, sofort Time up.
+    s = reducer(s, { type: 'SPRINTER_TIME_UP' })
+    expect(s.phase).toBe('scoreboard')
+    // Team A hat gewonnen — 1 Match-Punkt.
+    expect(s.matchPoints['team-a']).toBe(1)
+    expect(s.matchPoints['team-b'] ?? 0).toBe(0)
+  })
+
+  it('SPRINTER_START_NEXT_TEAM in answering-phase ist no-op', () => {
+    let s = bootSprinter()
+    const before = s.live
+    s = reducer(s, { type: 'SPRINTER_START_NEXT_TEAM' })
+    expect(s.live).toBe(before)
+  })
+
+  it('Duplicate-Check zwischen den Teams: Team B bekommt keine Fragen die Team A hatte', () => {
+    let s = bootSprinter()
+    if (s.live?.kind !== 'sprinter') throw new Error('unreachable')
+    // Team A: 3 Antworten dispatchen → 3 IDs in usedQuestionIds.
+    for (let i = 0; i < 3; i++) {
+      if (s.live?.kind !== 'sprinter') throw new Error('unreachable')
+      const idx = s.live.correctRenderedIndex
+      s = reducer(s, { type: 'SPRINTER_ANSWER', renderedIndex: idx })
+    }
+    if (s.live?.kind !== 'sprinter') throw new Error('unreachable')
+    const usedByTeamA = new Set(s.live.usedQuestionIds)
+
+    s = reducer(s, { type: 'SPRINTER_TIME_UP' })
+    s = reducer(s, { type: 'SPRINTER_START_NEXT_TEAM' })
+    if (s.live?.kind !== 'sprinter') throw new Error('unreachable')
+    expect(usedByTeamA.has(s.live.activeQuestion!.id)).toBe(false)
+  })
+})
+
 describe('reducer — Klick! (Session I)', () => {
   function bootAroundCorner(): ReturnType<typeof reducer> {
     let s = reducer(INITIAL_STATE, {

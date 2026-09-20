@@ -35,6 +35,27 @@ export function getMultipleChoiceByTopic(topic: Topic): MultipleChoiceQuestion[]
   )
 }
 
+export function getAllMultipleChoice(): MultipleChoiceQuestion[] {
+  return ALL_QUESTIONS.filter(
+    (q): q is MultipleChoiceQuestion => q.type === 'multiple-choice',
+  )
+}
+
+/**
+ * Zieht die nächste ungenutzte Multiple-Choice-Frage aus dem gesamten Pool — für den
+ * Sprinter, wo Fragen quer durch alle Topics jagen. Kein Topic- oder Difficulty-
+ * Filter; Duplicate-Check und Fallback analog zu `pickQuestion`.
+ */
+export function pickAnyMultipleChoice(
+  usedIds: ReadonlySet<string>,
+): MultipleChoiceQuestion | null {
+  const pool = getAllMultipleChoice()
+  if (pool.length === 0) return null
+  const fresh = pool.filter((q) => !usedIds.has(q.id))
+  const candidates = fresh.length > 0 ? fresh : pool
+  return candidates[Math.floor(Math.random() * candidates.length)]
+}
+
 // ---------- Difficulty-Präferenz (Session H) ---------------------------------
 
 /**

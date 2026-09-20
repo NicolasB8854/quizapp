@@ -70,7 +70,7 @@ export const MODES: GameMode[] = [
     estimatedMinutes: 10,
     scoresMatchPoint: true,
     accent: 'sprinter',
-    status: 'planned',
+    status: 'ready',
   },
   {
     id: 'points-ladder',

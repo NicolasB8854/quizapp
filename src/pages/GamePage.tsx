@@ -10,14 +10,14 @@
  *  - Score-Sidebar mit Krone am führenden Team.
  */
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { X, ArrowRight, Crown, Check, XCircle, Lightbulb, Eye } from 'lucide-react'
+import { X, ArrowRight, Crown, Check, XCircle, Lightbulb, Eye, Timer, SkipForward } from 'lucide-react'
 import { ScreenLayout } from '@/components/ScreenLayout'
 import { Button } from '@/components/Button'
 import { AnswerOption, type AnswerStatus } from '@/components/AnswerOption'
 import { TopicTile } from '@/components/TopicTile'
-import { useGame, useCategoryDuel, useFlash, useSpotlight, useAroundCorner } from '@/context/GameContext'
+import { useGame, useCategoryDuel, useFlash, useSpotlight, useAroundCorner, useSprinter } from '@/context/GameContext'
 import { TOPICS, TOPICS_BY_ID } from '@/data/topics'
 import { MODES_BY_ID } from '@/data/modes'
 import type { Team } from '@/types/round'
@@ -33,6 +33,7 @@ export default function GamePage() {
   const flashLive = useFlash()
   const spotlightLive = useSpotlight()
   const cornerLive = useAroundCorner()
+  const sprinterLive = useSprinter()
 
   useEffect(() => {
     if (state.phase === 'setup')      navigate('/setup', { replace: true })
@@ -46,9 +47,11 @@ export default function GamePage() {
   const live = state.live
   const mode = currentModeId ? MODES_BY_ID[currentModeId] : null
 
-  // „Am Zug"-Markierung gibt es nur im Themen-Battle. In der Blitzrunde antworten
-  // beide Teams parallel — deshalb hier `null`.
-  const currentTeamId = cdLive ? round.teams[cdLive.currentTeamIndex]?.id ?? null : null
+  // „Am Zug"-Markierung: Themen-Battle nutzt currentTeamIndex, Sprinter das
+  // activeTeamId. Blitzrunde und Klick! haben kein aktives Team.
+  const currentTeamId = cdLive
+    ? round.teams[cdLive.currentTeamIndex]?.id ?? null
+    : sprinterLive?.activeTeamId ?? null
 
   return (
     <ScreenLayout variant="stage" hideNav hideFooter contentClassName="px-0">
@@ -95,6 +98,8 @@ export default function GamePage() {
               <SpotlightStage />
             ) : cornerLive ? (
               <AroundCornerStage />
+            ) : sprinterLive ? (
+              <SprinterStage />
             ) : null}
           </div>
           {/* Score-Sidebar */}
@@ -927,6 +932,176 @@ function AroundCornerStage() {
           </div>
         </div>
       )}
+    </div>
+  )
+}
+
+// ---------- Sprinter ---------------------------------------------------------
+
+function SprinterStage() {
+  const { state, dispatch } = useGame()
+  const sprinter = useSprinter()
+  const [remainingSec, setRemainingSec] = useState<number>(0)
+
+  // Timer läuft im UI. Reducer bleibt pure — er bekommt nur SPRINTER_TIME_UP.
+  useEffect(() => {
+    if (!sprinter || sprinter.phase !== 'answering' || sprinter.sprintStartedAt == null) {
+      return
+    }
+    const startedAt = sprinter.sprintStartedAt
+    const durationMs = sprinter.sprintDurationSeconds * 1000
+
+    const compute = () => Math.max(0, Math.ceil((durationMs - (Date.now() - startedAt)) / 1000))
+    setRemainingSec(compute())
+    const interval = setInterval(() => {
+      const remaining = compute()
+      setRemainingSec(remaining)
+      if (remaining <= 0) {
+        clearInterval(interval)
+        dispatch({ type: 'SPRINTER_TIME_UP' })
+      }
+    }, 200)
+    return () => clearInterval(interval)
+  }, [sprinter?.phase, sprinter?.sprintStartedAt, sprinter?.sprintDurationSeconds, dispatch, sprinter])
+
+  if (!sprinter || !state.round) return null
+
+  // Between-Teams-Screen: Zwischenscore + Übergang.
+  if (sprinter.phase === 'between-teams') {
+    const finishedTeam = state.round.teams.find(
+      (t) => t.id === sprinter.teamOrder[sprinter.currentTeamIndex],
+    )
+    const isFirstDone = sprinter.currentTeamIndex === 0
+    const nextTeam = isFirstDone
+      ? state.round.teams.find((t) => t.id === sprinter.teamOrder[1])
+      : null
+    return (
+      <div className="animate-titleIn text-center py-6">
+        <div className="eyebrow inline-flex items-center gap-2 justify-center">
+          <Timer className="h-3.5 w-3.5" style={{ color: '#FF6E5C' }} />
+          {isFirstDone ? 'Team 1 fertig' : 'Sprint komplett'}
+        </div>
+        {finishedTeam && (
+          <div className="mt-3">
+            <div className="text-sm text-ink-muted">{finishedTeam.name}</div>
+            <div
+              className="mt-1 font-display font-extrabold tabular-nums text-5xl md:text-7xl leading-none"
+              style={{ color: '#FF6E5C', textShadow: '0 0 24px rgba(255,110,92,0.65)' }}
+            >
+              {sprinter.scores[finishedTeam.id] ?? 0}
+            </div>
+            <div className="mt-1 text-xs uppercase tracking-[0.22em] text-ink-muted">Punkte</div>
+          </div>
+        )}
+        {isFirstDone && nextTeam ? (
+          <>
+            <p className="mt-6 text-ink-muted max-w-md mx-auto">
+              Jetzt ist{' '}
+              <span className="font-semibold text-ink">{nextTeam.name}</span> dran —
+              wieder 90 Sekunden für so viele richtige Antworten wie möglich.
+            </p>
+            <div className="mt-6 flex justify-center">
+              <Button
+                variant="primary"
+                size="lg"
+                trailing={<ArrowRight className="h-5 w-5" />}
+                onClick={() => dispatch({ type: 'SPRINTER_START_NEXT_TEAM' })}
+              >
+                Sprint starten
+              </Button>
+            </div>
+          </>
+        ) : (
+          <p className="mt-6 text-ink-muted">Beide Sprints durch — weiter zum Ergebnis.</p>
+        )}
+      </div>
+    )
+  }
+
+  // Answering-Phase.
+  if (!sprinter.activeQuestion || !sprinter.activeTeamId) return null
+  const team = state.round.teams.find((t) => t.id === sprinter.activeTeamId)
+  if (!team) return null
+  const teamHex = team.color === 'purple' ? '#7C5CFF' : '#27D8FF'
+  const timerCritical = remainingSec <= 10
+  const timerHex = timerCritical ? '#FF5C7A' : '#FF6E5C'
+
+  return (
+    <div className="animate-titleIn">
+      {/* Kopfzeile: Team + Timer + aktueller Score */}
+      <div className="flex items-center justify-between gap-4 mb-6 md:mb-8">
+        <div>
+          <div className="eyebrow" style={{ color: teamHex }}>
+            Sprint · {team.name}
+          </div>
+          <div className="mt-1 font-display font-bold text-lg md:text-xl">
+            {sprinter.scores[team.id] ?? 0} <span className="text-ink-muted text-sm font-normal">Punkte</span>
+          </div>
+        </div>
+        <div
+          className="inline-flex items-center gap-3 rounded-full px-5 py-2.5 border-2 tabular-nums"
+          style={{
+            borderColor: `${timerHex}99`,
+            background: 'rgba(11,16,32,0.7)',
+            boxShadow: `0 0 24px -8px ${timerHex}CC`,
+          }}
+        >
+          <Timer className="h-5 w-5" style={{ color: timerHex }} />
+          <span
+            className="font-display font-extrabold text-2xl md:text-3xl"
+            style={{ color: timerHex, textShadow: `0 0 18px ${timerHex}55` }}
+          >
+            {String(remainingSec).padStart(2, '0')}
+          </span>
+        </div>
+      </div>
+
+      {/* Frage */}
+      <div
+        className="rounded-card border p-6 md:p-8 text-center"
+        style={{
+          borderColor: 'rgba(255,110,92,0.35)',
+          background: 'rgba(11,16,32,0.6)',
+          boxShadow: '0 0 0 1px rgba(255,110,92,0.25), 0 0 24px rgba(255,110,92,0.2)',
+        }}
+      >
+        <h2 className="font-display font-bold text-white leading-tight text-2xl md:text-4xl">
+          {sprinter.activeQuestion.question}
+        </h2>
+      </div>
+
+      {/* Antworten */}
+      <div className="mt-6 md:mt-8 grid md:grid-cols-2 gap-3 md:gap-4">
+        {sprinter.shuffledOptions.map((option, idx) => (
+          <AnswerOption
+            key={`sprint-${sprinter.usedQuestionIds.length}-${idx}`}
+            letter={LETTERS[idx]}
+            status="idle"
+            onClick={() =>
+              dispatch({ type: 'SPRINTER_ANSWER', renderedIndex: idx })
+            }
+          >
+            {option}
+          </AnswerOption>
+        ))}
+      </div>
+
+      {/* Skip */}
+      <div className="mt-5 flex justify-center">
+        <button
+          type="button"
+          onClick={() => dispatch({ type: 'SPRINTER_SKIP' })}
+          className={cn(
+            'inline-flex items-center gap-2 h-11 rounded-full px-5',
+            'text-sm font-semibold uppercase tracking-[0.22em]',
+            'border border-white/15 bg-navy-800/60 text-ink-muted',
+            'hover:border-white/30 hover:text-ink transition-colors',
+          )}
+        >
+          <SkipForward className="h-4 w-4" />
+          Weiter (kein Punkt)
+        </button>
+      </div>
     </div>
   )
 }
