@@ -83,7 +83,33 @@ export interface FlashLive {
   usedQuestionIds: string[]
 }
 
-export type LiveGame = CategoryDuelLive | FlashLive
+/**
+ * „Heimspiel" (Player Spotlight): jeder Spieler mit Interessen bekommt reihum eine
+ * Multiple-Choice-Frage aus einem seiner Topics. Optionen sind zunächst verdeckt — der
+ * Spieler antwortet frei. Der Master markiert richtig oder falsch. Bei falsch kommt das
+ * Gegenteam mit sichtbarem Multiple-Choice zum Zug (halbe Punkte).
+ */
+export interface SpotlightLive {
+  kind: 'player-spotlight'
+  /** playerIds in Spielreihenfolge; nur Spieler mit mindestens einem Interesse. */
+  playerOrder: string[]
+  currentIndex: number
+  activePlayerId: string | null
+  activeTopic: Topic | null
+  activeQuestion: MultipleChoiceQuestion | null
+  shuffledOptions: string[]
+  correctRenderedIndex: number
+  phase: 'primary' | 'steal' | 'revealed' | 'empty'
+  /** Vom Gegenteam gewählter Rendered-Index in der Steal-Phase; null, wenn Steal nicht ausgelöst. */
+  stealRenderedIndex: number | null
+  primaryOutcome: 'correct' | 'wrong' | null
+  stealOutcome: 'correct' | 'wrong' | null
+  scores: Record<string, number>
+  usedQuestionIds: string[]
+  pointsPerCorrect: number
+}
+
+export type LiveGame = CategoryDuelLive | FlashLive | SpotlightLive
 
 // ---------- Draft (Setup-Phase) ----------------------------------------------
 
@@ -124,6 +150,9 @@ export type GameAction =
   | { type: 'FLASH_SET_ANSWER'; teamId: string; answer: boolean }
   | { type: 'FLASH_REVEAL' }
   | { type: 'FLASH_NEXT' }
+  | { type: 'SPOTLIGHT_MARK_PRIMARY'; outcome: 'correct' | 'wrong' }
+  | { type: 'SPOTLIGHT_STEAL_ANSWER'; renderedIndex: number }
+  | { type: 'SPOTLIGHT_NEXT' }
   | { type: 'ADD_PLAYER'; teamId: string }
   | { type: 'REMOVE_PLAYER'; playerId: string }
   | { type: 'SET_PLAYER_NAME'; playerId: string; name: string }
@@ -221,6 +250,126 @@ function initFlash(teams: Team[], players: readonly Player[]): FlashLive | null 
   }
 }
 
+/** Ordnung der Skill-Level für Aggregation und Präferenz-Sortierung. */
+const SPOTLIGHT_LEVEL_ORDER = ['bisschen', 'gut', 'nerd'] as const
+
+/**
+ * Wählt das Topic für die Spotlight-Frage: höchstes Skill-Level, bei Gleichstand die
+ * erste Nennung. Gibt `null` zurück, wenn der Spieler keine Interessen hat.
+ */
+function pickTopicForPlayer(player: Player): Topic | null {
+  if (player.interests.length === 0) return null
+  let best = player.interests[0]
+  for (let i = 1; i < player.interests.length; i++) {
+    const candidate = player.interests[i]
+    if (
+      SPOTLIGHT_LEVEL_ORDER.indexOf(candidate.level) >
+      SPOTLIGHT_LEVEL_ORDER.indexOf(best.level)
+    ) {
+      best = candidate
+    }
+  }
+  return best.topic
+}
+
+/**
+ * Baut die Spotlight-Runde: Team-alternierende Reihenfolge über alle Spieler mit
+ * Interessen. Team A p0, Team B p0, Team A p1, Team B p1, ... Damit wechselt der
+ * Bühnenscheinwerfer regelmäßig die Seite.
+ */
+function buildSpotlightOrder(
+  teams: readonly Team[],
+  players: readonly Player[],
+): string[] {
+  const eligiblePerTeam = teams.map((team) =>
+    players.filter((p) => p.teamId === team.id && p.interests.length > 0),
+  )
+  const maxLen = Math.max(0, ...eligiblePerTeam.map((list) => list.length))
+  const order: string[] = []
+  for (let i = 0; i < maxLen; i++) {
+    for (const list of eligiblePerTeam) {
+      if (i < list.length) order.push(list[i].id)
+    }
+  }
+  return order
+}
+
+function initSpotlight(teams: Team[], players: readonly Player[]): SpotlightLive {
+  const order = buildSpotlightOrder(teams, players)
+  const scores = Object.fromEntries(teams.map((t) => [t.id, 0]))
+
+  if (order.length === 0) {
+    // Kein Spieler mit Interessen — Modus wird als „empty" angezeigt und übersprungen.
+    return {
+      kind: 'player-spotlight',
+      playerOrder: [],
+      currentIndex: 0,
+      activePlayerId: null,
+      activeTopic: null,
+      activeQuestion: null,
+      shuffledOptions: [],
+      correctRenderedIndex: 0,
+      phase: 'empty',
+      stealRenderedIndex: null,
+      primaryOutcome: null,
+      stealOutcome: null,
+      scores,
+      usedQuestionIds: [],
+      pointsPerCorrect: 500,
+    }
+  }
+
+  const firstPlayerId = order[0]
+  const firstPlayer = players.find((p) => p.id === firstPlayerId)!
+  const topic = pickTopicForPlayer(firstPlayer)!
+  const excluded = new Set<string>()
+  for (const id of readAskedQuestionIds()) excluded.add(id)
+  const question = pickQuestion(topic, excluded)
+
+  if (!question) {
+    // Topic hat keine MC-Fragen im Katalog — Modus trotzdem starten, empty-Style.
+    return {
+      kind: 'player-spotlight',
+      playerOrder: [],
+      currentIndex: 0,
+      activePlayerId: null,
+      activeTopic: null,
+      activeQuestion: null,
+      shuffledOptions: [],
+      correctRenderedIndex: 0,
+      phase: 'empty',
+      stealRenderedIndex: null,
+      primaryOutcome: null,
+      stealOutcome: null,
+      scores,
+      usedQuestionIds: [],
+      pointsPerCorrect: 500,
+    }
+  }
+
+  const shuffle = shuffleWithMapping(
+    question.options,
+    `spotlight:${firstPlayerId}:${question.id}`,
+  )
+  return {
+    kind: 'player-spotlight',
+    playerOrder: order,
+    currentIndex: 0,
+    activePlayerId: firstPlayerId,
+    activeTopic: topic,
+    activeQuestion: question,
+    shuffledOptions: shuffle.shuffled,
+    correctRenderedIndex: shuffle.renderedIndexOf(question.correctIndex),
+    phase: 'primary',
+    stealRenderedIndex: null,
+    primaryOutcome: null,
+    stealOutcome: null,
+    scores,
+    usedQuestionIds: [],
+    pointsPerCorrect: 500,
+  }
+}
+
 function initLiveFor(
   modeId: GameModeId,
   teams: Team[],
@@ -231,6 +380,8 @@ function initLiveFor(
       return initCategoryDuel(teams)
     case 'flash':
       return initFlash(teams, players)
+    case 'player-spotlight':
+      return initSpotlight(teams, players)
     default:
       // Alle anderen Modi sind in v0.1 als `planned` markiert und lassen sich im Setup
       // gar nicht auswählen. Falls doch: null → Reducer springt in FINISH_MODE.
@@ -508,6 +659,139 @@ export function reducer(state: GameState, action: GameAction): GameState {
       }
     }
 
+    case 'SPOTLIGHT_MARK_PRIMARY': {
+      if (!state.round || !state.live || state.live.kind !== 'player-spotlight') return state
+      const live = state.live
+      if (live.phase !== 'primary') return state
+      const player = state.round.players.find((p) => p.id === live.activePlayerId)
+      if (!player) return state
+
+      if (action.outcome === 'correct') {
+        const scores = {
+          ...live.scores,
+          [player.teamId]: live.scores[player.teamId] + live.pointsPerCorrect,
+        }
+        return {
+          ...state,
+          live: {
+            ...live,
+            phase: 'revealed',
+            primaryOutcome: 'correct',
+            scores,
+          },
+        }
+      }
+
+      // Fehler → Steal-Phase für das Gegenteam. Punktevergabe erst in STEAL_ANSWER.
+      return {
+        ...state,
+        live: {
+          ...live,
+          phase: 'steal',
+          primaryOutcome: 'wrong',
+        },
+      }
+    }
+
+    case 'SPOTLIGHT_STEAL_ANSWER': {
+      if (!state.round || !state.live || state.live.kind !== 'player-spotlight') return state
+      const live = state.live
+      if (live.phase !== 'steal') return state
+      const player = state.round.players.find((p) => p.id === live.activePlayerId)
+      if (!player) return state
+      const opponent = state.round.teams.find((t) => t.id !== player.teamId)
+      if (!opponent) return state
+
+      const wasCorrect = action.renderedIndex === live.correctRenderedIndex
+      const stealPoints = Math.floor(live.pointsPerCorrect / 2)
+      const scores = wasCorrect
+        ? {
+            ...live.scores,
+            [opponent.id]: live.scores[opponent.id] + stealPoints,
+          }
+        : live.scores
+
+      return {
+        ...state,
+        live: {
+          ...live,
+          phase: 'revealed',
+          stealRenderedIndex: action.renderedIndex,
+          stealOutcome: wasCorrect ? 'correct' : 'wrong',
+          scores,
+        },
+      }
+    }
+
+    case 'SPOTLIGHT_NEXT': {
+      if (!state.round || !state.live || state.live.kind !== 'player-spotlight') return state
+      // Empty-Fall: sofort in FINISH_MODE springen.
+      if (state.live.phase === 'empty') {
+        return reducer(state, { type: 'FINISH_MODE' })
+      }
+      if (state.live.phase !== 'revealed') return state
+
+      const usedQuestionIds = state.live.activeQuestion
+        ? [...state.live.usedQuestionIds, state.live.activeQuestion.id]
+        : state.live.usedQuestionIds
+      const nextIndex = state.live.currentIndex + 1
+      const isModeDone = nextIndex >= state.live.playerOrder.length
+
+      const advancedBase: SpotlightLive = {
+        ...state.live,
+        usedQuestionIds,
+        currentIndex: nextIndex,
+        activePlayerId: null,
+        activeTopic: null,
+        activeQuestion: null,
+        shuffledOptions: [],
+        correctRenderedIndex: 0,
+        phase: 'primary',
+        stealRenderedIndex: null,
+        primaryOutcome: null,
+        stealOutcome: null,
+      }
+
+      if (isModeDone) {
+        return reducer({ ...state, live: advancedBase }, { type: 'FINISH_MODE' })
+      }
+
+      const nextPlayerId = state.live.playerOrder[nextIndex]
+      const nextPlayer = state.round.players.find((p) => p.id === nextPlayerId)
+      // Wenn der nächste Spieler zwischenzeitlich keine Interessen mehr hat, überspringen.
+      // Sollte in phase='lobby' nicht mehr auftreten, aber wir sichern uns ab.
+      if (!nextPlayer) {
+        return reducer({ ...state, live: advancedBase }, { type: 'SPOTLIGHT_NEXT' })
+      }
+      const topic = pickTopicForPlayer(nextPlayer)
+      if (!topic) {
+        return reducer({ ...state, live: advancedBase }, { type: 'SPOTLIGHT_NEXT' })
+      }
+
+      const excluded = new Set(usedQuestionIds)
+      for (const id of readAskedQuestionIds()) excluded.add(id)
+      const nextQuestion = pickQuestion(topic, excluded)
+      if (!nextQuestion) {
+        return reducer({ ...state, live: advancedBase }, { type: 'SPOTLIGHT_NEXT' })
+      }
+
+      const shuffle = shuffleWithMapping(
+        nextQuestion.options,
+        `spotlight:${nextPlayerId}:${nextQuestion.id}`,
+      )
+      return {
+        ...state,
+        live: {
+          ...advancedBase,
+          activePlayerId: nextPlayerId,
+          activeTopic: topic,
+          activeQuestion: nextQuestion,
+          shuffledOptions: shuffle.shuffled,
+          correctRenderedIndex: shuffle.renderedIndexOf(nextQuestion.correctIndex),
+        },
+      }
+    }
+
     case 'CD_NEXT_TURN': {
       if (!state.round || !state.live || state.live.kind !== 'category-duel') return state
       if (state.live.phase !== 'revealed') return state
@@ -676,6 +960,11 @@ export function useCategoryDuel(): CategoryDuelLive | null {
 export function useFlash(): FlashLive | null {
   const { state } = useGame()
   return state.live && state.live.kind === 'flash' ? state.live : null
+}
+
+export function useSpotlight(): SpotlightLive | null {
+  const { state } = useGame()
+  return state.live && state.live.kind === 'player-spotlight' ? state.live : null
 }
 
 // Convenience für Dispatch ohne Boilerplate.

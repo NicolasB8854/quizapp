@@ -17,7 +17,7 @@ import { ScreenLayout } from '@/components/ScreenLayout'
 import { Button } from '@/components/Button'
 import { AnswerOption, type AnswerStatus } from '@/components/AnswerOption'
 import { TopicTile } from '@/components/TopicTile'
-import { useGame, useCategoryDuel, useFlash } from '@/context/GameContext'
+import { useGame, useCategoryDuel, useFlash, useSpotlight } from '@/context/GameContext'
 import { TOPICS, TOPICS_BY_ID } from '@/data/topics'
 import { MODES_BY_ID } from '@/data/modes'
 import type { Team } from '@/types/round'
@@ -31,6 +31,7 @@ export default function GamePage() {
   const { state, dispatch, currentModeId } = useGame()
   const cdLive = useCategoryDuel()
   const flashLive = useFlash()
+  const spotlightLive = useSpotlight()
 
   useEffect(() => {
     if (state.phase === 'setup')      navigate('/setup', { replace: true })
@@ -89,6 +90,8 @@ export default function GamePage() {
               cdLive.phase === 'pick-topic' ? <TopicGrid /> : <QuestionStage />
             ) : flashLive ? (
               <FlashStage />
+            ) : spotlightLive ? (
+              <SpotlightStage />
             ) : null}
           </div>
           {/* Score-Sidebar */}
@@ -504,6 +507,260 @@ function FlashRevealPanel({ question, pointsPerCorrect, onNext }: FlashRevealPan
         {explanation && (
           <p className="mt-2 text-sm text-ink-muted leading-relaxed max-w-2xl">
             {explanation}
+          </p>
+        )}
+      </div>
+      <Button
+        variant="primary"
+        size="lg"
+        trailing={<ArrowRight className="h-5 w-5" />}
+        onClick={onNext}
+      >
+        Weiter
+      </Button>
+    </div>
+  )
+}
+
+// ---------- Heimspiel (Player Spotlight) -------------------------------------
+
+function SpotlightStage() {
+  const { state, dispatch } = useGame()
+  const spot = useSpotlight()
+  if (!spot || !state.round) return null
+
+  // Empty-Fall: keine Spieler mit Interessen — Skip-Screen.
+  if (spot.phase === 'empty') {
+    return (
+      <div className="animate-titleIn text-center py-10">
+        <div className="eyebrow inline-flex items-center gap-2 justify-center">
+          Heimspiel übersprungen
+        </div>
+        <h1 className="mt-3 font-display font-bold uppercase text-3xl md:text-5xl tracking-tight">
+          Kein Interesse hinterlegt
+        </h1>
+        <p className="mt-3 text-ink-muted max-w-lg mx-auto">
+          Für das „Heimspiel" braucht mindestens ein Spieler ein Interesse in der Lobby.
+          Wir überspringen den Modus für diese Runde.
+        </p>
+        <div className="mt-6 flex justify-center">
+          <Button
+            variant="primary"
+            size="lg"
+            trailing={<ArrowRight className="h-5 w-5" />}
+            onClick={() => dispatch({ type: 'SPOTLIGHT_NEXT' })}
+          >
+            Weiter
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  if (!spot.activePlayerId || !spot.activeQuestion || !spot.activeTopic) return null
+
+  const player = state.round.players.find((p) => p.id === spot.activePlayerId)
+  if (!player) return null
+  const team = state.round.teams.find((t) => t.id === player.teamId)!
+  const opponent = state.round.teams.find((t) => t.id !== player.teamId)!
+  const topic = TOPICS_BY_ID[spot.activeTopic]
+  const teamHex = team.color === 'purple' ? '#7C5CFF' : '#27D8FF'
+  const opponentHex = opponent.color === 'purple' ? '#7C5CFF' : '#27D8FF'
+  const displayName = player.name.trim() || `Spieler ${spot.currentIndex + 1}`
+  const stealPoints = Math.floor(spot.pointsPerCorrect / 2)
+
+  return (
+    <div className="animate-titleIn">
+      {/* Progress */}
+      <div className="text-center mb-4 md:mb-6">
+        <div className="eyebrow">
+          Heimspiel · Spieler {spot.currentIndex + 1} von {spot.playerOrder.length}
+        </div>
+      </div>
+
+      {/* Aktiver Spieler + Topic */}
+      <div className="flex justify-center">
+        <div
+          className="relative inline-flex flex-col items-center rounded-2xl px-6 md:px-10 py-4 md:py-5 border-2"
+          style={{
+            borderColor: `${teamHex}99`,
+            background: 'rgba(11,16,32,0.7)',
+            boxShadow: `0 0 0 1px ${teamHex}55, 0 0 28px ${teamHex}55, 0 0 60px ${teamHex}30`,
+          }}
+        >
+          <div className="eyebrow" style={{ color: teamHex }}>
+            {team.name}
+          </div>
+          <div className="mt-1 font-display font-bold text-2xl md:text-4xl text-white text-neon-purple">
+            {displayName}
+          </div>
+          <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-white/10 bg-navy-800/70 px-3 py-1 text-sm">
+            <span aria-hidden>{topic.emoji}</span>
+            <span className="font-medium text-ink">{topic.label}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Frage */}
+      <div className="mt-8 md:mt-10">
+        <div
+          className="rounded-card border p-6 md:p-8 text-center"
+          style={{
+            borderColor: 'rgba(255,184,77,0.35)',
+            background: 'rgba(11,16,32,0.55)',
+            boxShadow:
+              '0 0 0 1px rgba(255,184,77,0.25), 0 0 24px rgba(255,184,77,0.2)',
+          }}
+        >
+          <div className="eyebrow" style={{ color: '#FFB84D' }}>
+            {spot.phase === 'primary'
+              ? `${displayName} antwortet frei`
+              : spot.phase === 'steal'
+              ? `Steal für ${opponent.name}`
+              : 'Auflösung'}
+          </div>
+          <h2 className="mt-3 font-display font-bold text-white leading-tight text-2xl md:text-4xl">
+            {spot.activeQuestion.question}
+          </h2>
+        </div>
+      </div>
+
+      {/* Phasenabhängige Interaktion */}
+      {spot.phase === 'primary' && (
+        <div className="mt-6 md:mt-8">
+          <p className="text-center text-sm text-ink-muted mb-4">
+            Optionen bleiben verdeckt — Antwort mündlich. Master markiert:
+          </p>
+          <div className="grid grid-cols-2 gap-3 md:gap-4 max-w-xl mx-auto">
+            <button
+              type="button"
+              onClick={() => dispatch({ type: 'SPOTLIGHT_MARK_PRIMARY', outcome: 'correct' })}
+              className={cn(
+                'h-14 rounded-card border font-display font-bold uppercase tracking-widest text-sm',
+                'border-correct/60 bg-correct/15 text-correct',
+                'hover:bg-correct/25 transition-colors',
+              )}
+            >
+              Richtig
+            </button>
+            <button
+              type="button"
+              onClick={() => dispatch({ type: 'SPOTLIGHT_MARK_PRIMARY', outcome: 'wrong' })}
+              className={cn(
+                'h-14 rounded-card border font-display font-bold uppercase tracking-widest text-sm',
+                'border-wrong/60 bg-wrong/15 text-wrong',
+                'hover:bg-wrong/25 transition-colors',
+              )}
+            >
+              Falsch
+            </button>
+          </div>
+        </div>
+      )}
+
+      {spot.phase === 'steal' && (
+        <div className="mt-6 md:mt-8">
+          <p className="text-center text-sm text-ink-muted mb-4">
+            <span style={{ color: opponentHex }} className="font-semibold">
+              {opponent.name}
+            </span>{' '}
+            wählt eine Option — {stealPoints} Punkte bei Treffer.
+          </p>
+          <div className="grid md:grid-cols-2 gap-3 md:gap-4">
+            {spot.shuffledOptions.map((option, idx) => (
+              <AnswerOption
+                key={`steal-${idx}`}
+                letter={LETTERS[idx]}
+                status="idle"
+                onClick={() =>
+                  dispatch({ type: 'SPOTLIGHT_STEAL_ANSWER', renderedIndex: idx })
+                }
+              >
+                {option}
+              </AnswerOption>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {spot.phase === 'revealed' && (
+        <SpotlightRevealPanel
+          question={spot.activeQuestion}
+          correctOption={spot.shuffledOptions[spot.correctRenderedIndex]}
+          primaryOutcome={spot.primaryOutcome}
+          stealOutcome={spot.stealOutcome}
+          primaryPoints={spot.pointsPerCorrect}
+          stealPoints={stealPoints}
+          activeTeamName={team.name}
+          opponentTeamName={opponent.name}
+          onNext={() => dispatch({ type: 'SPOTLIGHT_NEXT' })}
+        />
+      )}
+    </div>
+  )
+}
+
+interface SpotlightRevealProps {
+  question: import('@/types/question').MultipleChoiceQuestion
+  correctOption: string
+  primaryOutcome: 'correct' | 'wrong' | null
+  stealOutcome: 'correct' | 'wrong' | null
+  primaryPoints: number
+  stealPoints: number
+  activeTeamName: string
+  opponentTeamName: string
+  onNext: () => void
+}
+
+function SpotlightRevealPanel({
+  question,
+  correctOption,
+  primaryOutcome,
+  stealOutcome,
+  primaryPoints,
+  stealPoints,
+  activeTeamName,
+  opponentTeamName,
+  onNext,
+}: SpotlightRevealProps) {
+  const explanationText = question.explanation ?? question.gmNote
+  const primaryText =
+    primaryOutcome === 'correct'
+      ? `${activeTeamName}: + ${primaryPoints} Punkte`
+      : primaryOutcome === 'wrong' && stealOutcome === 'correct'
+      ? `${opponentTeamName} (Steal): + ${stealPoints} Punkte`
+      : primaryOutcome === 'wrong' && stealOutcome === 'wrong'
+      ? `Keine Punkte — auch der Steal ging daneben`
+      : 'Keine Punkte'
+  const tone =
+    primaryOutcome === 'correct' || stealOutcome === 'correct' ? 'positive' : 'neutral'
+
+  return (
+    <div
+      className={cn(
+        'mt-6 rounded-card border p-5 md:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4',
+        tone === 'positive'
+          ? 'bg-correct/10 border-correct/40'
+          : 'bg-navy-800/60 border-white/10',
+      )}
+    >
+      <div className="min-w-0">
+        <div
+          className={cn(
+            'text-[11px] font-bold uppercase tracking-[0.22em]',
+            tone === 'positive' ? 'text-correct' : 'text-ink-muted',
+          )}
+        >
+          {primaryText}
+        </div>
+        <div className="mt-1 text-sm">
+          <span className="text-ink-muted">Richtig wäre: </span>
+          <span className="font-semibold text-correct">{correctOption}</span>
+        </div>
+        {explanationText && (
+          <p className="mt-2 text-sm text-ink-muted leading-relaxed max-w-2xl">
+            <span className="font-semibold text-ink">Auflösung: </span>
+            {explanationText}
           </p>
         )}
       </div>

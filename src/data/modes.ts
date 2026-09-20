@@ -96,6 +96,18 @@ export const MODES: GameMode[] = [
     accent: 'flash',
     status: 'ready',
   },
+  {
+    id: 'player-spotlight',
+    name: 'Heimspiel',
+    chipLabel: 'Persönlich',
+    tagline: 'Deine Kategorie, dein Moment im Rampenlicht.',
+    description:
+      'Jeder Spieler bekommt eine Frage aus seinem eigenen Interessensprofil. Antwortet frei — bei Fehler übernimmt das Gegenteam (halbe Punkte).',
+    estimatedMinutes: 12,
+    scoresMatchPoint: true,
+    accent: 'spotlight',
+    status: 'ready',
+  },
 ]
 
 export const MODES_BY_ID: Record<string, GameMode> = Object.fromEntries(
@@ -104,11 +116,12 @@ export const MODES_BY_ID: Record<string, GameMode> = Object.fromEntries(
 
 /** Hex-Werte parallel zur Tailwind-`mode.*`-Palette — für inline-Styles. */
 export const ACCENT_HEX: Record<GameMode['accent'], string> = {
-  duel:     '#27D8FF',
-  board:    '#F0B23A',
-  sprinter: '#FF6E5C',
-  ladder:   '#E9C46A',
-  corner:   '#F4A261',
-  experts:  '#B78BFF',
-  flash:    '#FF3D8B',
+  duel:      '#27D8FF',
+  board:     '#F0B23A',
+  sprinter:  '#FF6E5C',
+  ladder:    '#E9C46A',
+  corner:    '#F4A261',
+  experts:   '#B78BFF',
+  flash:     '#FF3D8B',
+  spotlight: '#FFB84D',
 }

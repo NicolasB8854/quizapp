@@ -22,13 +22,14 @@ interface Props {
 }
 
 const accentText: Record<ModeAccent, string> = {
-  duel:     'text-brand-cyan-soft',
-  board:    'text-mode-board',
-  sprinter: 'text-mode-sprinter',
-  ladder:   'text-mode-ladder',
-  corner:   'text-mode-corner',
-  experts:  'text-mode-experts',
-  flash:    'text-mode-flash',
+  duel:      'text-brand-cyan-soft',
+  board:     'text-mode-board',
+  sprinter:  'text-mode-sprinter',
+  ladder:    'text-mode-ladder',
+  corner:    'text-mode-corner',
+  experts:   'text-mode-experts',
+  flash:     'text-mode-flash',
+  spotlight: 'text-mode-spotlight',
 }
 
 export function ModeCard({ mode, selected, onToggle }: Props) {

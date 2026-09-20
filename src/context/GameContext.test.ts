@@ -506,6 +506,204 @@ describe('reducer — Player-Ebene (Session D + E)', () => {
   })
 })
 
+describe('reducer — Heimspiel / Player Spotlight (Session G)', () => {
+  function bootSpotlight(): ReturnType<typeof reducer> {
+    let s = reducer(INITIAL_STATE, {
+      type: 'SET_MODE_SELECTION',
+      modeIds: ['player-spotlight'],
+    })
+    s = reducer(s, { type: 'GO_TO_LOBBY' })
+    return s
+  }
+
+  it('leere Interessen → Modus startet im empty-State und ist per NEXT übersprungbar', () => {
+    let s = bootSpotlight()
+    s = reducer(s, { type: 'START_PLAYING' })
+    if (s.live?.kind !== 'player-spotlight') throw new Error('unreachable')
+    expect(s.live.phase).toBe('empty')
+    expect(s.live.playerOrder).toHaveLength(0)
+
+    // NEXT im empty-State → FINISH_MODE → Single-Modus-Setup → scoreboard.
+    s = reducer(s, { type: 'SPOTLIGHT_NEXT' })
+    expect(s.phase).toBe('scoreboard')
+  })
+
+  it('Spielerreihenfolge alterniert zwischen den Teams', () => {
+    let s = bootSpotlight()
+    // Alle vier Spieler bekommen ein Interesse.
+    const [pA1, pA2, pB1, pB2] = s.round!.players
+    for (const p of [pA1, pA2, pB1, pB2]) {
+      s = reducer(s, {
+        type: 'SET_PLAYER_INTERESTS',
+        playerId: p.id,
+        interests: [gut('wissenschaft')],
+      })
+    }
+    s = reducer(s, { type: 'START_PLAYING' })
+    if (s.live?.kind !== 'player-spotlight') throw new Error('unreachable')
+
+    // Order: A1, B1, A2, B2 (Team-Alternierung).
+    expect(s.live.playerOrder).toEqual([pA1.id, pB1.id, pA2.id, pB2.id])
+    expect(s.live.activePlayerId).toBe(pA1.id)
+  })
+
+  it('MARK_PRIMARY correct: aktives Team bekommt volle Punkte, Reveal-Phase', () => {
+    let s = bootSpotlight()
+    const p = s.round!.players.find((p) => p.teamId === 'team-a')!
+    s = reducer(s, {
+      type: 'SET_PLAYER_INTERESTS',
+      playerId: p.id,
+      interests: [gut('wissenschaft')],
+    })
+    s = reducer(s, { type: 'START_PLAYING' })
+    if (s.live?.kind !== 'player-spotlight') throw new Error('unreachable')
+    const before = s.live.scores['team-a']
+    const points = s.live.pointsPerCorrect
+
+    s = reducer(s, { type: 'SPOTLIGHT_MARK_PRIMARY', outcome: 'correct' })
+    if (s.live?.kind !== 'player-spotlight') throw new Error('unreachable')
+    expect(s.live.phase).toBe('revealed')
+    expect(s.live.primaryOutcome).toBe('correct')
+    expect(s.live.scores['team-a']).toBe(before + points)
+    expect(s.live.scores['team-b']).toBe(0)
+  })
+
+  it('MARK_PRIMARY wrong: geht in steal-Phase, Punkte kommen erst nach STEAL_ANSWER', () => {
+    let s = bootSpotlight()
+    const p = s.round!.players.find((p) => p.teamId === 'team-a')!
+    s = reducer(s, {
+      type: 'SET_PLAYER_INTERESTS',
+      playerId: p.id,
+      interests: [gut('wissenschaft')],
+    })
+    s = reducer(s, { type: 'START_PLAYING' })
+    s = reducer(s, { type: 'SPOTLIGHT_MARK_PRIMARY', outcome: 'wrong' })
+    if (s.live?.kind !== 'player-spotlight') throw new Error('unreachable')
+    expect(s.live.phase).toBe('steal')
+    expect(s.live.primaryOutcome).toBe('wrong')
+    expect(s.live.scores['team-a']).toBe(0)
+    expect(s.live.scores['team-b']).toBe(0)
+  })
+
+  it('STEAL_ANSWER richtig: Gegenteam bekommt halbe Punkte', () => {
+    let s = bootSpotlight()
+    const p = s.round!.players.find((p) => p.teamId === 'team-a')!
+    s = reducer(s, {
+      type: 'SET_PLAYER_INTERESTS',
+      playerId: p.id,
+      interests: [gut('wissenschaft')],
+    })
+    s = reducer(s, { type: 'START_PLAYING' })
+    if (s.live?.kind !== 'player-spotlight') throw new Error('unreachable')
+    const correctIdx = s.live.correctRenderedIndex
+    const halfPoints = Math.floor(s.live.pointsPerCorrect / 2)
+
+    s = reducer(s, { type: 'SPOTLIGHT_MARK_PRIMARY', outcome: 'wrong' })
+    s = reducer(s, { type: 'SPOTLIGHT_STEAL_ANSWER', renderedIndex: correctIdx })
+    if (s.live?.kind !== 'player-spotlight') throw new Error('unreachable')
+    expect(s.live.phase).toBe('revealed')
+    expect(s.live.stealOutcome).toBe('correct')
+    expect(s.live.scores['team-a']).toBe(0)
+    expect(s.live.scores['team-b']).toBe(halfPoints)
+  })
+
+  it('STEAL_ANSWER falsch: keine Punkte für niemanden', () => {
+    let s = bootSpotlight()
+    const p = s.round!.players.find((p) => p.teamId === 'team-a')!
+    s = reducer(s, {
+      type: 'SET_PLAYER_INTERESTS',
+      playerId: p.id,
+      interests: [gut('wissenschaft')],
+    })
+    s = reducer(s, { type: 'START_PLAYING' })
+    if (s.live?.kind !== 'player-spotlight') throw new Error('unreachable')
+    const wrongIdx =
+      (s.live.correctRenderedIndex + 1) % s.live.shuffledOptions.length
+
+    s = reducer(s, { type: 'SPOTLIGHT_MARK_PRIMARY', outcome: 'wrong' })
+    s = reducer(s, { type: 'SPOTLIGHT_STEAL_ANSWER', renderedIndex: wrongIdx })
+    if (s.live?.kind !== 'player-spotlight') throw new Error('unreachable')
+    expect(s.live.stealOutcome).toBe('wrong')
+    expect(s.live.scores['team-a']).toBe(0)
+    expect(s.live.scores['team-b']).toBe(0)
+  })
+
+  it('NEXT ohne revealed-Phase ist no-op', () => {
+    let s = bootSpotlight()
+    const p = s.round!.players.find((p) => p.teamId === 'team-a')!
+    s = reducer(s, {
+      type: 'SET_PLAYER_INTERESTS',
+      playerId: p.id,
+      interests: [gut('wissenschaft')],
+    })
+    s = reducer(s, { type: 'START_PLAYING' })
+    const before = s.live
+    s = reducer(s, { type: 'SPOTLIGHT_NEXT' })
+    expect(s.live).toBe(before)
+  })
+
+  it('NEXT geht zum nächsten Spieler mit dessen Topic', () => {
+    let s = bootSpotlight()
+    const [pA1, , pB1] = s.round!.players
+    s = reducer(s, {
+      type: 'SET_PLAYER_INTERESTS',
+      playerId: pA1.id,
+      interests: [gut('wissenschaft')],
+    })
+    s = reducer(s, {
+      type: 'SET_PLAYER_INTERESTS',
+      playerId: pB1.id,
+      interests: [gut('film')],
+    })
+    s = reducer(s, { type: 'START_PLAYING' })
+    // A1 → wissenschaft → Frage. Richtig markieren, dann NEXT → B1 → film.
+    s = reducer(s, { type: 'SPOTLIGHT_MARK_PRIMARY', outcome: 'correct' })
+    s = reducer(s, { type: 'SPOTLIGHT_NEXT' })
+    if (s.live?.kind !== 'player-spotlight') throw new Error('unreachable')
+    expect(s.live.currentIndex).toBe(1)
+    expect(s.live.activePlayerId).toBe(pB1.id)
+    expect(s.live.activeTopic).toBe('film')
+    expect(s.live.phase).toBe('primary')
+  })
+
+  it('Nach letztem Spieler: FINISH_MODE → scoreboard bei Single-Modus', () => {
+    let s = bootSpotlight()
+    const p = s.round!.players.find((p) => p.teamId === 'team-a')!
+    s = reducer(s, {
+      type: 'SET_PLAYER_INTERESTS',
+      playerId: p.id,
+      interests: [gut('wissenschaft')],
+    })
+    // Nur ein Spieler mit Interesse — Order-Länge = 1.
+    s = reducer(s, { type: 'START_PLAYING' })
+    if (s.live?.kind !== 'player-spotlight') throw new Error('unreachable')
+    expect(s.live.playerOrder).toHaveLength(1)
+
+    s = reducer(s, { type: 'SPOTLIGHT_MARK_PRIMARY', outcome: 'correct' })
+    s = reducer(s, { type: 'SPOTLIGHT_NEXT' })
+    expect(s.phase).toBe('scoreboard')
+    expect(s.matchPoints['team-a']).toBe(1)
+  })
+
+  it('pickTopicForPlayer respektiert höchstes Level bei mehreren Interessen', () => {
+    let s = bootSpotlight()
+    const p = s.round!.players.find((p) => p.teamId === 'team-a')!
+    s = reducer(s, {
+      type: 'SET_PLAYER_INTERESTS',
+      playerId: p.id,
+      interests: [
+        { topic: 'film' as never, level: 'bisschen' },
+        { topic: 'wissenschaft' as never, level: 'nerd' },
+        { topic: 'musik' as never, level: 'gut' },
+      ],
+    })
+    s = reducer(s, { type: 'START_PLAYING' })
+    if (s.live?.kind !== 'player-spotlight') throw new Error('unreachable')
+    // 'wissenschaft' hat 'nerd' und sollte gewählt werden.
+    expect(s.live.activeTopic).toBe('wissenschaft')
+  })
+})
+
 // Wir referenzieren getMultipleChoiceByTopic hier nur, damit der Import nicht
 // als unused verworfen wird — der Sanity-Check am Pool ist trotzdem sinnvoll.
 describe('reducer — Sanity', () => {

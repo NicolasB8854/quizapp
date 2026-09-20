@@ -33,13 +33,14 @@ export default {
         wrong: '#FF5C7A',
         // Modus-Akzente (aus PDF „4. Farben je Spielmodus")
         mode: {
-          board:    '#F0B23A', // Punktejagd        – Wissen / klassisch → warmes Gold
-          sprinter: '#FF6E5C', // Sprinter          – Druck / Tempo   → Rot-Orange
-          ladder:   '#E9C46A', // Alles oder Nichts – Spannung / Premium → sattes Gold
-          corner:   '#F4A261', // Klick!            – Warm-up / Humor → warmes Orange
-          experts:  '#B78BFF', // Fachrunde         – Expertise / Spotlight → helles Lila
-          flash:    '#FF3D8B', // Blitzrunde        – Speed / Energie → Neon-Pink
-          duel:     '#27D8FF', // Themen-Battle     – Standard Cyan
+          board:     '#F0B23A', // Punktejagd        – Wissen / klassisch → warmes Gold
+          sprinter:  '#FF6E5C', // Sprinter          – Druck / Tempo   → Rot-Orange
+          ladder:    '#E9C46A', // Alles oder Nichts – Spannung / Premium → sattes Gold
+          corner:    '#F4A261', // Klick!            – Warm-up / Humor → warmes Orange
+          experts:   '#B78BFF', // Fachrunde         – Expertise → helles Lila
+          flash:     '#FF3D8B', // Blitzrunde        – Speed / Energie → Neon-Pink
+          duel:      '#27D8FF', // Themen-Battle     – Standard Cyan
+          spotlight: '#FFB84D', // Heimspiel         – Persönlich / Bühne → Bernstein
         },
       },
       fontFamily: {

@@ -13,13 +13,14 @@ import type { Question, Topic } from './question'
 export type GameModeId =
   // Aktiv im Prototyp:
   | 'category-duel'    // 12-Kategorien-Grid + Multiple Choice
+  | 'flash'            // Wahr/Falsch Speed-Round
+  | 'player-spotlight' // „Heimspiel" — Frage aus Spieler-Interessen, Steal bei Fehler
   // Coming soon:
   | 'around-corner'    // Warm-up mit stufenweisen Hinweisen
   | 'category-board'   // 5×4 Board mit steigenden Punktwerten
   | 'experts'          // Fachrunde: pro Person ein Fachgebiet, Solo-Timer + Steal
   | 'sprinter'         // Zeit-Sprint: 90 s pro Team, schnelle Fragefolge
   | 'points-ladder'    // Aufsteigende Punkt-Ladder mit hohem Endgewinn
-  | 'flash'            // Wahr/Falsch Speed-Round
   | 'wordsnippets'     // Songzeilen / Zitate raten
   | 'sorting'          // Reihenfolge sortieren
   | 'blindguess'       // Media-Guess (Audio/Bild/Video)
@@ -30,7 +31,7 @@ export type GameModeId =
   | 'pantomime'        // Activity-Style
 
 export type ModeAccent =
-  | 'duel' | 'corner' | 'board' | 'experts' | 'sprinter' | 'ladder' | 'flash'
+  | 'duel' | 'corner' | 'board' | 'experts' | 'sprinter' | 'ladder' | 'flash' | 'spotlight'
 
 export interface GameMode {
   id: GameModeId
