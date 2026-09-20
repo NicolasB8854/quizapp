@@ -31,6 +31,7 @@ import type {
   PlayerInterest,
   RoundConfig,
   Team,
+  TeamColor,
 } from '@/types/round'
 import type {
   MultipleChoiceQuestion,
@@ -53,6 +54,12 @@ import {
 import { generateRoomCode } from '@/lib/roomCode'
 import { shuffleWithMapping } from '@/lib/shuffle'
 import { getDefaultAvatar } from '@/data/avatars'
+import {
+  MAX_TEAMS,
+  MIN_TEAMS,
+  getNextTeamId,
+  makeDefaultTeam,
+} from '@/data/teams'
 import {
   saveToPlayerLibrary,
   type PlayerProfile,
@@ -225,7 +232,17 @@ export interface DuelLive {
   kind: 'duel-1v1'
   totalDuels: number
   currentIndex: number
-  /** Pro Duell: gewählter Vertreter je Team, `null` solange nicht gewählt. */
+  /**
+   * Aktuell duellierendes Team-Paar. Bei 2 Teams immer beide. Bei 3+ Teams
+   * rotieren wir zwischen (i, i+1) → so kommt jedes Team der Reihe nach dran.
+   * Die nicht-antretenden Teams sitzen dieses Duell aus und bekommen keine Punkte.
+   */
+  duelingTeamIds: [string, string]
+  /**
+   * Pro Duell: gewählter Vertreter je Team, `null` solange nicht gewählt.
+   * Bei 3+ Teams sind nur die zwei duellierenden Team-IDs relevant — die anderen
+   * bleiben auf `null` und werden im UI ausgegraut.
+   */
   duelPlayers: Record<string, string | null>
   phase: 'setup-duel' | 'awaiting-buzz' | 'primary-answer' | 'steal-answer' | 'revealed'
   activeQuestion: MultipleChoiceQuestion | null
@@ -305,11 +322,12 @@ export type LiveGame =
 export interface DraftTeam {
   id: string
   name: string
-  color: 'purple' | 'cyan'
+  color: TeamColor
 }
 
 export interface Draft {
-  teams: [DraftTeam, DraftTeam]  // MVP: exakt zwei Teams
+  /** 2 bis 4 Teams (siehe MIN_TEAMS / MAX_TEAMS in `@/data/teams`). */
+  teams: DraftTeam[]
   selectedModes: GameModeId[]
 }
 
@@ -329,6 +347,8 @@ export interface GameState {
 
 export type GameAction =
   | { type: 'SET_TEAM_NAME'; teamId: string; name: string }
+  | { type: 'ADD_TEAM' }
+  | { type: 'REMOVE_TEAM'; teamId: string }
   | { type: 'TOGGLE_MODE'; modeId: GameModeId }
   | { type: 'SET_MODE_SELECTION'; modeIds: GameModeId[] }
   | { type: 'GO_TO_LOBBY' }
@@ -381,10 +401,7 @@ export type GameAction =
 // ---------- Initial State -----------------------------------------------------
 
 const DEFAULT_DRAFT: Draft = {
-  teams: [
-    { id: 'team-a', name: 'Team Nova',   color: 'purple' },
-    { id: 'team-b', name: 'Team Pulsar', color: 'cyan' },
-  ],
+  teams: [makeDefaultTeam(0), makeDefaultTeam(1)],
   selectedModes: ['category-duel'],
 }
 
@@ -760,12 +777,30 @@ function initElimination(teams: Team[], players: readonly Player[]): Elimination
 const DUEL_TOTAL = 5
 const DUEL_POINTS = 300
 
+/**
+ * Wählt das duellierende Team-Paar für ein Duell mit Index `duelIndex`.
+ * Deterministische Round-Robin-Rotation: (0,1), (1,2), (2,3), (3,0), (0,1), …
+ * Bei 2 Teams treten immer beide an; bei 3-4 Teams läuft die Rotation modulo N.
+ */
+function pickDuelingPair(teams: readonly Team[], duelIndex: number): [string, string] {
+  const n = teams.length
+  if (n < 2) {
+    // Defensive: sollte nie passieren (MIN_TEAMS = 2), aber TS will beide Slots.
+    const only = teams[0]?.id ?? 'team-a'
+    return [only, only]
+  }
+  const first = teams[duelIndex % n].id
+  const second = teams[(duelIndex + 1) % n].id
+  return [first, second]
+}
+
 function initDuel(teams: Team[]): DuelLive {
   const scores = Object.fromEntries(teams.map((t) => [t.id, 0]))
   return {
     kind: 'duel-1v1',
     totalDuels: DUEL_TOTAL,
     currentIndex: 0,
+    duelingTeamIds: pickDuelingPair(teams, 0),
     duelPlayers: Object.fromEntries(teams.map((t) => [t.id, null])),
     phase: 'setup-duel',
     activeQuestion: null,
@@ -1018,7 +1053,27 @@ export function reducer(state: GameState, action: GameAction): GameState {
     case 'SET_TEAM_NAME': {
       const teams = state.draft.teams.map((t) =>
         t.id === action.teamId ? { ...t, name: action.name } : t,
-      ) as Draft['teams']
+      )
+      return { ...state, draft: { ...state.draft, teams } }
+    }
+
+    case 'ADD_TEAM': {
+      // Nur in Setup-Phase; darüber hinaus sind Teams bereits in `round.teams`
+      // eingefroren und Player den Teams zugeordnet.
+      if (state.phase !== 'setup') return state
+      if (state.draft.teams.length >= MAX_TEAMS) return state
+      // Nächsten freien Slot aus TEAM_COLOR_ORDER wählen — deterministisch nach
+      // Anzahl, weil `makeDefaultTeam(i)` genau die i-te Farbe liefert.
+      const nextIndex = state.draft.teams.length
+      const teams = [...state.draft.teams, makeDefaultTeam(nextIndex)]
+      return { ...state, draft: { ...state.draft, teams } }
+    }
+
+    case 'REMOVE_TEAM': {
+      if (state.phase !== 'setup') return state
+      if (state.draft.teams.length <= MIN_TEAMS) return state
+      const teams = state.draft.teams.filter((t) => t.id !== action.teamId)
+      if (teams.length === state.draft.teams.length) return state
       return { ...state, draft: { ...state.draft, teams } }
     }
 
@@ -1046,9 +1101,11 @@ export function reducer(state: GameState, action: GameAction): GameState {
 
     case 'GO_TO_LOBBY': {
       if (state.draft.selectedModes.length === 0) return state
-      const teams: Team[] = state.draft.teams.map((t) => ({
+      if (state.draft.teams.length < MIN_TEAMS) return state
+      const teams: Team[] = state.draft.teams.map((t, i) => ({
         id: t.id,
-        name: t.name.trim() || (t.color === 'purple' ? 'Team Nova' : 'Team Pulsar'),
+        // Leere Namen bekommen den Default-Namen für ihren Slot-Index (Nova/Pulsar/Solaris/Nebula).
+        name: t.name.trim() || makeDefaultTeam(i).name,
         color: t.color,
       }))
       const players = makeDefaultPlayers(teams)
@@ -1392,7 +1449,10 @@ export function reducer(state: GameState, action: GameAction): GameState {
       if (live.phase !== 'steal') return state
       const player = state.round.players.find((p) => p.id === live.activePlayerId)
       if (!player) return state
-      const opponent = state.round.teams.find((t) => t.id !== player.teamId)
+      // Bei 2 Teams: automatisch das eine Gegenteam. Bei 3+ Teams: deterministisch
+      // das nächste Team in der Rotation (fair über die Runden).
+      const opponentId = getNextTeamId(state.round.teams, player.teamId)
+      const opponent = opponentId ? state.round.teams.find((t) => t.id === opponentId) : null
       if (!opponent) return state
 
       const wasCorrect = action.renderedIndex === live.correctRenderedIndex
@@ -1654,7 +1714,9 @@ export function reducer(state: GameState, action: GameAction): GameState {
       if (live.phase !== 'steal-answer' || !live.activePlayerId) return state
       const player = state.round.players.find((p) => p.id === live.activePlayerId)
       if (!player) return state
-      const opponent = state.round.teams.find((t) => t.id !== player.teamId)
+      // Steal-Rotation: bei 2 Teams das eine Gegenteam, bei 3+ das nächste in der Reihenfolge.
+      const opponentId = getNextTeamId(state.round.teams, player.teamId)
+      const opponent = opponentId ? state.round.teams.find((t) => t.id === opponentId) : null
       if (!opponent) return state
       const wasCorrect = action.renderedIndex === live.correctRenderedIndex
       const stealPoints = Math.floor(live.pointsPerCorrect / 2)
@@ -1883,12 +1945,16 @@ export function reducer(state: GameState, action: GameAction): GameState {
       const live = state.live
       if (live.phase !== 'setup-duel') return state
       if (!(action.teamId in live.duelPlayers)) return state
+      // Nur die duellierenden Teams dürfen ihren Vertreter setzen. Bei 2 Teams
+      // sind das immer beide; bei 3+ Teams sitzen die anderen aus.
+      if (!live.duelingTeamIds.includes(action.teamId)) return state
       // Prüfen, ob der Spieler zum richtigen Team gehört.
       const player = state.round.players.find((p) => p.id === action.playerId)
       if (!player || player.teamId !== action.teamId) return state
 
       const nextDuelPlayers = { ...live.duelPlayers, [action.teamId]: action.playerId }
-      const allSelected = Object.values(nextDuelPlayers).every((v) => v !== null)
+      // allSelected zählt NUR die duellierenden Teams (nicht die aussitzenden).
+      const allSelected = live.duelingTeamIds.every((id) => nextDuelPlayers[id] !== null)
       if (!allSelected) {
         return { ...state, live: { ...live, duelPlayers: nextDuelPlayers } }
       }
@@ -1927,6 +1993,8 @@ export function reducer(state: GameState, action: GameAction): GameState {
       const live = state.live
       if (live.phase !== 'awaiting-buzz') return state
       if (!(action.teamId in live.duelPlayers)) return state
+      // Nur duellierende Teams dürfen buzzern (bei 3+ Teams).
+      if (!live.duelingTeamIds.includes(action.teamId)) return state
       return {
         ...state,
         live: { ...live, phase: 'primary-answer', buzzingTeamId: action.teamId },
@@ -1959,7 +2027,11 @@ export function reducer(state: GameState, action: GameAction): GameState {
       }
 
       if (live.phase === 'steal-answer') {
-        const opponent = state.round.teams.find((t) => t.id !== live.buzzingTeamId)
+        // Duell: Steal geht an das zweite duellierende Team (bei 2 Teams: das andere,
+        // bei 3+ Teams: das nicht-buzzende der beiden aktuellen Duell-Teams).
+        if (!live.buzzingTeamId) return state
+        const opponentId = live.duelingTeamIds.find((id) => id !== live.buzzingTeamId)
+        const opponent = opponentId ? state.round.teams.find((t) => t.id === opponentId) : null
         if (!opponent) return state
         if (wasCorrect) {
           const scores = {
@@ -1995,6 +2067,8 @@ export function reducer(state: GameState, action: GameAction): GameState {
         ...live,
         usedQuestionIds,
         currentIndex: nextIndex,
+        // Nächstes Duell-Paar via Round-Robin-Rotation (bei 2 Teams immer die gleichen zwei).
+        duelingTeamIds: pickDuelingPair(state.round.teams, nextIndex),
         // Vertreter für das nächste Duell wieder frei wählbar.
         duelPlayers: Object.fromEntries(
           state.round.teams.map((t) => [t.id, null]),
@@ -2094,7 +2168,11 @@ export function reducer(state: GameState, action: GameAction): GameState {
       }
 
       if (live.phase === 'steal-answer') {
-        const opponent = state.round.teams.find((t) => t.id !== live.buzzingTeamId)
+        // Steal-Rotation: bei 2 Teams automatisch das eine Gegenteam, bei 3+ Teams
+        // das nächste in der Team-Reihenfolge (deterministisch, fair).
+        if (!live.buzzingTeamId) return state
+        const opponentId = getNextTeamId(state.round.teams, live.buzzingTeamId)
+        const opponent = opponentId ? state.round.teams.find((t) => t.id === opponentId) : null
         if (!opponent) return state
         if (wasCorrect) {
           const scores = {
@@ -2127,10 +2205,11 @@ export function reducer(state: GameState, action: GameAction): GameState {
       const totalCells = live.boardTopics.length * live.cellValues.length
       const isBoardDone = playedCells.length >= totalCells
 
-      // Zell-Wahlrecht wechselt zum Gegenteam.
-      const nextPickerId = state.round.teams.find(
-        (t) => t.id !== live.cellPickerTeamId,
-      )?.id ?? live.cellPickerTeamId
+      // Zell-Wahlrecht rotiert durch alle Teams. Bei 2 Teams = Alternation,
+      // bei 3+ Teams läuft der Picker reihum.
+      const nextPickerId = live.cellPickerTeamId
+        ? getNextTeamId(state.round.teams, live.cellPickerTeamId) ?? live.cellPickerTeamId
+        : (state.round.teams[0]?.id ?? null)
 
       const advancedBase: CategoryBoardLive = {
         ...live,
@@ -2371,11 +2450,13 @@ export function reducer(state: GameState, action: GameAction): GameState {
       // Alle 12 Kacheln durch → Modus zu Ende, weiter im FINISH_MODE-Handler.
       const isModeDone = usedTopics.length >= 12
 
+      const teamCount = state.round.teams.length
       const nextLive: CategoryDuelLive = {
         ...state.live,
         usedTopics,
         usedQuestionIds,
-        currentTeamIndex: 1 - state.live.currentTeamIndex,
+        // Rotation über alle Teams — bei 2 gleich Alternation, bei 3-4 zirkulär.
+        currentTeamIndex: teamCount > 0 ? (state.live.currentTeamIndex + 1) % teamCount : 0,
         phase: 'pick-topic',
         activeTopic: null,
         activeQuestion: null,
@@ -2399,14 +2480,23 @@ export function reducer(state: GameState, action: GameAction): GameState {
       const scores = state.live.scores
       const questionsUsed = state.live.usedQuestionIds
 
-      // Modus-Sieger: das Team mit den meisten Punkten dieses Modus. Bei Gleichstand kein
-      // Matchpunkt — beide behalten ihre Gesamt-Matchpunkte.
-      const [teamA, teamB] = state.round.teams
-      const scoreA = scores[teamA.id] ?? 0
-      const scoreB = scores[teamB.id] ?? 0
+      // Modus-Sieger: das Team mit dem strikten Maximum an Modus-Punkten.
+      // Gleichstand (2+ Teams gleichauf) → kein Matchpunkt, alle behalten ihre Gesamt-Matchpunkte.
+      // Funktioniert für 2, 3 oder 4 Teams (siehe konzept-v2.md, Kapitel 4).
       let winnerTeamId: string | undefined
-      if (scoreA > scoreB) winnerTeamId = teamA.id
-      else if (scoreB > scoreA) winnerTeamId = teamB.id
+      let maxScore = -Infinity
+      let winnerCount = 0
+      for (const team of state.round.teams) {
+        const s = scores[team.id] ?? 0
+        if (s > maxScore) {
+          maxScore = s
+          winnerTeamId = team.id
+          winnerCount = 1
+        } else if (s === maxScore) {
+          winnerCount++
+        }
+      }
+      if (winnerCount !== 1) winnerTeamId = undefined
 
       const mode = MODES_BY_ID[modeId]
       const nextMatchPoints = { ...state.matchPoints }
@@ -2502,11 +2592,22 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
   const matchWinner = useMemo<Team | null>(() => {
     if (!state.round || state.phase !== 'scoreboard') return null
-    const [teamA, teamB] = state.round.teams
-    const a = state.matchPoints[teamA.id] ?? 0
-    const b = state.matchPoints[teamB.id] ?? 0
-    if (a === b) return null
-    return a > b ? teamA : teamB
+    // Sieger = Team mit strictem Maximum an Match-Punkten. Gleichstand → null.
+    // Skaliert für 2, 3 oder 4 Teams.
+    let winner: Team | null = null
+    let max = -Infinity
+    let ties = 0
+    for (const team of state.round.teams) {
+      const pts = state.matchPoints[team.id] ?? 0
+      if (pts > max) {
+        max = pts
+        winner = team
+        ties = 1
+      } else if (pts === max) {
+        ties++
+      }
+    }
+    return ties === 1 ? winner : null
   }, [state.round, state.matchPoints, state.phase])
 
   const value = useMemo<GameContextValue>(

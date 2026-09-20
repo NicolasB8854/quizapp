@@ -22,6 +22,12 @@ export default {
           'purple-deep': '#5A3EE0',
           cyan: '#27D8FF',          // Electric Cyan – Ready-State / Interaktion
           'cyan-soft': '#7EE7FF',
+          // Session R: Team-Farben 3 und 4 (Multi-Team). Aus mode.sprinter / mode.flash
+          // abgeleitet, damit die Palette einheitlich bleibt.
+          orange: '#FF6E5C',
+          'orange-soft': '#FF9587',
+          pink: '#FF3D8B',
+          'pink-soft': '#FF77B0',
         },
         ink: {
           DEFAULT: '#F5F7FF',       // Off White – Primärtext
@@ -54,6 +60,9 @@ export default {
         // Sanfte Glows für Fokus/Auswahl (siehe Guardrails: „Glow nur bei Fokus").
         'glow-purple': '0 0 0 1px rgba(124,92,255,0.35), 0 12px 40px -8px rgba(124,92,255,0.55)',
         'glow-cyan':   '0 0 0 1px rgba(39,216,255,0.35), 0 12px 40px -8px rgba(39,216,255,0.55)',
+        // Session R: Team-Farben 3 und 4 (Multi-Team-Support)
+        'glow-orange': '0 0 0 1px rgba(255,110,92,0.35), 0 12px 40px -8px rgba(255,110,92,0.55)',
+        'glow-pink':   '0 0 0 1px rgba(255,61,139,0.35), 0 12px 40px -8px rgba(255,61,139,0.55)',
         'glow-correct':'0 0 0 1px rgba(63,217,139,0.4),  0 12px 40px -8px rgba(63,217,139,0.55)',
         'glow-wrong':  '0 0 0 1px rgba(255,92,122,0.4),  0 12px 40px -8px rgba(255,92,122,0.55)',
         // Mehrschichtige „Neon"-Glows für die Show-Anker-Elemente (Room-Code, Kategorie-Chip,
@@ -62,6 +71,10 @@ export default {
           '0 0 0 1px rgba(124,92,255,0.55), 0 0 12px rgba(124,92,255,0.55), 0 0 28px rgba(124,92,255,0.35), 0 0 60px rgba(124,92,255,0.25)',
         'neon-cyan':
           '0 0 0 1px rgba(39,216,255,0.55), 0 0 12px rgba(39,216,255,0.55), 0 0 28px rgba(39,216,255,0.35), 0 0 60px rgba(39,216,255,0.25)',
+        'neon-orange':
+          '0 0 0 1px rgba(255,110,92,0.55), 0 0 12px rgba(255,110,92,0.55), 0 0 28px rgba(255,110,92,0.35), 0 0 60px rgba(255,110,92,0.25)',
+        'neon-pink':
+          '0 0 0 1px rgba(255,61,139,0.55), 0 0 12px rgba(255,61,139,0.55), 0 0 28px rgba(255,61,139,0.35), 0 0 60px rgba(255,61,139,0.25)',
         card: '0 12px 40px -20px rgba(0,0,0,0.6)',
       },
       borderRadius: {

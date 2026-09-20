@@ -32,6 +32,7 @@ import {
 } from '@/context/GameContext'
 import { TOPICS, TOPICS_BY_ID } from '@/data/topics'
 import { MODES_BY_ID } from '@/data/modes'
+import { getNextTeamId, getTeamColorHex, getTeamColorTokens } from '@/data/teams'
 import type { Player, Team } from '@/types/round'
 import { AvatarBadge } from '@/components/AvatarBadge'
 import type { TrueFalseQuestion } from '@/types/question'
@@ -452,7 +453,7 @@ interface TeamAnswerBoxProps {
 }
 
 function TeamAnswerBox({ team, answer, correctAnswer, revealed, onPick }: TeamAnswerBoxProps) {
-  const teamHex = team.color === 'purple' ? '#7C5CFF' : '#27D8FF'
+  const teamHex = getTeamColorHex(team.color)
   const wasCorrect = revealed && answer !== null && answer === correctAnswer
 
   return (
@@ -632,10 +633,13 @@ function SpotlightStage() {
   const player = state.round.players.find((p) => p.id === spot.activePlayerId)
   if (!player) return null
   const team = state.round.teams.find((t) => t.id === player.teamId)!
-  const opponent = state.round.teams.find((t) => t.id !== player.teamId)!
+  // Steal-Rotation muss zum Reducer passen: bei 2 Teams das eine Gegenteam,
+  // bei 3+ Teams das nächste in der Team-Rotation (siehe getNextTeamId).
+  const opponentId = getNextTeamId(state.round.teams, player.teamId)
+  const opponent = state.round.teams.find((t) => t.id === opponentId)!
   const topic = TOPICS_BY_ID[spot.activeTopic]
-  const teamHex = team.color === 'purple' ? '#7C5CFF' : '#27D8FF'
-  const opponentHex = opponent.color === 'purple' ? '#7C5CFF' : '#27D8FF'
+  const teamHex = getTeamColorHex(team.color)
+  const opponentHex = getTeamColorHex(opponent.color)
   const displayName = player.name.trim() || `Spieler ${spot.currentIndex + 1}`
   const stealPoints = Math.floor(spot.pointsPerCorrect / 2)
 
@@ -1084,7 +1088,7 @@ function SprinterStage() {
   if (!sprinter.activeQuestion || !sprinter.activeTeamId) return null
   const team = state.round.teams.find((t) => t.id === sprinter.activeTeamId)
   if (!team) return null
-  const teamHex = team.color === 'purple' ? '#7C5CFF' : '#27D8FF'
+  const teamHex = getTeamColorHex(team.color)
   const timerCritical = remainingSec <= 10
   const timerHex = timerCritical ? '#FF5C7A' : '#FF6E5C'
 
@@ -1329,7 +1333,7 @@ function LadderTeamPanel({
   revealed,
   onPick,
 }: LadderTeamPanelProps) {
-  const teamHex = team.color === 'purple' ? '#7C5CFF' : '#27D8FF'
+  const teamHex = getTeamColorHex(team.color)
   return (
     <div
       className="rounded-card border p-4 md:p-5"
@@ -1432,7 +1436,7 @@ function LadderRevealPanel({
         {teams.map((team) => {
           const answer = teamAnswers[team.id]
           const wasCorrect = answer === correctIndex
-          const teamHex = team.color === 'purple' ? '#7C5CFF' : '#27D8FF'
+          const teamHex = getTeamColorHex(team.color)
           return (
             <div
               key={team.id}
@@ -1487,7 +1491,7 @@ function CategoryBoardStage() {
   // pick-cell: das Board.
   if (board.phase === 'pick-cell') {
     const picker = teams.find((t) => t.id === board.cellPickerTeamId)
-    const pickerHex = picker?.color === 'purple' ? '#7C5CFF' : picker ? '#27D8FF' : '#F0B23A'
+    const pickerHex = picker ? getTeamColorHex(picker.color) : '#F0B23A'
     return (
       <div className="animate-titleIn">
         <div className="text-center mb-6 md:mb-8">
@@ -1565,13 +1569,14 @@ function CategoryBoardStage() {
   const topic = TOPICS_BY_ID[board.activeCell.topic]
   const value = board.cellValues[board.activeCell.valueIndex] ?? 0
   const buzzingTeam = teams.find((t) => t.id === board.buzzingTeamId)
+  // Steal-Team = nächstes Team in der Rotation (bei 2 Teams automatisch das andere,
+  // bei 3+ Teams das nächste — muss zum Reducer passen, siehe getNextTeamId).
   const opponent = buzzingTeam
-    ? teams.find((t) => t.id !== buzzingTeam.id)
+    ? teams.find((t) => t.id === getNextTeamId(teams, buzzingTeam.id))
     : null
   const activeTeam =
     board.phase === 'steal-answer' ? opponent : buzzingTeam
-  const activeTeamHex =
-    activeTeam?.color === 'purple' ? '#7C5CFF' : activeTeam ? '#27D8FF' : '#F0B23A'
+  const activeTeamHex = activeTeam ? getTeamColorHex(activeTeam.color) : '#F0B23A'
 
   return (
     <div className="animate-titleIn">
@@ -1616,9 +1621,16 @@ function CategoryBoardStage() {
           <p className="text-center text-sm text-ink-muted mb-4">
             Wer hat zuerst gesummt? Master markiert:
           </p>
-          <div className="grid grid-cols-2 gap-3 md:gap-4">
+          <div
+            className={cn(
+              'grid gap-3 md:gap-4',
+              teams.length === 2 && 'grid-cols-2',
+              teams.length === 3 && 'grid-cols-3',
+              teams.length === 4 && 'grid-cols-2 md:grid-cols-4',
+            )}
+          >
             {teams.map((team) => {
-              const hex = team.color === 'purple' ? '#7C5CFF' : '#27D8FF'
+              const hex = getTeamColorHex(team.color)
               return (
                 <button
                   key={team.id}
@@ -1776,6 +1788,13 @@ function DuelStage() {
 
   // Setup-Phase: Vertreter wählen.
   if (duel.phase === 'setup-duel') {
+    // Bei 3+ Teams treten pro Duell nur zwei Teams an, der Rest sitzt aus.
+    // duelingTeamIds kommt aus dem Reducer (Round-Robin-Rotation).
+    const duelingTeams = duel.duelingTeamIds
+      .map((id) => teams.find((t) => t.id === id))
+      .filter((t): t is NonNullable<typeof t> => Boolean(t))
+    const spectatorTeams = teams.filter((t) => !duel.duelingTeamIds.includes(t.id))
+
     return (
       <div className="animate-titleIn">
         <div className="text-center mb-6 md:mb-8">
@@ -1786,15 +1805,22 @@ function DuelStage() {
             Wer geht ins Duell?
           </h1>
           <p className="mt-2 text-sm text-ink-muted max-w-md mx-auto">
-            Jedes Team schickt einen Vertreter. Wenn beide stehen, geht's los.
+            {teams.length > 2
+              ? `${duelingTeams[0]?.name ?? '?'} gegen ${duelingTeams[1]?.name ?? '?'} — je einen Vertreter wählen.`
+              : 'Jedes Team schickt einen Vertreter. Wenn beide stehen, geht\'s los.'}
           </p>
+          {spectatorTeams.length > 0 && (
+            <p className="mt-2 text-xs uppercase tracking-[0.22em] text-ink-faint">
+              Diese Runde aussetzen: {spectatorTeams.map((t) => t.name).join(', ')}
+            </p>
+          )}
         </div>
 
         <div className="grid md:grid-cols-2 gap-4">
-          {teams.map((team) => {
+          {duelingTeams.map((team) => {
             const teamPlayers = state.round!.players.filter((p) => p.teamId === team.id)
             const selectedId = duel.duelPlayers[team.id]
-            const teamHex = team.color === 'purple' ? '#7C5CFF' : '#27D8FF'
+            const teamHex = getTeamColorHex(team.color)
             return (
               <div
                 key={team.id}
@@ -1847,28 +1873,36 @@ function DuelStage() {
   }
 
   // Frage-Phasen: Header mit Vertreter-Duo, dann Frage.
+  // Wichtig: bei 3+ Teams sind nur die zwei duellingTeamIds relevant, nicht `teams[0..1]`.
+  const [firstDuelId, secondDuelId] = duel.duelingTeamIds
+  const firstDuelTeam = teams.find((t) => t.id === firstDuelId)
+  const secondDuelTeam = teams.find((t) => t.id === secondDuelId)
   const buzzingTeam = teams.find((t) => t.id === duel.buzzingTeamId)
-  const opponent = buzzingTeam ? teams.find((t) => t.id !== buzzingTeam.id) : null
+  // Opponent innerhalb des Duell-Paars — nicht irgendein anderes Team.
+  const opponent = buzzingTeam
+    ? teams.find((t) => t.id === duel.duelingTeamIds.find((id) => id !== buzzingTeam.id))
+    : null
   const activeTeam = duel.phase === 'steal-answer' ? opponent : buzzingTeam
-  const activeHex =
-    activeTeam?.color === 'purple' ? '#7C5CFF' : activeTeam ? '#27D8FF' : '#27D8FF'
+  const activeHex = activeTeam ? getTeamColorHex(activeTeam.color) : '#27D8FF'
+
+  if (!firstDuelTeam || !secondDuelTeam) return null
 
   return (
     <div className="animate-titleIn">
-      {/* Vertreter-Duo */}
+      {/* Vertreter-Duo — die zwei duellierenden Teams. */}
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 md:gap-6 mb-6">
         <DuelistCard
-          team={teams[0]}
-          playerName={displayName(duel.duelPlayers[teams[0].id], 'Spieler')}
-          isActive={activeTeam?.id === teams[0].id}
+          team={firstDuelTeam}
+          playerName={displayName(duel.duelPlayers[firstDuelTeam.id], 'Spieler')}
+          isActive={activeTeam?.id === firstDuelTeam.id}
         />
         <div className="font-display font-extrabold text-2xl md:text-4xl text-ink-muted">
           vs
         </div>
         <DuelistCard
-          team={teams[1]}
-          playerName={displayName(duel.duelPlayers[teams[1].id], 'Spieler')}
-          isActive={activeTeam?.id === teams[1].id}
+          team={secondDuelTeam}
+          playerName={displayName(duel.duelPlayers[secondDuelTeam.id], 'Spieler')}
+          isActive={activeTeam?.id === secondDuelTeam.id}
         />
       </div>
 
@@ -1893,8 +1927,8 @@ function DuelStage() {
             Wer war schneller? Master markiert:
           </p>
           <div className="grid grid-cols-2 gap-3 md:gap-4">
-            {teams.map((team) => {
-              const hex = team.color === 'purple' ? '#7C5CFF' : '#27D8FF'
+            {[firstDuelTeam, secondDuelTeam].map((team) => {
+              const hex = getTeamColorHex(team.color)
               return (
                 <button
                   key={team.id}
@@ -1997,7 +2031,7 @@ function EliminationStage() {
   // Finished-Screen: Sieger und Bonus.
   if (elim.phase === 'finished') {
     const winner = teams.find((t) => t.id === elim.winnerTeamId)
-    const winnerHex = winner?.color === 'purple' ? '#7C5CFF' : winner ? '#27D8FF' : '#FF6E5C'
+    const winnerHex = winner ? getTeamColorHex(winner.color) : '#FF6E5C'
     return (
       <div className="animate-titleIn text-center py-6">
         <div className="eyebrow inline-flex items-center gap-2 justify-center" style={{ color: '#FF6E5C' }}>
@@ -2046,7 +2080,7 @@ function EliminationStage() {
   // Answering/Revealed: Frage-Screen mit Ring darunter.
   const activePlayer = state.round.players.find((p) => p.id === elim.activePlayerId)
   const activeTeam = activePlayer && teams.find((t) => t.id === activePlayer.teamId)
-  const teamHex = activeTeam?.color === 'purple' ? '#7C5CFF' : '#27D8FF'
+  const teamHex = activeTeam ? getTeamColorHex(activeTeam.color) : '#27D8FF'
   const activeName = (activePlayer?.name.trim()) || `Spieler ${elim.currentPlayerIndex + 1}`
 
   return (
@@ -2155,7 +2189,7 @@ function EliminationRing({
           const p = players.find((pp) => pp.id === pid)
           if (!p) return null
           const team = teams.find((t) => t.id === p.teamId)
-          const hex = team?.color === 'purple' ? '#7C5CFF' : '#27D8FF'
+          const hex = team ? getTeamColorHex(team.color) : '#27D8FF'
           const isEliminated = eliminatedSet.has(pid)
           const isActive = activePlayerId === pid
           const name = p.name.trim() || `Spieler ${idx + 1}`
@@ -2330,7 +2364,7 @@ function ExpertsStage() {
             const p = state.round!.players.find((pp) => pp.id === pid)
             if (!p) return null
             const team = teams.find((t) => t.id === p.teamId)!
-            const teamHex = team.color === 'purple' ? '#7C5CFF' : '#27D8FF'
+            const teamHex = getTeamColorHex(team.color)
             const chosen = experts.expertise[pid]
             const name = p.name.trim() || `Spieler ${idx + 1}`
             return (
@@ -2405,10 +2439,11 @@ function ExpertsStage() {
   const activePlayer = state.round.players.find((p) => p.id === experts.activePlayerId)
   if (!activePlayer) return null
   const activeTeam = teams.find((t) => t.id === activePlayer.teamId)!
-  const opponent = teams.find((t) => t.id !== activePlayer.teamId)!
+  // Steal-Rotation muss zum Reducer passen (siehe EXPERTS_STEAL_ANSWER + getNextTeamId).
+  const opponent = teams.find((t) => t.id === getNextTeamId(teams, activePlayer.teamId))!
   const topicId = experts.expertise[experts.activePlayerId]!
   const topicDef = TOPICS_BY_ID[topicId]
-  const teamHex = activeTeam.color === 'purple' ? '#7C5CFF' : '#27D8FF'
+  const teamHex = getTeamColorHex(activeTeam.color)
   const activeName = activePlayer.name.trim() || `Spieler ${experts.currentIndex + 1}`
   const stealPoints = Math.floor(experts.pointsPerCorrect / 2)
   const timerCritical = remainingSec <= 5
@@ -2522,7 +2557,7 @@ function ExpertsStage() {
       {experts.phase === 'steal-answer' && (
         <div className="mt-6 md:mt-8">
           <p className="text-center text-sm text-ink-muted mb-4">
-            <span style={{ color: opponent.color === 'purple' ? '#7C5CFF' : '#27D8FF' }} className="font-semibold">
+            <span style={{ color: getTeamColorHex(opponent.color) }} className="font-semibold">
               {opponent.name}
             </span>{' '}
             wählt eine Option — {stealPoints} Punkte bei Treffer.
@@ -2570,7 +2605,7 @@ interface DuelistCardProps {
 }
 
 function DuelistCard({ team, playerName, isActive }: DuelistCardProps) {
-  const teamHex = team.color === 'purple' ? '#7C5CFF' : '#27D8FF'
+  const teamHex = getTeamColorHex(team.color)
   return (
     <div
       className="rounded-card border p-3 md:p-4 text-center transition-all"
@@ -2601,14 +2636,35 @@ interface SidebarProps {
 }
 
 function ScoreSidebar({ teams, scores, matchPoints, currentTeamId }: SidebarProps) {
-  const [teamA, teamB] = teams
-  const scoreA = scores[teamA.id] ?? 0
-  const scoreB = scores[teamB.id] ?? 0
-  const leaderId = scoreA === scoreB ? null : scoreA > scoreB ? teamA.id : teamB.id
+  // Leader = Team mit striktem Maximum, sonst null (Gleichstand oder leer).
+  let leaderId: string | null = null
+  let maxScore = -Infinity
+  let ties = 0
+  for (const team of teams) {
+    const s = scores[team.id] ?? 0
+    if (s > maxScore) {
+      maxScore = s
+      leaderId = team.id
+      ties = 1
+    } else if (s === maxScore) {
+      ties++
+    }
+  }
+  if (ties !== 1) leaderId = null
 
   return (
-    <aside className="space-y-3 md:space-y-4">
-      <div className="eyebrow text-center">Punkte</div>
+    <aside
+      className={cn(
+        // Bei 2 Teams stapelt sich die Sidebar vertikal. Bei 3-4 Teams schalten
+        // wir auf Grid, damit sie nicht überlang wird — auf großen Screens bleibt
+        // die vertikale Anordnung erhalten (lg:flex-col-Fallback wäre auch möglich).
+        'grid gap-3 md:gap-4',
+        teams.length === 2 && 'grid-cols-1',
+        teams.length === 3 && 'grid-cols-1 md:grid-cols-3 lg:grid-cols-1',
+        teams.length === 4 && 'grid-cols-2 lg:grid-cols-1',
+      )}
+    >
+      <div className="eyebrow text-center col-span-full">Punkte</div>
       {teams.map((team) => (
         <TeamSidebarCard
           key={team.id}
@@ -2632,7 +2688,8 @@ interface TeamCardProps {
 }
 
 function TeamSidebarCard({ team, score, matchPoint, isLeader, isCurrent }: TeamCardProps) {
-  const hex = team.color === 'purple' ? '#7C5CFF' : '#27D8FF'
+  const tokens = getTeamColorTokens(team.color)
+  const hex = tokens.hex
   return (
     <div
       className="relative rounded-card border p-4 md:p-5"
@@ -2654,16 +2711,14 @@ function TeamSidebarCard({ team, score, matchPoint, isLeader, isCurrent }: TeamC
         <div
           className={cn(
             'h-10 w-10 rounded-full flex items-center justify-center font-display font-bold text-sm border-2',
-            team.color === 'purple'
-              ? 'text-brand-purple-soft border-brand-purple/60 bg-brand-purple/15'
-              : 'text-brand-cyan-soft border-brand-cyan/60 bg-brand-cyan/15',
+            tokens.chipStrong,
           )}
         >
           {team.name.slice(0, 2).toUpperCase()}
         </div>
         <div className="min-w-0 flex-1">
           <div className="eyebrow" style={{ color: hex }}>
-            Team {team.color === 'purple' ? 'Purple' : 'Cyan'}
+            Team {tokens.label}
           </div>
           <div className="truncate font-display font-bold text-ink text-sm md:text-base">
             {team.name}

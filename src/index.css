@@ -47,6 +47,21 @@
       0 0 22px rgba(39, 216, 255, 0.40),
       0 0 42px rgba(39, 216, 255, 0.25);
   }
+  /* Session R: Neon-Text-Varianten für Team-Farben 3 und 4 (Multi-Team). */
+  .text-neon-orange {
+    color: #FFEEE9;
+    text-shadow:
+      0 0 8px rgba(255, 110, 92, 0.55),
+      0 0 22px rgba(255, 110, 92, 0.40),
+      0 0 42px rgba(255, 110, 92, 0.25);
+  }
+  .text-neon-pink {
+    color: #FFEAF3;
+    text-shadow:
+      0 0 8px rgba(255, 61, 139, 0.55),
+      0 0 22px rgba(255, 61, 139, 0.40),
+      0 0 42px rgba(255, 61, 139, 0.25);
+  }
   /* Fein-körnige Overlay-Textur — bricht flache Gradient-Ebenen, wie ein Foto-Grain. */
   .stage-grain {
     position: relative;

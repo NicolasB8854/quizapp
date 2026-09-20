@@ -22,6 +22,7 @@ import { useGame, type GameAction } from '@/context/GameContext'
 import { MODES_BY_ID } from '@/data/modes'
 import { TOPICS, TOPICS_BY_ID } from '@/data/topics'
 import { AVATAR_COLORS, AVATAR_EMOJIS } from '@/data/avatars'
+import { getTeamColorHex, getTeamColorTokens } from '@/data/teams'
 import type { Topic } from '@/types/question'
 import type { Avatar, Player, RoundConfig, SkillLevel, Team } from '@/types/round'
 import { computeInterestProfile } from '@/lib/interestProfile'
@@ -122,11 +123,19 @@ export default function LobbyPage() {
           </div>
         </div>
 
-        {/* Team-Ready-Karten */}
-        <div className="mt-10 md:mt-14 grid grid-cols-2 gap-3 md:gap-5">
+        {/* Team-Ready-Karten — Grid passt sich der Team-Anzahl an. */}
+        <div
+          className={cn(
+            'mt-10 md:mt-14 grid gap-3 md:gap-5',
+            totalTeams === 2 && 'grid-cols-2',
+            totalTeams === 3 && 'grid-cols-1 md:grid-cols-3',
+            totalTeams === 4 && 'grid-cols-2 md:grid-cols-4',
+          )}
+        >
           {state.round.teams.map((team) => {
             const isReady = readyIds.has(team.id)
-            const ringHex = team.color === 'purple' ? '#7C5CFF' : '#27D8FF'
+            const tokens = getTeamColorTokens(team.color)
+            const ringHex = tokens.hex
             return (
               <button
                 key={team.id}
@@ -151,9 +160,7 @@ export default function LobbyPage() {
                   <div
                     className={cn(
                       'shrink-0 h-14 w-14 md:h-16 md:w-16 rounded-full flex items-center justify-center font-display font-bold text-xl border-2',
-                      team.color === 'purple'
-                        ? 'text-brand-purple-soft border-brand-purple/60 bg-brand-purple/15'
-                        : 'text-brand-cyan-soft border-brand-cyan/60 bg-brand-cyan/15',
+                      tokens.chipStrong,
                     )}
                     style={{
                       boxShadow: `0 0 0 1px ${ringHex}40, 0 0 22px -6px ${ringHex}80`,
@@ -163,7 +170,7 @@ export default function LobbyPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="eyebrow">
-                      Team · {team.color === 'purple' ? 'Purple' : 'Cyan'}
+                      Team · {tokens.label}
                     </div>
                     <div className="mt-0.5 font-display font-bold text-xl md:text-2xl truncate">
                       {team.name}
@@ -312,7 +319,14 @@ function PlayerSetupSection({ round, dispatch }: PlayerSetupSectionProps) {
         </div>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-4">
+      <div
+        className={cn(
+          'grid gap-4',
+          round.teams.length === 2 && 'md:grid-cols-2',
+          round.teams.length === 3 && 'md:grid-cols-3',
+          round.teams.length === 4 && 'md:grid-cols-2 lg:grid-cols-4',
+        )}
+      >
         {round.teams.map((team) => {
           const teamPlayers = round.players.filter((p) => p.teamId === team.id)
           return (
@@ -338,7 +352,8 @@ interface TeamPlayerCardProps {
 }
 
 function TeamPlayerCard({ team, players, dispatch }: TeamPlayerCardProps) {
-  const hex = team.color === 'purple' ? '#7C5CFF' : '#27D8FF'
+  const tokens = getTeamColorTokens(team.color)
+  const hex = tokens.hex
   const canRemove = players.length > 1
   const canAdd = players.length < 4
 
@@ -351,9 +366,7 @@ function TeamPlayerCard({ team, players, dispatch }: TeamPlayerCardProps) {
         <div
           className={cn(
             'h-8 w-8 rounded-full flex items-center justify-center font-display font-bold text-xs border-2',
-            team.color === 'purple'
-              ? 'text-brand-purple-soft border-brand-purple/60 bg-brand-purple/15'
-              : 'text-brand-cyan-soft border-brand-cyan/60 bg-brand-cyan/15',
+            tokens.chipStrong,
           )}
         >
           {team.name.slice(0, 2).toUpperCase()}
@@ -865,7 +878,7 @@ function LibraryChip({ profile, teamOptions, onAdd, onForget }: LibraryChipProps
           </div>
           <div className="flex flex-col gap-1 min-w-[140px]">
             {teamOptions.map((team) => {
-              const hex = team.color === 'purple' ? '#7C5CFF' : '#27D8FF'
+              const hex = getTeamColorHex(team.color)
               return (
                 <button
                   key={team.id}

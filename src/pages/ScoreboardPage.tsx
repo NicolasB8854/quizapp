@@ -18,6 +18,7 @@ import { Card } from '@/components/Card'
 import { Badge } from '@/components/Badge'
 import { useGame } from '@/context/GameContext'
 import { MODES_BY_ID } from '@/data/modes'
+import { getTeamColorTokens } from '@/data/teams'
 import { cn } from '@/lib/classnames'
 
 export default function ScoreboardPage() {
@@ -38,49 +39,44 @@ export default function ScoreboardPage() {
       <div className="mx-auto max-w-5xl pt-4 md:pt-10 pb-16 animate-titleIn">
         {/* Sieger-Fläche */}
         <div className="text-center">
-          <div
-            className="mx-auto h-20 w-20 md:h-24 md:w-24 rounded-full flex items-center justify-center border-2"
-            style={{
-              borderColor: matchWinner
-                ? matchWinner.color === 'purple'
-                  ? 'rgba(124,92,255,0.7)'
-                  : 'rgba(39,216,255,0.7)'
-                : 'rgba(255,255,255,0.1)',
-              boxShadow: matchWinner
-                ? matchWinner.color === 'purple'
-                  ? '0 0 0 1px rgba(124,92,255,0.4), 0 0 40px rgba(124,92,255,0.55)'
-                  : '0 0 0 1px rgba(39,216,255,0.4), 0 0 40px rgba(39,216,255,0.55)'
-                : undefined,
-              background: 'rgba(11,16,32,0.6)',
-            }}
-          >
-            <Trophy
-              className={cn(
-                'h-10 w-10 md:h-12 md:w-12',
-                matchWinner
-                  ? matchWinner.color === 'purple'
-                    ? 'text-brand-purple-soft'
-                    : 'text-brand-cyan-soft'
-                  : 'text-ink-muted',
-              )}
-            />
-          </div>
-          <div className="mt-5 eyebrow">
-            {matchWinner ? 'Sieger des Abends' : 'Unentschieden'}
-          </div>
-          <h1
-            className={cn(
-              'mt-3 font-display font-bold uppercase leading-[0.9] tracking-tight',
-              'text-5xl md:text-7xl',
-              matchWinner
-                ? matchWinner.color === 'purple'
-                  ? 'text-neon-purple'
-                  : 'text-neon-cyan'
-                : 'text-ink',
-            )}
-          >
-            {matchWinner ? matchWinner.name : 'Ehrenvolles Remis'}
-          </h1>
+          {(() => {
+            // Sieger-Farb-Tokens einmalig auflösen für Trophäe + Headline.
+            const winnerTokens = matchWinner ? getTeamColorTokens(matchWinner.color) : null
+            const winnerHex = winnerTokens?.hex
+            return (
+              <>
+                <div
+                  className="mx-auto h-20 w-20 md:h-24 md:w-24 rounded-full flex items-center justify-center border-2"
+                  style={{
+                    borderColor: winnerHex ? `${winnerHex}B3` : 'rgba(255,255,255,0.1)',
+                    boxShadow: winnerHex
+                      ? `0 0 0 1px ${winnerHex}66, 0 0 40px ${winnerHex}8C`
+                      : undefined,
+                    background: 'rgba(11,16,32,0.6)',
+                  }}
+                >
+                  <Trophy
+                    className={cn(
+                      'h-10 w-10 md:h-12 md:w-12',
+                      winnerTokens ? winnerTokens.softText : 'text-ink-muted',
+                    )}
+                  />
+                </div>
+                <div className="mt-5 eyebrow">
+                  {matchWinner ? 'Sieger des Abends' : 'Unentschieden'}
+                </div>
+                <h1
+                  className={cn(
+                    'mt-3 font-display font-bold uppercase leading-[0.9] tracking-tight',
+                    'text-5xl md:text-7xl',
+                    winnerTokens ? winnerTokens.neonText : 'text-ink',
+                  )}
+                >
+                  {matchWinner ? matchWinner.name : 'Ehrenvolles Remis'}
+                </h1>
+              </>
+            )
+          })()}
           <p className="mt-4 text-ink-muted max-w-md mx-auto">
             {matchWinner
               ? `${state.matchPoints[matchWinner.id] ?? 0} Match-Punkte in ${state.round.gameModes.length} Modi.`
@@ -88,9 +84,17 @@ export default function ScoreboardPage() {
           </p>
         </div>
 
-        {/* Team-Zusammenfassung */}
-        <div className="mt-10 md:mt-14 grid md:grid-cols-2 gap-4 md:gap-6">
+        {/* Team-Zusammenfassung — Grid passt sich der Team-Anzahl an. */}
+        <div
+          className={cn(
+            'mt-10 md:mt-14 grid gap-4 md:gap-6',
+            teams.length === 2 && 'md:grid-cols-2',
+            teams.length === 3 && 'md:grid-cols-3',
+            teams.length === 4 && 'md:grid-cols-2 lg:grid-cols-4',
+          )}
+        >
           {teams.map((team) => {
+            const tokens = getTeamColorTokens(team.color)
             const isWinner = matchWinner?.id === team.id
             const totalPoints = state.results.reduce(
               (sum, r) => sum + (r.scores[team.id] ?? 0),
@@ -99,7 +103,7 @@ export default function ScoreboardPage() {
             return (
               <Card
                 key={team.id}
-                glow={isWinner ? (team.color === 'purple' ? 'purple' : 'cyan') : null}
+                glow={isWinner ? tokens.cardGlow : null}
                 className="p-6"
               >
                 <div className="flex items-center justify-between gap-3 mb-4">
@@ -107,9 +111,7 @@ export default function ScoreboardPage() {
                     <div
                       className={cn(
                         'h-11 w-11 rounded-full flex items-center justify-center font-display font-bold text-sm',
-                        team.color === 'purple'
-                          ? 'bg-brand-purple/25 text-brand-purple-soft'
-                          : 'bg-brand-cyan/25 text-brand-cyan-soft',
+                        tokens.chip,
                       )}
                     >
                       {team.name.slice(0, 2).toUpperCase()}
@@ -121,7 +123,7 @@ export default function ScoreboardPage() {
                       </div>
                     </div>
                   </div>
-                  {isWinner && <Badge tone={team.color === 'purple' ? 'purple' : 'cyan'}>Sieger</Badge>}
+                  {isWinner && <Badge tone={tokens.badgeTone}>Sieger</Badge>}
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">

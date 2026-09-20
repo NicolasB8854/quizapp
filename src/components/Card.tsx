@@ -10,13 +10,15 @@ import type { HTMLAttributes } from 'react'
 import { cn } from '@/lib/classnames'
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
-  glow?: 'purple' | 'cyan' | 'correct' | 'wrong' | null
+  glow?: 'purple' | 'cyan' | 'orange' | 'pink' | 'correct' | 'wrong' | null
   as?: 'div' | 'section' | 'article'
 }
 
 const glowMap: Record<NonNullable<Props['glow']> & string, string> = {
   purple: 'shadow-glow-purple border-brand-purple/40',
   cyan:   'shadow-glow-cyan border-brand-cyan/40',
+  orange: 'shadow-glow-orange border-brand-orange/40',
+  pink:   'shadow-glow-pink border-brand-pink/40',
   correct:'shadow-glow-correct border-correct/40',
   wrong:  'shadow-glow-wrong border-wrong/40',
 }

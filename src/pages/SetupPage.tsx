@@ -2,21 +2,29 @@
  * Setup-Screen — Teams benennen + Modi wählen.
  *
  * Zwei Sektionen:
- *  1. Teams: 2 Teams mit fest zugewiesenen Marken-Farben (Purple/Cyan). Nur die Namen sind
- *     editierbar. Farb-Wechsel wäre für v0.1 unnötige Komplexität.
+ *  1. Teams: 2–4 Teams mit fest zugewiesenen Marken-Farben aus TEAM_COLOR_ORDER.
+ *     Session R: Die Anzahl ist dynamisch, es gibt Add- und Remove-Buttons.
+ *     Farb-Wechsel per Team wäre für v0.1 unnötige Komplexität — der Slot-Index
+ *     bestimmt die Farbe deterministisch.
  *  2. Modi: Grid der Modus-Karten. Nur `ready`-Modi sind auswählbar; die anderen sind
  *     bewusst mit sichtbar, damit die Roadmap gleich mitkommuniziert wird.
  */
 
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
-import { ArrowLeft, ArrowRight } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Plus, X } from 'lucide-react'
 import { ScreenLayout } from '@/components/ScreenLayout'
 import { Button } from '@/components/Button'
 import { Card } from '@/components/Card'
 import { Badge } from '@/components/Badge'
 import { ModeCard } from '@/components/ModeCard'
 import { MODES } from '@/data/modes'
+import {
+  MAX_TEAMS,
+  MIN_TEAMS,
+  getTeamColorTokens,
+} from '@/data/teams'
+import type { TeamColor } from '@/types/round'
 import { useGame } from '@/context/GameContext'
 import { cn } from '@/lib/classnames'
 
@@ -35,6 +43,9 @@ export default function SetupPage() {
   }, [state.phase, navigate])
 
   const canProceed = state.draft.selectedModes.length > 0
+  const canAddTeam = state.draft.teams.length < MAX_TEAMS
+  const canRemoveTeam = state.draft.teams.length > MIN_TEAMS
+  const teamCount = state.draft.teams.length
 
   return (
     <ScreenLayout
@@ -54,21 +65,50 @@ export default function SetupPage() {
             Wer spielt <span className="text-neon-purple">heute Abend</span>?
           </h1>
           <p className="mt-4 text-ink-muted text-base max-w-2xl leading-relaxed">
-            Zwei Teams treten gegeneinander an. Namen anpassen, Modi wählen, dann geht's in die Lobby.
+            Zwei bis vier Teams treten gegeneinander an. Namen anpassen, Modi wählen, dann geht's in die Lobby.
           </p>
         </div>
 
         {/* Teams */}
         <Card className="p-5 md:p-7">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-4 gap-3">
             <div>
               <div className="eyebrow">Teams</div>
-              <div className="mt-1 font-display font-semibold text-xl">Zwei Seiten, ein Abend</div>
+              <div className="mt-1 font-display font-semibold text-xl">
+                {teamCount === 2 && 'Zwei Seiten, ein Abend'}
+                {teamCount === 3 && 'Drei Teams, ein Sieger'}
+                {teamCount === 4 && 'Vier Teams im Wettkampf'}
+              </div>
             </div>
-            <Badge tone="muted">Farben fest</Badge>
+            <div className="flex items-center gap-2">
+              <Badge tone="muted">{teamCount}/{MAX_TEAMS}</Badge>
+              {canAddTeam && (
+                <button
+                  type="button"
+                  onClick={() => dispatch({ type: 'ADD_TEAM' })}
+                  className={cn(
+                    'inline-flex items-center gap-1.5 rounded-full px-3 py-1.5',
+                    'text-[11px] font-semibold uppercase tracking-[0.16em]',
+                    'border border-brand-purple/40 bg-brand-purple/10 text-brand-purple-soft',
+                    'hover:bg-brand-purple/20 hover:border-brand-purple/60 transition-colors',
+                  )}
+                  aria-label="Team hinzufügen"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  Team
+                </button>
+              )}
+            </div>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-4">
+          <div
+            className={cn(
+              'grid gap-4',
+              teamCount === 2 && 'md:grid-cols-2',
+              teamCount === 3 && 'md:grid-cols-3',
+              teamCount === 4 && 'md:grid-cols-2 lg:grid-cols-4',
+            )}
+          >
             {state.draft.teams.map((team) => (
               <TeamInput
                 key={team.id}
@@ -76,6 +116,11 @@ export default function SetupPage() {
                 color={team.color}
                 value={team.name}
                 onChange={(name) => dispatch({ type: 'SET_TEAM_NAME', teamId: team.id, name })}
+                onRemove={
+                  canRemoveTeam
+                    ? () => dispatch({ type: 'REMOVE_TEAM', teamId: team.id })
+                    : null
+                }
               />
             ))}
           </div>
@@ -165,39 +210,59 @@ export default function SetupPage() {
 
 interface TeamInputProps {
   teamId: string
-  color: 'purple' | 'cyan'
+  color: TeamColor
   value: string
   onChange: (v: string) => void
+  /** `null` deaktiviert den Entfernen-Button (z. B. wenn MIN_TEAMS erreicht). */
+  onRemove: (() => void) | null
 }
 
-function TeamInput({ teamId, color, value, onChange }: TeamInputProps) {
-  const chipClass =
-    color === 'purple'
-      ? 'bg-brand-purple/25 text-brand-purple-soft'
-      : 'bg-brand-cyan/25 text-brand-cyan-soft'
-  const borderClass =
-    color === 'purple' ? 'focus-within:border-brand-purple/60' : 'focus-within:border-brand-cyan/60'
+function TeamInput({ teamId, color, value, onChange, onRemove }: TeamInputProps) {
+  const tokens = getTeamColorTokens(color)
+  // Bei leerem Namen: zwei Buchstaben aus dem Farb-Label als Initialen ("PU"/"CY"/"OR"/"PI").
+  const initials =
+    value.slice(0, 2).toUpperCase() || tokens.label.slice(0, 2).toUpperCase()
 
   return (
-    <label
-      htmlFor={`team-${teamId}`}
-      className={`flex items-center gap-3 rounded-card border border-white/10 bg-navy-800 px-4 py-3 transition-colors ${borderClass}`}
-    >
-      <span className={`h-9 w-9 rounded-full flex items-center justify-center font-display font-bold text-sm ${chipClass}`}>
-        {value.slice(0, 2).toUpperCase() || (color === 'purple' ? 'TN' : 'TP')}
-      </span>
-      <div className="flex-1">
-        <div className="eyebrow">Team · {color === 'purple' ? 'Purple' : 'Cyan'}</div>
-        <input
-          id={`team-${teamId}`}
-          type="text"
-          value={value}
-          maxLength={24}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={color === 'purple' ? 'Team Nova' : 'Team Pulsar'}
-          className="mt-0.5 w-full bg-transparent font-display text-lg font-semibold text-ink placeholder:text-ink-faint focus:outline-none"
-        />
-      </div>
-    </label>
+    <div className="relative">
+      <label
+        htmlFor={`team-${teamId}`}
+        className="flex items-center gap-3 rounded-card border border-white/10 bg-navy-800 px-4 py-3 transition-colors"
+      >
+        <span
+          className={cn(
+            'h-9 w-9 rounded-full flex items-center justify-center font-display font-bold text-sm shrink-0',
+            tokens.chip,
+          )}
+        >
+          {initials}
+        </span>
+        <div className="flex-1 min-w-0">
+          <div className="eyebrow">Team · {tokens.label}</div>
+          <input
+            id={`team-${teamId}`}
+            type="text"
+            value={value}
+            maxLength={24}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder={`Team ${tokens.label}`}
+            className="mt-0.5 w-full bg-transparent font-display text-lg font-semibold text-ink placeholder:text-ink-faint focus:outline-none"
+          />
+        </div>
+        {onRemove && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault()
+              onRemove()
+            }}
+            className="shrink-0 h-7 w-7 rounded-full flex items-center justify-center text-ink-muted hover:text-white hover:bg-white/10 transition-colors"
+            aria-label={`${value || tokens.label}-Team entfernen`}
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
+      </label>
+    </div>
   )
 }

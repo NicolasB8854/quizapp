@@ -8,6 +8,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import type { Team } from '@/types/round'
+import { getTeamColorTokens } from '@/data/teams'
 import { cn } from '@/lib/classnames'
 
 interface Props {
@@ -21,16 +22,27 @@ interface Props {
 const teamColorRing: Record<Team['color'], string> = {
   purple: 'ring-brand-purple/60 bg-brand-purple/10',
   cyan:   'ring-brand-cyan/60 bg-brand-cyan/10',
+  orange: 'ring-brand-orange/60 bg-brand-orange/10',
+  pink:   'ring-brand-pink/60 bg-brand-pink/10',
 }
 
 const teamColorAccent: Record<Team['color'], string> = {
   purple: 'text-brand-purple-soft',
   cyan:   'text-brand-cyan-soft',
+  orange: 'text-brand-orange-soft',
+  pink:   'text-brand-pink-soft',
 }
 
 export function ScorePanel({ teams, scores, matchPoints, currentTeamId, highlightTeamId }: Props) {
   return (
-    <div className="grid grid-cols-2 gap-3 md:gap-4">
+    <div
+      className={cn(
+        'grid gap-3 md:gap-4',
+        teams.length === 2 && 'grid-cols-2',
+        teams.length === 3 && 'grid-cols-3',
+        teams.length === 4 && 'grid-cols-2 md:grid-cols-4',
+      )}
+    >
       {teams.map((team) => (
         <TeamTile
           key={team.id}
@@ -77,9 +89,7 @@ function TeamTile({ team, score, matchPoints, isActive, highlight }: TileProps) 
             aria-hidden
             className={cn(
               'shrink-0 h-9 w-9 rounded-full flex items-center justify-center font-display font-bold text-sm',
-              team.color === 'purple'
-                ? 'bg-brand-purple/25 text-brand-purple-soft'
-                : 'bg-brand-cyan/25 text-brand-cyan-soft',
+              getTeamColorTokens(team.color).chip,
             )}
           >
             {team.name.slice(0, 2).toUpperCase()}

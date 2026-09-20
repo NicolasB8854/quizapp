@@ -45,10 +45,16 @@ export interface GameMode {
   status: 'ready' | 'planned'
 }
 
+/**
+ * Team-Farben aus der Design-Palette. Vier Farben sind das Maximum, weil vier
+ * Teams die Konzept-Obergrenze sind (siehe konzept-v2.md, „2–4 pro Team").
+ */
+export type TeamColor = 'purple' | 'cyan' | 'orange' | 'pink'
+
 export interface Team {
   id: string
   name: string
-  color: 'purple' | 'cyan'  // MVP: zwei Teams, feste Marken-Zweifarben
+  color: TeamColor
 }
 
 /**
