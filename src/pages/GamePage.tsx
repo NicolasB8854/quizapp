@@ -215,44 +215,58 @@ function QuestionStage() {
         ))}
       </div>
 
-      {/* Reveal-Panel */}
-      {live.phase === 'revealed' && (
-        <div
-          className={cn(
-            'mt-6 rounded-card border p-5 md:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4',
-            wasCorrect
-              ? 'bg-correct/10 border-correct/40'
-              : 'bg-wrong/10 border-wrong/40',
-          )}
-        >
-          <div className="min-w-0">
-            <div
-              className={cn(
-                'text-[11px] font-bold uppercase tracking-[0.22em]',
-                wasCorrect ? 'text-correct' : 'text-wrong',
-              )}
-            >
-              {wasCorrect ? `+ ${live.pointsPerQuestion} Punkte` : 'Keine Punkte'}
-            </div>
-            <div className="mt-1 font-display font-bold text-xl md:text-2xl">
-              {wasCorrect ? 'Richtig!' : 'Leider daneben.'}
-            </div>
-            {live.activeQuestion.gmNote && (
-              <p className="mt-2 text-sm text-ink-muted leading-relaxed max-w-2xl">
-                {live.activeQuestion.gmNote}
-              </p>
+      {/* Reveal-Panel — zeigt Punkteänderung, Auflösung und optional Erklärung.
+          `explanation` ist das v2-Feld für öffentliche Auflösungstexte,
+          `gmNote` bleibt als Fallback für Bestandsdaten. */}
+      {live.phase === 'revealed' && (() => {
+        const explanationText =
+          live.activeQuestion.explanation ?? live.activeQuestion.gmNote
+        const correctAnswer = live.shuffledOptions[live.correctRenderedIndex]
+        return (
+          <div
+            className={cn(
+              'mt-6 rounded-card border p-5 md:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4',
+              wasCorrect
+                ? 'bg-correct/10 border-correct/40'
+                : 'bg-wrong/10 border-wrong/40',
             )}
-          </div>
-          <Button
-            variant={wasCorrect ? 'cyan' : 'primary'}
-            size="lg"
-            trailing={<ArrowRight className="h-5 w-5" />}
-            onClick={() => dispatch({ type: 'CD_NEXT_TURN' })}
           >
-            Weiter
-          </Button>
-        </div>
-      )}
+            <div className="min-w-0">
+              <div
+                className={cn(
+                  'text-[11px] font-bold uppercase tracking-[0.22em]',
+                  wasCorrect ? 'text-correct' : 'text-wrong',
+                )}
+              >
+                {wasCorrect ? `+ ${live.pointsPerQuestion} Punkte` : 'Keine Punkte'}
+              </div>
+              <div className="mt-1 font-display font-bold text-xl md:text-2xl">
+                {wasCorrect ? 'Richtig!' : 'Leider daneben.'}
+              </div>
+              {!wasCorrect && (
+                <div className="mt-2 text-sm">
+                  <span className="text-ink-muted">Richtig wäre: </span>
+                  <span className="font-semibold text-correct">{correctAnswer}</span>
+                </div>
+              )}
+              {explanationText && (
+                <p className="mt-3 text-sm text-ink-muted leading-relaxed max-w-2xl">
+                  <span className="font-semibold text-ink">Auflösung: </span>
+                  {explanationText}
+                </p>
+              )}
+            </div>
+            <Button
+              variant={wasCorrect ? 'cyan' : 'primary'}
+              size="lg"
+              trailing={<ArrowRight className="h-5 w-5" />}
+              onClick={() => dispatch({ type: 'CD_NEXT_TURN' })}
+            >
+              Weiter
+            </Button>
+          </div>
+        )
+      })()}
     </div>
   )
 }

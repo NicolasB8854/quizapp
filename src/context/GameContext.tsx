@@ -18,6 +18,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useReducer,
   type ReactNode,
@@ -31,6 +32,7 @@ import type {
 import type { MultipleChoiceQuestion, Topic } from '@/types/question'
 import { MODES_BY_ID } from '@/data/modes'
 import { pickQuestion } from '@/lib/questions'
+import { markQuestionsAsked, readAskedQuestionIds } from '@/lib/questionHistory'
 import { generateRoomCode } from '@/lib/roomCode'
 import { shuffleWithMapping } from '@/lib/shuffle'
 
@@ -209,10 +211,17 @@ function reducer(state: GameState, action: GameAction): GameState {
       if (state.live.phase !== 'pick-topic') return state
       if (state.live.usedTopics.includes(action.topic)) return state
 
-      const question = pickQuestion(action.topic, new Set(state.live.usedQuestionIds))
+      // Kombinierter Ausschluss: bereits in dieser Runde gespielt + Historie aus
+      // vorherigen Runden (localStorage). `pickQuestion` fällt automatisch auf den
+      // vollen Pool zurück, wenn nach dem Filter nichts mehr übrig ist.
+      const excluded = new Set(state.live.usedQuestionIds)
+      for (const id of readAskedQuestionIds()) excluded.add(id)
+      const question = pickQuestion(action.topic, excluded)
       if (!question) return state
 
-      const shuffle = shuffleWithMapping(question.options)
+      // Seed = Round-ID + Question-ID: reproduzierbar, aber neu pro Runde.
+      const shuffleSeed = `${state.round.id}:${question.id}`
+      const shuffle = shuffleWithMapping(question.options, shuffleSeed)
       return {
         ...state,
         live: {
@@ -361,6 +370,17 @@ const GameContext = createContext<GameContextValue | null>(null)
 
 export function GameProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE)
+
+  // Duplicate-Check-Historie: sobald eine Frage tatsächlich gespielt wurde,
+  // merken wir sie in `localStorage`. Der Reducer schreibt selbst nicht, damit er
+  // pure bleibt; hier reagieren wir nur auf State-Änderungen.
+  const liveUsedQuestionIds =
+    state.live?.kind === 'category-duel' ? state.live.usedQuestionIds : undefined
+  useEffect(() => {
+    if (liveUsedQuestionIds && liveUsedQuestionIds.length > 0) {
+      markQuestionsAsked(liveUsedQuestionIds)
+    }
+  }, [liveUsedQuestionIds])
 
   const currentTeam = useMemo<Team | null>(() => {
     if (!state.round || !state.live || state.live.kind !== 'category-duel') return null
