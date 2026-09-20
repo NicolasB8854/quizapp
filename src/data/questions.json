@@ -609,5 +609,96 @@
     "correctAnswer": false,
     "explanation": "Er sah nur einen Apfel fallen — laut eigener Erzählung im Garten seiner Mutter. Die Kopftreffer-Version ist eine spätere Verzierung.",
     "status": "approved"
+  },
+
+  {
+    "id": "q-klick-01",
+    "type": "warmup-riddle",
+    "category": "kurioses",
+    "topic": "kurioses",
+    "difficulty": "mittel",
+    "question": "Warum haben Golfbälle keine glatte Oberfläche, sondern kleine Dellen?",
+    "hints": [
+      "Ein völlig glatter Ball fliegt deutlich schlechter.",
+      "Es hat mit der Luftströmung um den Ball zu tun.",
+      "Winzige Wirbel dicht an der Oberfläche verringern den Widerstand."
+    ],
+    "solution": "Die Dellen erzeugen kontrollierte Turbulenzen um den Ball. Das verkleinert das Windschatten-Gebiet hinter dem Ball und reduziert den Luftwiderstand — ein glatter Ball würde nur die halbe Distanz erreichen. Entdeckt Ende des 19. Jahrhunderts, als alte, zerbeulte Bälle sich besser schlagen ließen als neue.",
+    "status": "approved"
+  },
+  {
+    "id": "q-klick-02",
+    "type": "warmup-riddle",
+    "category": "kurioses",
+    "topic": "kurioses",
+    "difficulty": "leicht",
+    "question": "Warum hat der Deckel eines Marmeladenglases oben in der Mitte eine leichte Delle, die beim ersten Öffnen laut „klickt“?",
+    "hints": [
+      "Die Delle zeigt euch etwas Wichtiges.",
+      "Innen im Glas herrscht ein anderer Druck als außen.",
+      "Solange die Delle drin ist, ist das Glas noch ungeöffnet."
+    ],
+    "solution": "Die Delle ist ein Vakuum-Indikator. Nach dem heißen Abfüllen und Verschließen entsteht durch die Abkühlung Unterdruck im Glas — der zieht den Deckel leicht nach innen. Beim ersten Öffnen strömt Luft ein, die Delle springt hoch und macht das typische „Klick“. Ist die Delle schon draußen, wurde das Glas eventuell schon geöffnet.",
+    "status": "approved"
+  },
+  {
+    "id": "q-klick-03",
+    "type": "warmup-riddle",
+    "category": "kurioses",
+    "topic": "kurioses",
+    "difficulty": "mittel",
+    "question": "Warum meint man das Meer zu hören, wenn man eine große Muschel ans Ohr hält?",
+    "hints": [
+      "Es ist nicht wirklich Meer, das man hört.",
+      "Man hört es auch weit vom Meer entfernt — in der Wüste, im Keller.",
+      "Umgebungsgeräusche werden durch die Muschel gefiltert."
+    ],
+    "solution": "Die Hohlkammer der Muschel wirkt wie ein akustischer Resonator und verstärkt selektiv Umgebungsgeräusche in bestimmten Frequenzen. Das dumpfe Rauschen, das wir als „Meer“ interpretieren, ist eine gefilterte Mischung aus Umgebungslärm, dem Blutfluss im Ohr und der Muschel-Resonanz. Denselben Effekt bekommt man mit einer hohlen Tasse.",
+    "status": "approved"
+  },
+  {
+    "id": "q-klick-04",
+    "type": "warmup-riddle",
+    "category": "kurioses",
+    "topic": "kurioses",
+    "difficulty": "leicht",
+    "question": "Warum sind Feuerlöscher überall auf der Welt knallrot?",
+    "hints": [
+      "Es geht um sofortige Erkennbarkeit — nicht um Ästhetik.",
+      "Rot signalisiert Gefahr und ist bei den meisten Wandfarben ein Kontrast.",
+      "Die Farbe ist international genormt."
+    ],
+    "solution": "Rot ist die international per DIN/ISO genormte Farbe für Brandschutzausrüstung. Sie signalisiert Gefahr, hebt sich vor fast jedem Hintergrund ab und stellt sicher, dass Feuerlöscher weltweit auf einen Blick erkannt werden — auch unter Stress. In besonderen Umgebungen (Rot-Grün-Kliniken, Schiffe) gibt es dokumentierte Ausnahmen mit Neongelb.",
+    "status": "approved"
+  },
+  {
+    "id": "q-klick-05",
+    "type": "warmup-riddle",
+    "category": "kurioses",
+    "topic": "kurioses",
+    "difficulty": "mittel",
+    "question": "Warum haben Bananen aus dem Supermarkt keine Kerne, obwohl sie botanisch Früchte sind?",
+    "hints": [
+      "Wildbananen haben sehr wohl Kerne — und zwar große, harte.",
+      "Kulturbananen können sich nicht mehr selbst fortpflanzen.",
+      "Sie sind alle genetisch identisch."
+    ],
+    "solution": "Alle handelsüblichen Bananen sind sterile Klone einer einzigen Sorte — in Europa fast ausschließlich die Cavendish. Sie werden vegetativ vermehrt, jede Pflanze ist genetisch identisch zur Mutterpflanze. Wildbananen wären kaum essbar. Nachteil der Monokultur: ein einziger Pilz (etwa TR4) kann die weltweite Ernte gefährden.",
+    "status": "approved"
+  },
+  {
+    "id": "q-klick-06",
+    "type": "warmup-riddle",
+    "category": "kurioses",
+    "topic": "kurioses",
+    "difficulty": "leicht",
+    "question": "Warum knallen Champagnerkorken so laut, wenn man die Flasche öffnet?",
+    "hints": [
+      "Es liegt am Innendruck in der Flasche.",
+      "Der Druck ist deutlich höher als in einem Autoreifen.",
+      "Beim Öffnen expandiert das eingeschlossene Gas schlagartig."
+    ],
+    "solution": "In einer Champagnerflasche stehen etwa 5 bis 6 Bar Druck an — drei- bis viermal so viel wie in einem Autoreifen. Springt der Korken, entweicht das eingeschlossene CO₂ blitzartig, expandiert und erzeugt eine kleine Schockwelle: den „Knall“. Das Geräusch entsteht also durch die schlagartige Druckentspannung, nicht durch den Korken selbst.",
+    "status": "approved"
   }
 ]

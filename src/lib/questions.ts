@@ -17,6 +17,7 @@ import type {
   Question,
   Topic,
   TrueFalseQuestion,
+  WarmupRiddleQuestion,
 } from '@/types/question'
 import type { SkillLevel } from '@/types/round'
 import type { InterestProfile } from './interestProfile'
@@ -180,4 +181,26 @@ export function pickTrueFalse(
     ? (() => undefined)
     : ((q: TrueFalseQuestion) => profile.levelPerTopic.get(q.topic))
   return pickByDifficulty(chosen.items, getLevel)
+}
+
+// ---------- Klick! / Warm-Up-Rätsel ------------------------------------------
+
+export function getWarmupRiddlePool(): WarmupRiddleQuestion[] {
+  return ALL_QUESTIONS.filter(
+    (q): q is WarmupRiddleQuestion => q.type === 'warmup-riddle',
+  )
+}
+
+/**
+ * Zieht das nächste ungenutzte Warm-Up-Rätsel. Kein Topic- oder Difficulty-Filter —
+ * Klick! ist bewusst breit und kollaborativ.
+ */
+export function pickWarmupRiddle(
+  usedIds: ReadonlySet<string>,
+): WarmupRiddleQuestion | null {
+  const pool = getWarmupRiddlePool()
+  if (pool.length === 0) return null
+  const fresh = pool.filter((q) => !usedIds.has(q.id))
+  const candidates = fresh.length > 0 ? fresh : pool
+  return candidates[Math.floor(Math.random() * candidates.length)]
 }

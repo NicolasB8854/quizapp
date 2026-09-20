@@ -3,9 +3,11 @@ import {
   getAllQuestions,
   getMultipleChoiceByTopic,
   getTrueFalsePool,
+  getWarmupRiddlePool,
   pickByDifficulty,
   pickQuestion,
   pickTrueFalse,
+  pickWarmupRiddle,
 } from './questions'
 import type { Topic } from '@/types/question'
 
@@ -62,6 +64,25 @@ describe('questions', () => {
 
     it('gibt null zurück, wenn das Topic keine Fragen hat', () => {
       expect(pickQuestion('nonsense' as Topic, new Set())).toBeNull()
+    })
+  })
+
+  describe('pickWarmupRiddle (Session I)', () => {
+    it('zieht ein Rätsel aus dem Warm-Up-Pool', () => {
+      const picked = pickWarmupRiddle(new Set())
+      expect(picked).not.toBeNull()
+      expect(picked!.type).toBe('warmup-riddle')
+      expect(picked!.hints.length).toBeGreaterThan(0)
+      expect(picked!.solution.length).toBeGreaterThan(0)
+    })
+
+    it('respektiert usedIds und fällt bei erschöpftem Pool auf voll zurück', () => {
+      const pool = getWarmupRiddlePool()
+      expect(pool.length).toBeGreaterThan(0)
+      const excluded = new Set([pool[0].id])
+      const picked = pickWarmupRiddle(excluded)
+      expect(picked).not.toBeNull()
+      expect(excluded.has(picked!.id)).toBe(false)
     })
   })
 

@@ -12,12 +12,12 @@
 
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { X, ArrowRight, Crown, Check, XCircle } from 'lucide-react'
+import { X, ArrowRight, Crown, Check, XCircle, Lightbulb, Eye } from 'lucide-react'
 import { ScreenLayout } from '@/components/ScreenLayout'
 import { Button } from '@/components/Button'
 import { AnswerOption, type AnswerStatus } from '@/components/AnswerOption'
 import { TopicTile } from '@/components/TopicTile'
-import { useGame, useCategoryDuel, useFlash, useSpotlight } from '@/context/GameContext'
+import { useGame, useCategoryDuel, useFlash, useSpotlight, useAroundCorner } from '@/context/GameContext'
 import { TOPICS, TOPICS_BY_ID } from '@/data/topics'
 import { MODES_BY_ID } from '@/data/modes'
 import type { Team } from '@/types/round'
@@ -32,6 +32,7 @@ export default function GamePage() {
   const cdLive = useCategoryDuel()
   const flashLive = useFlash()
   const spotlightLive = useSpotlight()
+  const cornerLive = useAroundCorner()
 
   useEffect(() => {
     if (state.phase === 'setup')      navigate('/setup', { replace: true })
@@ -92,6 +93,8 @@ export default function GamePage() {
               <FlashStage />
             ) : spotlightLive ? (
               <SpotlightStage />
+            ) : cornerLive ? (
+              <AroundCornerStage />
             ) : null}
           </div>
           {/* Score-Sidebar */}
@@ -772,6 +775,158 @@ function SpotlightRevealPanel({
       >
         Weiter
       </Button>
+    </div>
+  )
+}
+
+// ---------- Klick! (Warm-Up „Genial daneben") --------------------------------
+
+function AroundCornerStage() {
+  const { dispatch } = useGame()
+  const corner = useAroundCorner()
+  if (!corner) return null
+
+  if (corner.phase === 'empty') {
+    return (
+      <div className="animate-titleIn text-center py-10">
+        <div className="eyebrow">Klick! übersprungen</div>
+        <h1 className="mt-3 font-display font-bold uppercase text-3xl md:text-5xl tracking-tight">
+          Keine Rätsel im Katalog
+        </h1>
+        <p className="mt-3 text-ink-muted max-w-lg mx-auto">
+          Für „Klick!" braucht es Warm-Up-Rätsel im Fragen-Katalog. Wir überspringen den
+          Modus für diese Runde.
+        </p>
+        <div className="mt-6 flex justify-center">
+          <Button
+            variant="primary"
+            size="lg"
+            trailing={<ArrowRight className="h-5 w-5" />}
+            onClick={() => dispatch({ type: 'AC_NEXT' })}
+          >
+            Weiter
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  if (!corner.activeQuestion) return null
+  const question = corner.activeQuestion
+  const maxHints = question.hints.length
+  const canRevealMoreHints = corner.revealedHints < maxHints
+  const isRevealed = corner.phase === 'revealed'
+
+  return (
+    <div className="animate-titleIn">
+      {/* Progress */}
+      <div className="text-center mb-4 md:mb-6">
+        <div className="eyebrow inline-flex items-center gap-2 justify-center">
+          <Lightbulb className="h-3.5 w-3.5" style={{ color: '#F4A261' }} />
+          Klick! · Rätsel {corner.currentIndex + 1} von {corner.totalRiddles}
+        </div>
+        <p className="mt-2 text-ink-muted text-sm">
+          Alle beraten gemeinsam. Keine Punkte, nur der Aha-Moment.
+        </p>
+      </div>
+
+      {/* Frage */}
+      <div
+        className="rounded-card border p-6 md:p-8 text-center"
+        style={{
+          borderColor: 'rgba(244,162,97,0.4)',
+          background: 'rgba(11,16,32,0.6)',
+          boxShadow:
+            '0 0 0 1px rgba(244,162,97,0.25), 0 0 28px rgba(244,162,97,0.25)',
+        }}
+      >
+        <h2 className="font-display font-bold text-white leading-tight text-2xl md:text-4xl">
+          {question.question}
+        </h2>
+      </div>
+
+      {/* Hinweise (nacheinander aufgedeckt) */}
+      {corner.revealedHints > 0 && (
+        <div className="mt-6 space-y-2">
+          {question.hints.slice(0, corner.revealedHints).map((hint, idx) => (
+            <div
+              key={idx}
+              className="rounded-lg border border-white/[0.08] bg-navy-800/60 p-4 flex items-start gap-3 animate-titleIn"
+            >
+              <span
+                className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[10px] font-bold uppercase tracking-widest"
+                style={{
+                  color: '#F4A261',
+                  border: '1px solid rgba(244,162,97,0.5)',
+                  background: 'rgba(244,162,97,0.12)',
+                }}
+              >
+                {idx + 1}
+              </span>
+              <p className="text-sm text-ink leading-relaxed">{hint}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Aktion */}
+      {!isRevealed && (
+        <div className="mt-6 flex flex-col md:flex-row items-center justify-center gap-3">
+          <button
+            type="button"
+            disabled={!canRevealMoreHints}
+            onClick={() => dispatch({ type: 'AC_REVEAL_HINT' })}
+            className={cn(
+              'inline-flex items-center gap-2 h-12 rounded-full px-5',
+              'font-display font-bold uppercase tracking-widest text-sm',
+              canRevealMoreHints
+                ? 'border-2 border-mode-corner/60 bg-mode-corner/15 text-mode-corner hover:bg-mode-corner/25'
+                : 'border border-white/10 bg-navy-800/50 text-ink-faint cursor-not-allowed',
+              'transition-colors',
+            )}
+          >
+            <Lightbulb className="h-4 w-4" />
+            {canRevealMoreHints ? `Hinweis ${corner.revealedHints + 1}/${maxHints}` : 'Alle Hinweise gezeigt'}
+          </button>
+          <Button
+            variant="primary"
+            size="lg"
+            leading={<Eye className="h-5 w-5" />}
+            onClick={() => dispatch({ type: 'AC_REVEAL_SOLUTION' })}
+          >
+            Auflösung
+          </Button>
+        </div>
+      )}
+
+      {/* Solution + Weiter */}
+      {isRevealed && (
+        <div
+          className="mt-6 rounded-card border p-5 md:p-6"
+          style={{
+            borderColor: 'rgba(244,162,97,0.5)',
+            background: 'rgba(11,16,32,0.7)',
+            boxShadow: '0 0 24px -8px rgba(244,162,97,0.6)',
+          }}
+        >
+          <div className="text-[11px] font-bold uppercase tracking-[0.22em] mb-2" style={{ color: '#F4A261' }}>
+            Auflösung
+          </div>
+          <p className="font-display font-semibold text-white text-lg md:text-xl leading-snug">
+            {question.solution}
+          </p>
+          <div className="mt-5 flex justify-end">
+            <Button
+              variant="primary"
+              size="lg"
+              trailing={<ArrowRight className="h-5 w-5" />}
+              onClick={() => dispatch({ type: 'AC_NEXT' })}
+            >
+              {corner.currentIndex + 1 >= corner.totalRiddles ? 'Modus beenden' : 'Nächstes Rätsel'}
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

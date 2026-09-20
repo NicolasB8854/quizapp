@@ -34,7 +34,7 @@ export const MODES: GameMode[] = [
     estimatedMinutes: 15,
     scoresMatchPoint: false,
     accent: 'corner',
-    status: 'planned',
+    status: 'ready',
   },
   {
     id: 'category-board',

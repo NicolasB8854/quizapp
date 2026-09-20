@@ -506,6 +506,88 @@ describe('reducer — Player-Ebene (Session D + E)', () => {
   })
 })
 
+describe('reducer — Klick! (Session I)', () => {
+  function bootAroundCorner(): ReturnType<typeof reducer> {
+    let s = reducer(INITIAL_STATE, {
+      type: 'SET_MODE_SELECTION',
+      modeIds: ['around-corner'],
+    })
+    s = reducer(s, { type: 'GO_TO_LOBBY' })
+    s = reducer(s, { type: 'START_PLAYING' })
+    return s
+  }
+
+  it('START_PLAYING zieht sofort das erste Rätsel', () => {
+    const s = bootAroundCorner()
+    expect(s.live?.kind).toBe('around-corner')
+    if (s.live?.kind !== 'around-corner') throw new Error('unreachable')
+    expect(s.live.phase).toBe('guessing')
+    expect(s.live.currentIndex).toBe(0)
+    expect(s.live.revealedHints).toBe(0)
+    expect(s.live.activeQuestion).not.toBeNull()
+    expect(s.live.activeQuestion?.hints.length).toBeGreaterThan(0)
+  })
+
+  it('AC_REVEAL_HINT erhöht revealedHints bis zum Maximum', () => {
+    let s = bootAroundCorner()
+    if (s.live?.kind !== 'around-corner') throw new Error('unreachable')
+    const maxHints = s.live.activeQuestion!.hints.length
+    for (let i = 0; i < maxHints; i++) {
+      s = reducer(s, { type: 'AC_REVEAL_HINT' })
+    }
+    if (s.live?.kind !== 'around-corner') throw new Error('unreachable')
+    expect(s.live.revealedHints).toBe(maxHints)
+    // Weiterer Hint über das Maximum hinaus → no-op.
+    const before = s.live
+    s = reducer(s, { type: 'AC_REVEAL_HINT' })
+    expect(s.live).toBe(before)
+  })
+
+  it('AC_REVEAL_SOLUTION schaltet in revealed-Phase', () => {
+    let s = bootAroundCorner()
+    s = reducer(s, { type: 'AC_REVEAL_SOLUTION' })
+    if (s.live?.kind !== 'around-corner') throw new Error('unreachable')
+    expect(s.live.phase).toBe('revealed')
+  })
+
+  it('AC_NEXT vor revealed ist no-op', () => {
+    let s = bootAroundCorner()
+    const before = s.live
+    s = reducer(s, { type: 'AC_NEXT' })
+    expect(s.live).toBe(before)
+  })
+
+  it('AC_NEXT nach revealed geht zum nächsten Rätsel', () => {
+    let s = bootAroundCorner()
+    if (s.live?.kind !== 'around-corner') throw new Error('unreachable')
+    const firstQuestionId = s.live.activeQuestion!.id
+
+    s = reducer(s, { type: 'AC_REVEAL_SOLUTION' })
+    s = reducer(s, { type: 'AC_NEXT' })
+    if (s.live?.kind !== 'around-corner') throw new Error('unreachable')
+    expect(s.live.currentIndex).toBe(1)
+    expect(s.live.phase).toBe('guessing')
+    expect(s.live.revealedHints).toBe(0)
+    expect(s.live.usedQuestionIds).toContain(firstQuestionId)
+    expect(s.live.activeQuestion?.id).not.toBe(firstQuestionId)
+  })
+
+  it('Nach totalRiddles Rätseln: FINISH_MODE → scoreboard, kein Match-Punkt', () => {
+    let s = bootAroundCorner()
+    if (s.live?.kind !== 'around-corner') throw new Error('unreachable')
+    const total = s.live.totalRiddles
+
+    for (let i = 0; i < total; i++) {
+      s = reducer(s, { type: 'AC_REVEAL_SOLUTION' })
+      s = reducer(s, { type: 'AC_NEXT' })
+    }
+    expect(s.phase).toBe('scoreboard')
+    // Klick! trägt keinen Match-Punkt bei (mode.scoresMatchPoint === false).
+    expect(s.matchPoints['team-a'] ?? 0).toBe(0)
+    expect(s.matchPoints['team-b'] ?? 0).toBe(0)
+  })
+})
+
 describe('reducer — Difficulty-Match (Session H)', () => {
   it('CD_PICK_TOPIC bevorzugt schwere Fragen wenn Team-Level nerd ist', () => {
     vi.restoreAllMocks()

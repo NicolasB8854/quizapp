@@ -31,9 +31,14 @@ import type {
   RoundConfig,
   Team,
 } from '@/types/round'
-import type { MultipleChoiceQuestion, Topic, TrueFalseQuestion } from '@/types/question'
+import type {
+  MultipleChoiceQuestion,
+  Topic,
+  TrueFalseQuestion,
+  WarmupRiddleQuestion,
+} from '@/types/question'
 import { MODES_BY_ID } from '@/data/modes'
-import { pickQuestion, pickTrueFalse } from '@/lib/questions'
+import { pickQuestion, pickTrueFalse, pickWarmupRiddle } from '@/lib/questions'
 import { markQuestionsAsked, readAskedQuestionIds } from '@/lib/questionHistory'
 import {
   aggregatePlayerInterests,
@@ -109,7 +114,25 @@ export interface SpotlightLive {
   pointsPerCorrect: number
 }
 
-export type LiveGame = CategoryDuelLive | FlashLive | SpotlightLive
+/**
+ * Klick! (Warm-Up „Genial daneben"): fünf Rätsel-Fragen mit stufenweisen Hinweisen.
+ * Alle beraten gemeinsam, keine Team-Wertung. Fokus liegt auf dem Aha-Moment und der
+ * lockeren Einstimmung — kein Match-Punkt (mode.scoresMatchPoint === false).
+ */
+export interface AroundCornerLive {
+  kind: 'around-corner'
+  totalRiddles: number
+  currentIndex: number
+  activeQuestion: WarmupRiddleQuestion | null
+  /** Wie viele der `hints` bereits aufgedeckt sind (0 bis hints.length). */
+  revealedHints: number
+  phase: 'guessing' | 'revealed' | 'empty'
+  /** Für Konsistenz mit LiveGame — bleibt in diesem Modus dauerhaft bei 0. */
+  scores: Record<string, number>
+  usedQuestionIds: string[]
+}
+
+export type LiveGame = CategoryDuelLive | FlashLive | SpotlightLive | AroundCornerLive
 
 // ---------- Draft (Setup-Phase) ----------------------------------------------
 
@@ -153,6 +176,9 @@ export type GameAction =
   | { type: 'SPOTLIGHT_MARK_PRIMARY'; outcome: 'correct' | 'wrong' }
   | { type: 'SPOTLIGHT_STEAL_ANSWER'; renderedIndex: number }
   | { type: 'SPOTLIGHT_NEXT' }
+  | { type: 'AC_REVEAL_HINT' }
+  | { type: 'AC_REVEAL_SOLUTION' }
+  | { type: 'AC_NEXT' }
   | { type: 'ADD_PLAYER'; teamId: string }
   | { type: 'REMOVE_PLAYER'; playerId: string }
   | { type: 'SET_PLAYER_NAME'; playerId: string; name: string }
@@ -380,6 +406,39 @@ function initSpotlight(teams: Team[], players: readonly Player[]): SpotlightLive
   }
 }
 
+function initAroundCorner(teams: Team[]): AroundCornerLive {
+  const scores = Object.fromEntries(teams.map((t) => [t.id, 0]))
+  const excluded = new Set<string>()
+  for (const id of readAskedQuestionIds()) excluded.add(id)
+  const first = pickWarmupRiddle(excluded)
+
+  if (!first) {
+    // Kein Rätsel im Katalog verfügbar — Modus signalisiert Empty und wird beim
+    // ersten NEXT übersprungen.
+    return {
+      kind: 'around-corner',
+      totalRiddles: 5,
+      currentIndex: 0,
+      activeQuestion: null,
+      revealedHints: 0,
+      phase: 'empty',
+      scores,
+      usedQuestionIds: [],
+    }
+  }
+
+  return {
+    kind: 'around-corner',
+    totalRiddles: 5,
+    currentIndex: 0,
+    activeQuestion: first,
+    revealedHints: 0,
+    phase: 'guessing',
+    scores,
+    usedQuestionIds: [],
+  }
+}
+
 function initLiveFor(
   modeId: GameModeId,
   teams: Team[],
@@ -392,6 +451,8 @@ function initLiveFor(
       return initFlash(teams, players)
     case 'player-spotlight':
       return initSpotlight(teams, players)
+    case 'around-corner':
+      return initAroundCorner(teams)
     default:
       // Alle anderen Modi sind in v0.1 als `planned` markiert und lassen sich im Setup
       // gar nicht auswählen. Falls doch: null → Reducer springt in FINISH_MODE.
@@ -807,6 +868,64 @@ export function reducer(state: GameState, action: GameAction): GameState {
       }
     }
 
+    case 'AC_REVEAL_HINT': {
+      if (!state.live || state.live.kind !== 'around-corner') return state
+      if (state.live.phase !== 'guessing' || !state.live.activeQuestion) return state
+      const maxHints = state.live.activeQuestion.hints.length
+      if (state.live.revealedHints >= maxHints) return state
+      return {
+        ...state,
+        live: { ...state.live, revealedHints: state.live.revealedHints + 1 },
+      }
+    }
+
+    case 'AC_REVEAL_SOLUTION': {
+      if (!state.live || state.live.kind !== 'around-corner') return state
+      if (state.live.phase !== 'guessing') return state
+      return { ...state, live: { ...state.live, phase: 'revealed' } }
+    }
+
+    case 'AC_NEXT': {
+      if (!state.round || !state.live || state.live.kind !== 'around-corner') return state
+      // Empty-Fall: direkt zu FINISH_MODE.
+      if (state.live.phase === 'empty') {
+        return reducer(state, { type: 'FINISH_MODE' })
+      }
+      if (state.live.phase !== 'revealed') return state
+
+      const usedQuestionIds = state.live.activeQuestion
+        ? [...state.live.usedQuestionIds, state.live.activeQuestion.id]
+        : state.live.usedQuestionIds
+      const nextIndex = state.live.currentIndex + 1
+      const isModeDone = nextIndex >= state.live.totalRiddles
+
+      const advancedBase: AroundCornerLive = {
+        ...state.live,
+        usedQuestionIds,
+        currentIndex: nextIndex,
+        activeQuestion: null,
+        revealedHints: 0,
+        phase: 'guessing',
+      }
+
+      if (isModeDone) {
+        return reducer({ ...state, live: advancedBase }, { type: 'FINISH_MODE' })
+      }
+
+      const excluded = new Set(usedQuestionIds)
+      for (const id of readAskedQuestionIds()) excluded.add(id)
+      const nextQuestion = pickWarmupRiddle(excluded)
+      if (!nextQuestion) {
+        // Pool leer — vorzeitig beenden.
+        return reducer({ ...state, live: advancedBase }, { type: 'FINISH_MODE' })
+      }
+
+      return {
+        ...state,
+        live: { ...advancedBase, activeQuestion: nextQuestion },
+      }
+    }
+
     case 'CD_NEXT_TURN': {
       if (!state.round || !state.live || state.live.kind !== 'category-duel') return state
       if (state.live.phase !== 'revealed') return state
@@ -980,6 +1099,11 @@ export function useFlash(): FlashLive | null {
 export function useSpotlight(): SpotlightLive | null {
   const { state } = useGame()
   return state.live && state.live.kind === 'player-spotlight' ? state.live : null
+}
+
+export function useAroundCorner(): AroundCornerLive | null {
+  const { state } = useGame()
+  return state.live && state.live.kind === 'around-corner' ? state.live : null
 }
 
 // Convenience für Dispatch ohne Boilerplate.
