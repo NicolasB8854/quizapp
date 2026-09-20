@@ -24,6 +24,7 @@ import {
   type ReactNode,
 } from 'react'
 import type {
+  Avatar,
   GameModeId,
   GameResult,
   Player,
@@ -51,6 +52,11 @@ import {
 } from '@/lib/interestProfile'
 import { generateRoomCode } from '@/lib/roomCode'
 import { shuffleWithMapping } from '@/lib/shuffle'
+import { getDefaultAvatar } from '@/data/avatars'
+import {
+  saveToPlayerLibrary,
+  type PlayerProfile,
+} from '@/lib/playerLibrary'
 
 // ---------- Sub-Types ---------------------------------------------------------
 
@@ -365,6 +371,9 @@ export type GameAction =
   | { type: 'REMOVE_PLAYER'; playerId: string }
   | { type: 'SET_PLAYER_NAME'; playerId: string; name: string }
   | { type: 'SET_PLAYER_INTERESTS'; playerId: string; interests: PlayerInterest[] }
+  | { type: 'SET_PLAYER_AVATAR'; playerId: string; avatar: Avatar }
+  | { type: 'ADD_PLAYER_FROM_LIBRARY'; teamId: string; profile: PlayerProfile }
+  | { type: 'REPLACE_PLAYER_FROM_LIBRARY'; playerId: string; profile: PlayerProfile }
   | { type: 'FINISH_MODE' }
   | { type: 'BACK_TO_SETUP' }
   | { type: 'RESET_ALL' }
@@ -405,9 +414,17 @@ function newPlayerId(): string {
 
 function makeDefaultPlayers(teams: Team[]): Player[] {
   const players: Player[] = []
+  let slotIndex = 0
   for (const team of teams) {
     for (let i = 0; i < DEFAULT_PLAYERS_PER_TEAM; i++) {
-      players.push({ id: newPlayerId(), name: '', teamId: team.id, interests: [] })
+      players.push({
+        id: newPlayerId(),
+        name: '',
+        teamId: team.id,
+        interests: [],
+        avatar: getDefaultAvatar(slotIndex),
+      })
+      slotIndex++
     }
   }
   return players
@@ -1074,6 +1091,7 @@ export function reducer(state: GameState, action: GameAction): GameState {
         name: '',
         teamId: action.teamId,
         interests: [],
+        avatar: getDefaultAvatar(state.round.players.length),
       }
       const players = [...state.round.players, newPlayer]
       return {
@@ -1123,6 +1141,70 @@ export function reducer(state: GameState, action: GameAction): GameState {
       const interests = Array.from(byTopic.values())
       const players = state.round.players.map((p) =>
         p.id === action.playerId ? { ...p, interests } : p,
+      )
+      return {
+        ...state,
+        round: {
+          ...state.round,
+          players,
+          interests: aggregatePlayerInterests(players),
+        },
+      }
+    }
+
+    case 'SET_PLAYER_AVATAR': {
+      if (!state.round || state.phase !== 'lobby') return state
+      const players = state.round.players.map((p) =>
+        p.id === action.playerId ? { ...p, avatar: action.avatar } : p,
+      )
+      return { ...state, round: { ...state.round, players } }
+    }
+
+    case 'ADD_PLAYER_FROM_LIBRARY': {
+      if (!state.round || state.phase !== 'lobby') return state
+      if (countPlayersInTeam(state.round.players, action.teamId) >= MAX_PLAYERS_PER_TEAM) {
+        return state
+      }
+      // Verhindern, dass das gleiche Profil doppelt zur Runde hinzugefügt wird.
+      if (state.round.players.some((p) => p.id === action.profile.id)) return state
+      const newPlayer: Player = {
+        id: action.profile.id,
+        name: action.profile.name,
+        teamId: action.teamId,
+        interests: action.profile.interests,
+        avatar: action.profile.avatar,
+      }
+      const players = [...state.round.players, newPlayer]
+      return {
+        ...state,
+        round: {
+          ...state.round,
+          players,
+          interests: aggregatePlayerInterests(players),
+        },
+      }
+    }
+
+    case 'REPLACE_PLAYER_FROM_LIBRARY': {
+      if (!state.round || state.phase !== 'lobby') return state
+      const target = state.round.players.find((p) => p.id === action.playerId)
+      if (!target) return state
+      // Wenn das Profil bereits in einem anderen Slot dieser Runde steht: ablehnen.
+      if (
+        state.round.players.some((p) => p.id === action.profile.id && p.id !== target.id)
+      ) {
+        return state
+      }
+      const players = state.round.players.map((p) =>
+        p.id === action.playerId
+          ? {
+              ...p,
+              id: action.profile.id,
+              name: action.profile.name,
+              interests: action.profile.interests,
+              avatar: action.profile.avatar,
+            }
+          : p,
       )
       return {
         ...state,
@@ -2399,6 +2481,14 @@ export function GameProvider({ children }: { children: ReactNode }) {
       markQuestionsAsked(liveUsedQuestionIds)
     }
   }, [liveUsedQuestionIds])
+
+  // Player-Bibliothek: beim Wechsel in die Spielphase snapshoten wir alle Spieler
+  // mit echtem Namen — für Wiederverwendung an späteren Abenden.
+  useEffect(() => {
+    if (state.phase === 'playing' && state.round) {
+      saveToPlayerLibrary(state.round.players)
+    }
+  }, [state.phase, state.round])
 
   const currentTeam = useMemo<Team | null>(() => {
     if (!state.round || !state.live || state.live.kind !== 'category-duel') return null

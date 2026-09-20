@@ -448,6 +448,79 @@ describe('reducer — Player-Ebene (Session D + E)', () => {
     expect(s.round?.interests).toEqual(['musik'])
   })
 
+  it('SET_PLAYER_AVATAR ändert nur den Avatar des betroffenen Spielers', () => {
+    let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    const [p1, p2] = s.round!.players
+    const originalAvatarP2 = p2.avatar
+    s = reducer(s, {
+      type: 'SET_PLAYER_AVATAR',
+      playerId: p1.id,
+      avatar: { emoji: '🐺', colorHex: '#FF3D8B' },
+    })
+    expect(s.round?.players[0].avatar).toEqual({ emoji: '🐺', colorHex: '#FF3D8B' })
+    expect(s.round?.players[1].avatar).toEqual(originalAvatarP2)
+  })
+
+  it('ADD_PLAYER_FROM_LIBRARY fügt Profil dem Team hinzu und übernimmt Interessen', () => {
+    let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    s = reducer(s, {
+      type: 'ADD_PLAYER_FROM_LIBRARY',
+      teamId: 'team-a',
+      profile: {
+        id: 'library-1',
+        name: 'Alice',
+        interests: [gut('film')],
+        avatar: { emoji: '🐼', colorHex: '#27D8FF' },
+        lastUsedAt: '2024-01-01T10:00:00Z',
+      },
+    })
+    const added = s.round?.players.find((p) => p.id === 'library-1')
+    expect(added).toBeDefined()
+    expect(added?.name).toBe('Alice')
+    expect(added?.teamId).toBe('team-a')
+    expect(added?.avatar.emoji).toBe('🐼')
+    expect(added?.interests).toEqual([gut('film')])
+    // Aggregation zieht das Interesse in round.interests.
+    expect(s.round?.interests).toContain('film')
+  })
+
+  it('ADD_PLAYER_FROM_LIBRARY lehnt duplizierte Profil-IDs ab', () => {
+    let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    const profile = {
+      id: 'library-1',
+      name: 'Alice',
+      interests: [],
+      avatar: { emoji: '🦊', colorHex: '#7C5CFF' },
+      lastUsedAt: '2024-01-01T10:00:00Z',
+    }
+    s = reducer(s, { type: 'ADD_PLAYER_FROM_LIBRARY', teamId: 'team-a', profile })
+    const before = s.round?.players.length
+    s = reducer(s, { type: 'ADD_PLAYER_FROM_LIBRARY', teamId: 'team-a', profile })
+    expect(s.round?.players.length).toBe(before)
+  })
+
+  it('REPLACE_PLAYER_FROM_LIBRARY ersetzt einen Slot, behält teamId', () => {
+    let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    const target = s.round!.players.find((p) => p.teamId === 'team-b')!
+    s = reducer(s, {
+      type: 'REPLACE_PLAYER_FROM_LIBRARY',
+      playerId: target.id,
+      profile: {
+        id: 'library-alice',
+        name: 'Alice',
+        interests: [gut('musik')],
+        avatar: { emoji: '🐼', colorHex: '#27D8FF' },
+        lastUsedAt: '2024-01-01T10:00:00Z',
+      },
+    })
+    // Ursprünglicher Slot ist weg, Profil-ID übernommen.
+    expect(s.round?.players.find((p) => p.id === target.id)).toBeUndefined()
+    const replaced = s.round?.players.find((p) => p.id === 'library-alice')
+    expect(replaced?.teamId).toBe('team-b')
+    expect(replaced?.name).toBe('Alice')
+    expect(replaced?.interests).toEqual([gut('musik')])
+  })
+
   it('SET_PLAYER_NAME lässt Interessen und Aggregation in Ruhe', () => {
     let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
     const p1 = s.round!.players[0]

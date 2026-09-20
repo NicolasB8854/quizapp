@@ -33,6 +33,7 @@ import {
 import { TOPICS, TOPICS_BY_ID } from '@/data/topics'
 import { MODES_BY_ID } from '@/data/modes'
 import type { Player, Team } from '@/types/round'
+import { AvatarBadge } from '@/components/AvatarBadge'
 import type { TrueFalseQuestion } from '@/types/question'
 import { cn } from '@/lib/classnames'
 
@@ -1828,16 +1829,7 @@ function DuelStage() {
                             : 'bg-navy-800/70 border-white/10 text-ink hover:border-white/25',
                         )}
                       >
-                        <span
-                          className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold border"
-                          style={{
-                            borderColor: `${teamHex}55`,
-                            color: teamHex,
-                            background: `${teamHex}18`,
-                          }}
-                        >
-                          {(p.name.trim() || `S${idx + 1}`).slice(0, 2).toUpperCase()}
-                        </span>
+                        <AvatarBadge avatar={p.avatar} size="sm" teamHex={teamHex} />
                         <span className="flex-1 truncate">
                           {p.name.trim() || `Spieler ${idx + 1}`}
                         </span>
@@ -2070,16 +2062,7 @@ function EliminationStage() {
               boxShadow: `0 0 0 1px ${teamHex}55, 0 0 24px -4px ${teamHex}AA`,
             }}
           >
-            <span
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full font-display font-bold border-2"
-              style={{
-                borderColor: `${teamHex}80`,
-                color: teamHex,
-                background: `${teamHex}18`,
-              }}
-            >
-              {activeName.slice(0, 2).toUpperCase()}
-            </span>
+            <AvatarBadge avatar={activePlayer.avatar} size="md" teamHex={teamHex} />
             <div className="text-left">
               <div className="eyebrow" style={{ color: teamHex }}>
                 {activeTeam.name}
@@ -2356,16 +2339,7 @@ function ExpertsStage() {
                 className="rounded-card border border-white/[0.08] bg-navy-800/60 p-4 md:p-5"
               >
                 <div className="flex items-center gap-3 mb-3">
-                  <span
-                    className="inline-flex h-8 w-8 items-center justify-center rounded-full font-display font-bold text-xs border-2"
-                    style={{
-                      borderColor: `${teamHex}80`,
-                      color: teamHex,
-                      background: `${teamHex}18`,
-                    }}
-                  >
-                    {name.slice(0, 2).toUpperCase()}
-                  </span>
+                  <AvatarBadge avatar={p.avatar} size="sm" teamHex={teamHex} />
                   <div className="min-w-0 flex-1">
                     <div className="eyebrow" style={{ color: teamHex }}>
                       {team.name}
@@ -2459,16 +2433,7 @@ function ExpertsStage() {
             boxShadow: `0 0 24px -6px ${teamHex}AA`,
           }}
         >
-          <span
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full font-display font-bold border-2"
-            style={{
-              borderColor: `${teamHex}80`,
-              color: teamHex,
-              background: `${teamHex}18`,
-            }}
-          >
-            {activeName.slice(0, 2).toUpperCase()}
-          </span>
+          <AvatarBadge avatar={activePlayer.avatar} size="md" teamHex={teamHex} />
           <div className="text-left">
             <div className="eyebrow" style={{ color: teamHex }}>
               {activeTeam.name}

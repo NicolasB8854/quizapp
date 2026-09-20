@@ -14,15 +14,22 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, Play, Check, Gamepad2, Clock, Trophy, Sparkles, Plus, UserMinus, Users } from 'lucide-react'
+import { ArrowLeft, Play, Check, Gamepad2, Clock, Trophy, Sparkles, Plus, UserMinus, Users, Pencil, BookOpen, X as XIcon } from 'lucide-react'
 import { ScreenLayout } from '@/components/ScreenLayout'
 import { Button } from '@/components/Button'
+import { AvatarBadge } from '@/components/AvatarBadge'
 import { useGame, type GameAction } from '@/context/GameContext'
 import { MODES_BY_ID } from '@/data/modes'
 import { TOPICS, TOPICS_BY_ID } from '@/data/topics'
+import { AVATAR_COLORS, AVATAR_EMOJIS } from '@/data/avatars'
 import type { Topic } from '@/types/question'
-import type { Player, RoundConfig, SkillLevel, Team } from '@/types/round'
+import type { Avatar, Player, RoundConfig, SkillLevel, Team } from '@/types/round'
 import { computeInterestProfile } from '@/lib/interestProfile'
+import {
+  readPlayerLibrary,
+  removeFromPlayerLibrary,
+  type PlayerProfile,
+} from '@/lib/playerLibrary'
 import { cn } from '@/lib/classnames'
 
 export default function LobbyPage() {
@@ -318,6 +325,8 @@ function PlayerSetupSection({ round, dispatch }: PlayerSetupSectionProps) {
           )
         })}
       </div>
+
+      <PlayerLibraryPanel round={round} dispatch={dispatch} />
     </section>
   )
 }
@@ -395,12 +404,27 @@ interface PlayerRowProps {
 }
 
 function PlayerRow({ player, placeholderIndex, canRemove, teamAccentHex, dispatch }: PlayerRowProps) {
+  const [avatarOpen, setAvatarOpen] = useState(false)
   const levelByTopic = new Map<string, SkillLevel>()
   for (const { topic, level } of player.interests) levelByTopic.set(topic, level)
 
   return (
     <div className="rounded-lg border border-white/[0.06] bg-navy-900/60 p-3">
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 relative">
+        <button
+          type="button"
+          onClick={() => setAvatarOpen((v) => !v)}
+          aria-label="Avatar bearbeiten"
+          className="shrink-0 relative"
+        >
+          <AvatarBadge avatar={player.avatar} size="md" teamHex={teamAccentHex} />
+          <span
+            aria-hidden
+            className="absolute -bottom-0.5 -right-0.5 inline-flex h-4 w-4 items-center justify-center rounded-full bg-navy-800 border border-white/20"
+          >
+            <Pencil className="h-2.5 w-2.5 text-ink-muted" />
+          </span>
+        </button>
         <input
           type="text"
           value={player.name}
@@ -424,6 +448,15 @@ function PlayerRow({ player, placeholderIndex, canRemove, teamAccentHex, dispatc
           >
             <UserMinus className="h-4 w-4" />
           </button>
+        )}
+        {avatarOpen && (
+          <AvatarEditor
+            avatar={player.avatar}
+            onChange={(next) =>
+              dispatch({ type: 'SET_PLAYER_AVATAR', playerId: player.id, avatar: next })
+            }
+            onClose={() => setAvatarOpen(false)}
+          />
         )}
       </div>
       <div className="mt-2 flex flex-wrap gap-1.5">
@@ -648,5 +681,223 @@ function ProfileTopicChip({ topicId, level, tone }: ProfileTopicChipProps) {
       <span>{topic.label}</span>
       {level && <LevelDots count={LEVEL_DOTS[level]} />}
     </span>
+  )
+}
+
+// ---------- Avatar-Editor (Popover) -----------------------------------------
+
+interface AvatarEditorProps {
+  avatar: Avatar
+  onChange: (next: Avatar) => void
+  onClose: () => void
+}
+
+function AvatarEditor({ avatar, onChange, onClose }: AvatarEditorProps) {
+  return (
+    <div
+      className="absolute top-full left-0 mt-2 z-20 w-72 rounded-card border border-white/10 bg-navy-800 p-3 shadow-neon-purple"
+      role="dialog"
+      aria-label="Avatar wählen"
+    >
+      <div className="flex items-center justify-between mb-2">
+        <div className="eyebrow">Avatar</div>
+        <button
+          type="button"
+          aria-label="Schließen"
+          onClick={onClose}
+          className="text-ink-muted hover:text-ink p-1"
+        >
+          <XIcon className="h-3.5 w-3.5" />
+        </button>
+      </div>
+      <div className="mb-2 text-[10px] uppercase tracking-[0.22em] text-ink-faint">
+        Symbol
+      </div>
+      <div className="grid grid-cols-6 gap-1.5 mb-3">
+        {AVATAR_EMOJIS.map((emoji) => {
+          const isOn = emoji === avatar.emoji
+          return (
+            <button
+              key={emoji}
+              type="button"
+              onClick={() => onChange({ ...avatar, emoji })}
+              className={cn(
+                'h-9 w-9 rounded-lg border flex items-center justify-center text-lg leading-none',
+                'transition-colors',
+                isOn
+                  ? 'border-brand-purple/80 bg-brand-purple/25'
+                  : 'border-white/10 bg-navy-900/60 hover:border-white/25',
+              )}
+            >
+              <span aria-hidden>{emoji}</span>
+            </button>
+          )
+        })}
+      </div>
+      <div className="mb-2 text-[10px] uppercase tracking-[0.22em] text-ink-faint">
+        Farbe
+      </div>
+      <div className="grid grid-cols-8 gap-1.5">
+        {AVATAR_COLORS.map((colorHex) => {
+          const isOn = colorHex === avatar.colorHex
+          return (
+            <button
+              key={colorHex}
+              type="button"
+              onClick={() => onChange({ ...avatar, colorHex })}
+              aria-label={`Farbe ${colorHex}`}
+              className={cn(
+                'h-7 w-7 rounded-full border-2 transition-all',
+                isOn ? 'scale-110' : 'hover:scale-105',
+              )}
+              style={{
+                borderColor: isOn ? '#fff' : `${colorHex}80`,
+                background: colorHex,
+                boxShadow: isOn ? `0 0 12px ${colorHex}CC` : undefined,
+              }}
+            />
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+// ---------- Player-Library-Panel --------------------------------------------
+
+interface PlayerLibraryPanelProps {
+  round: RoundConfig
+  dispatch: (action: GameAction) => void
+}
+
+function PlayerLibraryPanel({ round, dispatch }: PlayerLibraryPanelProps) {
+  // Wir lesen die Bibliothek beim ersten Render und bei jeder Player-Änderung —
+  // damit bereits geladene Profile aus der Auswahl verschwinden.
+  const activeIds = new Set(round.players.map((p) => p.id))
+  const [profiles, setProfiles] = useState<PlayerProfile[]>(() =>
+    readPlayerLibrary().filter((p) => !activeIds.has(p.id)),
+  )
+
+  // Bibliothek neu einlesen wenn sich die Menge aktiver Player ändert.
+  useEffect(() => {
+    setProfiles(readPlayerLibrary().filter((p) => !activeIds.has(p.id)))
+    // Zwar würde ein direkter Read reichen; useEffect entkoppelt gegen doppelte
+    // Renders und macht das Verhalten deterministischer.
+    // Wir hängen an round.players über die Länge, um Endlos-Loops zu vermeiden.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [round.players.length])
+
+  if (profiles.length === 0) return null
+
+  const teamOptions = round.teams
+
+  return (
+    <section className="mt-6">
+      <div className="flex items-end justify-between gap-4 mb-3">
+        <div>
+          <div className="eyebrow inline-flex items-center gap-2">
+            <BookOpen className="h-3.5 w-3.5 text-brand-cyan-soft" />
+            Bekannte Spieler
+          </div>
+          <p className="mt-1 text-[11px] text-ink-muted">
+            Profile aus vergangenen Abenden. Klick fügt sie zu einem Team hinzu.
+          </p>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        {profiles.slice(0, 10).map((profile) => (
+          <LibraryChip
+            key={profile.id}
+            profile={profile}
+            teamOptions={teamOptions}
+            onAdd={(teamId) =>
+              dispatch({ type: 'ADD_PLAYER_FROM_LIBRARY', teamId, profile })
+            }
+            onForget={() => {
+              removeFromPlayerLibrary(profile.id)
+              setProfiles(readPlayerLibrary().filter((p) => !activeIds.has(p.id)))
+            }}
+          />
+        ))}
+      </div>
+    </section>
+  )
+}
+
+interface LibraryChipProps {
+  profile: PlayerProfile
+  teamOptions: Team[]
+  onAdd: (teamId: string) => void
+  onForget: () => void
+}
+
+function LibraryChip({ profile, teamOptions, onAdd, onForget }: LibraryChipProps) {
+  const [open, setOpen] = useState(false)
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className={cn(
+          'inline-flex items-center gap-2 h-9 rounded-full pl-1 pr-3',
+          'border border-white/10 bg-navy-800/70 text-sm',
+          'hover:border-white/25 transition-colors',
+        )}
+      >
+        <AvatarBadge avatar={profile.avatar} size="sm" />
+        <span className="text-ink font-medium truncate max-w-[8rem]">
+          {profile.name}
+        </span>
+        {profile.interests.length > 0 && (
+          <span className="text-[10px] text-ink-faint tabular-nums">
+            {profile.interests.length}★
+          </span>
+        )}
+      </button>
+      {open && (
+        <div
+          className="absolute top-full left-0 mt-1 z-20 rounded-card border border-white/10 bg-navy-800 p-2 shadow-neon-purple"
+          role="dialog"
+        >
+          <div className="text-[10px] uppercase tracking-[0.22em] text-ink-faint mb-2">
+            zu Team hinzufügen
+          </div>
+          <div className="flex flex-col gap-1 min-w-[140px]">
+            {teamOptions.map((team) => {
+              const hex = team.color === 'purple' ? '#7C5CFF' : '#27D8FF'
+              return (
+                <button
+                  key={team.id}
+                  type="button"
+                  onClick={() => {
+                    onAdd(team.id)
+                    setOpen(false)
+                  }}
+                  className="h-8 rounded-lg px-2 flex items-center gap-2 text-sm text-ink hover:bg-white/[0.06]"
+                >
+                  <span
+                    className="inline-block h-2.5 w-2.5 rounded-full"
+                    style={{ background: hex, boxShadow: `0 0 8px ${hex}80` }}
+                  />
+                  <span>{team.name}</span>
+                </button>
+              )
+            })}
+            <button
+              type="button"
+              onClick={() => {
+                onForget()
+                setOpen(false)
+              }}
+              className="mt-1 h-8 rounded-lg px-2 flex items-center gap-2 text-xs text-ink-muted hover:bg-wrong/10 hover:text-wrong"
+            >
+              <XIcon className="h-3 w-3" />
+              Aus Bibliothek löschen
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
   )
 }

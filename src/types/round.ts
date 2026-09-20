@@ -67,6 +67,16 @@ export interface PlayerInterest {
 }
 
 /**
+ * Visuelle Spieler-Identität: ein Emoji-Symbol (universell, kein Gesicht)
+ * plus eine Farbe aus einer festen Palette. Bewusst simpel — kein SVG-Avatar-
+ * Editor, sondern kombinierbare Grundbausteine.
+ */
+export interface Avatar {
+  emoji: string
+  colorHex: string
+}
+
+/**
  * Spieler-Entität für die Personalisierung (siehe konzept-v2.md, Kapitel 2c und 8).
  *
  * Zuordnung zu einem Team über `teamId`. `name` kann leer sein — die UI zeigt dann
@@ -78,6 +88,7 @@ export interface Player {
   name: string
   teamId: string
   interests: PlayerInterest[]
+  avatar: Avatar
 }
 
 export interface GameResult {
