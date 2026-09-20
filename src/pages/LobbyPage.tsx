@@ -14,11 +14,13 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, Play, Check, Gamepad2, Clock, Trophy } from 'lucide-react'
+import { ArrowLeft, Play, Check, Gamepad2, Clock, Trophy, Sparkles } from 'lucide-react'
 import { ScreenLayout } from '@/components/ScreenLayout'
 import { Button } from '@/components/Button'
 import { useGame } from '@/context/GameContext'
 import { MODES_BY_ID } from '@/data/modes'
+import { TOPICS } from '@/data/topics'
+import type { Topic } from '@/types/question'
 import { cn } from '@/lib/classnames'
 
 export default function LobbyPage() {
@@ -182,6 +184,21 @@ export default function LobbyPage() {
           })}
         </div>
 
+        {/* Interessen — optionaler Personalisierungs-Layer.
+            Betrifft aktuell die Blitzrunde (Fragen bevorzugt aus gewählten Topics) und
+            markiert Themen im Themen-Battle-Grid. */}
+        <InterestsSection
+          interests={state.round.interests}
+          onToggle={(topic) => {
+            if (!state.round) return
+            const has = state.round.interests.includes(topic)
+            const next = has
+              ? state.round.interests.filter((t) => t !== topic)
+              : [...state.round.interests, topic]
+            dispatch({ type: 'SET_ROUND_INTERESTS', interests: next })
+          }}
+        />
+
         {/* Progress + CTA */}
         <div className="mt-8 md:mt-10">
           <div className="flex items-center justify-center gap-3 text-sm mb-3">
@@ -261,5 +278,58 @@ export default function LobbyPage() {
         </div>
       </div>
     </ScreenLayout>
+  )
+}
+
+interface InterestsSectionProps {
+  interests: Topic[]
+  onToggle: (topic: Topic) => void
+}
+
+function InterestsSection({ interests, onToggle }: InterestsSectionProps) {
+  const selected = new Set(interests)
+  return (
+    <section className="mt-10 md:mt-14">
+      <div className="flex items-end justify-between gap-4 mb-4">
+        <div>
+          <div className="eyebrow inline-flex items-center gap-2">
+            <Sparkles className="h-3.5 w-3.5 text-brand-purple-soft" />
+            Was liegt euch heute?
+          </div>
+          <p className="mt-2 text-ink-muted text-sm max-w-2xl leading-relaxed">
+            Optional — wer nichts wählt, spielt das breite Programm. Auswahl beeinflusst
+            aktuell die Blitzrunde und markiert eure Themen im Kategorien-Grid.
+          </p>
+        </div>
+        <div className="text-right text-xs uppercase tracking-[0.22em] text-ink-muted whitespace-nowrap">
+          <span className="text-ink font-semibold tabular-nums">{interests.length}</span>{' '}
+          von 12
+        </div>
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        {TOPICS.map((topic) => {
+          const isOn = selected.has(topic.id)
+          return (
+            <button
+              key={topic.id}
+              type="button"
+              onClick={() => onToggle(topic.id)}
+              className={cn(
+                'inline-flex items-center gap-2 h-10 rounded-full px-4',
+                'text-sm font-medium transition-all border',
+                isOn
+                  ? 'bg-brand-purple/20 border-brand-purple/70 text-brand-purple-soft shadow-[0_0_18px_-4px_rgba(124,92,255,0.7)]'
+                  : 'bg-navy-800/70 border-white/10 text-ink-muted hover:border-white/25 hover:text-ink',
+              )}
+              aria-pressed={isOn}
+            >
+              <span aria-hidden className="text-base leading-none">{topic.emoji}</span>
+              <span>{topic.label}</span>
+            </button>
+          )
+        })}
+      </div>
+    </section>
   )
 }

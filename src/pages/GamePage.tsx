@@ -107,11 +107,12 @@ export default function GamePage() {
 // ---------- Sub-Screens -------------------------------------------------------
 
 function TopicGrid() {
-  const { dispatch, currentTeam } = useGame()
+  const { state, dispatch, currentTeam } = useGame()
   const live = useCategoryDuel()
   if (!live || !currentTeam) return null
 
   const usedSet = new Set(live.usedTopics)
+  const interestSet = new Set(state.round?.interests ?? [])
   return (
     <div className="animate-titleIn">
       <div className="text-center mb-6 md:mb-8">
@@ -133,6 +134,7 @@ function TopicGrid() {
             topic={topic}
             points={live.pointsPerQuestion}
             used={usedSet.has(topic.id)}
+            isInterest={interestSet.has(topic.id)}
             onSelect={() => dispatch({ type: 'CD_PICK_TOPIC', topic: topic.id })}
           />
         ))}

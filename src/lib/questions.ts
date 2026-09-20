@@ -49,14 +49,34 @@ export function getTrueFalsePool(): TrueFalseQuestion[] {
 }
 
 /**
- * Zieht die nächste ungenutzte True-False-Behauptung. Anders als `pickQuestion` ohne
- * Topic-Filter — Blitzrunde ist bewusst breit.
+ * Zieht die nächste ungenutzte True-False-Behauptung.
+ *
+ * Optionaler `allowedTopics`-Filter für die Personalisierung: Fragen werden zuerst aus
+ * den bevorzugten Topics gezogen. Fallback-Kaskade:
+ *  1. Nicht-verbrauchte Frage aus den Interessen  ← Best-Case
+ *  2. Nicht-verbrauchte Frage aus dem gesamten Pool (Topic-Filter aufweichen)
+ *  3. Beliebige Frage aus dem Pool (Duplicate-Check aufweichen)
+ *
+ * Damit halten kurze Interessen-Listen die Blitzrunde nicht künstlich klein.
  */
 export function pickTrueFalse(
   usedIds: ReadonlySet<string>,
+  allowedTopics?: readonly Topic[],
 ): TrueFalseQuestion | null {
   const pool = getTrueFalsePool()
   if (pool.length === 0) return null
+
+  const hasFilter = allowedTopics !== undefined && allowedTopics.length > 0
+  if (hasFilter) {
+    const topicSet = new Set(allowedTopics)
+    const inTopics = pool.filter((q) => topicSet.has(q.topic))
+    const freshInTopics = inTopics.filter((q) => !usedIds.has(q.id))
+    if (freshInTopics.length > 0) {
+      return freshInTopics[Math.floor(Math.random() * freshInTopics.length)]
+    }
+    // Interessen im Pool sind entweder leer oder erschöpft — weiche Topic-Filter auf.
+  }
+
   const fresh = pool.filter((q) => !usedIds.has(q.id))
   const candidates = fresh.length > 0 ? fresh : pool
   return candidates[Math.floor(Math.random() * candidates.length)]

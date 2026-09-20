@@ -8,7 +8,7 @@
  * TV-Show-Marken (Design-Direction v1, Kapitel „Guardrails"). IDs bleiben in kebab-case.
  */
 
-import type { Question } from './question'
+import type { Question, Topic } from './question'
 
 export type GameModeId =
   // Aktiv im Prototyp:
@@ -65,6 +65,12 @@ export interface RoundConfig {
   teams: Team[]
   bestOf: number              // z. B. 5 → wer zuerst ceil(5/2) = 3 Matchpunkte hat, gewinnt
   gameModes: GameModeId[]     // Ablauf-Reihenfolge
+  /**
+   * Personalisierungs-Signal aus der Lobby (siehe konzept-v2.md, Kapitel 6 „Quiz Director").
+   * Leeres Array = kein Filter, alle Topics gleich gewichtet. Nicht-leeres Array =
+   * Fragen werden bevorzugt aus diesen Topics gezogen (mit Fallback bei leerem Pool).
+   */
+  interests: Topic[]
 }
 
 export interface RoundState {

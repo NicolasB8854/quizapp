@@ -329,6 +329,80 @@ describe('reducer — Utility-Actions', () => {
   })
 })
 
+describe('reducer — Interessen (Session C)', () => {
+  it('SET_ROUND_INTERESTS in der Lobby setzt round.interests', () => {
+    let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    s = reducer(s, {
+      type: 'SET_ROUND_INTERESTS',
+      interests: ['wissenschaft', 'sprache'],
+    })
+    expect(s.round?.interests).toEqual(['wissenschaft', 'sprache'])
+  })
+
+  it('SET_ROUND_INTERESTS dedupliziert', () => {
+    let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    s = reducer(s, {
+      type: 'SET_ROUND_INTERESTS',
+      interests: ['film', 'film', 'musik'],
+    })
+    expect(s.round?.interests).toEqual(['film', 'musik'])
+  })
+
+  it('SET_ROUND_INTERESTS wird während des Spiels ignoriert', () => {
+    let s = bootIntoPlaying('flash')
+    const before = s.round?.interests
+    s = reducer(s, {
+      type: 'SET_ROUND_INTERESTS',
+      interests: ['film', 'musik'],
+    })
+    expect(s.round?.interests).toEqual(before)
+  })
+
+  it('GO_TO_LOBBY startet mit leeren Interessen', () => {
+    const s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    expect(s.round?.interests).toEqual([])
+  })
+
+  it('Blitzrunde: erste Frage kommt aus einem Interest-Topic (wenn verfügbar)', () => {
+    // Setup: Blitz + wissenschaft-Interesse
+    let s = reducer(INITIAL_STATE, { type: 'SET_MODE_SELECTION', modeIds: ['flash'] })
+    s = reducer(s, { type: 'GO_TO_LOBBY' })
+    s = reducer(s, {
+      type: 'SET_ROUND_INTERESTS',
+      interests: ['wissenschaft'],
+    })
+    s = reducer(s, { type: 'START_PLAYING' })
+    if (s.live?.kind !== 'flash') throw new Error('unreachable')
+    expect(s.live.activeQuestion?.topic).toBe('wissenschaft')
+  })
+
+  it('Blitzrunde: nächste Frage bleibt nach Möglichkeit im Interest-Topic', () => {
+    let s = reducer(INITIAL_STATE, { type: 'SET_MODE_SELECTION', modeIds: ['flash'] })
+    s = reducer(s, { type: 'GO_TO_LOBBY' })
+    s = reducer(s, {
+      type: 'SET_ROUND_INTERESTS',
+      interests: ['wissenschaft'],
+    })
+    s = reducer(s, { type: 'START_PLAYING' })
+    if (s.live?.kind !== 'flash') throw new Error('unreachable')
+
+    // Zwei Runden vollständig durchziehen und prüfen, dass beide Fragen wissenschaft
+    // sind (Pool hat vier wissenschaft-TF-Fragen, also reicht das).
+    const topics: string[] = []
+    for (let i = 0; i < 2; i++) {
+      if (s.live?.kind !== 'flash') throw new Error('unreachable')
+      const q = s.live.activeQuestion
+      if (!q) throw new Error('no question')
+      topics.push(q.topic)
+      s = reducer(s, { type: 'FLASH_SET_ANSWER', teamId: 'team-a', answer: true })
+      s = reducer(s, { type: 'FLASH_SET_ANSWER', teamId: 'team-b', answer: true })
+      s = reducer(s, { type: 'FLASH_REVEAL' })
+      s = reducer(s, { type: 'FLASH_NEXT' })
+    }
+    expect(topics).toEqual(['wissenschaft', 'wissenschaft'])
+  })
+})
+
 // Wir referenzieren getMultipleChoiceByTopic hier nur, damit der Import nicht
 // als unused verworfen wird — der Sanity-Check am Pool ist trotzdem sinnvoll.
 describe('reducer — Sanity', () => {

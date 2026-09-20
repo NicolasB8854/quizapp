@@ -118,6 +118,7 @@ export type GameAction =
   | { type: 'FLASH_SET_ANSWER'; teamId: string; answer: boolean }
   | { type: 'FLASH_REVEAL' }
   | { type: 'FLASH_NEXT' }
+  | { type: 'SET_ROUND_INTERESTS'; interests: Topic[] }
   | { type: 'FINISH_MODE' }
   | { type: 'BACK_TO_SETUP' }
   | { type: 'RESET_ALL' }
@@ -161,11 +162,11 @@ function initCategoryDuel(teams: Team[]): CategoryDuelLive {
   }
 }
 
-function initFlash(teams: Team[]): FlashLive | null {
+function initFlash(teams: Team[], interests: readonly Topic[]): FlashLive | null {
   // Erste Behauptung direkt ziehen — Blitzrunde ist linear, keine Vorauswahl.
   const excluded = new Set<string>()
   for (const id of readAskedQuestionIds()) excluded.add(id)
-  const first = pickTrueFalse(excluded)
+  const first = pickTrueFalse(excluded, interests)
   if (!first) return null
 
   return {
@@ -181,12 +182,16 @@ function initFlash(teams: Team[]): FlashLive | null {
   }
 }
 
-function initLiveFor(modeId: GameModeId, teams: Team[]): LiveGame | null {
+function initLiveFor(
+  modeId: GameModeId,
+  teams: Team[],
+  interests: readonly Topic[] = [],
+): LiveGame | null {
   switch (modeId) {
     case 'category-duel':
       return initCategoryDuel(teams)
     case 'flash':
-      return initFlash(teams)
+      return initFlash(teams, interests)
     default:
       // Alle anderen Modi sind in v0.1 als `planned` markiert und lassen sich im Setup
       // gar nicht auswählen. Falls doch: null → Reducer springt in FINISH_MODE.
@@ -240,6 +245,7 @@ export function reducer(state: GameState, action: GameAction): GameState {
         teams,
         bestOf: Math.max(1, state.draft.selectedModes.length),
         gameModes: [...state.draft.selectedModes],
+        interests: [],
       }
       return {
         ...state,
@@ -255,8 +261,20 @@ export function reducer(state: GameState, action: GameAction): GameState {
     case 'START_PLAYING': {
       if (!state.round) return state
       const firstModeId = state.round.gameModes[0]
-      const live = initLiveFor(firstModeId, state.round.teams)
+      const live = initLiveFor(firstModeId, state.round.teams, state.round.interests)
       return { ...state, phase: 'playing', currentModeIndex: 0, live }
+    }
+
+    case 'SET_ROUND_INTERESTS': {
+      // Nur in der Lobby änderbar — während des Spiels würden neue Interessen die
+      // aktuelle Fragenauswahl unter dem Modus wegziehen.
+      if (!state.round || state.phase !== 'lobby') return state
+      // Dedupliziert, damit doppelte Topic-IDs den Filter nicht verzerren.
+      const interests = Array.from(new Set(action.interests))
+      return {
+        ...state,
+        round: { ...state.round, interests },
+      }
     }
 
     case 'CD_PICK_TOPIC': {
@@ -376,7 +394,7 @@ export function reducer(state: GameState, action: GameAction): GameState {
       // Nächste Behauptung ziehen (Duplicate-Check: Runde + Historie).
       const excluded = new Set(usedQuestionIds)
       for (const id of readAskedQuestionIds()) excluded.add(id)
-      const nextQuestion = pickTrueFalse(excluded)
+      const nextQuestion = pickTrueFalse(excluded, state.round.interests)
       if (!nextQuestion) {
         // Pool leer — Modus vorzeitig beenden.
         return reducer({ ...state, live: advancedLive }, { type: 'FINISH_MODE' })
@@ -465,7 +483,7 @@ export function reducer(state: GameState, action: GameAction): GameState {
       }
 
       const nextModeId = state.round.gameModes[nextIndex]
-      const nextLive = initLiveFor(nextModeId, state.round.teams)
+      const nextLive = initLiveFor(nextModeId, state.round.teams, state.round.interests)
       return {
         ...state,
         results,
