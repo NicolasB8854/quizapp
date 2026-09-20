@@ -3,6 +3,7 @@ import {
   getAllQuestions,
   getMultipleChoiceByTopic,
   getTrueFalsePool,
+  pickByDifficulty,
   pickQuestion,
   pickTrueFalse,
 } from './questions'
@@ -90,6 +91,86 @@ describe('questions', () => {
     })
   })
 
+  describe('pickByDifficulty (Session H)', () => {
+    interface Fake {
+      id: string
+      difficulty: 'leicht' | 'mittel' | 'schwer' | 'experten'
+    }
+    const items: Fake[] = [
+      { id: 'l1', difficulty: 'leicht' },
+      { id: 'l2', difficulty: 'leicht' },
+      { id: 'm1', difficulty: 'mittel' },
+      { id: 'm2', difficulty: 'mittel' },
+      { id: 's1', difficulty: 'schwer' },
+      { id: 's2', difficulty: 'schwer' },
+    ]
+
+    it('leerer Input liefert null', () => {
+      const picked = pickByDifficulty([] as Fake[], () => 'gut')
+      expect(picked).toBeNull()
+    })
+
+    it('ohne Level (getLevel returns undefined) fällt auf uniforme Wahl zurück', () => {
+      // Math.random ist auf 0 gepinnt → nimmt den ersten Kandidaten.
+      const picked = pickByDifficulty(items, () => undefined)
+      expect(picked?.id).toBe('l1')
+    })
+
+    it("preferredLevel 'bisschen': leicht-Fragen dominieren deutlich über N=800", () => {
+      vi.restoreAllMocks()
+      const counts = { leicht: 0, mittel: 0, schwer: 0 }
+      for (let i = 0; i < 800; i++) {
+        const picked = pickByDifficulty(items, () => 'bisschen')
+        if (picked) counts[picked.difficulty as keyof typeof counts]++
+      }
+      expect(counts.leicht).toBeGreaterThan(counts.mittel)
+      expect(counts.mittel).toBeGreaterThan(counts.schwer)
+    })
+
+    it("preferredLevel 'nerd': schwer-Fragen dominieren deutlich über N=800", () => {
+      vi.restoreAllMocks()
+      const counts = { leicht: 0, mittel: 0, schwer: 0 }
+      for (let i = 0; i < 800; i++) {
+        const picked = pickByDifficulty(items, () => 'nerd')
+        if (picked) counts[picked.difficulty as keyof typeof counts]++
+      }
+      expect(counts.schwer).toBeGreaterThan(counts.mittel)
+      expect(counts.mittel).toBeGreaterThan(counts.leicht)
+    })
+
+    it('nur experten-verlangende Fragen bei bisschen-Level: uniforme Fallback-Wahl', () => {
+      // 'bisschen' hat für 'experten' Gewicht 0 → total = 0 → uniform fallback.
+      const expertOnly: Fake[] = [
+        { id: 'e1', difficulty: 'experten' },
+        { id: 'e2', difficulty: 'experten' },
+      ]
+      const picked = pickByDifficulty(expertOnly, () => 'bisschen')
+      // Math.random=0 → nimmt den ersten Kandidaten im uniformen Fallback.
+      expect(picked?.id).toBe('e1')
+    })
+  })
+
+  describe('pickQuestion mit preferredLevel (Session H)', () => {
+    it('ohne preferredLevel: aktuelles Verhalten (uniform, Math.random=0 → erstes Item)', () => {
+      const pool = getMultipleChoiceByTopic('film')
+      const picked = pickQuestion('film', new Set())
+      expect(picked?.id).toBe(pool[0].id)
+    })
+
+    it("preferredLevel 'bisschen': bevorzugt leichte Fragen für Topics mit Level-Vielfalt", () => {
+      vi.restoreAllMocks()
+      const counts = { leicht: 0, mittel: 0, schwer: 0 }
+      for (let i = 0; i < 500; i++) {
+        const picked = pickQuestion('film', new Set(), 'bisschen')
+        if (picked) counts[picked.difficulty as keyof typeof counts]++
+      }
+      // 'film' hat je genau 1 Frage pro Difficulty im Bestand.
+      // Bei 60/30/10-Verteilung (bisschen): leicht dominiert klar.
+      expect(counts.leicht).toBeGreaterThan(counts.mittel)
+      expect(counts.mittel).toBeGreaterThan(counts.schwer)
+    })
+  })
+
   describe('pickTrueFalse mit InterestProfile (Session E)', () => {
     it('undefined Profile verhält sich wie ohne Filter', () => {
       const pool = getTrueFalsePool()
@@ -156,8 +237,8 @@ describe('questions', () => {
       // Verifikation der 60/30/10-Gewichtung mit Math.random-Mock aufgeräumt.
       vi.restoreAllMocks()
       const profile = {
-        shared: new Set(['wissenschaft'] as const),
-        individual: new Set(['sprache'] as const),
+        shared: new Set<Topic>(['wissenschaft']),
+        individual: new Set<Topic>(['sprache']),
         levelPerTopic: new Map(),
       }
       const counts = { shared: 0, individual: 0, wildcard: 0 }
@@ -171,6 +252,49 @@ describe('questions', () => {
       // Gewichtung ist 60/30/10; erlaubt ist normale Statistik-Streuung.
       expect(counts.shared).toBeGreaterThan(counts.individual)
       expect(counts.individual).toBeGreaterThan(counts.wildcard)
+    })
+
+    it('Level nerd auf sprache: Innerhalb des Buckets bevorzugt schwer über leicht', () => {
+      // sprache hat je genau 1 TF-Frage in leicht und schwer.
+      vi.restoreAllMocks()
+      const profile = {
+        shared: new Set<Topic>(['sprache']),
+        individual: new Set<Topic>(),
+        levelPerTopic: new Map<Topic, 'nerd'>([['sprache', 'nerd']]),
+      }
+      const counts = { leicht: 0, schwer: 0 }
+      // Wir zählen nur sprache-Treffer, damit die 60/30/10-Bucket-Wahl uns nicht
+      // verzerrt (der wildcard-Anteil verdünnt sonst die Level-Signale).
+      let sprachHits = 0
+      for (let i = 0; i < 1500 && sprachHits < 400; i++) {
+        const p = pickTrueFalse(new Set(), profile)
+        if (p?.topic === 'sprache') {
+          sprachHits++
+          counts[p.difficulty as 'leicht' | 'schwer']++
+        }
+      }
+      // Bei level=nerd: schwer 45 vs. leicht 5 → schwer sollte dominieren.
+      expect(counts.schwer).toBeGreaterThan(counts.leicht * 3)
+    })
+
+    it('Level bisschen auf sprache: bevorzugt leicht über schwer', () => {
+      vi.restoreAllMocks()
+      const profile = {
+        shared: new Set<Topic>(['sprache']),
+        individual: new Set<Topic>(),
+        levelPerTopic: new Map<Topic, 'bisschen'>([['sprache', 'bisschen']]),
+      }
+      const counts = { leicht: 0, schwer: 0 }
+      let sprachHits = 0
+      for (let i = 0; i < 1500 && sprachHits < 400; i++) {
+        const p = pickTrueFalse(new Set(), profile)
+        if (p?.topic === 'sprache') {
+          sprachHits++
+          counts[p.difficulty as 'leicht' | 'schwer']++
+        }
+      }
+      // Bei level=bisschen: leicht 60 vs. schwer 10 → leicht dominiert.
+      expect(counts.leicht).toBeGreaterThan(counts.schwer * 3)
     })
   })
 })

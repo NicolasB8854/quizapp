@@ -1,18 +1,24 @@
 /**
- * Fragen-Zugriff mit Typ-Sicherheit + einfachen Filterhelfern.
+ * Fragen-Zugriff mit Typ-Sicherheit + Filter- und Auswahl-Helfern.
  *
  * Kein Backend nötig — Katalog kommt aus JSON und wird beim Import einmal geladen und
- * gecacht. Für den Prototyp reicht das; ab Amplify wird `getQuestionsByTopic` gegen die
- * generierte GraphQL-API ausgetauscht.
+ * gecacht. Ab einem Backend-Schritt wandert `getQuestionsByTopic` gegen die generierte
+ * API.
+ *
+ * Session E hat den gewichteten Bucket-Ansatz für die Blitzrunde eingeführt
+ * (shared / individual / wildcard, 60/30/10). Session H legt darüber die Difficulty-
+ * Präferenz per Skill-Level: `nerd` bekommt schwerere Fragen, `bisschen` leichtere.
  */
 
 import rawQuestions from '@/data/questions.json'
 import type {
+  Difficulty,
   MultipleChoiceQuestion,
   Question,
   Topic,
   TrueFalseQuestion,
 } from '@/types/question'
+import type { SkillLevel } from '@/types/round'
 import type { InterestProfile } from './interestProfile'
 
 // JSON-Import ist untypisiert — hier einmal narrowen.
@@ -28,34 +34,88 @@ export function getMultipleChoiceByTopic(topic: Topic): MultipleChoiceQuestion[]
   )
 }
 
+// ---------- Difficulty-Präferenz (Session H) ---------------------------------
+
 /**
- * Zieht per Zufall die nächste ungenutzte Frage zu einem Topic. Falls alle bereits
- * verwendet wurden, greift die Funktion auf den kompletten Pool zurück.
+ * Gewichtung der Difficulty-Stufen je Selbsteinschätzung.
+ *
+ * Bewusst asymmetrisch, aber nicht dogmatisch — Nerd bekommt auch mal was Leichtes,
+ * Anfänger bekommt hin und wieder eine mittlere. Startwerte, für Kalibrierung bereit.
+ */
+export const DIFFICULTY_WEIGHTS: Record<SkillLevel, Record<Difficulty, number>> = {
+  bisschen: { leicht: 60, mittel: 30, schwer: 10, experten: 0 },
+  gut:      { leicht: 20, mittel: 50, schwer: 25, experten: 5 },
+  nerd:     { leicht: 5,  mittel: 20, schwer: 45, experten: 30 },
+}
+
+/**
+ * Gewichtete Zufallswahl aus einer Liste von Fragen mit passender Difficulty für ein
+ * (optional pro Frage variierendes) Skill-Level.
+ *
+ * `getLevel` liefert das Level pro Item; wenn `undefined`, wird die Frage neutral mit
+ * Gewicht 1 behandelt. Ist die Summe aller Gewichte 0 (etwa: alle Fragen `schwer`, aber
+ * Level `bisschen`), gibt es uniformen Fallback über die Items.
+ */
+export function pickByDifficulty<Q extends { difficulty: Difficulty }>(
+  items: readonly Q[],
+  getLevel: (item: Q) => SkillLevel | undefined,
+): Q | null {
+  if (items.length === 0) return null
+  const weights = items.map((q) => {
+    const level = getLevel(q)
+    if (!level) return 1
+    return DIFFICULTY_WEIGHTS[level][q.difficulty] ?? 0
+  })
+  const total = weights.reduce((s, w) => s + w, 0)
+  if (total === 0) {
+    return items[Math.floor(Math.random() * items.length)]
+  }
+  const r = Math.random() * total
+  let acc = 0
+  for (let i = 0; i < items.length; i++) {
+    acc += weights[i]
+    if (r < acc) return items[i]
+  }
+  return items[items.length - 1]
+}
+
+// ---------- Multiple-Choice-Fragen -------------------------------------------
+
+/**
+ * Zieht per Zufall die nächste ungenutzte Frage zu einem Topic.
+ *
+ * Mit `preferredLevel`: gewichtete Wahl nach Difficulty (`bisschen` → tendenziell
+ * leichte Fragen, `nerd` → tendenziell schwere). Ohne Level: uniform.
+ *
+ * Fallback-Kaskade:
+ *   1. Nicht-verbrauchte Frage (mit Difficulty-Match, falls Level gesetzt)
+ *   2. Falls alle Fragen verbraucht: kompletter Pool, gleiche Regel für Difficulty.
  */
 export function pickQuestion(
   topic: Topic,
   usedIds: ReadonlySet<string>,
+  preferredLevel?: SkillLevel,
 ): MultipleChoiceQuestion | null {
   const pool = getMultipleChoiceByTopic(topic)
   if (pool.length === 0) return null
   const fresh = pool.filter((q) => !usedIds.has(q.id))
   const candidates = fresh.length > 0 ? fresh : pool
-  return candidates[Math.floor(Math.random() * candidates.length)]
+
+  if (!preferredLevel) {
+    return candidates[Math.floor(Math.random() * candidates.length)]
+  }
+  return pickByDifficulty(candidates, () => preferredLevel)
 }
 
-// ---------- Blitzrunde: True-False ---------------------------------------------
+// ---------- True-False (Blitzrunde) ------------------------------------------
 
 export function getTrueFalsePool(): TrueFalseQuestion[] {
   return ALL_QUESTIONS.filter((q): q is TrueFalseQuestion => q.type === 'true-false')
 }
 
 /**
- * Gewichtete Buckets (Session E): 60% shared, 30% individual, 10% wildcard.
- *
- * Diese Verteilung ist die pragmatische Kurzform der 30/30/25/15-Formel aus
- * konzept-v2.md, Kapitel 6. Ohne dedizierte „general vs. shared-interest"-
- * Klassifizierung in der DB kollabieren wir general in wildcard und heben shared
- * gegenüber individual an, damit gemeinsame Themen die Runde tragen.
+ * Gewichtete Buckets für die Blitzrunde: 60% shared, 30% individual, 10% wildcard.
+ * Kurzform der 30/30/25/15-Formel aus konzept-v2.md, Kapitel 6.
  */
 const FLASH_WEIGHTS = { shared: 60, individual: 30, wildcard: 10 } as const
 
@@ -64,11 +124,10 @@ const FLASH_WEIGHTS = { shared: 60, individual: 30, wildcard: 10 } as const
  *
  * Ohne `profile` (oder mit leerem Profile): uniforme Auswahl aus dem Pool.
  *
- * Mit `profile`: gewichtete Wahl über drei Töpfe (shared / individual / wildcard).
- * Leere Töpfe fallen weg, das verbleibende Gewicht wird proportional verteilt.
- *
- * Duplicate-Check: wird bevorzugt eingehalten. Wenn nach Ausschluss der `usedIds`
- * gar nichts mehr übrig bleibt, greift der volle Pool als Fallback.
+ * Mit `profile`: zweistufig gewichtete Wahl.
+ *   1. Bucket-Wahl (shared / individual / wildcard) mit den FLASH_WEIGHTS.
+ *   2. Innerhalb des Buckets: Difficulty-Match per `profile.levelPerTopic` (Session H).
+ *      In der wildcard-Bucket gibt es kein Ziel-Level → uniform.
  */
 export function pickTrueFalse(
   usedIds: ReadonlySet<string>,
@@ -94,35 +153,31 @@ export function pickTrueFalse(
     (q) => !profile.shared.has(q.topic) && !profile.individual.has(q.topic),
   )
 
-  const picked = pickWeighted([
-    { weight: FLASH_WEIGHTS.shared, items: sharedItems },
-    { weight: FLASH_WEIGHTS.individual, items: individualItems },
-    { weight: FLASH_WEIGHTS.wildcard, items: wildcardItems },
-  ])
-  return picked ?? pool[Math.floor(Math.random() * pool.length)]
-}
+  const nonEmpty = [
+    { key: 'shared' as const, weight: FLASH_WEIGHTS.shared, items: sharedItems },
+    { key: 'individual' as const, weight: FLASH_WEIGHTS.individual, items: individualItems },
+    { key: 'wildcard' as const, weight: FLASH_WEIGHTS.wildcard, items: wildcardItems },
+  ].filter((b) => b.items.length > 0 && b.weight > 0)
 
-/**
- * Gewichtete Zufallsauswahl über mehrere Töpfe. Leere Töpfe werden ignoriert und ihr
- * Gewicht verfällt (bzw. entfällt aus der Summe). Innerhalb eines Topfes uniforme
- * Auswahl.
- */
-function pickWeighted<T>(
-  buckets: readonly { weight: number; items: readonly T[] }[],
-): T | null {
-  const nonEmpty = buckets.filter((b) => b.items.length > 0 && b.weight > 0)
-  if (nonEmpty.length === 0) return null
+  if (nonEmpty.length === 0) {
+    return pool[Math.floor(Math.random() * pool.length)]
+  }
+
   const total = nonEmpty.reduce((s, b) => s + b.weight, 0)
   const r = Math.random() * total
   let acc = 0
+  let chosen = nonEmpty[nonEmpty.length - 1]
   for (const bucket of nonEmpty) {
     acc += bucket.weight
     if (r < acc) {
-      return bucket.items[Math.floor(Math.random() * bucket.items.length)]
+      chosen = bucket
+      break
     }
   }
-  // Numerische Sicherheitsnetzknote — Math.random kann in seltenen Fällen r = total-eps
-  // liefern; wir fallen dann auf den letzten Bucket zurück.
-  const last = nonEmpty[nonEmpty.length - 1]
-  return last.items[Math.floor(Math.random() * last.items.length)]
+
+  // Innerhalb des Buckets: Difficulty-Match, außer für Wildcards (unbekanntes Level).
+  const getLevel = chosen.key === 'wildcard'
+    ? (() => undefined)
+    : ((q: TrueFalseQuestion) => profile.levelPerTopic.get(q.topic))
+  return pickByDifficulty(chosen.items, getLevel)
 }

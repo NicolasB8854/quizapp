@@ -272,6 +272,14 @@ function pickTopicForPlayer(player: Player): Topic | null {
   return best.topic
 }
 
+/** Level, das ein konkreter Spieler zu einem Topic angegeben hat. */
+function getPlayerLevelForTopic(
+  player: Player,
+  topic: Topic,
+): PlayerInterest['level'] | undefined {
+  return player.interests.find((i) => i.topic === topic)?.level
+}
+
 /**
  * Baut die Spotlight-Runde: Team-alternierende Reihenfolge über alle Spieler mit
  * Interessen. Team A p0, Team B p0, Team A p1, Team B p1, ... Damit wechselt der
@@ -324,7 +332,9 @@ function initSpotlight(teams: Team[], players: readonly Player[]): SpotlightLive
   const topic = pickTopicForPlayer(firstPlayer)!
   const excluded = new Set<string>()
   for (const id of readAskedQuestionIds()) excluded.add(id)
-  const question = pickQuestion(topic, excluded)
+  // Session H: Difficulty-Match anhand des Spieler-Levels für sein Topic.
+  const level = getPlayerLevelForTopic(firstPlayer, topic)
+  const question = pickQuestion(topic, excluded, level)
 
   if (!question) {
     // Topic hat keine MC-Fragen im Katalog — Modus trotzdem starten, empty-Style.
@@ -537,7 +547,11 @@ export function reducer(state: GameState, action: GameAction): GameState {
       // vollen Pool zurück, wenn nach dem Filter nichts mehr übrig ist.
       const excluded = new Set(state.live.usedQuestionIds)
       for (const id of readAskedQuestionIds()) excluded.add(id)
-      const question = pickQuestion(action.topic, excluded)
+      // Session H: Level aus der Player-Aggregation (Max-Level pro Topic) fließt in
+      // die Difficulty-Wahl der Frage ein.
+      const cdProfile = computeInterestProfile(state.round.players)
+      const preferredLevel = cdProfile.levelPerTopic.get(action.topic)
+      const question = pickQuestion(action.topic, excluded, preferredLevel)
       if (!question) return state
 
       // Seed = Round-ID + Question-ID: reproduzierbar, aber neu pro Runde.
@@ -770,7 +784,8 @@ export function reducer(state: GameState, action: GameAction): GameState {
 
       const excluded = new Set(usedQuestionIds)
       for (const id of readAskedQuestionIds()) excluded.add(id)
-      const nextQuestion = pickQuestion(topic, excluded)
+      const nextLevel = getPlayerLevelForTopic(nextPlayer, topic)
+      const nextQuestion = pickQuestion(topic, excluded, nextLevel)
       if (!nextQuestion) {
         return reducer({ ...state, live: advancedBase }, { type: 'SPOTLIGHT_NEXT' })
       }

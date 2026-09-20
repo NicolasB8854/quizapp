@@ -506,6 +506,78 @@ describe('reducer — Player-Ebene (Session D + E)', () => {
   })
 })
 
+describe('reducer — Difficulty-Match (Session H)', () => {
+  it('CD_PICK_TOPIC bevorzugt schwere Fragen wenn Team-Level nerd ist', () => {
+    vi.restoreAllMocks()
+    let base = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    const p1 = base.round!.players[0]
+    base = reducer(base, {
+      type: 'SET_PLAYER_INTERESTS',
+      playerId: p1.id,
+      interests: [{ topic: 'film' as never, level: 'nerd' }],
+    })
+    base = reducer(base, { type: 'START_PLAYING' })
+
+    const counts: Record<string, number> = { leicht: 0, mittel: 0, schwer: 0 }
+    // film hat je genau 1 Frage pro Difficulty im Bestand → gute Verteilungs-Basis.
+    for (let i = 0; i < 200; i++) {
+      const s = reducer(base, { type: 'CD_PICK_TOPIC', topic: 'film' })
+      if (s.live?.kind !== 'category-duel') continue
+      const q = s.live.activeQuestion
+      if (q) counts[q.difficulty] = (counts[q.difficulty] ?? 0) + 1
+    }
+    expect(counts.schwer).toBeGreaterThan(counts.leicht)
+  })
+
+  it('Spotlight bevorzugt schwere Fragen für nerd-Spieler', () => {
+    vi.restoreAllMocks()
+    let base = reducer(INITIAL_STATE, {
+      type: 'SET_MODE_SELECTION',
+      modeIds: ['player-spotlight'],
+    })
+    base = reducer(base, { type: 'GO_TO_LOBBY' })
+    const p = base.round!.players.find((p) => p.teamId === 'team-a')!
+    base = reducer(base, {
+      type: 'SET_PLAYER_INTERESTS',
+      playerId: p.id,
+      interests: [{ topic: 'film' as never, level: 'nerd' }],
+    })
+
+    const counts: Record<string, number> = { leicht: 0, mittel: 0, schwer: 0 }
+    for (let i = 0; i < 200; i++) {
+      const s = reducer(base, { type: 'START_PLAYING' })
+      if (s.live?.kind !== 'player-spotlight') continue
+      const q = s.live.activeQuestion
+      if (q) counts[q.difficulty] = (counts[q.difficulty] ?? 0) + 1
+    }
+    expect(counts.schwer).toBeGreaterThan(counts.leicht)
+  })
+
+  it('Spotlight bevorzugt leichte Fragen für bisschen-Spieler', () => {
+    vi.restoreAllMocks()
+    let base = reducer(INITIAL_STATE, {
+      type: 'SET_MODE_SELECTION',
+      modeIds: ['player-spotlight'],
+    })
+    base = reducer(base, { type: 'GO_TO_LOBBY' })
+    const p = base.round!.players.find((p) => p.teamId === 'team-a')!
+    base = reducer(base, {
+      type: 'SET_PLAYER_INTERESTS',
+      playerId: p.id,
+      interests: [{ topic: 'film' as never, level: 'bisschen' }],
+    })
+
+    const counts: Record<string, number> = { leicht: 0, mittel: 0, schwer: 0 }
+    for (let i = 0; i < 200; i++) {
+      const s = reducer(base, { type: 'START_PLAYING' })
+      if (s.live?.kind !== 'player-spotlight') continue
+      const q = s.live.activeQuestion
+      if (q) counts[q.difficulty] = (counts[q.difficulty] ?? 0) + 1
+    }
+    expect(counts.leicht).toBeGreaterThan(counts.schwer)
+  })
+})
+
 describe('reducer — Heimspiel / Player Spotlight (Session G)', () => {
   function bootSpotlight(): ReturnType<typeof reducer> {
     let s = reducer(INITIAL_STATE, {
