@@ -73,6 +73,48 @@ resource "aws_dynamodb_table" "sessions" {
   }
 }
 
+# Questions-Katalog: alle Quiz-Fragen liegen als eigene Items in DDB, damit
+# Content-Änderungen ohne Redeploy live gehen. Server lädt beim Cold-Start
+# den kompletten Katalog in den Container-Memory (Lambda-Lifetime typisch
+# 15-30 min bei Idle). Frontend nutzt weiterhin den inline JSON.
+#
+# Zugriffs-Muster:
+#   • Scan alle Items einmal pro Cold-Start
+#   • Query by topic via GSI (für zukünftige gezielte Topic-Loads)
+resource "aws_dynamodb_table" "questions" {
+  name         = "${local.name_prefix}-questions"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "id"
+
+  attribute {
+    name = "id"
+    type = "S"
+  }
+
+  attribute {
+    name = "topic"
+    type = "S"
+  }
+
+  # GSI: erlaubt Query „alle Fragen zu Topic X" ohne kompletten Scan.
+  # Aktuell noch nicht genutzt (Server macht Full-Scan beim Cold-Start),
+  # aber wenn der Katalog auf 1000+ wächst, ist gezieltes Laden pro
+  # Topic praktisch.
+  global_secondary_index {
+    name            = "TopicIndex"
+    hash_key        = "topic"
+    projection_type = "ALL"
+  }
+
+  point_in_time_recovery {
+    enabled = var.environment == "prod"
+  }
+
+  server_side_encryption {
+    enabled = true
+  }
+}
+
 # Player-Library-Tabelle (Session AB): persistente Player-Profile über
 # Sessions hinweg. Analog zum bisherigen localStorage-Ansatz, aber
 # cross-device wiederverwendbar (z. B. via Player-Token beim Join).

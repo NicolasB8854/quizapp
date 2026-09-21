@@ -22,11 +22,27 @@ import type {
 import type { SkillLevel } from '../types/round'
 import { normalizeTag, type InterestProfile } from './interestProfile'
 
-// JSON-Import ist untypisiert — hier einmal narrowen.
-const ALL_QUESTIONS = rawQuestions as unknown as Question[]
+// JSON-Import ist untypisiert — hier einmal narrowen. `let` statt `const`,
+// damit der Server zur Laufzeit den Katalog aus DynamoDB nachladen kann
+// (siehe `setQuestionCatalog`). Frontend nutzt weiter den Default aus JSON.
+let ALL_QUESTIONS: Question[] = rawQuestions as unknown as Question[]
 
 export function getAllQuestions(): Question[] {
   return ALL_QUESTIONS
+}
+
+/**
+ * Ersetzt den globalen Fragenkatalog zur Laufzeit.
+ *
+ * Wird vom Lambda-Handler beim Cold-Start aufgerufen, nachdem er die
+ * Fragen aus DDB gescannt hat. Frontend ruft es typischerweise nicht auf
+ * — der Bundle-Import mit `rawQuestions` liefert dort schon alles.
+ *
+ * Idempotent: kann bei jedem Handler-Aufruf sicher aufgerufen werden
+ * (macht Sinn: der Handler verifiziert den Cache-Status).
+ */
+export function setQuestionCatalog(questions: Question[]): void {
+  ALL_QUESTIONS = questions
 }
 
 /**

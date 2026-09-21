@@ -23,6 +23,11 @@ output "players_table" {
   value       = aws_dynamodb_table.players.name
 }
 
+output "questions_table" {
+  description = "DynamoDB-Tabelle mit dem Fragen-Katalog (Server lädt beim Cold-Start)."
+  value       = aws_dynamodb_table.questions.name
+}
+
 output "lambda_function_name" {
   description = "Name der WS-Handler-Lambda (nützlich für `aws logs tail`)."
   value       = aws_lambda_function.ws_handler.function_name

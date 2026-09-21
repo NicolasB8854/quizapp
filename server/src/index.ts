@@ -17,6 +17,7 @@ import type {
   APIGatewayProxyWebsocketEventV2,
 } from 'aws-lambda'
 
+import { ensureCatalogLoaded } from './catalog'
 import { handleConnect } from './handlers/connect'
 import { handleDisconnect } from './handlers/disconnect'
 import { handleMessage } from './handlers/message'
@@ -24,6 +25,10 @@ import { handleMessage } from './handlers/message'
 export async function handler(
   event: APIGatewayProxyWebsocketEventV2,
 ): Promise<APIGatewayProxyResultV2> {
+  // Beim ersten Aufruf im Container: Fragen aus DDB laden.
+  // Idempotent — nachfolgende Aufrufe sind no-op.
+  await ensureCatalogLoaded()
+
   const { routeKey } = event.requestContext
   switch (routeKey) {
     case '$connect':

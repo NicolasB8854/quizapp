@@ -52,6 +52,7 @@ resource "aws_iam_role_policy" "ws_handler_ddb" {
         "dynamodb:UpdateItem",
         "dynamodb:DeleteItem",
         "dynamodb:Query",
+        "dynamodb:Scan",
         "dynamodb:BatchGetItem",
         "dynamodb:BatchWriteItem",
       ]
@@ -62,6 +63,8 @@ resource "aws_iam_role_policy" "ws_handler_ddb" {
         "${aws_dynamodb_table.sessions.arn}/index/*",
         aws_dynamodb_table.players.arn,
         "${aws_dynamodb_table.players.arn}/index/*",
+        aws_dynamodb_table.questions.arn,
+        "${aws_dynamodb_table.questions.arn}/index/*",
       ]
     }]
   })
@@ -96,11 +99,12 @@ resource "aws_lambda_function" "ws_handler" {
 
   environment {
     variables = {
-      ROOMS_TABLE    = aws_dynamodb_table.rooms.name
-      SESSIONS_TABLE = aws_dynamodb_table.sessions.name
-      PLAYERS_TABLE  = aws_dynamodb_table.players.name
-      ROOM_TTL_HOURS = tostring(var.room_ttl_hours)
-      LOG_LEVEL      = var.environment == "prod" ? "info" : "debug"
+      ROOMS_TABLE     = aws_dynamodb_table.rooms.name
+      SESSIONS_TABLE  = aws_dynamodb_table.sessions.name
+      PLAYERS_TABLE   = aws_dynamodb_table.players.name
+      QUESTIONS_TABLE = aws_dynamodb_table.questions.name
+      ROOM_TTL_HOURS  = tostring(var.room_ttl_hours)
+      LOG_LEVEL       = var.environment == "prod" ? "info" : "debug"
     }
   }
 
