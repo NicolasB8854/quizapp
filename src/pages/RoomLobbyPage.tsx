@@ -109,8 +109,31 @@ export default function RoomLobbyPage() {
     }
   }
 
+  // Team-Farb-Präsenz: sobald der Player einem Team beigetreten ist, ziehen
+  // wir seine Team-Farbe als dünnen Balken über den Content. Gibt jedem Handy
+  // ein sofort erkennbares „das ist meine Farbe"-Signal, ohne die
+  // Content-Karten selbst zu überladen.
+  const myPlayer =
+    role === 'player' && room.playerId && room.state?.round
+      ? room.state.round.players.find((p) => p.id === room.playerId) ?? null
+      : null
+  const myTeam = myPlayer
+    ? room.state?.round?.teams.find((t) => t.id === myPlayer.teamId) ?? null
+    : null
+  const myTeamColor = myTeam ? getTeamColorHex(myTeam.color) : null
+
   return (
     <ScreenLayout variant="dim">
+      {myTeamColor && (
+        <div
+          aria-hidden
+          className="pointer-events-none fixed inset-x-0 top-0 z-40 h-[3px]"
+          style={{
+            background: myTeamColor,
+            boxShadow: `0 0 12px ${myTeamColor}, 0 0 24px ${myTeamColor}80`,
+          }}
+        />
+      )}
       <div
         className={cn(
           'mx-auto space-y-4 p-4 md:p-6',
@@ -148,7 +171,14 @@ export default function RoomLobbyPage() {
             onCopyCode={copyCode}
           />
         ) : (
-          <Card className="space-y-3 p-4">
+          <Card
+            className="space-y-3 p-4"
+            style={
+              myTeamColor
+                ? { borderColor: `${myTeamColor}66`, boxShadow: `inset 0 1px 0 ${myTeamColor}55` }
+                : undefined
+            }
+          >
             <div className="flex flex-wrap items-center gap-4">
               <div>
                 <div className="text-[10px] uppercase tracking-[0.32em] text-ink-muted">
@@ -165,10 +195,20 @@ export default function RoomLobbyPage() {
               <div className="flex-1" />
               <div className="text-right">
                 <div className="text-[10px] uppercase tracking-[0.32em] text-ink-muted">
-                  Player
+                  {myTeam ? myTeam.name : 'Player'}
                 </div>
-                <div className="mt-1 font-semibold text-white">
-                  {playerName}
+                <div className="mt-1 flex items-center justify-end gap-2 font-semibold text-white">
+                  {myTeamColor && (
+                    <span
+                      className="h-2.5 w-2.5 rounded-full"
+                      style={{
+                        background: myTeamColor,
+                        boxShadow: `0 0 8px ${myTeamColor}`,
+                      }}
+                      aria-hidden
+                    />
+                  )}
+                  <span>{playerName}</span>
                 </div>
               </div>
             </div>
@@ -2485,7 +2525,7 @@ function SprinterRoomView({
             className={cn(
               'font-mono font-bold tabular-nums',
               isMaster ? 'text-6xl' : 'text-3xl',
-              remainingSecs <= 10 ? 'text-wrong' : 'text-white',
+              remainingSecs <= 10 ? 'text-wrong animate-timer-pulse' : 'text-white',
             )}
           >
             {Math.max(0, Math.floor(remainingSecs))}s
@@ -3321,7 +3361,7 @@ function ExpertsRoomView({
                 className={cn(
                   'font-mono font-bold tabular-nums',
                   isMaster ? 'text-5xl' : 'text-2xl',
-                  remainingSecs <= 5 ? 'text-wrong' : 'text-white',
+                  remainingSecs <= 5 ? 'text-wrong animate-timer-pulse' : 'text-white',
                 )}
               >
                 {Math.max(0, Math.floor(remainingSecs))}s
@@ -3475,13 +3515,18 @@ function QuestionCard({
   isMaster: boolean
   revealedTone: 'correct' | 'wrong' | 'neutral' | null
 }) {
+  // `key` an revealedTone koppelt die Component-Instanz an den Tone-Wechsel:
+  // sobald sich `correct` / `wrong` ändert, wird der Card neu gemountet und
+  // die CSS-Animation läuft frisch. Ohne key würde ein Wiederholungs-Reveal
+  // die Animation nicht neu triggern.
   return (
     <Card
+      key={revealedTone ?? 'neutral'}
       className={cn(
         'space-y-3',
         isMaster ? 'p-8 md:p-12' : 'p-4',
-        revealedTone === 'correct' && 'border-correct/40 bg-correct/[0.06]',
-        revealedTone === 'wrong' && 'border-wrong/40 bg-wrong/[0.06]',
+        revealedTone === 'correct' && 'border-correct/40 bg-correct/[0.06] animate-reveal-correct',
+        revealedTone === 'wrong' && 'border-wrong/40 bg-wrong/[0.06] animate-reveal-wrong',
       )}
     >
       <div
@@ -3582,7 +3627,35 @@ function OptionsGrid({
   )
 }
 
-/** Team-Score-Chip: Farbdot + Name + Punkte. */
+/**
+ * Trackt Änderungen an `score` und meldet für ~1.4s den positiven Delta.
+ * Wird für die `+N`-Toast-Animation am TeamScoreChip verwendet. Negative
+ * Deltas werden bewusst ignoriert — im Party-Kontext ist ein Punkt-Abzug
+ * eher selten und würde sonst schnell irritieren.
+ */
+function useScoreDelta(score: number): number | null {
+  const previousRef = useRef(score)
+  const [delta, setDelta] = useState<number | null>(null)
+  const timerRef = useRef<number | null>(null)
+
+  useEffect(() => {
+    const previous = previousRef.current
+    previousRef.current = score
+    if (score > previous) {
+      const diff = score - previous
+      setDelta(diff)
+      if (timerRef.current !== null) window.clearTimeout(timerRef.current)
+      timerRef.current = window.setTimeout(() => setDelta(null), 1400)
+    }
+    return () => {
+      if (timerRef.current !== null) window.clearTimeout(timerRef.current)
+    }
+  }, [score])
+
+  return delta
+}
+
+/** Team-Score-Chip: Farbdot + Name + Punkte, mit `+N`-Toast bei Punktzuwachs. */
 function TeamScoreChip({
   team,
   score,
@@ -3592,10 +3665,11 @@ function TeamScoreChip({
   score: number
   isMaster: boolean
 }) {
+  const delta = useScoreDelta(score)
   return (
     <div
       className={cn(
-        'flex items-center gap-1.5 rounded-lg bg-white/[0.04]',
+        'relative flex items-center gap-1.5 rounded-lg bg-white/[0.04]',
         isMaster ? 'px-3 py-2' : 'px-2 py-1',
       )}
     >
@@ -3612,6 +3686,18 @@ function TeamScoreChip({
       >
         {score}
       </span>
+      {delta !== null && delta > 0 && (
+        <span
+          key={delta}
+          className={cn(
+            'pointer-events-none absolute left-1/2 -top-3 rounded-full bg-correct/25 font-mono font-bold text-correct animate-score-pop',
+            isMaster ? 'px-2.5 py-0.5 text-base' : 'px-1.5 py-[1px] text-[11px]',
+          )}
+          aria-hidden
+        >
+          +{delta}
+        </span>
+      )}
     </div>
   )
 }

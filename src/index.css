@@ -86,6 +86,37 @@
     z-index: 0;
     background: radial-gradient(120% 80% at 50% 50%, transparent 55%, rgba(4, 6, 16, 0.65) 100%);
   }
+  /* Score-Diff-Toast: „+N" schwebt kurz nach oben und blendet aus. */
+  @keyframes score-pop {
+    0%   { opacity: 0; transform: translate(-50%, 6px) scale(0.7); }
+    25%  { opacity: 1; transform: translate(-50%, -6px) scale(1.05); }
+    70%  { opacity: 1; transform: translate(-50%, -14px) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -22px) scale(0.9); }
+  }
+  .animate-score-pop {
+    animation: score-pop 1.4s ease-out forwards;
+  }
+  /* Timer-Warn-Puls: kurzes Skalieren, sobald wenig Zeit übrig ist. */
+  @keyframes timer-pulse {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.07); }
+  }
+  .animate-timer-pulse {
+    animation: timer-pulse 0.7s ease-in-out infinite;
+  }
+  /* Reveal-Glow: kurzer Leucht-Impuls, wenn eine Frage aufgelöst wird. */
+  @keyframes reveal-glow-correct {
+    0%   { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0);   }
+    35%  { box-shadow: 0 0 26px 6px rgba(74, 222, 128, 0.45); }
+    100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0);   }
+  }
+  @keyframes reveal-glow-wrong {
+    0%   { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0);   }
+    35%  { box-shadow: 0 0 26px 6px rgba(248, 113, 113, 0.4); }
+    100% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0);   }
+  }
+  .animate-reveal-correct { animation: reveal-glow-correct 0.9s ease-out; }
+  .animate-reveal-wrong   { animation: reveal-glow-wrong 0.9s ease-out; }
   /* Rundes Show-Chip mit Neon-Border (für Kategorie-Anzeigen und Info-Chips). */
   .chip-neon {
     @apply inline-flex items-center gap-2 rounded-full border px-4 py-1.5
