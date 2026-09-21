@@ -23,6 +23,8 @@ import {
   ListOrdered,
   Loader2,
   RefreshCw,
+  Volume2,
+  VolumeX,
   WifiOff,
 } from 'lucide-react'
 import type {
@@ -55,6 +57,8 @@ import { PlayerInterestsPanel } from '@/components/PlayerInterestsPanel'
 import { ConfettiBurst } from '@/components/ConfettiBurst'
 import { ModeTransitionSplash } from '@/components/ModeTransitionSplash'
 import { useRoomSync } from '@/hooks/useRoomSync'
+import { useSoundEnabled } from '@/hooks/useSoundEnabled'
+import { playSound } from '@/lib/audio'
 import { readRoomIdentity, saveRoomIdentity } from '@/lib/roomIdentity'
 import { cn } from '@/lib/classnames'
 
@@ -180,6 +184,78 @@ export default function RoomLobbyPage() {
     })
   }, [currentPhase, room.state?.round, room.state?.matchPoints])
 
+  // ---- Sound-Feedback --------------------------------------------------
+  // Watchte einen kompakten Snapshot der Live-Situation und feuere Sounds
+  // bei bestimmten Übergängen:
+  //   correct — sobald der Score-Summenwert steigt (jede richtige Antwort).
+  //   wrong   — beim Wechsel in 'revealed', wenn die Punktesumme unverändert.
+  //   buzz    — beim Wechsel von 'awaiting-buzz' auf 'primary-answer'/'steal-answer'.
+  //   timeUp  — Sprinter 'answering' → 'between-teams' oder Experts primaryOutcome='timeout'.
+  const { enabled: soundEnabled, toggle: toggleSound } = useSoundEnabled()
+  const prevSoundSnapshotRef = useRef<{
+    kind: string
+    phase: string
+    scoresSum: number
+    expertsPrimaryOutcome: string | null
+  } | null>(null)
+
+  useEffect(() => {
+    const live = room.state?.live
+    if (!live || currentPhase !== 'playing') {
+      prevSoundSnapshotRef.current = null
+      return
+    }
+    const scoresSum = Object.values(live.scores).reduce((s, n) => s + n, 0)
+    const expertsPrimaryOutcome =
+      live.kind === 'experts' ? (live as ExpertsLive).primaryOutcome ?? null : null
+    const snapshot = {
+      kind: live.kind,
+      phase: live.phase,
+      scoresSum,
+      expertsPrimaryOutcome,
+    }
+    const prev = prevSoundSnapshotRef.current
+    prevSoundSnapshotRef.current = snapshot
+    if (!prev || prev.kind !== snapshot.kind) return // erster Snapshot oder Modus-Wechsel
+
+    // 1. Score-Anstieg — passt für alle Modi.
+    if (scoresSum > prev.scoresSum) {
+      playSound('correct')
+      return // ein Sound pro Snapshot reicht.
+    }
+    // 2. Reveal ohne Punktzuwachs — falsche Antwort.
+    if (snapshot.phase === 'revealed' && prev.phase !== 'revealed') {
+      playSound('wrong')
+      return
+    }
+    // 3. Buzzer klick.
+    if (
+      (snapshot.phase === 'primary-answer' || snapshot.phase === 'steal-answer') &&
+      prev.phase === 'awaiting-buzz'
+    ) {
+      playSound('buzz')
+      return
+    }
+    // 4a. Sprinter-Timer abgelaufen.
+    if (
+      snapshot.kind === 'sprinter' &&
+      snapshot.phase === 'between-teams' &&
+      prev.phase === 'answering'
+    ) {
+      playSound('timeUp')
+      return
+    }
+    // 4b. Experts-Solo-Timeout — Übergang primaryOutcome null → 'timeout'.
+    if (
+      snapshot.kind === 'experts' &&
+      snapshot.expertsPrimaryOutcome === 'timeout' &&
+      prev.expertsPrimaryOutcome !== 'timeout'
+    ) {
+      playSound('timeUp')
+      return
+    }
+  }, [room.state?.live, currentPhase])
+
   // ---- Modus-Übergangs-Splash ------------------------------------------
   // Sobald wir in Playing sind und `live.kind` sich ändert (inklusive
   // dem ersten Übergang von null auf einen Modus), zeigen wir für ~1.6 s
@@ -260,6 +336,25 @@ export default function RoomLobbyPage() {
             Verlassen
           </Button>
           <div className="flex-1" />
+          <button
+            type="button"
+            onClick={toggleSound}
+            aria-pressed={soundEnabled}
+            aria-label={soundEnabled ? 'Sound aus' : 'Sound an'}
+            title={soundEnabled ? 'Sound aus' : 'Sound an'}
+            className={cn(
+              'flex h-9 w-9 items-center justify-center rounded-lg border transition-colors',
+              soundEnabled
+                ? 'border-brand-purple/40 bg-brand-purple/10 text-brand-purple-soft hover:bg-brand-purple/20'
+                : 'border-white/10 bg-white/[0.03] text-white/40 hover:text-white/70',
+            )}
+          >
+            {soundEnabled ? (
+              <Volume2 className="h-4 w-4" />
+            ) : (
+              <VolumeX className="h-4 w-4" />
+            )}
+          </button>
           <StatusBadge status={room.status} />
         </div>
 
