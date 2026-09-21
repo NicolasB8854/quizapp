@@ -26,10 +26,12 @@ import {
   WifiOff,
 } from 'lucide-react'
 import type {
+  AroundCornerLive,
   CategoryDuelLive,
   FlashLive,
   GameAction,
   GameState,
+  SpotlightLive,
 } from '@quizapp/shared'
 import type { Player, SkillLevel, Topic } from '@quizapp/shared'
 import {
@@ -387,6 +389,28 @@ function PhaseView({
             state={state}
             live={live}
             playerId={playerId}
+            canDispatch={canDispatch}
+            send={send}
+          />
+        )
+      }
+      if (live?.kind === 'player-spotlight') {
+        return (
+          <SpotlightRoomView
+            state={state}
+            live={live}
+            playerId={playerId}
+            canDispatch={canDispatch}
+            send={send}
+          />
+        )
+      }
+      if (live?.kind === 'around-corner') {
+        return (
+          <AroundCornerRoomView
+            live={live}
+            playerId={playerId}
+            state={state}
             canDispatch={canDispatch}
             send={send}
           />
@@ -1260,6 +1284,599 @@ function CDRevealedView({
         {live.usedTopics.length >= 12 ? 'Runde beenden' : 'Nächste Runde'}
       </Button>
     </>
+  )
+}
+
+// ---------- Spotlight (Player-Heimspiel) -----------------------------------
+
+/**
+ * Spotlight-Modus („Heimspiel"): jeder Spieler mit Interessen bekommt eine
+ * Frage aus einem seiner Topics. Er antwortet zuerst frei (mündlich), Master
+ * markiert richtig oder falsch. Bei falsch: Gegenteam bekommt Multiple-Choice
+ * (halbe Punkte).
+ *
+ * Semantik im Multi-Device:
+ *   - Master oder aktueller Player klickt „Richtig!"/„Falsch"
+ *   - Nur Nicht-Team-Mitglieder des aktiven Spielers sehen Steal-Options
+ *   - Alle sehen die Auflösung
+ */
+function SpotlightRoomView({
+  state,
+  live,
+  playerId,
+  canDispatch,
+  send,
+}: {
+  state: GameState
+  live: SpotlightLive
+  playerId: string | null
+  canDispatch: boolean
+  send: (a: GameAction) => void
+}) {
+  if (!state.round) return <LoadingCard label="Lade Runde …" />
+
+  const activePlayer = live.activePlayerId
+    ? state.round.players.find((p) => p.id === live.activePlayerId)
+    : null
+  const activeTeam = activePlayer
+    ? state.round.teams.find((t) => t.id === activePlayer.teamId) ?? null
+    : null
+  const topicDef = live.activeTopic ? TOPICS_BY_ID[live.activeTopic] : null
+  const question = live.activeQuestion
+
+  const myPlayer = playerId
+    ? state.round.players.find((p) => p.id === playerId)
+    : null
+  const isMaster = !myPlayer
+  const isMyTurn = !!myPlayer && myPlayer.id === live.activePlayerId
+  const isTeamMate = !!myPlayer && !isMyTurn && myPlayer.teamId === activePlayer?.teamId
+  const isOpponent = !!myPlayer && myPlayer.teamId !== activePlayer?.teamId
+
+  if (live.phase === 'empty') {
+    return (
+      <Card className="space-y-2 p-6 text-center">
+        <div className="text-lg text-white/80">
+          Keine spielbaren Interessen im Roster.
+        </div>
+        <Button
+          size="lg"
+          variant="primary"
+          onClick={() => send({ type: 'FINISH_MODE' })}
+          disabled={!canDispatch}
+          className={cn('w-full', isMaster && 'h-16 text-lg')}
+        >
+          Modus überspringen
+        </Button>
+      </Card>
+    )
+  }
+
+  return (
+    <div className="space-y-3">
+      {/* Header */}
+      <Card className={cn('p-3', isMaster && 'p-4')}>
+        <div className="flex flex-wrap items-center gap-3">
+          <div>
+            <div className="text-[10px] uppercase tracking-[0.32em] text-brand-pink-soft">
+              Spotlight
+            </div>
+            <div
+              className={cn(
+                'mt-0.5 font-mono text-white',
+                isMaster ? 'text-lg' : 'text-sm',
+              )}
+            >
+              Zug {live.currentIndex + 1} / {live.playerOrder.length}
+            </div>
+          </div>
+          <div className="ml-auto flex flex-wrap gap-2">
+            {state.round.teams.map((team) => (
+              <div
+                key={team.id}
+                className={cn(
+                  'flex items-center gap-1.5 rounded-lg bg-white/[0.04]',
+                  isMaster ? 'px-3 py-2' : 'px-2 py-1',
+                )}
+              >
+                <span
+                  className={cn('rounded-full', isMaster ? 'h-3 w-3' : 'h-2 w-2')}
+                  style={{ background: getTeamColorHex(team.color) }}
+                />
+                <span className={cn('text-white/80', isMaster ? 'text-sm' : 'text-xs')}>
+                  {team.name}
+                </span>
+                <span
+                  className={cn(
+                    'font-mono font-bold text-white tabular-nums',
+                    isMaster ? 'text-2xl' : 'text-sm',
+                  )}
+                >
+                  {live.scores[team.id] ?? 0}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Card>
+
+      {/* Aktiver Spieler + Topic */}
+      {activePlayer && (
+        <Card
+          className={cn(
+            'flex items-center gap-3 border-brand-pink/40 bg-brand-pink/[0.06]',
+            isMaster ? 'p-6' : 'p-3',
+          )}
+        >
+          <span
+            className={cn(
+              'flex flex-shrink-0 items-center justify-center rounded-full font-bold text-white',
+              isMaster ? 'h-16 w-16 text-2xl' : 'h-10 w-10 text-base',
+            )}
+            style={{
+              background: activeTeam
+                ? getTeamColorHex(activeTeam.color)
+                : 'rgba(255,255,255,0.1)',
+            }}
+          >
+            {(activePlayer.name || 'N').slice(0, 1).toUpperCase()}
+          </span>
+          <div className="min-w-0 flex-1">
+            <div
+              className={cn(
+                'font-semibold text-white',
+                isMaster ? 'text-2xl md:text-3xl' : 'text-base',
+              )}
+            >
+              {activePlayer.name || 'Namenlos'}
+            </div>
+            <div className={cn('text-white/70', isMaster ? 'text-base' : 'text-xs')}>
+              {activeTeam?.name}
+              {topicDef && (
+                <>
+                  {' · '}
+                  <span aria-hidden>{topicDef.emoji}</span> {topicDef.label}
+                </>
+              )}
+            </div>
+          </div>
+        </Card>
+      )}
+
+      {/* Frage */}
+      {question ? (
+        <Card
+          className={cn(
+            'space-y-3',
+            isMaster ? 'p-8 md:p-12' : 'p-4',
+            live.phase === 'revealed' &&
+              live.primaryOutcome === 'correct' &&
+              'border-correct/40 bg-correct/[0.06]',
+            live.phase === 'revealed' &&
+              live.primaryOutcome === 'wrong' &&
+              'border-wrong/40 bg-wrong/[0.06]',
+          )}
+        >
+          <div
+            className={cn(
+              'font-semibold text-white',
+              isMaster
+                ? 'text-3xl leading-tight md:text-5xl md:leading-tight'
+                : 'text-lg md:text-xl',
+            )}
+          >
+            {question.question}
+          </div>
+        </Card>
+      ) : (
+        <LoadingCard label="Frage wird geladen …" />
+      )}
+
+      {/* Phase-abhängige Interaktion */}
+      {live.phase === 'primary' && question && (
+        <SpotlightPrimaryPanel
+          isMaster={isMaster}
+          isMyTurn={isMyTurn}
+          isTeamMate={isTeamMate}
+          canDispatch={canDispatch}
+          playerName={activePlayer?.name ?? ''}
+          send={send}
+        />
+      )}
+
+      {live.phase === 'steal' && question && (
+        <SpotlightStealPanel
+          isMaster={isMaster}
+          isOpponent={isOpponent}
+          canDispatch={canDispatch}
+          shuffledOptions={live.shuffledOptions}
+          send={send}
+        />
+      )}
+
+      {live.phase === 'revealed' && question && (
+        <>
+          <SpotlightRevealPanel
+            isMaster={isMaster}
+            live={live}
+          />
+          <Button
+            size="lg"
+            variant="primary"
+            onClick={() => send({ type: 'SPOTLIGHT_NEXT' })}
+            disabled={!canDispatch}
+            className={cn('w-full', isMaster && 'h-16 text-lg')}
+          >
+            {live.currentIndex + 1 >= live.playerOrder.length
+              ? 'Runde beenden'
+              : 'Nächster Spieler'}
+          </Button>
+        </>
+      )}
+    </div>
+  )
+}
+
+function SpotlightPrimaryPanel({
+  isMaster,
+  isMyTurn,
+  isTeamMate,
+  canDispatch,
+  playerName,
+  send,
+}: {
+  isMaster: boolean
+  isMyTurn: boolean
+  isTeamMate: boolean
+  canDispatch: boolean
+  playerName: string
+  send: (a: GameAction) => void
+}) {
+  // Primär-Phase: Frage wurde vorgelesen, Player antwortet mündlich.
+  // Master (oder der Player selbst) klickt „richtig" oder „falsch".
+  return (
+    <Card className={cn('space-y-3', isMaster ? 'p-5' : 'p-4')}>
+      <div className="text-[10px] uppercase tracking-[0.32em] text-ink-muted">
+        {isMyTurn
+          ? 'Sag deine Antwort — jemand markiert Richtig / Falsch'
+          : isTeamMate
+            ? `${playerName} antwortet frei — kein Reinreden`
+            : `Master markiert die Antwort für ${playerName}`}
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        <button
+          type="button"
+          onClick={() => send({ type: 'SPOTLIGHT_MARK_PRIMARY', outcome: 'correct' })}
+          disabled={!canDispatch || isTeamMate}
+          className={cn(
+            'flex items-center justify-center rounded-xl border font-bold uppercase tracking-wider transition-all disabled:opacity-40',
+            isMaster ? 'h-20 text-2xl' : 'h-16 text-lg',
+            'border-correct/60 bg-correct/15 text-correct hover:bg-correct/25',
+          )}
+        >
+          Richtig!
+        </button>
+        <button
+          type="button"
+          onClick={() => send({ type: 'SPOTLIGHT_MARK_PRIMARY', outcome: 'wrong' })}
+          disabled={!canDispatch || isTeamMate}
+          className={cn(
+            'flex items-center justify-center rounded-xl border font-bold uppercase tracking-wider transition-all disabled:opacity-40',
+            isMaster ? 'h-20 text-2xl' : 'h-16 text-lg',
+            'border-wrong/60 bg-wrong/15 text-wrong hover:bg-wrong/25',
+          )}
+        >
+          Falsch
+        </button>
+      </div>
+    </Card>
+  )
+}
+
+function SpotlightStealPanel({
+  isMaster,
+  isOpponent,
+  canDispatch,
+  shuffledOptions,
+  send,
+}: {
+  isMaster: boolean
+  isOpponent: boolean
+  canDispatch: boolean
+  shuffledOptions: string[]
+  send: (a: GameAction) => void
+}) {
+  const canClick = canDispatch && (isMaster || isOpponent)
+  return (
+    <>
+      <Card className={cn('space-y-2', isMaster ? 'p-5' : 'p-3')}>
+        <div className="text-[10px] uppercase tracking-[0.32em] text-brand-orange-soft">
+          Steal — Gegenteam ist dran (halbe Punkte)
+        </div>
+      </Card>
+      <div className={cn('space-y-2', isMaster && 'md:grid md:grid-cols-2 md:gap-3 md:space-y-0')}>
+        {shuffledOptions.map((option, idx) => (
+          <button
+            key={idx}
+            type="button"
+            onClick={() => send({ type: 'SPOTLIGHT_STEAL_ANSWER', renderedIndex: idx })}
+            disabled={!canClick}
+            className={cn(
+              'flex w-full items-center rounded-xl border text-left transition-all disabled:opacity-40',
+              isMaster ? 'gap-4 px-5 py-4' : 'gap-3 px-4 py-3',
+              canClick
+                ? 'border-brand-orange/40 bg-white/[0.04] text-white hover:border-brand-orange/70 hover:bg-brand-orange/10'
+                : 'border-white/10 bg-white/[0.03] text-white/70',
+            )}
+          >
+            <span
+              className={cn(
+                'flex items-center justify-center rounded-full bg-white/10 font-mono font-bold',
+                isMaster ? 'h-11 w-11 text-lg' : 'h-8 w-8 text-sm',
+              )}
+            >
+              {String.fromCharCode(65 + idx)}
+            </span>
+            <span className={cn('flex-1', isMaster ? 'text-lg md:text-xl' : 'text-sm md:text-base')}>
+              {option}
+            </span>
+          </button>
+        ))}
+      </div>
+    </>
+  )
+}
+
+function SpotlightRevealPanel({
+  isMaster,
+  live,
+}: {
+  isMaster: boolean
+  live: SpotlightLive
+}) {
+  const question = live.activeQuestion!
+  const correctIdx = live.correctRenderedIndex
+  const stealIdx = live.stealRenderedIndex
+  return (
+    <>
+      <div className={cn('space-y-2', isMaster && 'md:grid md:grid-cols-2 md:gap-3 md:space-y-0')}>
+        {live.shuffledOptions.map((option, idx) => {
+          const isCorrect = idx === correctIdx
+          const isSteal = idx === stealIdx
+          return (
+            <div
+              key={idx}
+              className={cn(
+                'flex items-center rounded-xl border',
+                isMaster ? 'gap-4 px-5 py-4' : 'gap-3 px-4 py-3',
+                isCorrect
+                  ? 'border-correct/60 bg-correct/15 text-correct'
+                  : isSteal
+                    ? 'border-wrong/60 bg-wrong/15 text-wrong'
+                    : 'border-white/10 bg-white/[0.02] text-white/60',
+              )}
+            >
+              <span
+                className={cn(
+                  'flex items-center justify-center rounded-full font-mono font-bold',
+                  isMaster ? 'h-11 w-11 text-lg' : 'h-8 w-8 text-sm',
+                  isCorrect ? 'bg-correct/25' : isSteal ? 'bg-wrong/25' : 'bg-white/10',
+                )}
+              >
+                {String.fromCharCode(65 + idx)}
+              </span>
+              <span
+                className={cn(
+                  'flex-1',
+                  isMaster ? 'text-lg md:text-xl' : 'text-sm md:text-base',
+                )}
+              >
+                {option}
+              </span>
+              {isCorrect && (
+                <span className={cn('uppercase tracking-wider', isMaster ? 'text-sm font-bold' : 'text-[10px]')}>
+                  richtig
+                </span>
+              )}
+            </div>
+          )
+        })}
+      </div>
+
+      {question.explanation && (
+        <Card
+          className={cn(
+            'text-white/80',
+            isMaster ? 'p-5 text-base md:text-lg' : 'p-3 text-sm',
+          )}
+        >
+          <div
+            className={cn(
+              'mb-1 uppercase tracking-[0.22em] text-ink-muted',
+              isMaster ? 'text-xs' : 'text-[10px]',
+            )}
+          >
+            Erklärung
+          </div>
+          {question.explanation}
+        </Card>
+      )}
+    </>
+  )
+}
+
+// ---------- Klick! (Warm-Up-Rätsel) ----------------------------------------
+
+/**
+ * Klick! / Around-Corner: fünf Rätsel-Fragen mit stufenweisen Hinweisen.
+ * Alle beraten gemeinsam (kein Team-Match). Master (oder jeder) klickt sich
+ * durch die Hinweise, bis jemand die Lösung ruft — dann „Auflösen" und
+ * weiter zum nächsten Rätsel.
+ */
+function AroundCornerRoomView({
+  live,
+  playerId,
+  state,
+  canDispatch,
+  send,
+}: {
+  live: AroundCornerLive
+  playerId: string | null
+  state: GameState
+  canDispatch: boolean
+  send: (a: GameAction) => void
+}) {
+  const myPlayer = playerId
+    ? state.round?.players.find((p) => p.id === playerId)
+    : null
+  const isMaster = !myPlayer
+  const question = live.activeQuestion
+
+  if (live.phase === 'empty' || !question) {
+    return (
+      <Card className="space-y-2 p-6 text-center">
+        <div className="text-lg text-white/80">Kein Rätsel mehr im Katalog.</div>
+        <Button
+          size="lg"
+          variant="primary"
+          onClick={() => send({ type: 'AC_NEXT' })}
+          disabled={!canDispatch}
+          className={cn('w-full', isMaster && 'h-16 text-lg')}
+        >
+          Modus beenden
+        </Button>
+      </Card>
+    )
+  }
+
+  const revealedHints = question.hints.slice(0, live.revealedHints)
+  const remainingHints = question.hints.length - live.revealedHints
+
+  return (
+    <div className="space-y-3">
+      {/* Header */}
+      <Card className={cn('p-3', isMaster && 'p-4')}>
+        <div className="flex items-center gap-3">
+          <div className="text-[10px] uppercase tracking-[0.32em] text-brand-cyan-soft">
+            Klick!
+          </div>
+          <div className={cn('font-mono text-white', isMaster ? 'text-lg' : 'text-sm')}>
+            Rätsel {live.currentIndex + 1} / {live.totalRiddles}
+          </div>
+        </div>
+      </Card>
+
+      {/* Frage */}
+      <Card
+        className={cn(
+          'space-y-3',
+          isMaster ? 'p-8 md:p-12' : 'p-4',
+          live.phase === 'revealed' && 'border-correct/40 bg-correct/[0.05]',
+        )}
+      >
+        <div
+          className={cn(
+            'font-semibold text-white',
+            isMaster
+              ? 'text-3xl leading-tight md:text-5xl md:leading-tight'
+              : 'text-lg md:text-xl',
+          )}
+        >
+          {question.question}
+        </div>
+      </Card>
+
+      {/* Hinweise (progressiv) */}
+      {revealedHints.length > 0 && (
+        <div className="space-y-2">
+          {revealedHints.map((hint, i) => (
+            <Card
+              key={i}
+              className={cn(
+                'flex items-start gap-3 border-brand-cyan/30 bg-brand-cyan/[0.04]',
+                isMaster ? 'p-5' : 'p-3',
+              )}
+            >
+              <span
+                className={cn(
+                  'flex flex-shrink-0 items-center justify-center rounded-full bg-brand-cyan/25 font-mono font-bold text-brand-cyan-soft',
+                  isMaster ? 'h-10 w-10 text-lg' : 'h-7 w-7 text-sm',
+                )}
+              >
+                {i + 1}
+              </span>
+              <span
+                className={cn(
+                  'flex-1 text-white',
+                  isMaster ? 'text-lg md:text-xl' : 'text-sm md:text-base',
+                )}
+              >
+                {hint}
+              </span>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      {/* Lösung (bei revealed) */}
+      {live.phase === 'revealed' && (
+        <Card
+          className={cn(
+            'space-y-1 border-correct/60 bg-correct/10',
+            isMaster ? 'p-6' : 'p-4',
+          )}
+        >
+          <div className="text-[10px] uppercase tracking-[0.32em] text-correct">
+            Lösung
+          </div>
+          <div
+            className={cn(
+              'font-bold text-white',
+              isMaster ? 'text-3xl md:text-4xl' : 'text-lg md:text-xl',
+            )}
+          >
+            {question.solution}
+          </div>
+        </Card>
+      )}
+
+      {/* Aktionen */}
+      {live.phase === 'guessing' ? (
+        <div className={cn('space-y-2', isMaster && 'md:grid md:grid-cols-2 md:gap-3 md:space-y-0')}>
+          <Button
+            size="lg"
+            variant="secondary"
+            onClick={() => send({ type: 'AC_REVEAL_HINT' })}
+            disabled={!canDispatch || remainingHints === 0}
+            className={cn('w-full', isMaster && 'h-16 text-lg')}
+          >
+            {remainingHints > 0
+              ? `Hinweis aufdecken (${remainingHints} übrig)`
+              : 'Keine Hinweise mehr'}
+          </Button>
+          <Button
+            size="lg"
+            variant="primary"
+            onClick={() => send({ type: 'AC_REVEAL_SOLUTION' })}
+            disabled={!canDispatch}
+            className={cn('w-full', isMaster && 'h-16 text-lg')}
+          >
+            Auflösen
+          </Button>
+        </div>
+      ) : (
+        <Button
+          size="lg"
+          variant="primary"
+          onClick={() => send({ type: 'AC_NEXT' })}
+          disabled={!canDispatch}
+          className={cn('w-full', isMaster && 'h-16 text-lg')}
+        >
+          {live.currentIndex + 1 >= live.totalRiddles
+            ? 'Klick! beenden'
+            : 'Nächstes Rätsel'}
+        </Button>
+      )}
+    </div>
   )
 }
 
