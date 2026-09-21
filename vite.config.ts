@@ -14,6 +14,21 @@ export default defineConfig({
     port: 5173,
     open: true,
   },
+  build: {
+    // Chunk-Warngrenze auf 300 kB senken — nach dem Split-Refactor sollten
+    // einzelne Chunks deutlich kleiner sein. Wenn wir wieder darüber landen,
+    // ist das ein Signal zum Nachdenken.
+    chunkSizeWarningLimit: 300,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // React + Router in einen eigenen Vendor-Chunk. Selten geändert,
+          // langfristig gecacht.
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+        },
+      },
+    },
+  },
   test: {
     environment: 'jsdom',
     include: [
