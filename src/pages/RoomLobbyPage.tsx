@@ -103,7 +103,12 @@ export default function RoomLobbyPage() {
 
   return (
     <ScreenLayout variant="dim">
-      <div className="mx-auto max-w-3xl space-y-4 p-4 md:p-6">
+      <div
+        className={cn(
+          'mx-auto space-y-4 p-4 md:p-6',
+          role === 'master' ? 'max-w-6xl' : 'max-w-3xl',
+        )}
+      >
         {/* Header */}
         <div className="flex flex-wrap items-center gap-3">
           <Button
@@ -118,12 +123,20 @@ export default function RoomLobbyPage() {
           <StatusBadge status={room.status} />
         </div>
 
-        {/* Room-Code + Rolle. Master bekommt den großen QR-Hero,
-            Player den kompakten Streifen. */}
-        {role === 'master' ? (
+        {/* Header-Variante nach Rolle + Phase:
+             - Master + setup/lobby → Hero mit QR (Onboarding-Phase)
+             - Master + playing/scoreboard → kompakter Header (Content dominiert)
+             - Player → immer compact-Streifen */}
+        {role === 'master' &&
+        (room.state?.phase === 'setup' || room.state?.phase === 'lobby') ? (
           <MasterHero
             roomCode={roomCode}
             playerCount={room.state?.round?.players.length ?? 0}
+            onCopyCode={copyCode}
+          />
+        ) : role === 'master' ? (
+          <MasterCompactHeader
+            roomCode={roomCode}
             onCopyCode={copyCode}
           />
         ) : (
@@ -250,6 +263,37 @@ function MasterHero({
             scan me
           </div>
         </div>
+      </div>
+    </Card>
+  )
+}
+
+/**
+ * Kompakter Master-Header während Playing/Scoreboard: nur der Room-Code,
+ * damit spät-joinende Gäste ihn noch abtippen könnten. Der QR fliegt raus —
+ * die Show soll dominieren.
+ */
+function MasterCompactHeader({
+  roomCode,
+  onCopyCode,
+}: {
+  roomCode: string
+  onCopyCode: () => void
+}) {
+  return (
+    <Card className="border-brand-purple/30 bg-brand-purple/[0.04] p-3">
+      <div className="flex items-center gap-3">
+        <div className="text-[10px] uppercase tracking-[0.32em] text-brand-purple-soft">
+          Room
+        </div>
+        <button
+          type="button"
+          onClick={onCopyCode}
+          className="inline-flex items-center gap-2 font-mono text-2xl font-bold tracking-[0.24em] text-white hover:text-brand-purple-soft"
+        >
+          {roomCode}
+          <Copy className="h-3.5 w-3.5 text-white/30" />
+        </button>
       </div>
     </Card>
   )
@@ -855,6 +899,7 @@ function CategoryDuelRoomView({
       {live.phase === 'revealed' && (
         <CDRevealedView
           live={live}
+          isMaster={isMaster}
           canDispatch={canDispatch}
           send={send}
         />
@@ -881,21 +926,32 @@ function CDPickTopicView({
   const used = new Set<Topic>(live.usedTopics)
   return (
     <div className="space-y-3">
-      <Card className="p-4">
-        <div className="text-center text-sm text-white/80">
+      <Card className={cn(isMaster ? 'p-6' : 'p-4')}>
+        <div
+          className={cn(
+            'text-center text-white/80',
+            isMaster ? 'text-xl md:text-2xl' : 'text-sm',
+          )}
+        >
           {isMyTurn ? (
             <>Wähle eine Kategorie für dein Team.</>
           ) : isMaster ? (
             <>
-              {currentTeamName} ist am Zug — Kategorie wählen oder Master
-              wählt für sie.
+              <strong className="text-white">{currentTeamName}</strong> ist am Zug
             </>
           ) : (
             <>{currentTeamName} wählt eine Kategorie …</>
           )}
         </div>
       </Card>
-      <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+      <div
+        className={cn(
+          'grid gap-2',
+          isMaster
+            ? 'grid-cols-3 md:grid-cols-4 md:gap-4'
+            : 'grid-cols-3 sm:grid-cols-4',
+        )}
+      >
         {TOPICS.map((topic) => {
           const isUsed = used.has(topic.id)
           const disabled = isUsed || !canPlay
@@ -906,7 +962,8 @@ function CDPickTopicView({
               onClick={() => send({ type: 'CD_PICK_TOPIC', topic: topic.id })}
               disabled={disabled}
               className={cn(
-                'flex flex-col items-center gap-1 rounded-lg border px-2 py-3 text-center transition-all',
+                'flex flex-col items-center rounded-lg border text-center transition-all',
+                isMaster ? 'gap-2 px-3 py-6' : 'gap-1 px-2 py-3',
                 isUsed
                   ? 'border-white/5 bg-white/[0.02] opacity-30'
                   : canPlay
@@ -914,12 +971,27 @@ function CDPickTopicView({
                     : 'border-white/10 bg-white/[0.03] text-white/60',
               )}
             >
-              <span className="text-2xl" aria-hidden>
+              <span
+                className={isMaster ? 'text-5xl md:text-6xl' : 'text-2xl'}
+                aria-hidden
+              >
                 {topic.emoji}
               </span>
-              <span className="text-[11px] font-medium">{topic.label}</span>
+              <span
+                className={cn(
+                  'font-medium',
+                  isMaster ? 'text-base md:text-lg' : 'text-[11px]',
+                )}
+              >
+                {topic.label}
+              </span>
               {isUsed && (
-                <span className="text-[9px] uppercase tracking-wider text-white/40">
+                <span
+                  className={cn(
+                    'uppercase tracking-wider text-white/40',
+                    isMaster ? 'text-xs' : 'text-[9px]',
+                  )}
+                >
                   gespielt
                 </span>
               )}
@@ -952,19 +1024,41 @@ function CDAnsweringView({
 
   return (
     <>
-      <Card className="space-y-3 p-4">
+      <Card
+        className={cn(
+          'space-y-3',
+          isMaster ? 'p-8 md:p-10' : 'p-4',
+        )}
+      >
         {topicDef && (
-          <div className="flex items-center gap-2 text-xs uppercase tracking-[0.22em] text-brand-cyan-soft">
-            <span aria-hidden>{topicDef.emoji}</span>
+          <div
+            className={cn(
+              'flex items-center gap-2 uppercase tracking-[0.22em] text-brand-cyan-soft',
+              isMaster ? 'text-sm md:text-base' : 'text-xs',
+            )}
+          >
+            <span
+              aria-hidden
+              className={isMaster ? 'text-2xl md:text-3xl' : ''}
+            >
+              {topicDef.emoji}
+            </span>
             {topicDef.label}
           </div>
         )}
-        <div className="text-lg font-semibold text-white md:text-xl">
+        <div
+          className={cn(
+            'font-semibold text-white',
+            isMaster
+              ? 'text-3xl leading-tight md:text-5xl md:leading-tight'
+              : 'text-lg md:text-xl',
+          )}
+        >
           {question.question}
         </div>
       </Card>
 
-      <div className="space-y-2">
+      <div className={cn('space-y-2', isMaster && 'md:grid md:grid-cols-2 md:gap-3 md:space-y-0')}>
         {live.shuffledOptions.map((option, idx) => (
           <button
             key={idx}
@@ -974,16 +1068,29 @@ function CDAnsweringView({
             }
             disabled={!canPlay}
             className={cn(
-              'flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left transition-all disabled:opacity-40',
+              'flex w-full items-center rounded-xl border text-left transition-all disabled:opacity-40',
+              isMaster ? 'gap-4 px-5 py-4' : 'gap-3 px-4 py-3',
               canPlay
                 ? 'border-brand-purple/40 bg-white/[0.04] text-white hover:border-brand-purple/70 hover:bg-brand-purple/10'
                 : 'border-white/10 bg-white/[0.03] text-white/70',
             )}
           >
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 font-mono text-sm font-bold">
+            <span
+              className={cn(
+                'flex items-center justify-center rounded-full bg-white/10 font-mono font-bold',
+                isMaster ? 'h-11 w-11 text-lg' : 'h-8 w-8 text-sm',
+              )}
+            >
               {String.fromCharCode(65 + idx)}
             </span>
-            <span className="flex-1 text-sm md:text-base">{option}</span>
+            <span
+              className={cn(
+                'flex-1',
+                isMaster ? 'text-lg md:text-xl' : 'text-sm md:text-base',
+              )}
+            >
+              {option}
+            </span>
           </button>
         ))}
       </div>
@@ -1005,10 +1112,12 @@ function CDAnsweringView({
 
 function CDRevealedView({
   live,
+  isMaster,
   canDispatch,
   send,
 }: {
   live: CategoryDuelLive
+  isMaster: boolean
   canDispatch: boolean
   send: (a: GameAction) => void
 }) {
@@ -1024,24 +1133,42 @@ function CDRevealedView({
     <>
       <Card
         className={cn(
-          'space-y-3 p-4',
+          'space-y-3',
+          isMaster ? 'p-8 md:p-10' : 'p-4',
           wasCorrect
             ? 'border-correct/40 bg-correct/[0.06]'
             : 'border-wrong/40 bg-wrong/[0.06]',
         )}
       >
         {topicDef && (
-          <div className="flex items-center gap-2 text-xs uppercase tracking-[0.22em] text-white/70">
-            <span aria-hidden>{topicDef.emoji}</span>
+          <div
+            className={cn(
+              'flex items-center gap-2 uppercase tracking-[0.22em] text-white/70',
+              isMaster ? 'text-sm md:text-base' : 'text-xs',
+            )}
+          >
+            <span
+              aria-hidden
+              className={isMaster ? 'text-2xl md:text-3xl' : ''}
+            >
+              {topicDef.emoji}
+            </span>
             {topicDef.label}
           </div>
         )}
-        <div className="text-lg font-semibold text-white md:text-xl">
+        <div
+          className={cn(
+            'font-semibold text-white',
+            isMaster
+              ? 'text-3xl leading-tight md:text-5xl md:leading-tight'
+              : 'text-lg md:text-xl',
+          )}
+        >
           {question.question}
         </div>
       </Card>
 
-      <div className="space-y-2">
+      <div className={cn('space-y-2', isMaster && 'md:grid md:grid-cols-2 md:gap-3 md:space-y-0')}>
         {live.shuffledOptions.map((option, idx) => {
           const isCorrect = idx === correctIdx
           const isSelected = idx === selectedIdx
@@ -1049,7 +1176,8 @@ function CDRevealedView({
             <div
               key={idx}
               className={cn(
-                'flex items-center gap-3 rounded-xl border px-4 py-3',
+                'flex items-center rounded-xl border',
+                isMaster ? 'gap-4 px-5 py-4' : 'gap-3 px-4 py-3',
                 isCorrect
                   ? 'border-correct/60 bg-correct/15 text-correct'
                   : isSelected
@@ -1059,7 +1187,8 @@ function CDRevealedView({
             >
               <span
                 className={cn(
-                  'flex h-8 w-8 items-center justify-center rounded-full font-mono text-sm font-bold',
+                  'flex items-center justify-center rounded-full font-mono font-bold',
+                  isMaster ? 'h-11 w-11 text-lg' : 'h-8 w-8 text-sm',
                   isCorrect
                     ? 'bg-correct/25'
                     : isSelected
@@ -1069,14 +1198,31 @@ function CDRevealedView({
               >
                 {String.fromCharCode(65 + idx)}
               </span>
-              <span className="flex-1 text-sm md:text-base">{option}</span>
+              <span
+                className={cn(
+                  'flex-1',
+                  isMaster ? 'text-lg md:text-xl' : 'text-sm md:text-base',
+                )}
+              >
+                {option}
+              </span>
               {isCorrect && (
-                <span className="text-[10px] uppercase tracking-wider">
+                <span
+                  className={cn(
+                    'uppercase tracking-wider',
+                    isMaster ? 'text-sm font-bold' : 'text-[10px]',
+                  )}
+                >
                   richtig
                 </span>
               )}
               {isSelected && !isCorrect && (
-                <span className="text-[10px] uppercase tracking-wider">
+                <span
+                  className={cn(
+                    'uppercase tracking-wider',
+                    isMaster ? 'text-sm font-bold' : 'text-[10px]',
+                  )}
+                >
                   gewählt
                 </span>
               )}
@@ -1086,8 +1232,18 @@ function CDRevealedView({
       </div>
 
       {question.explanation && (
-        <Card className="p-3 text-sm text-white/80">
-          <div className="mb-1 text-[10px] uppercase tracking-[0.22em] text-ink-muted">
+        <Card
+          className={cn(
+            'text-white/80',
+            isMaster ? 'p-5 text-base md:text-lg' : 'p-3 text-sm',
+          )}
+        >
+          <div
+            className={cn(
+              'mb-1 uppercase tracking-[0.22em] text-ink-muted',
+              isMaster ? 'text-xs' : 'text-[10px]',
+            )}
+          >
             Erklärung
           </div>
           {question.explanation}
@@ -1099,7 +1255,7 @@ function CDRevealedView({
         variant="primary"
         onClick={() => send({ type: 'CD_NEXT_TURN' })}
         disabled={!canDispatch}
-        className="w-full"
+        className={cn('w-full', isMaster && 'h-16 text-lg')}
       >
         {live.usedTopics.length >= 12 ? 'Runde beenden' : 'Nächste Runde'}
       </Button>
@@ -1134,6 +1290,7 @@ function FlashRoomView({
   const myPlayer = playerId
     ? state.round.players.find((p) => p.id === playerId)
     : null
+  const isMaster = !myPlayer // Master hat keinen Player-Eintrag im State.
   const myTeamId = myPlayer?.teamId ?? null
   const myTeamAnswer = myTeamId ? live.teamAnswers[myTeamId] : null
   const allTeamsAnswered = state.round.teams.every(
@@ -1142,14 +1299,19 @@ function FlashRoomView({
 
   return (
     <div className="space-y-3">
-      {/* Header: Zähler + Punkte-Übersicht */}
-      <Card className="p-3">
+      {/* Header: Zähler + Punkte-Übersicht (bei Master gr\u00f6\u00dfer) */}
+      <Card className={cn('p-3', isMaster && 'p-4')}>
         <div className="flex flex-wrap items-center gap-3">
           <div>
             <div className="text-[10px] uppercase tracking-[0.32em] text-brand-cyan-soft">
               Blitzrunde
             </div>
-            <div className="mt-0.5 font-mono text-sm text-white">
+            <div
+              className={cn(
+                'mt-0.5 font-mono text-white',
+                isMaster ? 'text-lg' : 'text-sm',
+              )}
+            >
               Behauptung {live.currentIndex + 1} / {live.totalStatements}
             </div>
           </div>
@@ -1157,14 +1319,32 @@ function FlashRoomView({
             {state.round.teams.map((team) => (
               <div
                 key={team.id}
-                className="flex items-center gap-1.5 rounded-lg bg-white/[0.04] px-2 py-1"
+                className={cn(
+                  'flex items-center gap-1.5 rounded-lg bg-white/[0.04]',
+                  isMaster ? 'px-3 py-2' : 'px-2 py-1',
+                )}
               >
                 <span
-                  className="h-2 w-2 rounded-full"
+                  className={cn(
+                    'rounded-full',
+                    isMaster ? 'h-3 w-3' : 'h-2 w-2',
+                  )}
                   style={{ background: getTeamColorHex(team.color) }}
                 />
-                <span className="text-xs text-white/80">{team.name}</span>
-                <span className="font-mono text-sm font-bold text-white">
+                <span
+                  className={cn(
+                    'text-white/80',
+                    isMaster ? 'text-sm' : 'text-xs',
+                  )}
+                >
+                  {team.name}
+                </span>
+                <span
+                  className={cn(
+                    'font-mono font-bold text-white tabular-nums',
+                    isMaster ? 'text-2xl' : 'text-sm',
+                  )}
+                >
                   {live.scores[team.id] ?? 0}
                 </span>
               </div>
@@ -1173,35 +1353,54 @@ function FlashRoomView({
         </div>
       </Card>
 
-      {/* Frage */}
+      {/* Frage — gr\u00f6\u00dfer im Master-Presenter-Mode */}
       {question ? (
         <Card
           className={cn(
-            'space-y-3 p-4',
+            'space-y-3',
+            isMaster ? 'p-8 md:p-12' : 'p-4',
             live.phase === 'revealed' &&
               (question.correctAnswer
                 ? 'border-correct/40 bg-correct/[0.05]'
                 : 'border-wrong/40 bg-wrong/[0.05]'),
           )}
         >
-          <div className="text-center text-lg font-semibold text-white md:text-xl">
+          <div
+            className={cn(
+              'text-center font-semibold text-white',
+              isMaster
+                ? 'text-3xl leading-tight md:text-5xl md:leading-tight'
+                : 'text-lg md:text-xl',
+            )}
+          >
             {question.question}
           </div>
           {live.phase === 'revealed' && (
-            <div className="rounded-lg bg-black/40 p-3 text-center">
+            <div
+              className={cn(
+                'rounded-lg bg-black/40 text-center',
+                isMaster ? 'p-6' : 'p-3',
+              )}
+            >
               <div className="text-[10px] uppercase tracking-[0.32em] text-white/50">
                 Antwort
               </div>
               <div
                 className={cn(
-                  'mt-1 text-2xl font-bold uppercase tracking-wide',
+                  'mt-1 font-bold uppercase tracking-wide',
+                  isMaster ? 'text-5xl md:text-7xl' : 'text-2xl',
                   question.correctAnswer ? 'text-correct' : 'text-wrong',
                 )}
               >
                 {question.correctAnswer ? 'Stimmt' : 'Falsch'}
               </div>
               {question.explanation && (
-                <div className="mt-2 text-xs text-white/70">
+                <div
+                  className={cn(
+                    'mt-2 text-white/70',
+                    isMaster ? 'text-base md:text-lg' : 'text-xs',
+                  )}
+                >
                   {question.explanation}
                 </div>
               )}
@@ -1212,8 +1411,8 @@ function FlashRoomView({
         <LoadingCard label="Keine Frage geladen." />
       )}
 
-      {/* Wahr/Falsch-Buttons oder Team-Antworten-Übersicht */}
-      {live.phase === 'answering' && myTeamId && (
+      {/* Wahr/Falsch-Buttons f\u00fcr Player-am-Zug. Master klickt nicht selbst. */}
+      {live.phase === 'answering' && myTeamId && !isMaster && (
         <Card className="space-y-2 p-4">
           <div className="text-[10px] uppercase tracking-[0.32em] text-ink-muted">
             Antwort für dein Team ·{' '}
@@ -1251,11 +1450,21 @@ function FlashRoomView({
       )}
 
       {/* Team-Antworten-Panel: wer hat schon geantwortet */}
-      <Card className="space-y-2 p-3">
-        <div className="text-[10px] uppercase tracking-[0.32em] text-ink-muted">
+      <Card className={cn('space-y-2', isMaster ? 'p-5' : 'p-3')}>
+        <div
+          className={cn(
+            'uppercase tracking-[0.32em] text-ink-muted',
+            isMaster ? 'text-xs' : 'text-[10px]',
+          )}
+        >
           Team-Antworten
         </div>
-        <div className="grid gap-1.5 sm:grid-cols-2">
+        <div
+          className={cn(
+            'grid gap-1.5',
+            isMaster ? 'sm:grid-cols-2 lg:grid-cols-4' : 'sm:grid-cols-2',
+          )}
+        >
           {state.round.teams.map((team) => {
             const answer = live.teamAnswers[team.id]
             const isRevealed = live.phase === 'revealed' && question
@@ -1265,23 +1474,35 @@ function FlashRoomView({
               <div
                 key={team.id}
                 className={cn(
-                  'flex items-center gap-2 rounded-lg border px-2 py-1.5 text-sm',
+                  'flex items-center gap-2 rounded-lg border',
+                  isMaster ? 'px-3 py-3 text-base' : 'px-2 py-1.5 text-sm',
                   correct && 'border-correct/40 bg-correct/[0.08]',
                   wrong && 'border-wrong/40 bg-wrong/[0.08]',
                   !isRevealed && 'border-white/10 bg-white/[0.03]',
                 )}
               >
                 <span
-                  className="h-2 w-2 rounded-full"
+                  className={cn(
+                    'rounded-full',
+                    isMaster ? 'h-3 w-3' : 'h-2 w-2',
+                  )}
                   style={{ background: getTeamColorHex(team.color) }}
                 />
                 <span className="flex-1 text-white/85">{team.name}</span>
                 {answer === null || answer === undefined ? (
-                  <span className="text-xs text-white/40">…</span>
+                  <span
+                    className={cn(
+                      'text-white/40',
+                      isMaster ? 'text-lg' : 'text-xs',
+                    )}
+                  >
+                    …
+                  </span>
                 ) : (
                   <span
                     className={cn(
-                      'font-mono text-xs font-bold uppercase',
+                      'font-mono font-bold uppercase',
+                      isMaster ? 'text-lg' : 'text-xs',
                       correct
                         ? 'text-correct'
                         : wrong
@@ -1305,7 +1526,7 @@ function FlashRoomView({
           variant={allTeamsAnswered ? 'primary' : 'secondary'}
           onClick={() => send({ type: 'FLASH_REVEAL' })}
           disabled={!canDispatch}
-          className="w-full"
+          className={cn('w-full', isMaster && 'h-16 text-lg')}
         >
           {allTeamsAnswered ? 'Auflösen' : 'Auflösen (jederzeit)'}
         </Button>
@@ -1315,7 +1536,7 @@ function FlashRoomView({
           variant="primary"
           onClick={() => send({ type: 'FLASH_NEXT' })}
           disabled={!canDispatch}
-          className="w-full"
+          className={cn('w-full', isMaster && 'h-16 text-lg')}
         >
           {live.currentIndex + 1 >= live.totalStatements
             ? 'Blitzrunde beenden'
