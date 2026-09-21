@@ -357,4 +357,114 @@ describe('questions', () => {
       expect(counts[2]).toBeGreaterThan(counts[4] * 3)
     })
   })
+
+  describe('Tag-Bonus (Session AB)', () => {
+    it('pickByDifficulty ohne matchesTag verhält sich wie vorher (leerer Callback → keine Änderung)', () => {
+      interface Fake { id: string; difficulty: Difficulty; tags?: string[] }
+      const items: Fake[] = [
+        { id: 'a', difficulty: 3, tags: ['foo'] },
+        { id: 'b', difficulty: 3 },
+      ]
+      // Math.random=0 → erstes Item, weil Weights identisch.
+      const picked = pickByDifficulty(items, () => 3 as SkillLevel)
+      expect(picked?.id).toBe('a')
+    })
+
+    it('pickByDifficulty mit matchesTag: matchende Items bekommen deutlich mehr Zug-Chance', () => {
+      vi.restoreAllMocks()
+      interface Fake { id: string; difficulty: Difficulty; tags?: string[] }
+      const items: Fake[] = [
+        { id: 'match', difficulty: 3, tags: ['basketball'] },
+        { id: 'nomatch-1', difficulty: 3 },
+        { id: 'nomatch-2', difficulty: 3 },
+        { id: 'nomatch-3', difficulty: 3 },
+        { id: 'nomatch-4', difficulty: 3 },
+      ]
+      const wanted = new Set(['basketball'])
+      const matchFn = (q: Fake) => !!q.tags?.some((t) => wanted.has(t))
+      let matchHits = 0
+      const N = 1500
+      for (let i = 0; i < N; i++) {
+        const p = pickByDifficulty(items, () => 3 as SkillLevel, matchFn)
+        if (p?.id === 'match') matchHits++
+      }
+      // Ohne Bonus wäre die Erwartung N/5 = 300 Treffer. Mit 5x-Bonus:
+      // Match-Weight = 5, andere = 1 pro Stück → Wahrscheinlichkeit = 5 / (5 + 4) ≈ 55%.
+      // Ich lasse Streuung großzügig: mindestens 40%.
+      expect(matchHits).toBeGreaterThan(N * 0.4)
+    })
+
+    it('pickQuestion mit preferredTags bevorzugt Fragen mit matchenden Katalog-Tags', () => {
+      vi.restoreAllMocks()
+      const pool = getMultipleChoiceByTopic('film')
+      const tagged = pool.filter((q) => q.tags && q.tags.length > 0)
+      expect(tagged.length).toBeGreaterThan(0)
+      // Wähle einen konkret vorhandenen Katalog-Tag als „Player-Interesse".
+      const someTag = tagged[0].tags![0]
+      const matchIds = new Set(
+        pool.filter((q) => q.tags?.includes(someTag)).map((q) => q.id),
+      )
+      let hits = 0
+      const N = 400
+      for (let i = 0; i < N; i++) {
+        const picked = pickQuestion('film', new Set(), 3, [someTag])
+        if (picked && matchIds.has(picked.id)) hits++
+      }
+      // Ohne Bonus wäre die Erwartung ~ (matchIds.size / pool.length) * N.
+      // Wir prüfen konservativ, dass matchende Fragen deutlich öfter kommen als
+      // ihr uniformer Erwartungswert.
+      const uniformExpected = (matchIds.size / pool.length) * N
+      expect(hits).toBeGreaterThan(uniformExpected * 1.5)
+    })
+
+    it('pickQuestion ohne preferredTags (kein Level) verhält sich uniform (Math.random=0 → erstes Item)', () => {
+      const pool = getMultipleChoiceByTopic('film')
+      const picked = pickQuestion('film', new Set())
+      expect(picked?.id).toBe(pool[0].id)
+    })
+
+    it('pickAnyMultipleChoice mit preferredTags aber ohne Level nutzt weiterhin den Bonus', () => {
+      vi.restoreAllMocks()
+      const all = getAllMultipleChoice()
+      const tagged = all.filter((q) => q.tags && q.tags.length > 0)
+      expect(tagged.length).toBeGreaterThan(0)
+      const someTag = tagged[0].tags![0]
+      const matchIds = new Set(
+        all.filter((q) => q.tags?.includes(someTag)).map((q) => q.id),
+      )
+      let hits = 0
+      const N = 400
+      for (let i = 0; i < N; i++) {
+        const picked = pickAnyMultipleChoice(new Set(), undefined, [someTag])
+        if (picked && matchIds.has(picked.id)) hits++
+      }
+      const uniformExpected = (matchIds.size / all.length) * N
+      expect(hits).toBeGreaterThan(uniformExpected * 1.5)
+    })
+
+    it('leere preferredTags → keine Verhaltensänderung (kein Bonus, uniform)', () => {
+      const pool = getMultipleChoiceByTopic('film')
+      const picked = pickQuestion('film', new Set(), undefined, [])
+      expect(picked?.id).toBe(pool[0].id)
+    })
+
+    it('preferredTags matchen case-insensitive', () => {
+      vi.restoreAllMocks()
+      const pool = getMultipleChoiceByTopic('film')
+      const tagged = pool.filter((q) => q.tags && q.tags.length > 0)
+      const someTag = tagged[0].tags![0]
+      const matchIds = new Set(
+        pool.filter((q) => q.tags?.includes(someTag)).map((q) => q.id),
+      )
+      const upper = someTag.toUpperCase()
+      let hits = 0
+      const N = 200
+      for (let i = 0; i < N; i++) {
+        const picked = pickQuestion('film', new Set(), 3, [upper])
+        if (picked && matchIds.has(picked.id)) hits++
+      }
+      const uniformExpected = (matchIds.size / pool.length) * N
+      expect(hits).toBeGreaterThan(uniformExpected * 1.5)
+    })
+  })
 })

@@ -550,6 +550,15 @@ function getPlayerLevelForTopic(
 }
 
 /**
+ * Sub-Interessen-Tags eines Spielers für ein Topic (Session AB).
+ * Wird an `pickQuestion` weitergegeben, damit Fragen mit matchenden Tags
+ * bevorzugt gezogen werden. Leeres Array = kein Match-Signal.
+ */
+function getPlayerTagsForTopic(player: Player, topic: Topic): readonly string[] {
+  return player.interests.find((i) => i.topic === topic)?.tags ?? []
+}
+
+/**
  * Baut die Spotlight-Runde: Team-alternierende Reihenfolge über alle Spieler mit
  * Interessen. Team A p0, Team B p0, Team A p1, Team B p1, ... Damit wechselt der
  * Bühnenscheinwerfer regelmäßig die Seite.
@@ -602,8 +611,10 @@ function initSpotlight(teams: Team[], players: readonly Player[]): SpotlightLive
   const excluded = new Set<string>()
   for (const id of readAskedQuestionIds()) excluded.add(id)
   // Session H: Difficulty-Match anhand des Spieler-Levels für sein Topic.
+  // Session AB: Zusätzlich Tag-Match auf Sub-Interessen des Spielers.
   const level = getPlayerLevelForTopic(firstPlayer, topic)
-  const question = pickQuestion(topic, excluded, level)
+  const preferredTags = getPlayerTagsForTopic(firstPlayer, topic)
+  const question = pickQuestion(topic, excluded, level, preferredTags)
 
   if (!question) {
     // Topic hat keine MC-Fragen im Katalog — Modus trotzdem starten, empty-Style.
@@ -1442,7 +1453,11 @@ export function reducer(state: GameState, action: GameAction): GameState {
       // die Difficulty-Wahl der Frage ein.
       const cdProfile = computeInterestProfile(state.round.players)
       const preferredLevel = cdProfile.levelPerTopic.get(action.topic)
-      const question = pickQuestion(action.topic, excluded, preferredLevel)
+      // Session AB: Aggregierte Sub-Interessen aller Spieler für dieses Topic
+      // fließen als Tag-Bonus in die Fragenwahl ein.
+      const cdTopicTags = cdProfile.tagsPerTopic?.get(action.topic)
+      const cdPreferredTags = cdTopicTags ? Array.from(cdTopicTags) : undefined
+      const question = pickQuestion(action.topic, excluded, preferredLevel, cdPreferredTags)
       if (!question) return state
 
       // Seed = Round-ID + Question-ID: reproduzierbar, aber neu pro Runde.
@@ -1680,7 +1695,8 @@ export function reducer(state: GameState, action: GameAction): GameState {
       const excluded = new Set(usedQuestionIds)
       for (const id of readAskedQuestionIds()) excluded.add(id)
       const nextLevel = getPlayerLevelForTopic(nextPlayer, topic)
-      const nextQuestion = pickQuestion(topic, excluded, nextLevel)
+      const nextTags = getPlayerTagsForTopic(nextPlayer, topic)
+      const nextQuestion = pickQuestion(topic, excluded, nextLevel, nextTags)
       if (!nextQuestion) {
         return reducer({ ...state, live: advancedBase }, { type: 'SPOTLIGHT_NEXT' })
       }
@@ -1797,7 +1813,8 @@ export function reducer(state: GameState, action: GameAction): GameState {
       for (const id of readAskedQuestionIds()) excluded.add(id)
       const player = state.round.players.find((p) => p.id === firstPlayerId)
       const level = player ? getPlayerLevelForTopic(player, topic) : undefined
-      const question = pickQuestion(topic, excluded, level)
+      const tags = player ? getPlayerTagsForTopic(player, topic) : undefined
+      const question = pickQuestion(topic, excluded, level, tags)
 
       if (!question) {
         // Kein Content für dieses Fach → weiterspringen.
@@ -1934,7 +1951,8 @@ export function reducer(state: GameState, action: GameAction): GameState {
       const excluded = new Set(usedQuestionIds)
       for (const id of readAskedQuestionIds()) excluded.add(id)
       const level = getPlayerLevelForTopic(nextPlayer, topic)
-      const nextQuestion = pickQuestion(topic, excluded, level)
+      const tags = getPlayerTagsForTopic(nextPlayer, topic)
+      const nextQuestion = pickQuestion(topic, excluded, level, tags)
       if (!nextQuestion) {
         return reducer({ ...state, live: advancedBase }, { type: 'EXPERTS_NEXT' })
       }
@@ -2261,7 +2279,12 @@ export function reducer(state: GameState, action: GameAction): GameState {
       const excluded = new Set(live.usedQuestionIds)
       for (const id of readAskedQuestionIds()) excluded.add(id)
       const preferredLevel = BOARD_LEVELS[action.valueIndex] ?? 3
-      const question = pickQuestion(action.topic, excluded, preferredLevel)
+      // Session AB: Board-Fragen greifen auf die aggregierten Sub-Interessen
+      // aller Spieler für dieses Topic zurück (Team-Modus, kein Solo-Kontext).
+      const boardProfile = computeInterestProfile(state.round.players)
+      const boardTopicTags = boardProfile.tagsPerTopic?.get(action.topic)
+      const boardPreferredTags = boardTopicTags ? Array.from(boardTopicTags) : undefined
+      const question = pickQuestion(action.topic, excluded, preferredLevel, boardPreferredTags)
       if (!question) return state
 
       const shuffle = shuffleWithMapping(

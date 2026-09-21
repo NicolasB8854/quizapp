@@ -20,7 +20,7 @@ import type {
   WarmupRiddleQuestion,
 } from '@/types/question'
 import type { SkillLevel } from '@/types/round'
-import type { InterestProfile } from './interestProfile'
+import { normalizeTag, type InterestProfile } from './interestProfile'
 
 // JSON-Import ist untypisiert — hier einmal narrowen.
 const ALL_QUESTIONS = rawQuestions as unknown as Question[]
@@ -83,16 +83,69 @@ export function getAllMultipleChoice(): MultipleChoiceQuestion[] {
 export function pickAnyMultipleChoice(
   usedIds: ReadonlySet<string>,
   preferredLevel?: SkillLevel,
+  preferredTags?: readonly string[],
 ): MultipleChoiceQuestion | null {
   const pool = getAllMultipleChoice()
   if (pool.length === 0) return null
   const fresh = pool.filter((q) => !usedIds.has(q.id))
   const candidates = fresh.length > 0 ? fresh : pool
 
-  if (!preferredLevel) {
+  const tagSet = buildPreferredTagSet(preferredTags)
+  if (!preferredLevel && !tagSet) {
     return candidates[Math.floor(Math.random() * candidates.length)]
   }
-  return pickByDifficulty(candidates, () => preferredLevel)
+  return pickByDifficulty(
+    candidates,
+    () => preferredLevel,
+    tagSet ? (q) => questionMatchesTags(q, tagSet) : undefined,
+  )
+}
+
+// ---------- Interest-Tag-Bonus (Session AB) ----------------------------------
+
+/**
+ * Multiplikator, den eine Frage bekommt, wenn ihr Tag-Set mit den vom Spieler
+ * gepflegten Sub-Interessen überlappt. Weicher Bonus (kein harter Filter) —
+ * Non-Match-Fragen bleiben ziehbar, tauchen aber seltener auf.
+ *
+ * Werte-Empfehlung:
+ *   • 1  → deaktiviert
+ *   • 3  → mildes Priming
+ *   • 5  → deutliches Priming (aktuell)
+ *   • 10 → aggressives Priming; Katalog droht monokulturell zu werden
+ */
+export const TAG_MATCH_BONUS = 5
+
+/**
+ * Baut aus einer Tag-Liste die case-insensitive Menge für Match-Checks. Gibt
+ * `undefined` zurück, wenn die Eingabe leer ist (Vereinfacht die Aufrufer:
+ * `if (!tagSet)` als Deaktivierungs-Signal).
+ */
+function buildPreferredTagSet(
+  tags?: readonly string[],
+): ReadonlySet<string> | undefined {
+  if (!tags || tags.length === 0) return undefined
+  const set = new Set<string>()
+  for (const t of tags) {
+    const n = normalizeTag(t)
+    if (n) set.add(n)
+  }
+  return set.size > 0 ? set : undefined
+}
+
+/**
+ * Prüft, ob eine Frage mindestens einen Tag mit der Vorzugs-Menge teilt.
+ * Vergleich case-insensitive; Fragen ohne `tags`-Array matchen nie.
+ */
+function questionMatchesTags(
+  q: { tags?: readonly string[] },
+  preferred: ReadonlySet<string>,
+): boolean {
+  if (!q.tags || q.tags.length === 0) return false
+  for (const t of q.tags) {
+    if (preferred.has(normalizeTag(t))) return true
+  }
+  return false
 }
 
 // ---------- Difficulty-Präferenz (Session H, numerisch in Session X) ---------
@@ -128,12 +181,19 @@ export const DIFFICULTY_WEIGHTS: Record<SkillLevel, Record<Difficulty, number>> 
 export function pickByDifficulty<Q extends { difficulty?: Difficulty }>(
   items: readonly Q[],
   getLevel: (item: Q) => SkillLevel | undefined,
+  matchesTag?: (item: Q) => boolean,
 ): Q | null {
   if (items.length === 0) return null
   const weights = items.map((q) => {
     const level = getLevel(q)
-    if (!level || !q.difficulty) return 1
-    return DIFFICULTY_WEIGHTS[level][q.difficulty] ?? 0
+    let w = 1
+    if (level && q.difficulty) {
+      w = DIFFICULTY_WEIGHTS[level][q.difficulty] ?? 0
+    }
+    if (matchesTag && matchesTag(q)) {
+      w *= TAG_MATCH_BONUS
+    }
+    return w
   })
   const total = weights.reduce((s, w) => s + w, 0)
   if (total === 0) {
@@ -164,16 +224,22 @@ export function pickQuestion(
   topic: Topic,
   usedIds: ReadonlySet<string>,
   preferredLevel?: SkillLevel,
+  preferredTags?: readonly string[],
 ): MultipleChoiceQuestion | null {
   const pool = getMultipleChoiceByTopic(topic)
   if (pool.length === 0) return null
   const fresh = pool.filter((q) => !usedIds.has(q.id))
   const candidates = fresh.length > 0 ? fresh : pool
 
-  if (!preferredLevel) {
+  const tagSet = buildPreferredTagSet(preferredTags)
+  if (!preferredLevel && !tagSet) {
     return candidates[Math.floor(Math.random() * candidates.length)]
   }
-  return pickByDifficulty(candidates, () => preferredLevel)
+  return pickByDifficulty(
+    candidates,
+    () => preferredLevel,
+    tagSet ? (q) => questionMatchesTags(q, tagSet) : undefined,
+  )
 }
 
 // ---------- True-False (Blitzrunde) ------------------------------------------
@@ -248,7 +314,14 @@ export function pickTrueFalse(
   const getLevel = chosen.key === 'wildcard'
     ? (() => undefined)
     : ((q: TrueFalseQuestion) => profile.levelPerTopic.get(q.topic))
-  return pickByDifficulty(chosen.items, getLevel)
+  // Tag-Bonus greift überall dort, wo der Spieler Sub-Interessen für das
+  // Frage-Topic gepflegt hat. Wildcards kennen keine Tags → matcht nie.
+  const matchesTag = (q: TrueFalseQuestion) => {
+    const topicTags = profile.tagsPerTopic?.get(q.topic)
+    if (!topicTags || topicTags.size === 0) return false
+    return questionMatchesTags(q, topicTags)
+  }
+  return pickByDifficulty(chosen.items, getLevel, matchesTag)
 }
 
 // ---------- Klick! / Warm-Up-Rätsel ------------------------------------------

@@ -18,6 +18,25 @@ function player(id: string, teamId: string, interests: Array<[string, SkillLevel
   }
 }
 
+/** Variante mit Sub-Interessen-Tags (Session AB). */
+function playerWithTags(
+  id: string,
+  teamId: string,
+  interests: Array<[string, SkillLevel, string[]?]>,
+): Player {
+  return {
+    id,
+    name: '',
+    teamId,
+    interests: interests.map(([topic, level, tags]) => ({
+      topic: topic as Player['interests'][number]['topic'],
+      level,
+      tags,
+    })),
+    avatar: { colorHex: '#7C5CFF', photoDataUrl: null },
+  }
+}
+
 describe('aggregatePlayerInterests', () => {
   it('leerer Player-Array liefert leeres Array', () => {
     expect(aggregatePlayerInterests([])).toEqual([])
@@ -79,5 +98,42 @@ describe('computeInterestProfile', () => {
     for (const topic of profile.shared) {
       expect(profile.individual.has(topic)).toBe(false)
     }
+  })
+
+  describe('tagsPerTopic (Session AB)', () => {
+    it('leere Sub-Interessen ergeben leere tagsPerTopic', () => {
+      const profile = computeInterestProfile([player('p1', 'a', [['film', 3]])])
+      // Field existiert; keine Einträge, weil keine Tags gepflegt.
+      expect(profile.tagsPerTopic?.get('film')).toBeUndefined()
+    })
+
+    it('Sub-Interessen eines Spielers landen normalisiert in tagsPerTopic', () => {
+      const profile = computeInterestProfile([
+        playerWithTags('p1', 'a', [['sport', 3, ['Basketball', 'Formel 1']]]),
+      ])
+      const sportTags = profile.tagsPerTopic?.get('sport')
+      expect(sportTags).toBeDefined()
+      expect(sportTags!.has('basketball')).toBe(true)
+      expect(sportTags!.has('formel 1')).toBe(true)
+    })
+
+    it('Sub-Interessen mehrerer Spieler werden pro Topic zur Union', () => {
+      const profile = computeInterestProfile([
+        playerWithTags('p1', 'a', [['sport', 3, ['Basketball']]]),
+        playerWithTags('p2', 'b', [['sport', 3, ['Tennis', 'basketball']]]),
+      ])
+      const sportTags = profile.tagsPerTopic?.get('sport')
+      expect(sportTags).toBeDefined()
+      // Dedupliziert case-insensitive: nur ein „basketball"-Eintrag.
+      expect(Array.from(sportTags!).sort()).toEqual(['basketball', 'tennis'])
+    })
+
+    it('Whitespace wird beim Normalisieren entfernt', () => {
+      const profile = computeInterestProfile([
+        playerWithTags('p1', 'a', [['film', 3, ['  Marvel  ']]]),
+      ])
+      const filmTags = profile.tagsPerTopic?.get('film')
+      expect(filmTags?.has('marvel')).toBe(true)
+    })
   })
 })

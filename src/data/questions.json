@@ -15,7 +15,10 @@
     ],
     "correctIndex": 1,
     "gmNote": "Die Knolle sitzt unterirdisch am Ausläufer der Sprossachse — kein Wurzelgewebe.",
-    "tags": [],
+    "tags": [
+      "Botanik",
+      "Kartoffel"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -30,7 +33,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-essen-02",
@@ -48,7 +51,10 @@
     ],
     "correctIndex": 1,
     "gmNote": "Bari und Umgebung — der Name bedeutet „kleine Ohren“. Klassisch mit Cime di Rapa (Stängelkohl).",
-    "tags": [],
+    "tags": [
+      "Nudeln",
+      "Italien"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -63,7 +69,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-essen-03",
@@ -81,7 +87,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Ursprünglich Bordeaux. Nach der Reblausplage fand man den Wein Ende der 1990er in chilenischen Weinbergen wieder.",
-    "tags": [],
+    "tags": [
+      "Wein",
+      "Europa",
+      "Chile"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -96,7 +106,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-essen-04",
@@ -114,7 +124,11 @@
     ],
     "correctIndex": 1,
     "explanation": "Der rheinische Sauerbraten wird tagelang in Rotwein-Essig-Sud eingelegt und mit Rosinen und Printenbröseln serviert. Fränkische und schwäbische Varianten kommen ohne Rosinen aus.",
-    "tags": [],
+    "tags": [
+      "Rheinland",
+      "Rezept",
+      "Sauerbraten"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -129,7 +143,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-essen-05",
@@ -147,7 +161,11 @@
     ],
     "correctIndex": 1,
     "explanation": "Tempranillo — auf Portugiesisch „Tinta Roriz“ — reift früh (daher der Name) und bildet in Rioja das Rückgrat. Ergänzt wird oft mit Garnacha (Grenache) und Graciano.",
-    "tags": [],
+    "tags": [
+      "Tempranillo",
+      "Wein",
+      "Spanien"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -162,7 +180,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-flash-06",
@@ -174,14 +192,17 @@
     "question": "Die Cashew-Nuss wächst außerhalb der eigentlichen Frucht.",
     "correctAnswer": true,
     "explanation": "Sie hängt außen am Cashew-Apfel und ist botanisch der Kern einer Steinfrucht — nicht die Frucht selbst.",
-    "tags": [],
+    "tags": [
+      "Nuss",
+      "Cashew"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-essen-06",
@@ -199,7 +220,10 @@
     ],
     "correctIndex": 1,
     "explanation": "Nur Aceto Balsamico aus Modena oder Reggio Emilia darf die DOP-Bezeichnung tragen. Mindestens zwölf Jahre Reifung in wechselnden Holzfässern sind Pflicht; der „Extra Vecchio“ reift 25+.",
-    "tags": [],
+    "tags": [
+      "Balsamico",
+      "Italien"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -214,7 +238,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-essen-07",
@@ -232,7 +256,10 @@
     ],
     "correctIndex": 2,
     "gmNote": "Das Farbpigment Curcumin ist auch der Grund, warum Curry seine typische gelb-orange Farbe hat.",
-    "tags": [],
+    "tags": [
+      "Kurkuma",
+      "Gewürz"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -247,7 +274,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-essen-08",
@@ -265,7 +292,10 @@
     ],
     "correctIndex": 1,
     "gmNote": "Die heutige Form entstand in Edo-zeitigen Tokio als schnelle Straßenspeise („Nigiri\").",
-    "tags": [],
+    "tags": [
+      "Japan",
+      "Sushi"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -280,7 +310,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-essen-09",
@@ -298,7 +328,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Für ein Kilo Safran werden rund 150.000 Blüten benötigt — alles in Handarbeit.",
-    "tags": [],
+    "tags": [
+      "Safran",
+      "Krokus",
+      "Gewürz"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -313,7 +347,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-essen-10",
@@ -331,7 +365,10 @@
     ],
     "correctIndex": 1,
     "gmNote": "Traditionell nur Olivenöl und Knoblauch, mit Mörser emulgiert. Moderne Rezepte fügen Eigelb hinzu.",
-    "tags": [],
+    "tags": [
+      "Aioli",
+      "Sauce"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -346,7 +383,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-essen-11",
@@ -364,7 +401,10 @@
     ],
     "correctIndex": 0,
     "gmNote": "Whiskey stammt aus Getreide (Gerste, Roggen, Weizen, Mais). Kartoffelbrand ist Wodka bzw. Aquavit.",
-    "tags": [],
+    "tags": [
+      "Whiskey",
+      "Getränke"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -379,7 +419,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-essen-12",
@@ -397,7 +437,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Mascarpone ist ein Rahm-Käse aus Lombardei mit rund 80 % Fettanteil.",
-    "tags": [],
+    "tags": [
+      "Mascarpone",
+      "Tiramisu",
+      "Käse"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -412,7 +456,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-essen-13",
@@ -430,7 +474,12 @@
     ],
     "correctIndex": 1,
     "gmNote": "Chipotle sind geräucherte, getrocknete reife Jalapeños — sie sind mild-rauchig, nicht extrem scharf.",
-    "tags": [],
+    "tags": [
+      "Jalapeño",
+      "Mexiko",
+      "Chipotle",
+      "Chili"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -445,7 +494,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-essen-14",
@@ -463,7 +512,10 @@
     ],
     "correctIndex": 1,
     "gmNote": "Weichkäse aus der französischen Bourgogne mit Marc-de-Bourgogne-gewaschener Rinde. Napoleon soll ihn geliebt haben.",
-    "tags": [],
+    "tags": [
+      "Frankreich",
+      "Käse"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -478,7 +530,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-essen-15",
@@ -490,14 +542,18 @@
     "question": "Erdnüsse sind botanisch keine Nüsse, sondern Hülsenfrüchte.",
     "correctAnswer": true,
     "gmNote": "Ihre nächste Verwandtschaft sind Bohnen und Erbsen — nicht Baumnüsse.",
-    "tags": [],
+    "tags": [
+      "Erdnuss",
+      "Botanik",
+      "Hülsenfrucht"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-flash-24",
@@ -509,14 +565,18 @@
     "question": "Weißer Balsamico trägt dieselbe DOP-Herkunftsbezeichnung wie klassischer Aceto Balsamico Tradizionale.",
     "correctAnswer": false,
     "explanation": "Weißer Balsamico wird zwar in Modena hergestellt, gehört aber zur Kategorie „Condimento“ ohne DOP-Schutz. Der echte Tradizionale ist immer dunkel und mindestens zwölf Jahre alt.",
-    "tags": [],
+    "tags": [
+      "Balsamico",
+      "Italien",
+      "Herkunftsschutz"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-film-01",
@@ -534,7 +594,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Bong Joon-ho gewann außerdem Oscars für Regie, Originaldrehbuch und besten internationalen Film — vier Trophäen in einer Nacht.",
-    "tags": [],
+    "tags": [
+      "Parasite",
+      "Oscar",
+      "Südkorea"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -549,7 +613,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-film-02",
@@ -567,7 +631,12 @@
     ],
     "correctIndex": 0,
     "gmNote": "Für „Nomadland“. Kathryn Bigelow war 2010 die erste (Tödliches Kommando – The Hurt Locker).",
-    "tags": [],
+    "tags": [
+      "Oscar",
+      "Regie",
+      "Chloé Zhao",
+      "Nomadland"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -582,7 +651,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-film-03",
@@ -600,7 +669,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Gegründet 1985 von Hayao Miyazaki, Isao Takahata und Toshio Suzuki in Tokio.",
-    "tags": [],
+    "tags": [
+      "Studio Ghibli",
+      "Anime",
+      "Japan"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -615,7 +688,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-film-04",
@@ -633,7 +706,11 @@
     ],
     "correctIndex": 1,
     "explanation": "Es war Donnersmarcks Regie-Debüt. Der Film über einen Stasi-Offizier in der DDR-Kulturüberwachung galt lange als Außenseiter im Rennen.",
-    "tags": [],
+    "tags": [
+      "Oscar",
+      "Deutschland",
+      "Das Leben der Anderen"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -648,7 +725,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-film-05",
@@ -666,7 +743,11 @@
     ],
     "correctIndex": 1,
     "explanation": "Wes Anderson — nicht verwandt mit Paul Thomas Anderson — inszeniert seit „Bottle Rocket“ (1996) mit derselben zentrischen Handschrift.",
-    "tags": [],
+    "tags": [
+      "Wes Anderson",
+      "Regie",
+      "USA"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -681,7 +762,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-film-06",
@@ -699,7 +780,11 @@
     ],
     "correctIndex": 0,
     "explanation": "Roger Deakins gewann 2018 für „Blade Runner 2049“ seinen ersten Oscar — nach 13 Nominierungen. „1917“ brachte ihm 2020 den zweiten.",
-    "tags": [],
+    "tags": [
+      "Roger Deakins",
+      "Kamera",
+      "Blade Runner"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -714,7 +799,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-film-07",
@@ -732,7 +817,11 @@
     ],
     "correctIndex": 0,
     "gmNote": "Der Film brachte DiCaprio den internationalen Durchbruch.",
-    "tags": [],
+    "tags": [
+      "Titanic",
+      "DiCaprio",
+      "Hollywood"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -747,7 +836,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-film-08",
@@ -765,7 +854,11 @@
     ],
     "correctIndex": 0,
     "gmNote": "Lucas schrieb auch das Drehbuch und finanzierte den Film teilweise selbst.",
-    "tags": [],
+    "tags": [
+      "Star Wars",
+      "George Lucas",
+      "Regie"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -780,7 +873,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-flash-09",
@@ -792,14 +885,18 @@
     "question": "Der Name „James Bond“ stammt von einem Ornithologen.",
     "correctAnswer": true,
     "explanation": "Ian Fleming nahm den Namen aus dem Vogelbuch „Birds of the West Indies“ des US-Ornithologen James Bond — bewusst unauffällig gewählt.",
-    "tags": [],
+    "tags": [
+      "James Bond",
+      "Namensherkunft",
+      "Ornithologie"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-film-09",
@@ -817,7 +914,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "„Die Verurteilten\" (Shawshank Redemption) verlor damals; „Forrest Gump\" gewann.",
-    "tags": [],
+    "tags": [
+      "Forrest Gump",
+      "Oscar",
+      "Hollywood"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -832,7 +933,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-film-10",
@@ -850,7 +951,11 @@
     ],
     "correctIndex": 3,
     "gmNote": "Die Traumebenen sind bewusst abstrakt; Realität-Szenen springen zwischen Paris, Tokio und LA.",
-    "tags": [],
+    "tags": [
+      "Inception",
+      "Nolan",
+      "Traumsequenz"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -865,7 +970,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-film-11",
@@ -883,7 +988,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "New Line Cinema war damals ein Time-Warner-Tochterunternehmen und ging mit dem Projekt große Risiken ein.",
-    "tags": [],
+    "tags": [
+      "Herr der Ringe",
+      "New Line Cinema",
+      "Fantasy"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -898,7 +1007,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-film-12",
@@ -916,7 +1025,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Volker Schlöndorffs Verfilmung des Grass-Romans.",
-    "tags": [],
+    "tags": [
+      "Die Blechtrommel",
+      "Oscar",
+      "Deutschland"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -931,7 +1044,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-film-13",
@@ -949,7 +1062,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "Rota schrieb das Hauptthema zu „Der Pate\"; „Chinatown\" komponierte Jerry Goldsmith — falsche Frage, Korrekt ist: nur Rota bei „Der Pate\".",
-    "tags": [],
+    "tags": [
+      "Nino Rota",
+      "Filmmusik",
+      "Der Pate"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -964,7 +1081,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-film-14",
@@ -982,7 +1099,11 @@
     ],
     "correctIndex": 0,
     "gmNote": "Malick nahm zwischen „Badlands\" (1973) und „Der schmale Grat\" (1998) eine 20-Jahre-Pause.",
-    "tags": [],
+    "tags": [
+      "Terrence Malick",
+      "Regie",
+      "USA"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -997,7 +1118,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-film-15",
@@ -1009,14 +1130,18 @@
     "question": "Der Film „Der Pate\" (1972) wurde von Francis Ford Coppola inszeniert.",
     "correctAnswer": true,
     "gmNote": "Coppola gewann den Oscar für die Regie beim zweiten Teil (1974).",
-    "tags": [],
+    "tags": [
+      "Der Pate",
+      "Coppola",
+      "Regie"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-flash-16",
@@ -1028,14 +1153,18 @@
     "question": "Der Film „Titanic“ (1997) gewann elf Oscars.",
     "correctAnswer": true,
     "explanation": "Damit gleichauf mit „Ben Hur“ (1959) und „Die Rückkehr des Königs“ (2003) — die drei mit den meisten Oscars in einer Nacht.",
-    "tags": [],
+    "tags": [
+      "Titanic",
+      "Oscar",
+      "Rekord"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-film-16",
@@ -1047,14 +1176,18 @@
     "question": "Alfred Hitchcock hat in „Vertigo\" (1958) einen kurzen Cameo-Auftritt.",
     "correctAnswer": true,
     "gmNote": "Hitchcock hatte in fast allen seinen Filmen einen kleinen Auftritt — Markenzeichen.",
-    "tags": [],
+    "tags": [
+      "Hitchcock",
+      "Vertigo",
+      "Cameo"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-flash-28",
@@ -1066,14 +1199,18 @@
     "question": "Der Film „Casablanca“ gewann bei der Oscar-Verleihung 1944 den Preis für den besten Film.",
     "correctAnswer": true,
     "explanation": "Zusätzlich gab es Oscars für die Regie (Michael Curtiz) und das Drehbuch. „Casablanca“ wurde eher als Routinearbeit produziert — der Kultstatus wuchs erst später.",
-    "tags": [],
+    "tags": [
+      "Casablanca",
+      "Oscar",
+      "Hollywood"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-games-01",
@@ -1091,7 +1228,11 @@
     ],
     "correctIndex": 0,
     "gmNote": "Sitz in Warschau. Die Vorlage stammt vom polnischen Autor Andrzej Sapkowski.",
-    "tags": [],
+    "tags": [
+      "The Witcher 3",
+      "CD Projekt Red",
+      "RPG"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -1106,7 +1247,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-games-02",
@@ -1124,7 +1265,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "18. November 2011 auf der MineCon in Las Vegas. Die Alpha lief seit 2009.",
-    "tags": [],
+    "tags": [
+      "Minecraft",
+      "Release",
+      "Sandbox"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -1139,7 +1284,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-games-03",
@@ -1157,7 +1302,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Der Controller mit dem markanten Drei-Griff-Design war für „Super Mario 64“ mitgedacht.",
-    "tags": [],
+    "tags": [
+      "Nintendo 64",
+      "Konsole",
+      "Analog-Stick"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -1172,7 +1321,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-games-04",
@@ -1190,7 +1339,11 @@
     ],
     "correctIndex": 1,
     "explanation": "Shigeru Miyamoto erschuf die Reihe 1986. Alle Hauptteile erschienen auf Nintendo-Konsolen; „Breath of the Wild“ und „Tears of the Kingdom“ definierten das Open-World-Genre neu.",
-    "tags": [],
+    "tags": [
+      "Zelda",
+      "Nintendo",
+      "Franchise"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -1205,7 +1358,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-games-05",
@@ -1223,7 +1376,11 @@
     ],
     "correctIndex": 1,
     "explanation": "Supergiant aus San Francisco — bekannt für „Bastion“ und „Transistor“. „Hades“ gewann als erstes Spiel den Hugo Award und den BAFTA für Best Game im selben Jahr.",
-    "tags": [],
+    "tags": [
+      "Hades",
+      "Supergiant Games",
+      "Roguelike"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -1238,7 +1395,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-games-06",
@@ -1256,7 +1413,11 @@
     ],
     "correctIndex": 1,
     "explanation": "Allan Alcorn programmierte den Prototyp; die erste Automatenversion stand im November 1972 in einer Bar in Sunnyvale, Kalifornien. Sie brach über Nacht kaputt — von zu vielen Münzen.",
-    "tags": [],
+    "tags": [
+      "Pong",
+      "Atari",
+      "Arcade"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -1271,7 +1432,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-games-07",
@@ -1289,7 +1450,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Sonic wurde 1991 auf dem Sega Mega Drive als Gegenentwurf zu Mario eingeführt.",
-    "tags": [],
+    "tags": [
+      "Sonic",
+      "SEGA",
+      "Maskottchen"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -1304,7 +1469,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-games-08",
@@ -1322,7 +1487,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "Valve entwickelte auch die Vertriebs-Plattform Steam, die 2003 startete.",
-    "tags": [],
+    "tags": [
+      "Valve",
+      "Portal",
+      "Half-Life"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -1337,7 +1506,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-games-09",
@@ -1355,7 +1524,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Fünfter Teil der Elder-Scrolls-Reihe; wird bis heute regelmäßig auf neue Plattformen portiert.",
-    "tags": [],
+    "tags": [
+      "Skyrim",
+      "Bethesda",
+      "RPG"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -1370,7 +1543,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-games-10",
@@ -1388,7 +1561,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Regisseur Hidetaka Miyazaki prägte den Sub-Genre-Begriff „Soulslike\".",
-    "tags": [],
+    "tags": [
+      "FromSoftware",
+      "Souls",
+      "Elden Ring"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -1403,7 +1580,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-games-11",
@@ -1421,7 +1598,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "PlayerUnknown's Battlegrounds prägte das Genre; Fortnite folgte kurz darauf mit einem eigenen Modus.",
-    "tags": [],
+    "tags": [
+      "PUBG",
+      "Battle Royale",
+      "Südkorea"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -1436,7 +1617,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-games-12",
@@ -1454,7 +1635,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Minecraft hat über 300 Millionen verkaufte Exemplare (Stand 2023). Tetris folgt mit ~200 Millionen (alle Versionen zusammen).",
-    "tags": [],
+    "tags": [
+      "Minecraft",
+      "Rekord",
+      "Verkauf"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -1469,7 +1654,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-games-13",
@@ -1487,7 +1672,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "GTA III führte offene Welten mit voller 3D-Steuerung in den Mainstream.",
-    "tags": [],
+    "tags": [
+      "GTA III",
+      "Rockstar",
+      "Open World"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -1502,7 +1691,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-games-14",
@@ -1520,7 +1709,11 @@
     ],
     "correctIndex": 0,
     "gmNote": "Pajitnov erhielt jahrzehntelang keine Lizenzgelder für sein Spiel wegen sowjetischer Rechteregelung.",
-    "tags": [],
+    "tags": [
+      "Tetris",
+      "Pajitnov",
+      "Sowjetunion"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -1535,7 +1728,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-games-15",
@@ -1547,14 +1740,18 @@
     "question": "Das Spiel „Pac-Man\" (1980) hat einen inoffiziellen „Kill Screen\" bei Level 256.",
     "correctAnswer": true,
     "gmNote": "Ein 8-Bit-Integer-Overflow lässt die Hälfte des Bildschirms zerbrechen — ein legendärer Programmierfehler.",
-    "tags": [],
+    "tags": [
+      "Pac-Man",
+      "Arcade",
+      "Kill Screen"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-flash-19",
@@ -1566,14 +1763,18 @@
     "question": "Mario, das Maskottchen von Nintendo, war in seinem allerersten Auftritt bereits als Klempner konzipiert.",
     "correctAnswer": false,
     "explanation": "In „Donkey Kong“ (1981) war er Zimmermann. Zum Klempner wurde er erst mit „Mario Bros.“ 1983 — passend zum Röhren-Setting.",
-    "tags": [],
+    "tags": [
+      "Mario",
+      "Nintendo",
+      "Donkey Kong"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-geo-01",
@@ -1591,7 +1792,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "Rund 202.000 km — bedingt durch die zerklüftete Arktis-Küste und die vielen Inseln im Norden.",
-    "tags": [],
+    "tags": [
+      "Kanada",
+      "Küste",
+      "Rekord"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -1606,7 +1811,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-geo-02",
@@ -1624,7 +1829,11 @@
     ],
     "correctIndex": 0,
     "gmNote": "Helsinki liegt auf ~60,2° Nord. Reykjavík wäre noch nördlicher, war aber nicht in den Optionen.",
-    "tags": [],
+    "tags": [
+      "Helsinki",
+      "Finnland",
+      "Hauptstadt"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -1639,7 +1848,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-geo-03",
@@ -1657,7 +1866,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Sokotra liegt im Golf von Aden. Der Drachenblutbaum ist eines der ikonischen Wahrzeichen der Insel.",
-    "tags": [],
+    "tags": [
+      "Sokotra",
+      "Jemen",
+      "Insel"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -1672,7 +1885,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-geografie-04",
@@ -1690,7 +1903,11 @@
     ],
     "correctIndex": 2,
     "explanation": "Algerien mit rund 2,38 Mio. km² — seit der Teilung des Sudan 2011. Davor war der (Gesamt-)Sudan größer.",
-    "tags": [],
+    "tags": [
+      "Algerien",
+      "Afrika",
+      "Fläche"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -1705,7 +1922,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-geografie-05",
@@ -1723,7 +1940,11 @@
     ],
     "correctIndex": 1,
     "explanation": "Ästuare entstehen, wenn Gezeiten regelmäßig ins Flussbett zurückschwingen. Auch Themse, Amazonas und Weser haben Ästuar-Mündungen — im Gegensatz zum Nildelta.",
-    "tags": [],
+    "tags": [
+      "Elbe",
+      "Ästuar",
+      "Nordsee"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -1738,7 +1959,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-geografie-06",
@@ -1756,7 +1977,11 @@
     ],
     "correctIndex": 2,
     "explanation": "Der Uhuru-Peak am Kibo-Krater misst 5895 m. Der Berg ist ein freistehender Vulkan — nicht Teil einer Kette — und damit einer der prominentesten Gipfel der Erde.",
-    "tags": [],
+    "tags": [
+      "Kilimandscharo",
+      "Afrika",
+      "Berg"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -1771,7 +1996,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-geografie-07",
@@ -1789,7 +2014,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Konventionell ~6.650 km. Neuere Messungen argumentieren, der Amazonas sei länger — international ist der Nil aber als längster geführt.",
-    "tags": [],
+    "tags": [
+      "Nil",
+      "Fluss",
+      "Afrika"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -1804,7 +2033,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-flash-08",
@@ -1816,14 +2045,18 @@
     "question": "Der Eiffelturm ist bis heute der höchste Turm der Welt.",
     "correctAnswer": false,
     "explanation": "Mit 330 m längst überholt. Der Burj Khalifa (828 m) und der Tokyo Skytree (634 m) sind deutlich höher, dazu diverse Fernsehtürme.",
-    "tags": [],
+    "tags": [
+      "Eiffelturm",
+      "Paris",
+      "Bauwerk"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-geografie-08",
@@ -1841,7 +2074,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "Die Sahara ist mit ~9,2 Mio. km² die größte Trockenwüste der Erde.",
-    "tags": [],
+    "tags": [
+      "Sahara",
+      "Wüste",
+      "Nordafrika"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -1856,7 +2093,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-geografie-09",
@@ -1874,7 +2111,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "An der schmalsten Stelle nur rund 14 Kilometer breit.",
-    "tags": [],
+    "tags": [
+      "Straße von Gibraltar",
+      "Meerenge",
+      "Europa"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -1889,7 +2130,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-geografie-10",
@@ -1907,7 +2148,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Indonesien erstreckt sich über etwa 5.000 km Ost-West und hat rund 270 Millionen Einwohner.",
-    "tags": [],
+    "tags": [
+      "Indonesien",
+      "Inselstaat",
+      "Asien"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -1922,7 +2167,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-flash-11",
@@ -1934,14 +2179,18 @@
     "question": "Die Transsibirische Eisenbahn ist die längste durchgehende Bahnstrecke der Welt.",
     "correctAnswer": true,
     "explanation": "Moskau – Wladiwostok, rund 9.288 Kilometer, sieben Zeitzonen. Reine Fahrzeit ohne Aufenthalte: etwa sechs Tage.",
-    "tags": [],
+    "tags": [
+      "Transsibirische Eisenbahn",
+      "Russland",
+      "Rekord"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-geografie-11",
@@ -1959,7 +2208,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Der Baikalsee in Sibirien reicht 1.642 m tief und enthält rund 20 % des flüssigen Süßwassers der Erde.",
-    "tags": [],
+    "tags": [
+      "Baikalsee",
+      "Russland",
+      "See"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -1974,7 +2227,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-geografie-12",
@@ -1992,7 +2245,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "Frankreich hat wegen seiner Überseegebiete zwölf Zeitzonen. Russland kommt auf elf, China nutzt trotz Ausdehnung nur eine.",
-    "tags": [],
+    "tags": [
+      "Frankreich",
+      "Zeitzonen",
+      "Überseegebiete"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -2007,7 +2264,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-geografie-13",
@@ -2025,7 +2282,11 @@
     ],
     "correctIndex": 0,
     "gmNote": "Die Kanaldurchfahrt verbindet den Atlantik (über Karibik) mit dem Pazifik — Schiffe sparen die Umfahrung von Südamerika.",
-    "tags": [],
+    "tags": [
+      "Panamakanal",
+      "Pazifik",
+      "Atlantik"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -2040,7 +2301,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-flash-14",
@@ -2052,14 +2313,18 @@
     "question": "Australien ist an seiner breitesten Stelle breiter als der Durchmesser des Mondes.",
     "correctAnswer": true,
     "explanation": "Australien misst rund 4.000 km, der Mond hat etwa 3.474 km Durchmesser. Sitzt bei der ersten Nennung selten.",
-    "tags": [],
+    "tags": [
+      "Australien",
+      "Mond",
+      "Vergleich"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-geografie-14",
@@ -2077,7 +2342,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "La Paz ist Regierungssitz Boliviens; die offizielle Hauptstadt ist Sucre, aber La Paz ist Sitz von Regierung und Parlament.",
-    "tags": [],
+    "tags": [
+      "La Paz",
+      "Bolivien",
+      "Hauptstadt"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -2092,7 +2361,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-geografie-15",
@@ -2104,14 +2373,18 @@
     "question": "Die Antarktis ist der trockenste Kontinent der Erde.",
     "correctAnswer": true,
     "gmNote": "Trotz Eis: der Niederschlag ist so gering (< 200 mm/Jahr), dass Teile als Wüste gelten.",
-    "tags": [],
+    "tags": [
+      "Antarktis",
+      "Wüste",
+      "Klima"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-geografie-16",
@@ -2123,14 +2396,18 @@
     "question": "Der Mount Everest ist der höchste Berg, wenn man vom Meeresspiegel aus misst.",
     "correctAnswer": true,
     "gmNote": "8.849 m NN. Vom Fuß auf Ozeanboden gemessen ist der Mauna Kea auf Hawaii höher.",
-    "tags": [],
+    "tags": [
+      "Mount Everest",
+      "Himalaya",
+      "Berg"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-geografie-17",
@@ -2142,14 +2419,18 @@
     "question": "Die Datumsgrenze verläuft in gerader Linie exakt entlang des 180. Längengrads.",
     "correctAnswer": false,
     "gmNote": "Sie hat mehrere Zickzacks, u.a. um Kiribati und die Aleuten herum, damit ganze Länder in derselben Zeitzone bleiben.",
-    "tags": [],
+    "tags": [
+      "Datumsgrenze",
+      "Zeitzonen",
+      "Pazifik"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-flash-20",
@@ -2161,14 +2442,18 @@
     "question": "Australien ist gleichzeitig ein Land und ein eigenständiger Kontinent.",
     "correctAnswer": true,
     "explanation": "Als einziger Kontinent nur aus einem Staat bestehend. Das umgebende Ozeanien schließt auch Neuseeland, Papua-Neuguinea und die Pazifik-Inselstaaten ein — geografisch trennbar.",
-    "tags": [],
+    "tags": [
+      "Australien",
+      "Kontinent",
+      "Land"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-gesch-01",
@@ -2186,7 +2471,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "9. November — Günter Schabowskis Pressekonferenz löste den unkontrollierten Grenzöffnungs-Ansturm aus.",
-    "tags": [],
+    "tags": [
+      "Berliner Mauer",
+      "Deutschland",
+      "1989"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -2201,7 +2490,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-gesch-02",
@@ -2219,7 +2508,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Rund 24 Millionen km² auf dem Höhepunkt unter Dschingis Khans Nachfolgern.",
-    "tags": [],
+    "tags": [
+      "Mongolisches Reich",
+      "Mittelalter",
+      "Dschingis Khan"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -2234,7 +2527,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-gesch-03",
@@ -2252,7 +2545,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Unterzeichnet in Münster und Osnabrück. Der Ausgangspunkt der modernen Staatensouveränität.",
-    "tags": [],
+    "tags": [
+      "Westfälischer Friede",
+      "Dreißigjähriger Krieg",
+      "1648"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -2267,7 +2564,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-geschichte-04",
@@ -2285,7 +2582,11 @@
     ],
     "correctIndex": 2,
     "explanation": "Am Abend des 9. November 1989 öffneten sich die Grenzübergänge nach einer missverständlichen Pressekonferenz von Günter Schabowski. Die Wiedervereinigung folgte am 3. Oktober 1990.",
-    "tags": [],
+    "tags": [
+      "Berliner Mauer",
+      "Deutschland",
+      "1989"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -2300,7 +2601,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-flash-05",
@@ -2312,14 +2613,18 @@
     "question": "Napoleon Bonaparte war für seine Zeit ungewöhnlich klein.",
     "correctAnswer": false,
     "explanation": "Er war rund 1,68 m — Durchschnittsgröße im Frankreich seiner Zeit. Der Mythos entstand durch Verwechslung französischer und englischer Zolleinheiten sowie britische Karikaturen.",
-    "tags": [],
+    "tags": [
+      "Napoleon",
+      "Frankreich",
+      "Mythos"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-geschichte-05",
@@ -2337,7 +2642,11 @@
     ],
     "correctIndex": 1,
     "explanation": "Süleyman I. (1520–1566) dehnte das Reich bis vor Wien aus. Sein Namenszusatz „der Prächtige“ stammt aus westlichen Chroniken; osmanisch wurde er „Kanuni“, der Gesetzgeber, genannt.",
-    "tags": [],
+    "tags": [
+      "Osmanisches Reich",
+      "Süleyman",
+      "Sultan"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -2352,7 +2661,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-geschichte-06",
@@ -2370,7 +2679,11 @@
     ],
     "correctIndex": 0,
     "explanation": "Der Sozialdemokrat Ebert wurde von der Nationalversammlung gewählt. Nach seinem frühen Tod 1925 folgte Paul von Hindenburg als erster direkt gewählter Reichspräsident.",
-    "tags": [],
+    "tags": [
+      "Weimarer Republik",
+      "Ebert",
+      "Reichspräsident"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -2385,7 +2698,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-geschichte-07",
@@ -2403,7 +2716,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "8. Mai 1945 (in Russland als 9. Mai gefeiert wegen Zeitverschiebung der Unterzeichnung).",
-    "tags": [],
+    "tags": [
+      "Zweiter Weltkrieg",
+      "Kapitulation",
+      "1945"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -2418,7 +2735,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-geschichte-08",
@@ -2436,7 +2753,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Die Cheops-Pyramide entstand ca. 2560 v. Chr. und war fast 4.000 Jahre das höchste Bauwerk der Welt.",
-    "tags": [],
+    "tags": [
+      "Ägypten",
+      "Pyramiden",
+      "Antike"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -2451,7 +2772,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-geschichte-09",
@@ -2469,7 +2790,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Elisabeth I. — das Elisabethanische Zeitalter brachte u.a. William Shakespeare hervor.",
-    "tags": [],
+    "tags": [
+      "Elisabeth I.",
+      "England",
+      "Tudor"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -2484,7 +2809,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-geschichte-10",
@@ -2502,7 +2827,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "Adenauer amtierte 1949-1963 und prägte die Westintegration Westdeutschlands.",
-    "tags": [],
+    "tags": [
+      "Adenauer",
+      "Bundeskanzler",
+      "Bundesrepublik"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -2517,7 +2846,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-geschichte-11",
@@ -2535,7 +2864,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "14. Juli 1789 — der Sturm auf das Pariser Staatsgefängnis wurde zum Symbol des Volksaufstandes.",
-    "tags": [],
+    "tags": [
+      "Französische Revolution",
+      "Bastille",
+      "1789"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -2550,7 +2883,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-geschichte-12",
@@ -2568,7 +2901,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Nikolaus II. und seine Familie wurden 1918 in Jekaterinburg von Bolschewiki ermordet.",
-    "tags": [],
+    "tags": [
+      "Nikolaus II.",
+      "Russland",
+      "Zar"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -2583,7 +2920,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-geschichte-13",
@@ -2601,7 +2938,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Nach 13 Tagen zog Chruschtschow die sowjetischen Raketen aus Kuba ab — im Gegenzug entfernten die USA Raketen aus der Türkei.",
-    "tags": [],
+    "tags": [
+      "Kubakrise",
+      "Kalter Krieg",
+      "1962"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -2616,7 +2957,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-geschichte-14",
@@ -2634,7 +2975,12 @@
     ],
     "correctIndex": 1,
     "gmNote": "Tordesillas (1494) teilte die Neue Welt entlang eines Meridians; Saragossa (1529) verlängerte die Grenze durch Asien.",
-    "tags": [],
+    "tags": [
+      "Vertrag von Tordesillas",
+      "Kolonialismus",
+      "Spanien",
+      "Portugal"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -2649,7 +2995,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-flash-15",
@@ -2661,14 +3007,18 @@
     "question": "Isaac Newton wurde tatsächlich von einem herabfallenden Apfel am Kopf getroffen.",
     "correctAnswer": false,
     "explanation": "Er sah nur einen Apfel fallen — laut eigener Erzählung im Garten seiner Mutter. Die Kopftreffer-Version ist eine spätere Verzierung.",
-    "tags": [],
+    "tags": [
+      "Newton",
+      "Physik",
+      "Mythos"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-geschichte-15",
@@ -2680,14 +3030,18 @@
     "question": "Die Berliner Mauer stand länger als 25 Jahre.",
     "correctAnswer": true,
     "gmNote": "1961 bis 1989 — 28 Jahre.",
-    "tags": [],
+    "tags": [
+      "Berliner Mauer",
+      "Deutschland",
+      "Kalter Krieg"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-geschichte-16",
@@ -2699,14 +3053,18 @@
     "question": "Cleopatra lebte zeitlich näher an der Erfindung des iPhones als am Bau der Cheops-Pyramide.",
     "correctAnswer": true,
     "gmNote": "Pyramide: ~2560 v. Chr., Cleopatra: 69-30 v. Chr., iPhone: 2007. Die Zeitdistanz Pyramide → Cleopatra ist rund 2500 Jahre, Cleopatra → iPhone rund 2000 Jahre.",
-    "tags": [],
+    "tags": [
+      "Cleopatra",
+      "Antike",
+      "Zeitvergleich"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-flash-21",
@@ -2718,14 +3076,18 @@
     "question": "Napoleon Bonaparte wurde in Frankreich geboren.",
     "correctAnswer": false,
     "explanation": "Er wurde am 15. August 1769 auf Korsika geboren — die Insel gehörte gerade seit einem Jahr zu Frankreich. Als Kind sprach er Korsisch, nicht Französisch.",
-    "tags": [],
+    "tags": [
+      "Napoleon",
+      "Korsika",
+      "Herkunft"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-kurios-01",
@@ -2743,7 +3105,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "Ein Hauptherz für den Körper, zwei Kiemenherzen. Das Blut ist blau (Hämocyanin statt Hämoglobin).",
-    "tags": [],
+    "tags": [
+      "Krake",
+      "Anatomie",
+      "Herz"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -2758,7 +3124,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-flash-01",
@@ -2770,14 +3136,18 @@
     "question": "Die Chinesische Mauer ist mit bloßem Auge aus dem Weltall sichtbar.",
     "correctAnswer": false,
     "explanation": "Ein hartnäckiger Mythos. Astronaut:innen bestätigen: die Mauer ist zu schmal, um aus dem Orbit ohne Hilfsmittel erkannt zu werden.",
-    "tags": [],
+    "tags": [
+      "Chinesische Mauer",
+      "Mythos",
+      "Weltall"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-klick-01",
@@ -2793,14 +3163,18 @@
       "Winzige Wirbel dicht an der Oberfläche verringern den Widerstand."
     ],
     "solution": "Die Dellen erzeugen kontrollierte Turbulenzen um den Ball. Das verkleinert das Windschatten-Gebiet hinter dem Ball und reduziert den Luftwiderstand — ein glatter Ball würde nur die halbe Distanz erreichen. Entdeckt Ende des 19. Jahrhunderts, als alte, zerbeulte Bälle sich besser schlagen ließen als neue.",
-    "tags": [],
+    "tags": [
+      "Golfball",
+      "Aerodynamik",
+      "Physik"
+    ],
     "compatibleModes": [
       "around-corner"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-kurios-02",
@@ -2818,7 +3192,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "Rund 60 % der Trockenmasse — deshalb sind essenzielle Fettsäuren so wichtig für die Hirnentwicklung.",
-    "tags": [],
+    "tags": [
+      "Gehirn",
+      "Anatomie",
+      "Fett"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -2833,7 +3211,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-klick-02",
@@ -2849,14 +3227,18 @@
       "Solange die Delle drin ist, ist das Glas noch ungeöffnet."
     ],
     "solution": "Die Delle ist ein Vakuum-Indikator. Nach dem heißen Abfüllen und Verschließen entsteht durch die Abkühlung Unterdruck im Glas — der zieht den Deckel leicht nach innen. Beim ersten Öffnen strömt Luft ein, die Delle springt hoch und macht das typische „Klick“. Ist die Delle schon draußen, wurde das Glas eventuell schon geöffnet.",
-    "tags": [],
+    "tags": [
+      "Marmeladenglas",
+      "Vakuum",
+      "Konservierung"
+    ],
     "compatibleModes": [
       "around-corner"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-kurios-03",
@@ -2874,7 +3256,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Rund 22 Monate. Kälber wiegen bei der Geburt schon etwa 120 kg.",
-    "tags": [],
+    "tags": [
+      "Elefant",
+      "Tragezeit",
+      "Säugetier"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -2889,7 +3275,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-klick-03",
@@ -2905,14 +3291,18 @@
       "Umgebungsgeräusche werden durch die Muschel gefiltert."
     ],
     "solution": "Die Hohlkammer der Muschel wirkt wie ein akustischer Resonator und verstärkt selektiv Umgebungsgeräusche in bestimmten Frequenzen. Das dumpfe Rauschen, das wir als „Meer“ interpretieren, ist eine gefilterte Mischung aus Umgebungslärm, dem Blutfluss im Ohr und der Muschel-Resonanz. Denselben Effekt bekommt man mit einer hohlen Tasse.",
-    "tags": [],
+    "tags": [
+      "Muschel",
+      "Akustik",
+      "Physik"
+    ],
     "compatibleModes": [
       "around-corner"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-klick-04",
@@ -2928,14 +3318,18 @@
       "Die Farbe ist international genormt."
     ],
     "solution": "Rot ist die international per DIN/ISO genormte Farbe für Brandschutzausrüstung. Sie signalisiert Gefahr, hebt sich vor fast jedem Hintergrund ab und stellt sicher, dass Feuerlöscher weltweit auf einen Blick erkannt werden — auch unter Stress. In besonderen Umgebungen (Rot-Grün-Kliniken, Schiffe) gibt es dokumentierte Ausnahmen mit Neongelb.",
-    "tags": [],
+    "tags": [
+      "Feuerlöscher",
+      "Warnfarbe",
+      "Symbolik"
+    ],
     "compatibleModes": [
       "around-corner"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-kurioses-04",
@@ -2953,7 +3347,11 @@
     ],
     "correctIndex": 2,
     "explanation": "Olympus Mons steht auf dem Mars und ist etwa dreimal so hoch wie der Mount Everest. Sein Gipfel liegt so hoch, dass er die Marsatmosphäre teilweise durchbricht.",
-    "tags": [],
+    "tags": [
+      "Olympus Mons",
+      "Mars",
+      "Vulkan"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -2968,7 +3366,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-klick-05",
@@ -2984,14 +3382,18 @@
       "Sie sind alle genetisch identisch."
     ],
     "solution": "Alle handelsüblichen Bananen sind sterile Klone einer einzigen Sorte — in Europa fast ausschließlich die Cavendish. Sie werden vegetativ vermehrt, jede Pflanze ist genetisch identisch zur Mutterpflanze. Wildbananen wären kaum essbar. Nachteil der Monokultur: ein einziger Pilz (etwa TR4) kann die weltweite Ernte gefährden.",
-    "tags": [],
+    "tags": [
+      "Banane",
+      "Botanik",
+      "Zucht"
+    ],
     "compatibleModes": [
       "around-corner"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-kurioses-05",
@@ -3009,7 +3411,11 @@
     ],
     "correctIndex": 1,
     "explanation": "23 Paare, also 46 Chromosomen insgesamt — 22 Autosomen-Paare plus die Geschlechtschromosomen (XX oder XY). Keimzellen (Ei- und Samenzellen) tragen dagegen nur den einfachen Chromosomensatz.",
-    "tags": [],
+    "tags": [
+      "Chromosom",
+      "Genetik",
+      "Mensch"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -3024,7 +3430,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-klick-06",
@@ -3040,14 +3446,18 @@
       "Beim Öffnen expandiert das eingeschlossene Gas schlagartig."
     ],
     "solution": "In einer Champagnerflasche stehen etwa 5 bis 6 Bar Druck an — drei- bis viermal so viel wie in einem Autoreifen. Springt der Korken, entweicht das eingeschlossene CO₂ blitzartig, expandiert und erzeugt eine kleine Schockwelle: den „Knall“. Das Geräusch entsteht also durch die schlagartige Druckentspannung, nicht durch den Korken selbst.",
-    "tags": [],
+    "tags": [
+      "Champagner",
+      "Druck",
+      "Physik"
+    ],
     "compatibleModes": [
       "around-corner"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-kurioses-06",
@@ -3065,7 +3475,11 @@
     ],
     "correctIndex": 2,
     "explanation": "Etwa 84 Erdenjahre — Uranus wurde erst 1781 entdeckt und hat seither also gerade einmal drei komplette Umläufe geschafft.",
-    "tags": [],
+    "tags": [
+      "Uranus",
+      "Planet",
+      "Umlaufzeit"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -3080,7 +3494,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-flash-07",
@@ -3092,14 +3506,18 @@
     "question": "Der Große Panda gehört biologisch zur Familie der Bären.",
     "correctAnswer": true,
     "explanation": "Lange umstritten, seit DNA-Analysen in den 1980ern klar: Ursidae. Der Kleine Panda hingegen bekam sogar eine eigene Familie.",
-    "tags": [],
+    "tags": [
+      "Panda",
+      "Bär",
+      "Biologie"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-kurioses-07",
@@ -3117,7 +3535,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "Newton fügte „Indigo\" hinzu, um auf sieben Farben zu kommen — analog zur diatonischen Tonleiter.",
-    "tags": [],
+    "tags": [
+      "Regenbogen",
+      "Newton",
+      "Farben"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -3132,7 +3554,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-kurioses-08",
@@ -3150,7 +3572,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "Karpfen haben etwa 100 Chromosomenpaare. Farne (kein Wirbeltier) haben teils >600 — die Frage ist trickreich formuliert.",
-    "tags": [],
+    "tags": [
+      "Karpfen",
+      "Chromosom",
+      "Fisch"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -3165,7 +3591,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-kurioses-09",
@@ -3183,7 +3609,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "Rund 150- bis 200-fache Körperlänge — hätte ein Mensch dieselbe Sprungkraft, käme er etwa 300 m hoch.",
-    "tags": [],
+    "tags": [
+      "Floh",
+      "Insekt",
+      "Sprung"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -3198,7 +3628,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-kurioses-10",
@@ -3216,7 +3646,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "Studien seit ca. 2014 zeigen: Streifenmuster reduziert Landeversuche von Tsetsefliegen deutlich.",
-    "tags": [],
+    "tags": [
+      "Zebra",
+      "Streifen",
+      "Insekten"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -3231,7 +3665,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-kurioses-11",
@@ -3249,7 +3683,11 @@
     ],
     "correctIndex": 0,
     "gmNote": "Kraken (und andere Cephalopoden) nutzen kupferbasiertes Hämocyanin statt eisenhaltigem Hämoglobin — daher blaue Farbe.",
-    "tags": [],
+    "tags": [
+      "Krake",
+      "Blut",
+      "Biologie"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -3264,7 +3702,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-kurioses-12",
@@ -3282,7 +3720,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "2021 wuchsen die ersten Chilis auf der ISS als Teil des „Plant Habitat-04\"-Experiments.",
-    "tags": [],
+    "tags": [
+      "Chili",
+      "ISS",
+      "Weltraum"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -3297,7 +3739,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-kurioses-13",
@@ -3315,7 +3757,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "100-150 Millisekunden — der englische Idiom „in the blink of an eye\" ist wörtlich rund eine Zehntelsekunde.",
-    "tags": [],
+    "tags": [
+      "Wimpernschlag",
+      "Auge",
+      "Physiologie"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -3330,7 +3776,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-kurioses-14",
@@ -3348,7 +3794,11 @@
     ],
     "correctIndex": 0,
     "gmNote": "Ultraviolett liegt außerhalb des sichtbaren Spektrums (unter 380 nm). Manche Insekten wie Bienen können UV sehen.",
-    "tags": [],
+    "tags": [
+      "Ultraviolett",
+      "Licht",
+      "Auge"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -3363,7 +3813,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-kurioses-15",
@@ -3379,14 +3829,18 @@
       "Bei tiefstehender Sonne durchläuft das Licht viel mehr Atmosphäre."
     ],
     "solution": "Rayleigh-Streuung: Blaues Licht wird stärker gestreut als rotes. Tagsüber ist es überall blau, weil Blau von allen Seiten kommt. Beim Sonnenuntergang muss das Licht durch mehr Atmosphäre — das meiste Blau ist längst weggestreut, nur Rot und Orange kommen direkt bei uns an.",
-    "tags": [],
+    "tags": [
+      "Himmel",
+      "Streuung",
+      "Optik"
+    ],
     "compatibleModes": [
       "around-corner"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-kurioses-16",
@@ -3402,14 +3856,18 @@
       "Der Knall ist die Druckwelle, die uns erreicht."
     ],
     "solution": "Beim Überschallflug schiebt der Flieger die Luftmoleküle so schnell zusammen, dass sich eine kegelförmige Stoßwelle bildet. Wenn diese Druckfront einen Beobachter erreicht, hört er einen kurzen, lauten Knall — den „Sonic Boom\". Das passiert kontinuierlich, nicht nur beim Durchbrechen.",
-    "tags": [],
+    "tags": [
+      "Überschallknall",
+      "Schall",
+      "Physik"
+    ],
     "compatibleModes": [
       "around-corner"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-kurioses-17",
@@ -3425,14 +3883,18 @@
       "Zu warmes Wasser lässt uns nicht abkühlen — der Körper überhitzt."
     ],
     "solution": "Der menschliche Körper produziert beim Schwimmen viel Wärme. In warmem Wasser kann er diese nicht loswerden und überhitzt schnell. Kaltes Wasser (18-22 °C) leitet die produzierte Wärme ab — genug, aber nicht zu viel. Deshalb sind Wettkampf-Schwimmbecken kühl, nicht warm.",
-    "tags": [],
+    "tags": [
+      "Schwimmen",
+      "Kälte",
+      "Wärmeregulation"
+    ],
     "compatibleModes": [
       "around-corner"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-kurioses-18",
@@ -3448,14 +3910,18 @@
       "Sie ahmen Regen nach, um Beute an die Oberfläche zu locken."
     ],
     "solution": "Möwen (und einige andere Vögel) trippeln rhythmisch auf dem nassen Sand, um Vibrationen wie fallende Regentropfen zu erzeugen. Würmer und andere Bodenlebewesen kommen bei Regen an die Oberfläche, um nicht zu ertrinken — dieses „Regentanz-Verhalten\" nutzt diesen Reflex aus. Die Möwe hat dann leichte Beute.",
-    "tags": [],
+    "tags": [
+      "Möwe",
+      "Regenwurm",
+      "Verhalten"
+    ],
     "compatibleModes": [
       "around-corner"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-kurioses-19",
@@ -3471,14 +3937,18 @@
       "Der Erdkern erzeugt ein starkes Magnetfeld."
     ],
     "solution": "Der Erdkern besteht überwiegend aus flüssigem Eisen und Nickel, die ständig in Bewegung sind. Diese Konvektionsströme erzeugen ein globales Magnetfeld — die Erde wirkt wie ein riesiger Stabmagnet. Die Kompassnadel richtet sich entlang dieses Feldes aus, nordwärts. Der magnetische Nordpol wandert übrigens langsam, aktuell etwa 40 km pro Jahr Richtung Sibirien.",
-    "tags": [],
+    "tags": [
+      "Kompass",
+      "Erdmagnetfeld",
+      "Physik"
+    ],
     "compatibleModes": [
       "around-corner"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-kurioses-20",
@@ -3494,14 +3964,18 @@
       "Ein Enzym im Apfel reagiert mit dem Luftsauerstoff."
     ],
     "solution": "Beim Schneiden werden Zellen im Apfel aufgeschnitten. Das freigelegte Enzym Polyphenoloxidase (PPO) reagiert mit Sauerstoff aus der Luft und färbt Phenol-Verbindungen im Apfel braun — ähnlich wie beim Rosten von Eisen. Zitronensaft (Vitamin C) verhindert die Reaktion, weil er das Enzym hemmt.",
-    "tags": [],
+    "tags": [
+      "Apfel",
+      "Oxidation",
+      "Chemie"
+    ],
     "compatibleModes": [
       "around-corner"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-flash-27",
@@ -3513,14 +3987,18 @@
     "question": "Der Fußabdruck von Neil Armstrong auf dem Mond bleibt praktisch für alle Zeiten erhalten.",
     "correctAnswer": true,
     "explanation": "Keine Atmosphäre, kein Wind, kein Wasser — die Abdrücke der Apollo-11-Astronauten könnten Jahrmillionen halten. Nur Mikrometeoriten und kosmischer Staub tragen langsam ab.",
-    "tags": [],
+    "tags": [
+      "Mond",
+      "Apollo",
+      "Fußabdruck"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-flash-30",
@@ -3532,14 +4010,18 @@
     "question": "Der Nordpol liegt auf einer schwimmenden Eisdecke — nicht auf Landmasse.",
     "correctAnswer": true,
     "explanation": "Anders als die Antarktis (Kontinent unter dem Eis) ist der Arktische Ozean bedeckt von Meereis, das sich saisonal ausdehnt und zurückzieht. Deswegen kann man dort keine Fahne dauerhaft aufstellen.",
-    "tags": [],
+    "tags": [
+      "Nordpol",
+      "Arktis",
+      "Eis"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-musik-01",
@@ -3557,7 +4039,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "Rund 70 Millionen verkaufte Einheiten weltweit seit 1982.",
-    "tags": [],
+    "tags": [
+      "Thriller",
+      "Michael Jackson",
+      "Album"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -3572,7 +4058,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-musik-02",
@@ -3590,7 +4076,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "Entstanden in Rio de Janeiro Ende der 1950er, verschmelzt Samba mit Cool Jazz. Klassiker: „The Girl from Ipanema“.",
-    "tags": [],
+    "tags": [
+      "Bossa Nova",
+      "Brasilien",
+      "Genre"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -3605,7 +4095,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-musik-03",
@@ -3623,7 +4113,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Uraufführung 1791 in Wien, wenige Wochen vor Mozarts Tod. Libretto von Emanuel Schikaneder.",
-    "tags": [],
+    "tags": [
+      "Mozart",
+      "Oper",
+      "Klassik"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -3638,7 +4132,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-musik-04",
@@ -3656,7 +4150,11 @@
     ],
     "correctIndex": 1,
     "explanation": "Paul McCartney träumte die Melodie und hielt sie erst für ein Plagiat — er suchte monatelang nach dem Original, das nie existiert hatte.",
-    "tags": [],
+    "tags": [
+      "Beatles",
+      "Yesterday",
+      "Album"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -3671,7 +4169,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-musik-05",
@@ -3689,7 +4187,11 @@
     ],
     "correctIndex": 1,
     "explanation": "Ralf Hütter und Florian Schneider gründeten Kraftwerk in Düsseldorf. Das Kling-Klang-Studio wurde zum Zentrum des deutschen Elektronik-Sounds.",
-    "tags": [],
+    "tags": [
+      "Kraftwerk",
+      "Düsseldorf",
+      "Elektro"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -3704,7 +4206,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-musik-06",
@@ -3722,7 +4224,11 @@
     ],
     "correctIndex": 1,
     "explanation": "Schönberg entwickelte die Zwölftontechnik ab etwa 1921. Sie wurde zur Grundlage der Zweiten Wiener Schule — auch Webern und Alban Berg gehörten dazu.",
-    "tags": [],
+    "tags": [
+      "Schönberg",
+      "Zwölftontechnik",
+      "Österreich"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -3737,7 +4243,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-musik-07",
@@ -3755,7 +4261,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Beyoncé überraschte mit einem visuellen Album ohne Vorankündigung.",
-    "tags": [],
+    "tags": [
+      "Beyoncé",
+      "Lemonade",
+      "Album"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -3770,7 +4280,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-musik-08",
@@ -3788,7 +4298,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Freddie Mercury komponierte das Stück; die Album-Version dauert 5:55 Minuten.",
-    "tags": [],
+    "tags": [
+      "Queen",
+      "Bohemian Rhapsody",
+      "Rock"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -3803,7 +4317,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-musik-09",
@@ -3821,7 +4335,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "Spector produzierte u.a. „You've Lost That Lovin' Feelin'\" und später „Let It Be\" für die Beatles.",
-    "tags": [],
+    "tags": [
+      "Phil Spector",
+      "Wall of Sound",
+      "Produktion"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -3836,7 +4354,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-musik-10",
@@ -3854,7 +4372,11 @@
     ],
     "correctIndex": 0,
     "gmNote": "Gegründet 1965 von Rudolf Schenker; „Wind of Change\" wurde zum inoffiziellen Hymne der Wende.",
-    "tags": [],
+    "tags": [
+      "Scorpions",
+      "Hannover",
+      "Rock"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -3869,7 +4391,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-musik-11",
@@ -3887,7 +4409,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "Sopran- und Tenorsaxophon. Sein Album „A Love Supreme\" gilt als Meilenstein des spirituellen Jazz.",
-    "tags": [],
+    "tags": [
+      "Coltrane",
+      "Jazz",
+      "Saxophon"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -3902,7 +4428,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-musik-12",
@@ -3920,7 +4446,12 @@
     ],
     "correctIndex": 0,
     "gmNote": "Da Ponte wanderte später nach New York aus und wurde erster Italienisch-Professor an der Columbia University.",
-    "tags": [],
+    "tags": [
+      "Mozart",
+      "Da Ponte",
+      "Libretto",
+      "Oper"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -3935,7 +4466,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-musik-13",
@@ -3953,7 +4484,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Frontmann Ian Curtis nahm sich 1980 das Leben; die verbleibenden Mitglieder gründeten New Order.",
-    "tags": [],
+    "tags": [
+      "Joy Division",
+      "Manchester",
+      "Post-Punk"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -3968,7 +4503,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-musik-14",
@@ -3986,7 +4521,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Clara Wieck war zu Lebzeiten eine der berühmtesten Konzertpianistinnen Europas.",
-    "tags": [],
+    "tags": [
+      "Clara Schumann",
+      "Klassik",
+      "Komponistin"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -4001,7 +4540,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-musik-15",
@@ -4013,14 +4552,18 @@
     "question": "Elvis Presley starb 1977 in seinem Anwesen Graceland.",
     "correctAnswer": true,
     "gmNote": "16. August 1977, mit 42 Jahren.",
-    "tags": [],
+    "tags": [
+      "Elvis",
+      "Graceland",
+      "Rock’n’Roll"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-musik-16",
@@ -4032,14 +4575,18 @@
     "question": "Der Song „Happy Birthday to You\" ist erst seit 2016 gemeinfrei nutzbar.",
     "correctAnswer": true,
     "gmNote": "Ein US-Gericht erklärte 2016 die Urheberrechte für nichtig — vorher zahlte Warner/Chappell Millionen an Lizenzgebühren.",
-    "tags": [],
+    "tags": [
+      "Happy Birthday",
+      "Urheberrecht",
+      "Gemeinfreiheit"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-flash-18",
@@ -4051,14 +4598,18 @@
     "question": "Ludwig van Beethoven war zum Zeitpunkt der Uraufführung seiner 9. Sinfonie 1824 nahezu vollständig taub.",
     "correctAnswer": true,
     "explanation": "Bei der Wiener Uraufführung stand er auf der Bühne, hörte aber weder das Orchester noch den Applaus — eine Sängerin drehte ihn zum Publikum, damit er die Ovationen sah.",
-    "tags": [],
+    "tags": [
+      "Beethoven",
+      "Sinfonie",
+      "Taubheit"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-serien-01",
@@ -4076,7 +4627,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "New Mexico. Vince Gilligan wollte ursprünglich in Riverside, Kalifornien drehen — die Steuervergünstigungen waren in NM besser.",
-    "tags": [],
+    "tags": [
+      "Breaking Bad",
+      "Albuquerque",
+      "USA"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -4091,7 +4646,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-serien-02",
@@ -4109,7 +4664,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "Vier Siege (2015, 2016, 2018, 2019). Succession folgt mit drei, Die Sopranos mit zwei.",
-    "tags": [],
+    "tags": [
+      "Game of Thrones",
+      "HBO",
+      "Emmy"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -4124,7 +4683,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-serien-03",
@@ -4142,7 +4701,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "George R. R. Martin hat den Umriss von Westeros bewusst an die britischen Inseln angelehnt — mit Norden = Schottland-Analogie.",
-    "tags": [],
+    "tags": [
+      "Game of Thrones",
+      "Westeros",
+      "Fantasy"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -4157,7 +4720,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-serien-04",
@@ -4175,7 +4738,11 @@
     ],
     "correctIndex": 1,
     "explanation": "Serienschöpfer David Simon war zuvor Polizeireporter der Baltimore Sun — die Stadt und ihre Institutionen bilden das Gerüst aller fünf Staffeln.",
-    "tags": [],
+    "tags": [
+      "The Wire",
+      "HBO",
+      "Baltimore"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -4190,7 +4757,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-serien-05",
@@ -4208,7 +4775,11 @@
     ],
     "correctIndex": 0,
     "explanation": "Bob-Waksberg entwickelte die Show mit Illustratorin Lisa Hanawalt. Sechs Staffeln von 2014 bis 2020, gefeiert für Umgang mit Depression, Sucht und Selbstwert.",
-    "tags": [],
+    "tags": [
+      "BoJack Horseman",
+      "Netflix",
+      "Animation"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -4223,7 +4794,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-serien-06",
@@ -4241,7 +4812,11 @@
     ],
     "correctIndex": 1,
     "explanation": "David Lynch — Regisseur von „Blue Velvet“ und „Mulholland Drive“ — schuf mit „Twin Peaks“ 1990 einen Meilenstein des Serienfernsehens. Die Rückkehr 2017 gilt als eigenständiges Kunstwerk.",
-    "tags": [],
+    "tags": [
+      "Twin Peaks",
+      "David Lynch",
+      "Mystery"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -4256,7 +4831,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-serien-07",
@@ -4274,7 +4849,11 @@
     ],
     "correctIndex": 0,
     "gmNote": "Vince Gilligans „Breaking Bad\" lief 2008-2013 auf AMC.",
-    "tags": [],
+    "tags": [
+      "Breaking Bad",
+      "Krimi",
+      "AMC"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -4289,7 +4868,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-serien-08",
@@ -4307,7 +4886,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Hawkins ist an das Duffer-Brüder-inspirierte Amblin-Kino der 80er angelehnt.",
-    "tags": [],
+    "tags": [
+      "Stranger Things",
+      "Netflix",
+      "Hawkins"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -4322,7 +4905,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-serien-09",
@@ -4340,7 +4923,12 @@
     ],
     "correctIndex": 2,
     "gmNote": "Zehn Staffeln, 236 Folgen — bis heute massiv in Streaming präsent.",
-    "tags": [],
+    "tags": [
+      "Friends",
+      "Sitcom",
+      "New York",
+      "NBC"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -4355,7 +4943,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-serien-10",
@@ -4373,7 +4961,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Jesse Armstrongs „Succession\" (2018-2023) gewann drei Emmys als beste Dramaserie.",
-    "tags": [],
+    "tags": [
+      "Succession",
+      "HBO",
+      "Familiendrama"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -4388,7 +4980,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-serien-11",
@@ -4406,7 +4998,11 @@
     ],
     "correctIndex": 0,
     "gmNote": "Später umbenannt in Pearson Specter, Pearson Specter Litt etc. — der Firmenname wechselt fast in jeder Staffel.",
-    "tags": [],
+    "tags": [
+      "Suits",
+      "Anwaltsserie",
+      "Pearson Hardman"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -4421,7 +5017,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-serien-12",
@@ -4439,7 +5035,11 @@
     ],
     "correctIndex": 0,
     "gmNote": "Mad Men lief 2007-2015 auf AMC und ist Referenz für Retro-Design bis heute.",
-    "tags": [],
+    "tags": [
+      "Mad Men",
+      "Matthew Weiner",
+      "AMC"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -4454,7 +5054,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-serien-13",
@@ -4472,7 +5072,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "Squid Game von Hwang Dong-hyuk brach nahezu jeden Netflix-Rekord.",
-    "tags": [],
+    "tags": [
+      "Squid Game",
+      "Netflix",
+      "Südkorea"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -4487,7 +5091,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-serien-14",
@@ -4505,7 +5109,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "„L'amica geniale\" (2018-2024) verfilmt alle vier Bücher der „Neapolitanischen Saga\".",
-    "tags": [],
+    "tags": [
+      "Meine geniale Freundin",
+      "Italien",
+      "Neapel"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -4520,7 +5128,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-serien-15",
@@ -4532,14 +5140,18 @@
     "question": "Die HBO-Serie „The Sopranos\" endet mit einem klaren, aufgelösten Finale.",
     "correctAnswer": false,
     "gmNote": "Die Serie endet 2007 mit einem abrupten Schwarzbild bei laufendem Musikstück — bewusst mehrdeutig.",
-    "tags": [],
+    "tags": [
+      "Sopranos",
+      "HBO",
+      "Finale"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-serien-16",
@@ -4551,14 +5163,18 @@
     "question": "Die Simpsons haben mehr Staffeln als jede andere US-Prime-Time-Serie.",
     "correctAnswer": true,
     "gmNote": "Seit 1989 laufend, mit über 35 Staffeln der längste laufende Sitcom-Klassiker.",
-    "tags": [],
+    "tags": [
+      "Simpsons",
+      "Rekord",
+      "FOX"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-flash-17",
@@ -4570,14 +5186,18 @@
     "question": "Die HBO-Serie „Game of Thrones“ basiert auf einer Romanreihe von J. R. R. Tolkien.",
     "correctAnswer": false,
     "explanation": "George R. R. Martin, nicht Tolkien. „Das Lied von Eis und Feuer“ erschien ab 1996 — Tolkien war da schon 23 Jahre tot.",
-    "tags": [],
+    "tags": [
+      "Game of Thrones",
+      "George R. R. Martin",
+      "Buchvorlage"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-sport-01",
@@ -4595,7 +5215,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Ein Point Guard, ein Shooting Guard, ein Small Forward, ein Power Forward und ein Center — klassisch.",
-    "tags": [],
+    "tags": [
+      "Basketball",
+      "Regel",
+      "Team"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -4610,7 +5234,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-sport-02",
@@ -4628,7 +5252,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Ausgetragen in Montevideo. Der Gastgeber schlug im Finale den Nachbarn Argentinien mit 4:2.",
-    "tags": [],
+    "tags": [
+      "Fußball",
+      "Weltmeisterschaft",
+      "Uruguay"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -4643,7 +5271,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-sport-03",
@@ -4661,7 +5289,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "Die 195 m stammen aus den Olympischen Spielen 1908 in London — die königliche Familie wollte den Start näher am Schloss haben.",
-    "tags": [],
+    "tags": [
+      "Marathon",
+      "Leichtathletik",
+      "Distanz"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -4676,7 +5308,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-sport-04",
@@ -4694,7 +5326,11 @@
     ],
     "correctIndex": 0,
     "explanation": "Die BRD schlug im Finale von München die Niederlande um Johan Cruyff 2:1. Kapitän Franz Beckenbauer stemmte den ersten WM-Pokal für Deutschland als Kaiser der Abwehr.",
-    "tags": [],
+    "tags": [
+      "Fußball",
+      "Weltmeisterschaft",
+      "Deutschland"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -4709,7 +5345,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-sport-05",
@@ -4727,7 +5363,11 @@
     ],
     "correctIndex": 2,
     "explanation": "Kareem gewann sechs MVPs zwischen 1971 und 1980. Michael Jordan folgt mit fünf, LeBron James und Bill Russell mit je vier.",
-    "tags": [],
+    "tags": [
+      "NBA",
+      "Basketball",
+      "Kareem Abdul-Jabbar"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -4742,7 +5382,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-sport-06",
@@ -4760,7 +5400,11 @@
     ],
     "correctIndex": 2,
     "explanation": "Beide gewannen sieben Fahrer-Weltmeistertitel. Hamilton zog 2020 mit Schumachers Rekord gleich; danach setzte kein Fahrer neu drauf.",
-    "tags": [],
+    "tags": [
+      "Formel 1",
+      "Schumacher",
+      "Hamilton"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -4775,7 +5419,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-sport-07",
@@ -4793,7 +5437,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Fünf Ringe symbolisieren die fünf Kontinente. Farben: Blau, Gelb, Schwarz, Grün, Rot.",
-    "tags": [],
+    "tags": [
+      "Olympia",
+      "Symbol",
+      "Ringe"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -4808,7 +5456,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-sport-08",
@@ -4826,7 +5474,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Ein Karrierewinner der vier Grand Slams heißt „Career Grand Slam\"; im selben Kalenderjahr = „Kalender-Grand-Slam\".",
-    "tags": [],
+    "tags": [
+      "Tennis",
+      "Grand Slam",
+      "Turnier"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -4841,7 +5493,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-sport-09",
@@ -4859,7 +5511,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "Das erste Rennen fand am 13. Mai 1950 in Silverstone statt; Giuseppe Farina gewann.",
-    "tags": [],
+    "tags": [
+      "Formel 1",
+      "Großbritannien",
+      "Motorsport"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -4874,7 +5530,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-sport-10",
@@ -4892,7 +5548,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Sechs Punkte. Danach folgt entweder ein 1-Punkt-Extrapunkt (PAT) oder ein 2-Punkt-Conversion-Versuch.",
-    "tags": [],
+    "tags": [
+      "American Football",
+      "NFL",
+      "Touchdown"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -4907,7 +5567,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-sport-11",
@@ -4925,7 +5585,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "Das Maillot Jaune (Gelbes Trikot) — die Farbe erinnert an das Papier der Sportzeitung „L'Auto\".",
-    "tags": [],
+    "tags": [
+      "Tour de France",
+      "Radsport",
+      "Gelbes Trikot"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -4940,7 +5604,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-sport-12",
@@ -4958,7 +5622,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "In der MLB-Geschichte gab es weniger als 25 Perfect Games — eines der seltensten Ereignisse im Profisport.",
-    "tags": [],
+    "tags": [
+      "Baseball",
+      "Perfect Game",
+      "MLB"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -4973,7 +5641,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-sport-13",
@@ -4991,7 +5659,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "Trickfrage: Hirscher ist Österreicher, nicht Deutscher. Trotzdem passendste Antwort.",
-    "tags": [],
+    "tags": [
+      "Ski Alpin",
+      "Hirscher",
+      "Weltcup"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -5006,7 +5678,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-sport-14",
@@ -5024,7 +5696,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "Djokovic mit 24 Titeln (Stand Ende 2023). Nadal 22, Federer 20.",
-    "tags": [],
+    "tags": [
+      "Tennis",
+      "Djokovic",
+      "Grand Slam"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -5039,7 +5715,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-sport-15",
@@ -5051,14 +5727,18 @@
     "question": "Beim Standard-Fußball hat jedes Team elf Spieler auf dem Feld.",
     "correctAnswer": true,
     "gmNote": "Zehn Feldspieler + ein Torwart.",
-    "tags": [],
+    "tags": [
+      "Fußball",
+      "Regel",
+      "Team"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-sport-16",
@@ -5070,14 +5750,18 @@
     "question": "Boxen ist seit den ersten neuzeitlichen Olympischen Spielen 1896 Teil des Programms.",
     "correctAnswer": false,
     "gmNote": "Boxen wurde erst 1904 in St. Louis olympisch.",
-    "tags": [],
+    "tags": [
+      "Olympia",
+      "Boxen",
+      "Sportgeschichte"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-flash-23",
@@ -5089,14 +5773,18 @@
     "question": "Bei den ersten Olympischen Spielen der Neuzeit 1896 in Athen nahmen ausschließlich männliche Athleten teil.",
     "correctAnswer": true,
     "explanation": "Frauen wurden erstmals 1900 in Paris zugelassen — und zunächst nur in Golf und Tennis. Das Olympia-Team der Frauen ist bis heute jüngeres Gebilde als das der Männer.",
-    "tags": [],
+    "tags": [
+      "Olympia",
+      "Athen",
+      "1896"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-flash-29",
@@ -5108,14 +5796,18 @@
     "question": "Cricket zählt gemessen an aktiven Fans weltweit zu den populärsten Sportarten nach Fußball.",
     "correctAnswer": true,
     "explanation": "Mit rund 2,5 Milliarden Fans — vor allem in Indien, Pakistan, Australien und England — steht Cricket in globalen Rankings meist auf Platz 2 hinter Fußball, vor Feldhockey und Tennis.",
-    "tags": [],
+    "tags": [
+      "Cricket",
+      "Weltsport",
+      "Fußball"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-sprache-01",
@@ -5133,7 +5825,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "Vom persischen Universalgelehrten al-Chwarizmi (9. Jh.), dessen Werke im Mittelalter ins Lateinische übersetzt wurden.",
-    "tags": [],
+    "tags": [
+      "Algorithmus",
+      "Etymologie",
+      "Arabisch"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -5148,7 +5844,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-sprache-02",
@@ -5166,7 +5862,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "Baskisch ist eine isolierte Sprache ohne bekannte Verwandtschaft zu einer anderen — ein sprachliches Rätsel Europas.",
-    "tags": [],
+    "tags": [
+      "Baskisch",
+      "Sprachfamilie",
+      "Europa"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -5181,7 +5881,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-sprache-03",
@@ -5199,7 +5899,11 @@
     ],
     "correctIndex": 0,
     "gmNote": "Begründung: die Vielzahl paralleler Krisen, in denen sich Politik und Gesellschaft dauerhaft eingerichtet zu haben scheinen.",
-    "tags": [],
+    "tags": [
+      "Wort des Jahres",
+      "Deutsch",
+      "Krisenmodus"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -5215,7 +5919,7 @@
     "source": "https://gfds.de/wort-des-jahres-2023/",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:55:21Z",
     "timeReference": {
       "isTimeSensitive": true,
       "referenceDate": "2023-12-08"
@@ -5231,14 +5935,18 @@
     "question": "Die Amtssprache Brasiliens ist Portugiesisch.",
     "correctAnswer": true,
     "explanation": "Als einzige Amtssprache — Erbe der portugiesischen Kolonialzeit. Alle Nachbarländer sind spanischsprachig.",
-    "tags": [],
+    "tags": [
+      "Brasilien",
+      "Portugiesisch",
+      "Amtssprache"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-sprache-04",
@@ -5256,7 +5964,11 @@
     ],
     "correctIndex": 1,
     "explanation": "„Doppelganger“ (meist ohne Umlaut) taucht in Zeitungen, Filmen und Songtiteln auf. Der Begriff geht auf Jean Paul zurück (1796) und war ursprünglich literarisch gemeint.",
-    "tags": [],
+    "tags": [
+      "Doppelgänger",
+      "Lehnwort",
+      "Englisch"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -5271,7 +5983,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-sprache-05",
@@ -5289,7 +6001,11 @@
     ],
     "correctIndex": 1,
     "explanation": "Vom arabischen „qahwa“ über das osmanische Türkisch („kahve“) und schließlich das Italienische („caffè“). Ursprünglich bezeichnete „qahwa“ Wein — die Bedeutungsübertragung auf Kaffee kam mit der Sufi-Kultur.",
-    "tags": [],
+    "tags": [
+      "Kaffee",
+      "Etymologie",
+      "Arabisch"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -5304,7 +6020,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-sprache-06",
@@ -5322,7 +6038,11 @@
     ],
     "correctIndex": 1,
     "explanation": "Die drei sind die einzigen größeren uralischen Sprachen mit staatlichem Status in Europa. Untereinander verwandt, aber weit entfernt — Ungarisch trennte sich vor rund 3000 Jahren.",
-    "tags": [],
+    "tags": [
+      "Uralisch",
+      "Sprachfamilie",
+      "Finnisch"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -5337,7 +6057,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-sprache-07",
@@ -5355,7 +6075,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "Mandarin-Chinesisch mit rund 900 Millionen. Englisch hat mehr Zweitsprachler, aber weniger Muttersprachler.",
-    "tags": [],
+    "tags": [
+      "Mandarin",
+      "China",
+      "Muttersprache"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -5370,7 +6094,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-sprache-08",
@@ -5388,7 +6112,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "Englisch übernahm das deutsche „Kindergarten\" praktisch unverändert (auch in der Schreibweise).",
-    "tags": [],
+    "tags": [
+      "Kindergarten",
+      "Lehnwort",
+      "Englisch"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -5403,7 +6131,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-sprache-09",
@@ -5421,7 +6149,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "Arabisch: Vokale werden in der klassischen Schriftform meist nicht mitgeschrieben, sondern nur bei Bedarf durch diakritische Zeichen ergänzt.",
-    "tags": [],
+    "tags": [
+      "Arabisch",
+      "Schrift",
+      "Konsonanten"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -5436,7 +6168,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-sprache-10",
@@ -5454,7 +6186,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Berühmte Warntafel-Inschrift auf Fußbodenmosaiken in Pompeji.",
-    "tags": [],
+    "tags": [
+      "Latein",
+      "Redewendung",
+      "Cave canem"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -5469,7 +6205,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-sprache-11",
@@ -5487,7 +6223,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Türkisch „köşk\" = Gartenhäuschen, ursprünglich aus dem Persischen „kušk\".",
-    "tags": [],
+    "tags": [
+      "Kiosk",
+      "Etymologie",
+      "Türkisch"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -5502,7 +6242,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-flash-12",
@@ -5514,14 +6254,18 @@
     "question": "Auf das englische Wort „orange“ gibt es kein einziges perfekt reimendes Wort in der Alltagssprache.",
     "correctAnswer": true,
     "explanation": "Berühmte Reim-Falle. Einzige technische Ausnahme: „sporange“ (Sporenbehälter), praktisch aber ungebräuchlich.",
-    "tags": [],
+    "tags": [
+      "Englisch",
+      "Orange",
+      "Reim"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-sprache-12",
@@ -5539,7 +6283,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "Ungarisch gehört zur uralischen Sprachfamilie (mit Finnisch und Estnisch).",
-    "tags": [],
+    "tags": [
+      "Ungarisch",
+      "Sprachfamilie",
+      "Uralisch"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -5554,7 +6302,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-sprache-13",
@@ -5572,7 +6320,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "Sechs: Nominativ, Genitiv, Dativ, Akkusativ, Ablativ, Vokativ. Deutsch hat vier, Finnisch etwa 15.",
-    "tags": [],
+    "tags": [
+      "Latein",
+      "Grammatik",
+      "Kasus"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -5587,7 +6339,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-sprache-14",
@@ -5605,7 +6357,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Kyrillisch — benannt nach Kyrill von Saloniki, der im 9. Jahrhundert das Vorgänger-Alphabet Glagolitisch entwickelte.",
-    "tags": [],
+    "tags": [
+      "Kyrillisch",
+      "Alphabet",
+      "Russisch"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -5620,7 +6376,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-sprache-15",
@@ -5632,14 +6388,18 @@
     "question": "Das englische Wort „quiz\" wurde ursprünglich als Wette erfunden, um ein sinnloses Wort in die Sprache einzuführen.",
     "correctAnswer": false,
     "gmNote": "Diese Anekdote ist eine populäre Legende, aber historisch nicht belegt. Etymologisch unklar.",
-    "tags": [],
+    "tags": [
+      "Quiz",
+      "Etymologie",
+      "Mythos"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-flash-26",
@@ -5651,14 +6411,18 @@
     "question": "„Mama“ und „Papa“ klingen in erstaunlich vielen Sprachen weltweit sehr ähnlich.",
     "correctAnswer": true,
     "explanation": "Kleinkinder produzieren früh Silben wie „ma“ und „pa“ — Eltern deuteten sie als Anrede. Roman Jakobson beschrieb den Effekt 1959; er gilt sprachfamilienübergreifend.",
-    "tags": [],
+    "tags": [
+      "Kindersprache",
+      "Universalismus",
+      "Mama"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-tech-01",
@@ -5676,7 +6440,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Als Student in Helsinki. Der Name entstand aus Torvalds' Vornamen plus dem verbreiteten Unix-Suffix.",
-    "tags": [],
+    "tags": [
+      "Linux",
+      "Torvalds",
+      "Open Source"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -5691,7 +6459,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-tech-02",
@@ -5709,7 +6477,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "IPv4 hatte 32 Bit — etwa 4,3 Milliarden Adressen. IPv6 kommt auf 3,4 × 10^38 mögliche Adressen.",
-    "tags": [],
+    "tags": [
+      "IPv6",
+      "Netzwerk",
+      "Internet"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -5724,7 +6496,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-tech-03",
@@ -5742,7 +6514,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "Voodoo Graphics erschien 1996 und dominierte den PC-3D-Markt, bis NVIDIA das Unternehmen 2000 übernahm.",
-    "tags": [],
+    "tags": [
+      "3dfx",
+      "Voodoo",
+      "Grafikkarte"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -5757,7 +6533,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-technik-04",
@@ -5775,7 +6551,11 @@
     ],
     "correctIndex": 1,
     "explanation": "Steve Jobs präsentierte das iPhone am 9. Januar 2007 auf der Macworld — der Verkaufsstart folgte im Juni. Blackberry und Nokia dominierten damals noch den Smartphone-Markt.",
-    "tags": [],
+    "tags": [
+      "iPhone",
+      "Apple",
+      "Smartphone"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -5790,7 +6570,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-technik-05",
@@ -5808,7 +6588,11 @@
     ],
     "correctIndex": 2,
     "explanation": "Python ist nach dem britischen Comedy-Ensemble Monty Python benannt — nicht nach der Schlange. Der Aufstieg durch Data Science, KI und Bildung ließ die Sprache in den 2020ern zur Nummer eins werden.",
-    "tags": [],
+    "tags": [
+      "Python",
+      "Programmiersprache",
+      "TIOBE"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -5823,7 +6607,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-technik-06",
@@ -5841,7 +6625,11 @@
     ],
     "correctIndex": 1,
     "explanation": "Der 4-Bit-Prozessor mit 2300 Transistoren wurde im November 1971 vorgestellt. Chefdesigner war Federico Faggin; sein Signatur-F ist bis heute im Chip-Layout eingebettet.",
-    "tags": [],
+    "tags": [
+      "Intel 4004",
+      "Mikroprozessor",
+      "1971"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -5856,7 +6644,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-technik-07",
@@ -5874,7 +6662,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "„HyperText Transfer Protocol\" — 1989-1991 von Tim Berners-Lee am CERN definiert.",
-    "tags": [],
+    "tags": [
+      "HTTP",
+      "Internet",
+      "Protokoll"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -5889,7 +6681,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-technik-08",
@@ -5907,7 +6699,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "Ursprünglich vom Start-up Android Inc. entwickelt, 2005 von Google übernommen.",
-    "tags": [],
+    "tags": [
+      "Android",
+      "Google",
+      "Betriebssystem"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -5922,7 +6718,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-technik-09",
@@ -5940,7 +6736,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Acht Bit — ein Byte kann 256 verschiedene Werte darstellen (2^8).",
-    "tags": [],
+    "tags": [
+      "Byte",
+      "Bit",
+      "Informatik"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -5955,7 +6755,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-technik-10",
@@ -5973,7 +6773,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Ursprünglich für Set-Top-Boxen gedacht, wurde Java durch das Web-Browser-Plugin und später Android massiv verbreitet.",
-    "tags": [],
+    "tags": [
+      "Java",
+      "Gosling",
+      "Programmiersprache"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -5988,7 +6792,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-technik-11",
@@ -6006,7 +6810,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Die 8-Zoll-Diskette, gefolgt von 5¼- und 3½-Zoll-Varianten.",
-    "tags": [],
+    "tags": [
+      "Diskette",
+      "IBM",
+      "Speicher"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -6021,7 +6829,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-technik-12",
@@ -6039,7 +6847,11 @@
     ],
     "correctIndex": 0,
     "gmNote": "Der offizielle Name ist MPEG-1 Audio Layer 3. Karlheinz Brandenburg leitete die Entwicklung am Fraunhofer IIS.",
-    "tags": [],
+    "tags": [
+      "MP3",
+      "Audio",
+      "Kompression"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -6054,7 +6866,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-technik-13",
@@ -6072,7 +6884,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "HTTP-Header haben keine feste Empfänger-Grenze; Server können aber Header-Länge und -Anzahl selbst limitieren.",
-    "tags": [],
+    "tags": [
+      "HTTP",
+      "Header",
+      "Protokoll"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -6087,7 +6903,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-technik-14",
@@ -6105,7 +6921,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "1. Januar 1983 — der „Flag Day\", an dem das gesamte ARPANET von NCP auf TCP/IP umgestellt wurde.",
-    "tags": [],
+    "tags": [
+      "TCP/IP",
+      "ARPANET",
+      "Internet"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -6120,7 +6940,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-technik-15",
@@ -6132,14 +6952,18 @@
     "question": "Der erste Computervirus im weiten Sinne stammt aus den 1970er Jahren.",
     "correctAnswer": true,
     "gmNote": "„Creeper\" von 1971 im ARPANET zeigte die Nachricht „I'm the creeper, catch me if you can!\".",
-    "tags": [],
+    "tags": [
+      "Computervirus",
+      "Sicherheit",
+      "Informatikgeschichte"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-flash-25",
@@ -6151,14 +6975,18 @@
     "question": "Das World Wide Web wurde am Kernforschungszentrum CERN in Genf entwickelt.",
     "correctAnswer": true,
     "explanation": "Tim Berners-Lee schrieb 1989 den Vorschlag, 1991 stand der erste Web-Server. Ursprünglicher Zweck: physikalische Forschungsdaten teilen.",
-    "tags": [],
+    "tags": [
+      "WWW",
+      "CERN",
+      "Internet"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-wiss-01",
@@ -6176,7 +7004,11 @@
     ],
     "correctIndex": 3,
     "gmNote": "Symbol Au (von lat. „aurum“). Rund 205.000 Tonnen wurden bis heute weltweit gefördert.",
-    "tags": [],
+    "tags": [
+      "Gold",
+      "Element",
+      "Periodensystem"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -6191,7 +7023,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-wiss-02",
@@ -6209,7 +7041,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "23 Paare — 22 Autosomen plus ein Geschlechtschromosomen-Paar.",
-    "tags": [],
+    "tags": [
+      "Chromosom",
+      "Genetik",
+      "Mensch"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -6224,7 +7060,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-flash-02",
@@ -6236,14 +7072,18 @@
     "question": "Menschen nutzen nur etwa zehn Prozent ihres Gehirns.",
     "correctAnswer": false,
     "explanation": "Auch im Alltag sind fast alle Hirnregionen aktiv. Der 10-%-Mythos ist popkulturell hartnäckig, wissenschaftlich aber widerlegt.",
-    "tags": [],
+    "tags": [
+      "Gehirn",
+      "Mythos",
+      "Neurologie"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-wiss-03",
@@ -6261,7 +7101,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Die starke Kernkraft bindet die Quarks im Kern selbst. Für die Bindung der Elektronen ist die elektromagnetische Anziehung zuständig.",
-    "tags": [],
+    "tags": [
+      "Elektromagnetismus",
+      "Physik",
+      "Atom"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -6276,7 +7120,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-flash-04",
@@ -6288,14 +7132,18 @@
     "question": "Ein Tag auf der Venus dauert länger als ein Jahr auf der Venus.",
     "correctAnswer": true,
     "explanation": "Venus rotiert extrem langsam (243 Erdtage pro Umdrehung), umläuft die Sonne aber in nur 225 Erdtagen.",
-    "tags": [],
+    "tags": [
+      "Venus",
+      "Planet",
+      "Astronomie"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-wissenschaft-04",
@@ -6313,7 +7161,11 @@
     ],
     "correctIndex": 2,
     "explanation": "Vom lateinischen „natrium“. Natrium reagiert heftig mit Wasser, bildet mit Chlor aber ausgerechnet unser Speisesalz — NaCl.",
-    "tags": [],
+    "tags": [
+      "Natrium",
+      "Element",
+      "Chemie"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -6328,7 +7180,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-wissenschaft-05",
@@ -6346,7 +7198,12 @@
     ],
     "correctIndex": 1,
     "explanation": "Physik 1903 (gemeinsam mit Pierre Curie und Henri Becquerel), Chemie 1911. Ihre Tochter Irène Joliot-Curie gewann später einen weiteren Chemie-Nobelpreis.",
-    "tags": [],
+    "tags": [
+      "Marie Curie",
+      "Nobelpreis",
+      "Physik",
+      "Chemie"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -6361,7 +7218,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-wissenschaft-06",
@@ -6379,7 +7236,11 @@
     ],
     "correctIndex": 1,
     "explanation": "Die Feinstrukturkonstante α ≈ 1/137,036 ist dimensionslos — jeder Zivilisation würde sie denselben Zahlenwert liefern. Warum sie ausgerechnet diesen Wert hat, ist eines der offenen Rätsel der Physik.",
-    "tags": [],
+    "tags": [
+      "Feinstrukturkonstante",
+      "Physik",
+      "Elektromagnetismus"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -6394,7 +7255,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-wissenschaft-07",
@@ -6412,7 +7273,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Proxima Centauri, rund 4,24 Lichtjahre entfernt. Teil des Alpha-Centauri-Systems.",
-    "tags": [],
+    "tags": [
+      "Proxima Centauri",
+      "Astronomie",
+      "Stern"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -6427,7 +7292,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-wissenschaft-08",
@@ -6445,7 +7310,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "Wasserstoff macht rund 74 % der baryonischen Masse aus, Helium etwa 24 %.",
-    "tags": [],
+    "tags": [
+      "Wasserstoff",
+      "Element",
+      "Kosmologie"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -6460,7 +7329,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-wissenschaft-09",
@@ -6478,7 +7347,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "Verursacher der drei großen historischen Pest-Pandemien, u.a. des „Schwarzen Todes\" im 14. Jahrhundert.",
-    "tags": [],
+    "tags": [
+      "Pest",
+      "Bakterium",
+      "Krankheit"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -6493,7 +7366,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-flash-10",
@@ -6505,14 +7378,18 @@
     "question": "Fledermäuse sind blind und orientieren sich ausschließlich per Echoortung.",
     "correctAnswer": false,
     "explanation": "Sie sehen sogar recht gut, viele Arten farbig. Echoortung ergänzt die Sicht in der Nacht, ersetzt sie aber nicht.",
-    "tags": [],
+    "tags": [
+      "Fledermaus",
+      "Echolokation",
+      "Mythos"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-wissenschaft-10",
@@ -6530,7 +7407,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Fleming bemerkte, dass Schimmelpilzsporen (Penicillium) in einer Petrischale Bakterien abtöteten.",
-    "tags": [],
+    "tags": [
+      "Penicillin",
+      "Fleming",
+      "Antibiotikum"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -6545,7 +7426,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-wissenschaft-11",
@@ -6563,7 +7444,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Benannt nach Alessandro Volta, dem Erfinder der ersten Batterie um 1800.",
-    "tags": [],
+    "tags": [
+      "Volt",
+      "Spannung",
+      "Elektrizität"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -6578,7 +7463,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-wissenschaft-12",
@@ -6596,7 +7481,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "Das Experiment 1911 zeigte, dass Atome einen kleinen, dichten positiv geladenen Kern haben.",
-    "tags": [],
+    "tags": [
+      "Rutherford",
+      "Atomkern",
+      "Streuexperiment"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -6611,7 +7500,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-flash-13",
@@ -6623,14 +7512,18 @@
     "question": "Ein Blitz schlägt nie zweimal an derselben Stelle ein.",
     "correctAnswer": false,
     "explanation": "Doch, sogar häufig. Hohe Gebäude wie das Empire State Building werden pro Jahr zweistellig oft getroffen.",
-    "tags": [],
+    "tags": [
+      "Blitz",
+      "Wetter",
+      "Mythos"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-wissenschaft-13",
@@ -6648,7 +7541,11 @@
     ],
     "correctIndex": 1,
     "gmNote": "Der zweite Hauptsatz erklärt, warum Wärme immer vom heißeren zum kälteren Körper fließt.",
-    "tags": [],
+    "tags": [
+      "Thermodynamik",
+      "Entropie",
+      "Physik"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -6663,7 +7560,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-wissenschaft-14",
@@ -6681,7 +7578,11 @@
     ],
     "correctIndex": 2,
     "gmNote": "99,98 % ist ¹H (Protium), ca. 0,02 % Deuterium (²H). Tritium ist radioaktiv und nur in Spuren vorhanden.",
-    "tags": [],
+    "tags": [
+      "Wasserstoff",
+      "Isotop",
+      "Deuterium"
+    ],
     "compatibleModes": [
       "category-duel",
       "flash",
@@ -6696,7 +7597,7 @@
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-wissenschaft-15",
@@ -6708,14 +7609,18 @@
     "question": "Wasser besteht aus zwei Wasserstoff- und einem Sauerstoffatom.",
     "correctAnswer": true,
     "gmNote": "H₂O — die Molekülform ist gewinkelt (~104,5°), nicht linear.",
-    "tags": [],
+    "tags": [
+      "Wasser",
+      "Chemie",
+      "Molekül"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-wissenschaft-16",
@@ -6727,14 +7632,18 @@
     "question": "Ein Blitz ist heißer als die Oberfläche der Sonne.",
     "correctAnswer": true,
     "gmNote": "Blitz kann kurzfristig ~30.000 °C erreichen, Sonnenoberfläche ~5.500 °C.",
-    "tags": [],
+    "tags": [
+      "Blitz",
+      "Physik",
+      "Temperatur"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-wissenschaft-17",
@@ -6746,14 +7655,18 @@
     "question": "Alle Diamanten auf der Erde sind älter als eine Milliarde Jahre.",
     "correctAnswer": true,
     "gmNote": "Die meisten sind 1-3 Milliarden Jahre alt und entstanden tief im Erdmantel.",
-    "tags": [],
+    "tags": [
+      "Diamant",
+      "Geologie",
+      "Alter"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-wissenschaft-18",
@@ -6769,14 +7682,18 @@
       "Der Erdschatten liegt fast direkt hinter der Erde — nicht immer trifft er den Mond."
     ],
     "solution": "Bei Vollmond stehen Sonne, Erde und Mond fast in einer Linie. Wenn sie perfekt zusammenkommen, gibt es eine Mondfinsternis — die Erde wirft ihren Schatten auf den Mond. Normalerweise ist die Mondbahn aber leicht geneigt (5°) und der Mond fliegt am Erdschatten vorbei. Deswegen sind Mondfinsternisse nicht jeden Monat.",
-    "tags": [],
+    "tags": [
+      "Vollmond",
+      "Mond",
+      "Astronomie"
+    ],
     "compatibleModes": [
       "around-corner"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-wissenschaft-19",
@@ -6792,14 +7709,18 @@
       "Das Wasser muss erst verdampfen, bevor das Holz brennen kann."
     ],
     "solution": "Frisches Holz enthält 30-60 % Wasser. Beim Anzünden muss diese Feuchtigkeit zuerst verdampfen — das verbraucht enorm viel Energie und kühlt das Feuer ab. Deswegen brennen nasse Scheite schlecht, qualmen viel und geben wenig Wärme ab. Trockenes Holz (unter ~20 % Feuchte) brennt heißer, sauberer und effizienter.",
-    "tags": [],
+    "tags": [
+      "Feuer",
+      "Holz",
+      "Verbrennung"
+    ],
     "compatibleModes": [
       "around-corner"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:30:32Z",
-    "updatedAt": "2026-09-21T20:30:32Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   },
   {
     "id": "q-flash-22",
@@ -6811,13 +7732,17 @@
     "question": "Licht bewegt sich in einem Medium wie Wasser oder Glas langsamer als im Vakuum.",
     "correctAnswer": true,
     "explanation": "In Wasser bei etwa 75 % der Vakuumgeschwindigkeit, in Diamant sogar nur bei 40 %. Deshalb bricht sich das Licht beim Übergang zwischen Medien — der Effekt heißt Refraktion.",
-    "tags": [],
+    "tags": [
+      "Licht",
+      "Optik",
+      "Physik"
+    ],
     "compatibleModes": [
       "flash"
     ],
     "timeScope": "timeless",
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
-    "updatedAt": "2026-09-21T20:06:33Z"
+    "updatedAt": "2026-09-21T20:55:21Z"
   }
 ]
