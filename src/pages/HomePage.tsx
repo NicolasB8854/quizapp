@@ -11,7 +11,7 @@
  */
 
 import { Link } from 'react-router-dom'
-import { Play, LogIn, Users, Wifi, Sparkles, Info, Settings, Radio } from 'lucide-react'
+import { Play, LogIn, Users, Wifi, Sparkles, Info, Radio } from 'lucide-react'
 import { ScreenLayout } from '@/components/ScreenLayout'
 import { ModeCard } from '@/components/ModeCard'
 import { MODES } from '@quizapp/shared'
@@ -24,18 +24,10 @@ export default function HomePage() {
     <ScreenLayout
       variant="home"
       navActions={
-        <>
-          <span className="hidden md:inline-flex items-center gap-2 rounded-full border border-white/10 bg-navy-800/60 backdrop-blur px-3 py-1.5 text-[11px] uppercase tracking-[0.22em] text-ink-muted">
-            <Users className="h-3.5 w-3.5 text-brand-cyan-soft" />
-            Gemeinsam schlauer
-          </span>
-          <button
-            aria-label="Einstellungen"
-            className="h-9 w-9 rounded-full border border-white/10 bg-navy-800/60 backdrop-blur flex items-center justify-center text-ink-muted hover:text-ink hover:border-white/25 transition-colors"
-          >
-            <Settings className="h-4 w-4" />
-          </button>
-        </>
+        <span className="hidden md:inline-flex items-center gap-2 rounded-full border border-white/10 bg-navy-800/60 backdrop-blur px-3 py-1.5 text-[11px] uppercase tracking-[0.22em] text-ink-muted">
+          <Users className="h-3.5 w-3.5 text-brand-cyan-soft" />
+          Gemeinsam schlauer
+        </span>
       }
     >
       <div className="mx-auto max-w-7xl">
