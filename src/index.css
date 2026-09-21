@@ -117,6 +117,29 @@
   }
   .animate-reveal-correct { animation: reveal-glow-correct 0.9s ease-out; }
   .animate-reveal-wrong   { animation: reveal-glow-wrong 0.9s ease-out; }
+  /* Modus-Übergangs-Splash: Backdrop faded ein und wieder aus, Inhalt scaled
+     leicht rein. Gesamtdauer 1.6s, synchron mit ModeTransitionSplash. */
+  @keyframes splash-fade {
+    0%   { opacity: 0; }
+    15%  { opacity: 1; }
+    85%  { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  @keyframes splash-content {
+    0%   { transform: scale(0.92) translateY(18px); opacity: 0; }
+    18%  { transform: scale(1) translateY(0);       opacity: 1; }
+    82%  { transform: scale(1) translateY(0);       opacity: 1; }
+    100% { transform: scale(1.02) translateY(-6px); opacity: 0; }
+  }
+  .animate-splash-fade    { animation: splash-fade 1.6s ease-in-out forwards; }
+  .animate-splash-content { animation: splash-content 1.6s ease-out forwards; }
+  @media (prefers-reduced-motion: reduce) {
+    .animate-splash-fade,
+    .animate-splash-content {
+      animation-duration: 1.6s;
+      animation-timing-function: linear;
+    }
+  }
   /* Rundes Show-Chip mit Neon-Border (für Kategorie-Anzeigen und Info-Chips). */
   .chip-neon {
     @apply inline-flex items-center gap-2 rounded-full border px-4 py-1.5
