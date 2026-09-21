@@ -405,6 +405,7 @@ export type GameAction =
   | { type: 'REMOVE_PLAYER'; playerId: string }
   | { type: 'SET_PLAYER_NAME'; playerId: string; name: string }
   | { type: 'SET_PLAYER_INTERESTS'; playerId: string; interests: PlayerInterest[] }
+  | { type: 'SET_PLAYER_INTEREST_TAGS'; playerId: string; topic: Topic; tags: string[] }
   | { type: 'SET_PLAYER_AVATAR'; playerId: string; avatar: Avatar }
   | { type: 'ADD_PLAYER_FROM_LIBRARY'; teamId: string | null; profile: PlayerProfile }
   | { type: 'REPLACE_PLAYER_FROM_LIBRARY'; playerId: string; profile: PlayerProfile }
@@ -1324,6 +1325,38 @@ export function reducer(state: GameState, action: GameAction): GameState {
           players,
           interests: aggregatePlayerInterests(players),
         },
+      }
+    }
+
+    case 'SET_PLAYER_INTEREST_TAGS': {
+      if (!state.round || state.phase !== 'lobby') return state
+      // Trim + Dedup + leere Strings raus. Groß-/Kleinschreibung beibehalten
+      // wie eingetippt (Anzeige-Freundlich), aber Duplikate case-insensitive filtern.
+      const seenLower = new Set<string>()
+      const cleanTags: string[] = []
+      for (const raw of action.tags) {
+        const t = raw.trim()
+        if (!t) continue
+        const key = t.toLowerCase()
+        if (seenLower.has(key)) continue
+        seenLower.add(key)
+        cleanTags.push(t)
+      }
+      const players = state.round.players.map((p) => {
+        if (p.id !== action.playerId) return p
+        // Nur ändern, wenn der Player das Topic auch aktiviert hat.
+        // Sonst wäre ein „Sub-Interest ohne Grob-Interest" möglich, was
+        // die Aggregation stört.
+        const has = p.interests.some((i) => i.topic === action.topic)
+        if (!has) return p
+        const interests = p.interests.map((i) =>
+          i.topic === action.topic ? { ...i, tags: cleanTags } : i,
+        )
+        return { ...p, interests }
+      })
+      return {
+        ...state,
+        round: { ...state.round, players },
       }
     }
 

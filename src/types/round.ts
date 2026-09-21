@@ -75,10 +75,18 @@ export interface Team {
  */
 export type SkillLevel = 1 | 2 | 3 | 4 | 5
 
-/** Ein einzelnes Spieler-Interesse mit Selbsteinschätzung. */
+/**
+ * Ein einzelnes Spieler-Interesse mit Selbsteinschätzung.
+ *
+ * `tags` sind optionale Sub-Interessen (Session AA): der Spieler darf pro Topic
+ * beliebig viele Feinkategorien angeben (z. B. Topic „sport" + Tags
+ * `['Fußball', 'Basketball', 'Formel 1']`). Freier Text, gepflegt via Auto-
+ * Complete aus vordefinierten Vorschlägen und Katalog-Tags.
+ */
 export interface PlayerInterest {
   topic: Topic
   level: SkillLevel
+  tags?: string[]
 }
 
 /**

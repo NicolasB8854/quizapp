@@ -29,6 +29,39 @@ export function getAllQuestions(): Question[] {
   return ALL_QUESTIONS
 }
 
+/**
+ * Liefert alle im Katalog gepflegten Tags gruppiert nach Topic (Session AA).
+ *
+ * Wird für die Interessen-Auto-Complete genutzt: wenn der Nutzer im Roster
+ * Sub-Interessen für ein Topic angibt, schlagen wir die Tags aus dem Fragen-
+ * Katalog vor, damit die Personalisierung später matchen kann.
+ *
+ * Reihenfolge: nach Häufigkeit absteigend, dann alphabetisch. So kommen die
+ * relevantesten Tags zuerst.
+ */
+export function getCatalogTagsByTopic(): Partial<Record<Topic, string[]>> {
+  const counts = new Map<string, Map<string, number>>()
+  for (const q of ALL_QUESTIONS) {
+    if (!q.tags || q.tags.length === 0) continue
+    let topicMap = counts.get(q.topic)
+    if (!topicMap) {
+      topicMap = new Map<string, number>()
+      counts.set(q.topic, topicMap)
+    }
+    for (const tag of q.tags) {
+      if (!tag) continue
+      topicMap.set(tag, (topicMap.get(tag) ?? 0) + 1)
+    }
+  }
+  const out: Partial<Record<Topic, string[]>> = {}
+  for (const [topic, map] of counts) {
+    out[topic as Topic] = Array.from(map.entries())
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+      .map(([tag]) => tag)
+  }
+  return out
+}
+
 export function getMultipleChoiceByTopic(topic: Topic): MultipleChoiceQuestion[] {
   return ALL_QUESTIONS.filter(
     (q): q is MultipleChoiceQuestion => q.type === 'multiple-choice' && q.topic === topic,

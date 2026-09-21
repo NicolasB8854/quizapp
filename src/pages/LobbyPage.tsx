@@ -31,8 +31,10 @@ import { AVATAR_COLORS } from '@/data/avatars'
 import { downscaleImageToDataUrl } from '@/lib/image'
 import { getTeamColorTokens } from '@/data/teams'
 import type { Topic } from '@/types/question'
-import type { Avatar, Player, RoundConfig, SkillLevel, Team } from '@/types/round'
+import type { Avatar, Player, PlayerInterest, RoundConfig, SkillLevel, Team } from '@/types/round'
 import { computeInterestProfile } from '@/lib/interestProfile'
+import { getCatalogTagsByTopic } from '@/lib/questions'
+import { getInterestSuggestionsForTopic } from '@/data/interest-suggestions'
 import {
   readPlayerLibrary,
   removeFromPlayerLibrary,
@@ -466,8 +468,11 @@ interface RosterPlayerRowProps {
 
 function RosterPlayerRow({ player, placeholderIndex, dispatch }: RosterPlayerRowProps) {
   const [avatarOpen, setAvatarOpen] = useState(false)
-  const levelByTopic = new Map<string, SkillLevel>()
-  for (const { topic, level } of player.interests) levelByTopic.set(topic, level)
+  // Popover-Zustand für den Sub-Interest-Editor: aktives Topic oder null.
+  const [detailsTopic, setDetailsTopic] = useState<Topic | null>(null)
+
+  const interestByTopic = new Map<Topic, PlayerInterest>()
+  for (const i of player.interests) interestByTopic.set(i.topic, i)
 
   return (
     <div className="rounded-card border border-white/[0.08] bg-navy-800/60 p-4">
@@ -519,13 +524,15 @@ function RosterPlayerRow({ player, placeholderIndex, dispatch }: RosterPlayerRow
       </div>
       <div className="mt-3 flex flex-wrap gap-1.5">
         {TOPICS.map((topic) => {
-          const level = levelByTopic.get(topic.id)
+          const interest = interestByTopic.get(topic.id)
+          const level = interest?.level
           return (
             <InterestChip
               key={topic.id}
               emoji={topic.emoji}
               label={topic.label}
               level={level}
+              subCount={interest?.tags?.length ?? 0}
               onClick={() => {
                 const nextLvl = nextLevel(level)
                 let interests = player.interests
@@ -533,7 +540,7 @@ function RosterPlayerRow({ player, placeholderIndex, dispatch }: RosterPlayerRow
                   interests = interests.filter((i) => i.topic !== topic.id)
                 } else if (level) {
                   interests = interests.map((i) =>
-                    i.topic === topic.id ? { topic: topic.id, level: nextLvl } : i,
+                    i.topic === topic.id ? { ...i, level: nextLvl } : i,
                   )
                 } else {
                   interests = [...interests, { topic: topic.id, level: nextLvl }]
@@ -551,6 +558,60 @@ function RosterPlayerRow({ player, placeholderIndex, dispatch }: RosterPlayerRow
       <div className="mt-2 text-[10px] uppercase tracking-[0.22em] text-ink-faint">
         Tippen zyklt: aus → bisschen → gut → nerd → aus.
       </div>
+
+      {/* Sub-Interessen (Session AA): pro aktivem Topic eine Detail-Zeile mit
+          bereits gewählten Tags und einem „+ Details"-Button für den Editor. */}
+      {player.interests.length > 0 && (
+        <div className="mt-3 space-y-1.5 border-t border-white/[0.05] pt-3">
+          {player.interests.map((i) => {
+            const topicDef = TOPICS_BY_ID[i.topic]
+            const tags = i.tags ?? []
+            return (
+              <div key={i.topic} className="flex items-center gap-2 flex-wrap text-[11px]">
+                <span aria-hidden>{topicDef?.emoji}</span>
+                <span className="text-ink-muted min-w-[70px]">{topicDef?.label}</span>
+                {tags.length > 0 ? (
+                  tags.map((t) => (
+                    <span
+                      key={t}
+                      className="inline-flex items-center gap-1 h-5 rounded-full px-2 bg-brand-purple/15 border border-brand-purple/40 text-brand-purple-soft"
+                    >
+                      {t}
+                    </span>
+                  ))
+                ) : (
+                  <span className="text-ink-faint italic">keine Details</span>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setDetailsTopic(i.topic)}
+                  className="inline-flex items-center gap-1 h-5 rounded-full px-2 border border-white/15 text-ink-muted hover:text-ink hover:border-white/30 transition-colors"
+                >
+                  <Pencil className="h-2.5 w-2.5" />
+                  {tags.length > 0 ? 'ändern' : 'Details'}
+                </button>
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      {/* Popover-Editor für Sub-Interessen des aktuell gewählten Topics. */}
+      {detailsTopic && (
+        <InterestDetailsEditor
+          topic={detailsTopic}
+          currentTags={interestByTopic.get(detailsTopic)?.tags ?? []}
+          onSave={(tags) => {
+            dispatch({
+              type: 'SET_PLAYER_INTEREST_TAGS',
+              playerId: player.id,
+              topic: detailsTopic,
+              tags,
+            })
+          }}
+          onClose={() => setDetailsTopic(null)}
+        />
+      )}
     </div>
   )
 }
@@ -1120,17 +1181,19 @@ interface InterestChipProps {
   emoji: string
   label: string
   level: SkillLevel | undefined
+  /** Zeigt kleines Badge mit Anzahl der Sub-Tags (Session AA). */
+  subCount?: number
   onClick: () => void
 }
 
-function InterestChip({ emoji, label, level, onClick }: InterestChipProps) {
+function InterestChip({ emoji, label, level, subCount = 0, onClick }: InterestChipProps) {
   const off = !level
   return (
     <button
       type="button"
       onClick={onClick}
       aria-pressed={!off}
-      title={level ? `${label} · ${LEVEL_LABEL[level]}` : label}
+      title={level ? `${label} · ${LEVEL_LABEL[level]}${subCount > 0 ? ` · ${subCount} Details` : ''}` : label}
       className={cn(
         'inline-flex items-center gap-1.5 h-7 rounded-full px-2.5',
         'text-[11px] font-medium transition-all border',
@@ -1142,7 +1205,229 @@ function InterestChip({ emoji, label, level, onClick }: InterestChipProps) {
       <span aria-hidden>{emoji}</span>
       <span>{label}</span>
       {level && <LevelDots count={LEVEL_DOTS[level]} />}
+      {subCount > 0 && (
+        <span
+          aria-label={`${subCount} Details`}
+          className="ml-0.5 inline-flex items-center justify-center h-4 min-w-4 px-1 rounded-full bg-white/25 text-[9px] font-bold"
+        >
+          {subCount}
+        </span>
+      )}
     </button>
+  )
+}
+
+// ---------- Sub-Interest-Editor (Popover, Session AA) -----------------------
+
+interface InterestDetailsEditorProps {
+  topic: Topic
+  currentTags: readonly string[]
+  onSave: (tags: string[]) => void
+  onClose: () => void
+}
+
+function InterestDetailsEditor({
+  topic,
+  currentTags,
+  onSave,
+  onClose,
+}: InterestDetailsEditorProps) {
+  const topicDef = TOPICS_BY_ID[topic]
+  const [tags, setTags] = useState<string[]>([...currentTags])
+  const [input, setInput] = useState('')
+  const catalogByTopic = useMemo(() => getCatalogTagsByTopic(), [])
+  const suggestions = useMemo(
+    () => getInterestSuggestionsForTopic(topic, catalogByTopic[topic] ?? [], tags),
+    [topic, tags, catalogByTopic],
+  )
+  const filteredSuggestions = useMemo(() => {
+    const q = input.trim().toLowerCase()
+    if (!q) return suggestions.slice(0, 16)
+    return suggestions.filter((s) => s.toLowerCase().includes(q)).slice(0, 20)
+  }, [input, suggestions])
+
+  const addTag = (raw: string) => {
+    const t = raw.trim()
+    if (!t) return
+    if (tags.some((x) => x.toLowerCase() === t.toLowerCase())) return
+    setTags((prev) => [...prev, t])
+    setInput('')
+  }
+  const removeTag = (t: string) => {
+    setTags((prev) => prev.filter((x) => x !== t))
+  }
+
+  // ESC-Schließen. Speicher-Sync: onSave wird beim Schließen mit den finalen Tags aufgerufen.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onSave(tags)
+        onClose()
+      }
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [tags, onSave, onClose])
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-start md:items-center justify-center p-4 md:p-8"
+      role="dialog"
+      aria-label={`Sub-Interessen für ${topicDef?.label} bearbeiten`}
+    >
+      <button
+        type="button"
+        aria-label="Schließen"
+        onClick={() => {
+          onSave(tags)
+          onClose()
+        }}
+        className="absolute inset-0 bg-navy-900/80 backdrop-blur-sm cursor-default"
+      />
+
+      <div className="relative w-full max-w-lg max-h-[85vh] overflow-hidden flex flex-col rounded-card border border-brand-purple/40 bg-navy-800 shadow-neon-purple">
+        <div className="flex items-start justify-between gap-3 p-5 border-b border-white/10">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl" aria-hidden>
+              {topicDef?.emoji}
+            </span>
+            <div>
+              <div className="eyebrow">Details</div>
+              <div className="mt-0.5 font-display font-semibold text-lg text-ink">
+                Was speziell interessiert dich an {topicDef?.label}?
+              </div>
+              <div className="mt-0.5 text-[11px] text-ink-muted">
+                z. B. „Fußball", „NBA", „Marvel" — passendere Fragen im Spiel.
+              </div>
+            </div>
+          </div>
+          <button
+            type="button"
+            aria-label="Schließen"
+            onClick={() => {
+              onSave(tags)
+              onClose()
+            }}
+            className="shrink-0 h-8 w-8 rounded-full inline-flex items-center justify-center text-ink-muted hover:text-ink hover:bg-white/10"
+          >
+            <XIcon className="h-4 w-4" />
+          </button>
+        </div>
+
+        <div className="p-5 space-y-4 overflow-y-auto">
+          {/* Gewählte Tags */}
+          <div>
+            <div className="eyebrow mb-2">
+              Deine Auswahl {tags.length > 0 && `(${tags.length})`}
+            </div>
+            {tags.length === 0 ? (
+              <div className="text-[11px] text-ink-faint italic">
+                Noch keine Sub-Interessen gewählt.
+              </div>
+            ) : (
+              <div className="flex flex-wrap gap-1.5">
+                {tags.map((t) => (
+                  <span
+                    key={t}
+                    className="inline-flex items-center gap-1.5 h-7 rounded-full pl-3 pr-1 text-[11px] font-medium bg-brand-purple/25 border border-brand-purple/70 text-white"
+                  >
+                    {t}
+                    <button
+                      type="button"
+                      onClick={() => removeTag(t)}
+                      aria-label={`${t} entfernen`}
+                      className="h-5 w-5 rounded-full inline-flex items-center justify-center hover:bg-white/15"
+                    >
+                      <XIcon className="h-2.5 w-2.5" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Freitext-Input */}
+          <div>
+            <div className="eyebrow mb-2">Hinzufügen</div>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                addTag(input)
+              }}
+            >
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="z. B. Basketball, Formel 1…"
+                  autoFocus
+                  className={cn(
+                    'flex-1 h-10 rounded-lg px-3 text-sm',
+                    'bg-navy-900/60 border border-white/15 text-ink',
+                    'placeholder:text-ink-faint focus:outline-none focus:border-brand-purple/60',
+                  )}
+                />
+                <button
+                  type="submit"
+                  disabled={!input.trim()}
+                  className={cn(
+                    'inline-flex items-center gap-1 h-10 rounded-lg px-4',
+                    'font-display font-bold uppercase tracking-[0.16em] text-[11px]',
+                    'bg-brand-purple/25 border border-brand-purple/60 text-white',
+                    'hover:bg-brand-purple/40 transition-colors',
+                    'disabled:opacity-40 disabled:cursor-not-allowed',
+                  )}
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  Hinzufügen
+                </button>
+              </div>
+            </form>
+          </div>
+
+          {/* Vorschläge */}
+          {filteredSuggestions.length > 0 && (
+            <div>
+              <div className="eyebrow mb-2">
+                {input.trim() ? 'Passende Vorschläge' : 'Häufig gewählt'}
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {filteredSuggestions.map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => addTag(s)}
+                    className="inline-flex items-center h-7 rounded-full px-2.5 text-[11px] bg-navy-900/60 border border-white/10 text-ink-muted hover:border-brand-purple/60 hover:text-ink transition-colors"
+                  >
+                    + {s}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="border-t border-white/10 p-4 flex items-center justify-end gap-3">
+          <button
+            type="button"
+            onClick={() => {
+              onSave(tags)
+              onClose()
+            }}
+            className={cn(
+              'inline-flex items-center gap-2 h-10 px-6 rounded-full',
+              'font-display font-bold uppercase tracking-widest text-white text-xs',
+              'bg-cta shadow-neon-purple hover:brightness-110',
+              'transition-all',
+            )}
+          >
+            <Check className="h-4 w-4" />
+            Fertig
+          </button>
+        </div>
+      </div>
+    </div>
   )
 }
 

@@ -2363,3 +2363,85 @@ describe('reducer — Roster-Player-Ops (Session S)', () => {
     expect(bob.name).toBe('Bob')
   })
 })
+// ---------------------------------------------------------------------------
+// Session AA: Sub-Interessen (Player-Interest-Tags)
+// ---------------------------------------------------------------------------
+
+describe('reducer — SET_PLAYER_INTEREST_TAGS (Session AA)', () => {
+  it('setzt Tags an einem existierenden Interest-Eintrag', () => {
+    let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    const p1 = s.round!.players[0]
+    // Erst Interest aktivieren, sonst greift die Guard-Klausel
+    s = reducer(s, {
+      type: 'SET_PLAYER_INTERESTS',
+      playerId: p1.id,
+      interests: [gut('sport')],
+    })
+    s = reducer(s, {
+      type: 'SET_PLAYER_INTEREST_TAGS',
+      playerId: p1.id,
+      topic: 'sport' as never,
+      tags: ['Fußball', 'Basketball', 'Formel 1'],
+    })
+    const updated = s.round!.players.find((p) => p.id === p1.id)!
+    const sport = updated.interests.find((i) => i.topic === 'sport')!
+    expect(sport.tags).toEqual(['Fußball', 'Basketball', 'Formel 1'])
+  })
+
+  it('trimt und dedupliziert Tags case-insensitive', () => {
+    let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    const p1 = s.round!.players[0]
+    s = reducer(s, {
+      type: 'SET_PLAYER_INTERESTS',
+      playerId: p1.id,
+      interests: [gut('musik')],
+    })
+    s = reducer(s, {
+      type: 'SET_PLAYER_INTEREST_TAGS',
+      playerId: p1.id,
+      topic: 'musik' as never,
+      tags: [' Rock ', 'rock', 'Jazz', '', '  Jazz'],
+    })
+    const musik = s.round!.players[0].interests.find((i) => i.topic === 'musik')!
+    // 'Rock' (getrimmt, erst-Vorkommen) und 'Jazz' — leere Strings raus, Duplikate raus
+    expect(musik.tags).toEqual(['Rock', 'Jazz'])
+  })
+
+  it('ignoriert Tag-Setzen für ein Topic, das der Player nicht als Interest aktiviert hat', () => {
+    let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    const p1 = s.round!.players[0]
+    // Kein Interest an "film"
+    s = reducer(s, {
+      type: 'SET_PLAYER_INTEREST_TAGS',
+      playerId: p1.id,
+      topic: 'film' as never,
+      tags: ['Marvel'],
+    })
+    const player = s.round!.players[0]
+    expect(player.interests.some((i) => i.topic === 'film')).toBe(false)
+  })
+
+  it('lässt bestehende Tags ersetzen (nicht anfügen)', () => {
+    let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    const p1 = s.round!.players[0]
+    s = reducer(s, {
+      type: 'SET_PLAYER_INTERESTS',
+      playerId: p1.id,
+      interests: [gut('sport')],
+    })
+    s = reducer(s, {
+      type: 'SET_PLAYER_INTEREST_TAGS',
+      playerId: p1.id,
+      topic: 'sport' as never,
+      tags: ['Fußball'],
+    })
+    s = reducer(s, {
+      type: 'SET_PLAYER_INTEREST_TAGS',
+      playerId: p1.id,
+      topic: 'sport' as never,
+      tags: ['Tennis', 'Golf'],
+    })
+    const sport = s.round!.players[0].interests.find((i) => i.topic === 'sport')!
+    expect(sport.tags).toEqual(['Tennis', 'Golf'])
+  })
+})
