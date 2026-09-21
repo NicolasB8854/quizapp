@@ -29,13 +29,15 @@ type Intent = 'create' | 'join'
 export default function RoomEntryPage() {
   const navigate = useNavigate()
   const wsUrl = import.meta.env.VITE_WS_URL
+  const params = new URLSearchParams(window.location.search)
+  const prefilledCode = (params.get('code') ?? '').trim().toUpperCase()
 
   const identity = useMemo(() => readRoomIdentity(), [])
-  const [intent, setIntent] = useState<Intent>('create')
+  const [intent, setIntent] = useState<Intent>(prefilledCode ? 'join' : 'create')
   const [name, setName] = useState(identity.playerName ?? '')
   const [role, setRole] = useState<'player' | 'master'>('player')
   const [freshCode] = useState(() => generateRoomCode(4))
-  const [joinCode, setJoinCode] = useState('')
+  const [joinCode, setJoinCode] = useState(prefilledCode)
 
   const chosenCode = intent === 'create' ? freshCode : joinCode.trim().toUpperCase()
   const canSubmit =

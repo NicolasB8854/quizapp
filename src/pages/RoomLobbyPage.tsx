@@ -15,6 +15,7 @@
  */
 
 import { useEffect, useMemo } from 'react'
+import { QRCodeSVG } from 'qrcode.react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import {
   ArrowLeft,
@@ -117,30 +118,41 @@ export default function RoomLobbyPage() {
           <StatusBadge status={room.status} />
         </div>
 
-        {/* Room-Code + Rolle */}
-        <Card className="space-y-3 p-4">
-          <div className="flex flex-wrap items-center gap-4">
-            <div>
-              <div className="text-[10px] uppercase tracking-[0.32em] text-ink-muted">
-                Room-Code
+        {/* Room-Code + Rolle. Master bekommt den großen QR-Hero,
+            Player den kompakten Streifen. */}
+        {role === 'master' ? (
+          <MasterHero
+            roomCode={roomCode}
+            playerCount={room.state?.round?.players.length ?? 0}
+            onCopyCode={copyCode}
+          />
+        ) : (
+          <Card className="space-y-3 p-4">
+            <div className="flex flex-wrap items-center gap-4">
+              <div>
+                <div className="text-[10px] uppercase tracking-[0.32em] text-ink-muted">
+                  Room-Code
+                </div>
+                <button
+                  onClick={copyCode}
+                  className="mt-1 inline-flex items-center gap-2 font-mono text-3xl font-bold tracking-[0.32em] text-white hover:text-brand-purple-soft"
+                >
+                  {roomCode}
+                  <Copy className="h-4 w-4 text-white/40" />
+                </button>
               </div>
-              <button
-                onClick={copyCode}
-                className="mt-1 inline-flex items-center gap-2 font-mono text-3xl font-bold tracking-[0.32em] text-white hover:text-brand-purple-soft"
-              >
-                {roomCode}
-                <Copy className="h-4 w-4 text-white/40" />
-              </button>
-            </div>
-            <div className="flex-1" />
-            <div className="text-right">
-              <div className="text-[10px] uppercase tracking-[0.32em] text-ink-muted">
-                {role === 'master' ? 'Master-Screen' : 'Player'}
+              <div className="flex-1" />
+              <div className="text-right">
+                <div className="text-[10px] uppercase tracking-[0.32em] text-ink-muted">
+                  Player
+                </div>
+                <div className="mt-1 font-semibold text-white">
+                  {playerName}
+                </div>
               </div>
-              <div className="mt-1 font-semibold text-white">{playerName}</div>
             </div>
-          </div>
-        </Card>
+          </Card>
+        )}
 
         {!wsUrl && (
           <Card className="border-amber-500/40 bg-amber-500/10 p-4 text-sm text-amber-200">
@@ -179,6 +191,69 @@ export default function RoomLobbyPage() {
 }
 
 // ---------- Sub-Komponenten -------------------------------------------------
+
+/**
+ * Presentation-Hero für die Master-Rolle: großer Room-Code, QR-Code für
+ * Handy-Scan, kompakte Join-URL + Player-Zähler.
+ *
+ * Wird auf dem großen Bildschirm (TV/Beamer) angezeigt, damit die Gäste
+ * mit ihrem Handy einfach den QR scannen können — er zeigt auf
+ * `<origin>/room?code=<CODE>`, wo die Entry-Page den Code bereits
+ * vorbelegt und nur nach dem Namen fragt.
+ */
+function MasterHero({
+  roomCode,
+  playerCount,
+  onCopyCode,
+}: {
+  roomCode: string
+  playerCount: number
+  onCopyCode: () => void
+}) {
+  const origin = typeof window !== 'undefined' ? window.location.origin : ''
+  const joinUrl = `${origin}/room?code=${roomCode}`
+  return (
+    <Card className="border-brand-purple/40 bg-brand-purple/[0.06] p-4 md:p-6">
+      <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:gap-6">
+        <div className="min-w-0 space-y-3">
+          <div className="text-[10px] uppercase tracking-[0.32em] text-brand-purple-soft">
+            Master-Screen · Handy scannen zum Beitreten
+          </div>
+          <button
+            onClick={onCopyCode}
+            title="Kopieren"
+            className="group flex items-center gap-3 text-left"
+          >
+            <span className="font-mono text-6xl font-bold tracking-[0.16em] text-white md:text-7xl">
+              {roomCode}
+            </span>
+            <Copy className="h-5 w-5 text-white/30 transition-colors group-hover:text-brand-purple-soft" />
+          </button>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-white/70">
+            <span className="inline-flex items-center gap-1.5">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+              {playerCount} {playerCount === 1 ? 'Player' : 'Player'} im Raum
+            </span>
+            <span className="font-mono text-white/50">{joinUrl}</span>
+          </div>
+        </div>
+        <div className="flex flex-col items-center gap-1">
+          <div className="rounded-xl bg-white p-2">
+            <QRCodeSVG
+              value={joinUrl}
+              size={140}
+              level="M"
+              marginSize={0}
+            />
+          </div>
+          <div className="text-[10px] uppercase tracking-[0.22em] text-white/40">
+            scan me
+          </div>
+        </div>
+      </div>
+    </Card>
+  )
+}
 
 function StatusBadge({ status }: { status: ReturnType<typeof useRoomSync>['status'] }) {
   const map = {
