@@ -1,5 +1,319 @@
 [
   {
+    "id": "q-essen-01",
+    "topic": "essen",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Als welches Pflanzenteil klassifiziert die Botanik die Kartoffel?",
+    "correctAnswer": "Sprossknolle",
+    "gmNote": "Die Knolle sitzt unterirdisch am Ausläufer der Sprossachse — kein Wurzelgewebe.",
+    "tagsSuggested": [
+      "Sprossknolle",
+      "Pflanzenteil",
+      "Botanik",
+      "Kartoffel",
+      "Ausläufer",
+      "Sprossachse",
+      "Wurzelgewebe"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-essen-02",
+    "topic": "essen",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "Aus welcher italienischen Region stammt die Nudel Orecchiette ursprünglich?",
+    "correctAnswer": "Apulien",
+    "gmNote": "Bari und Umgebung — der Name bedeutet „kleine Ohren“. Klassisch mit Cime di Rapa (Stängelkohl).",
+    "tagsSuggested": [
+      "Apulien",
+      "Nudel Orecchiette",
+      "Bari",
+      "Umgebung",
+      "Name",
+      "Ohren",
+      "Klassisch",
+      "Cime"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-essen-03",
+    "topic": "essen",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "Welche Rebsorte galt in Europa lange als ausgestorben und wurde in Chile wiederentdeckt?",
+    "correctAnswer": "Carménère",
+    "gmNote": "Ursprünglich Bordeaux. Nach der Reblausplage fand man den Wein Ende der 1990er in chilenischen Weinbergen wieder.",
+    "tagsSuggested": [
+      "Carménère",
+      "Europa",
+      "Chile",
+      "Ursprünglich Bordeaux",
+      "Reblausplage",
+      "Wein Ende",
+      "Weinbergen"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-essen-04",
+    "topic": "essen",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Aus welcher deutschen Region stammt das klassische Rezept für den Sauerbraten mit dunkler Marinade und Rosinen?",
+    "correctAnswer": "Rheinland",
+    "tagsSuggested": [
+      "Rheinland",
+      "Rezept",
+      "Sauerbraten",
+      "Marinade",
+      "Rosinen",
+      "Rotwein-Essig-Sud",
+      "Printenbröseln",
+      "Fränkische"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-essen-05",
+    "topic": "essen",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "Welche rote Rebsorte dominiert die klassischen Weine der spanischen Rioja-Region?",
+    "correctAnswer": "Tempranillo",
+    "tagsSuggested": [
+      "Tempranillo",
+      "Rebsorte",
+      "Weine",
+      "Rioja-Region",
+      "Portugiesisch",
+      "Tinta Roriz",
+      "Name",
+      "Rioja"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-flash-06",
+    "topic": "essen",
+    "difficulty": 3,
+    "type": "true-false",
+    "question": "Die Cashew-Nuss wächst außerhalb der eigentlichen Frucht.",
+    "correctAnswer": true,
+    "tagsSuggested": [
+      "Frucht",
+      "Cashew-Apfel",
+      "Kern",
+      "Steinfrucht"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-essen-06",
+    "topic": "essen",
+    "difficulty": 5,
+    "type": "multiple-choice",
+    "question": "Aus welcher italienischen Region stammt der klassische Aceto Balsamico Tradizionale mit DOP-Siegel?",
+    "correctAnswer": "Emilia-Romagna",
+    "tagsSuggested": [
+      "Emilia-Romagna",
+      "Aceto Balsamico Tradizionale",
+      "Siegel",
+      "Modena",
+      "Reggio Emilia",
+      "Bezeichnung",
+      "Mindestens",
+      "Holzfässern"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-essen-07",
+    "topic": "essen",
+    "difficulty": 2,
+    "type": "multiple-choice",
+    "question": "Welche Farbe hat Kurkuma-Pulver typischerweise?",
+    "correctAnswer": "Gelb-Orange",
+    "gmNote": "Das Farbpigment Curcumin ist auch der Grund, warum Curry seine typische gelb-orange Farbe hat.",
+    "tagsSuggested": [
+      "Gelb-Orange",
+      "Kurkuma-Pulver",
+      "Grund",
+      "Curry",
+      "Farbe"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-essen-08",
+    "topic": "essen",
+    "difficulty": 2,
+    "type": "multiple-choice",
+    "question": "Aus welchem Land stammt das Nationalgericht Sushi?",
+    "correctAnswer": "Japan",
+    "gmNote": "Die heutige Form entstand in Edo-zeitigen Tokio als schnelle Straßenspeise („Nigiri\").",
+    "tagsSuggested": [
+      "Japan",
+      "Nationalgericht Sushi",
+      "Form",
+      "Edo",
+      "Tokio",
+      "Straßenspeise",
+      "Nigiri"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-essen-09",
+    "topic": "essen",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Welches Gewürz wird aus getrockneten Blütennarben des Krokus gewonnen und ist das teuerste der Welt?",
+    "correctAnswer": "Safran",
+    "gmNote": "Für ein Kilo Safran werden rund 150.000 Blüten benötigt — alles in Handarbeit.",
+    "tagsSuggested": [
+      "Safran",
+      "Blütennarben",
+      "Krokus",
+      "Welt",
+      "Kilo Safran",
+      "Blüten",
+      "Handarbeit"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-essen-10",
+    "topic": "essen",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Welche zwei Hauptzutaten braucht ein klassischer Aioli?",
+    "correctAnswer": "Öl und Knoblauch",
+    "gmNote": "Traditionell nur Olivenöl und Knoblauch, mit Mörser emulgiert. Moderne Rezepte fügen Eigelb hinzu.",
+    "tagsSuggested": [
+      "Öl und Knoblauch",
+      "Hauptzutaten",
+      "Aioli",
+      "Traditionell",
+      "Olivenöl",
+      "Knoblauch",
+      "Mörser",
+      "Moderne Rezepte"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-essen-11",
+    "topic": "essen",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Aus welcher Kartoffelart wird Whiskey hauptsächlich hergestellt?",
+    "correctAnswer": "Keiner — Whiskey stammt aus Getreide",
+    "gmNote": "Whiskey stammt aus Getreide (Gerste, Roggen, Weizen, Mais). Kartoffelbrand ist Wodka bzw. Aquavit.",
+    "tagsSuggested": [
+      "Keiner — Whiskey stammt aus Getreide",
+      "Kartoffelart",
+      "Whiskey",
+      "Getreide",
+      "Gerste",
+      "Roggen",
+      "Weizen",
+      "Mais"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-essen-12",
+    "topic": "essen",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "Welche Käsesorte wird in einem klassischen Tiramisu verwendet?",
+    "correctAnswer": "Mascarpone",
+    "gmNote": "Mascarpone ist ein Rahm-Käse aus Lombardei mit rund 80 % Fettanteil.",
+    "tagsSuggested": [
+      "Mascarpone",
+      "Tiramisu",
+      "Rahm-Käse",
+      "Lombardei",
+      "Fettanteil"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-essen-13",
+    "topic": "essen",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "Welche mexikanische Chilisorte wird geräuchert zu Chipotle?",
+    "correctAnswer": "Jalapeño",
+    "gmNote": "Chipotle sind geräucherte, getrocknete reife Jalapeños — sie sind mild-rauchig, nicht extrem scharf.",
+    "tagsSuggested": [
+      "Jalapeño",
+      "Chilisorte",
+      "Chipotle"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-essen-14",
+    "topic": "essen",
+    "difficulty": 5,
+    "type": "multiple-choice",
+    "question": "Aus welchem Land stammt der klassische Käse Époisses de Bourgogne mit seiner intensiven Rinde?",
+    "correctAnswer": "Frankreich",
+    "gmNote": "Weichkäse aus der französischen Bourgogne mit Marc-de-Bourgogne-gewaschener Rinde. Napoleon soll ihn geliebt haben.",
+    "tagsSuggested": [
+      "Frankreich",
+      "Käse",
+      "Bourgogne",
+      "Rinde",
+      "Weichkäse",
+      "Marc",
+      "Napoleon"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-essen-15",
+    "topic": "essen",
+    "difficulty": 3,
+    "type": "true-false",
+    "question": "Erdnüsse sind botanisch keine Nüsse, sondern Hülsenfrüchte.",
+    "correctAnswer": true,
+    "gmNote": "Ihre nächste Verwandtschaft sind Bohnen und Erbsen — nicht Baumnüsse.",
+    "tagsSuggested": [
+      "Erdnüsse",
+      "Nüsse",
+      "Hülsenfrüchte",
+      "Verwandtschaft",
+      "Bohnen",
+      "Erbsen",
+      "Baumnüsse"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-flash-24",
+    "topic": "essen",
+    "difficulty": 4,
+    "type": "true-false",
+    "question": "Weißer Balsamico trägt dieselbe DOP-Herkunftsbezeichnung wie klassischer Aceto Balsamico Tradizionale.",
+    "correctAnswer": false,
+    "tagsSuggested": [
+      "Weißer Balsamico",
+      "Herkunftsbezeichnung",
+      "Aceto Balsamico Tradizionale",
+      "Modena",
+      "Kategorie",
+      "Condimento",
+      "Schutz",
+      "Tradizionale"
+    ],
+    "tags": []
+  },
+  {
     "id": "q-film-01",
     "topic": "film",
     "difficulty": 3,
@@ -56,6 +370,2168 @@
       "Gegründet",
       "Hayao Miyazaki",
       "Isao Takahata"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-film-04",
+    "topic": "film",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Welcher deutsche Regisseur gewann 2007 den Oscar für den besten fremdsprachigen Film mit „Das Leben der Anderen“?",
+    "correctAnswer": "Florian Henckel von Donnersmarck",
+    "tagsSuggested": [
+      "Florian Henckel von Donnersmarck",
+      "2007",
+      "Oscar",
+      "Anderen",
+      "Donnersmarcks Regie-Debüt",
+      "Stasi-Offizier",
+      "Kulturüberwachung",
+      "Außenseiter"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-film-05",
+    "topic": "film",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "Welcher US-Regisseur ist für seinen markanten symmetrischen Bildstil bekannt und drehte unter anderem „The Grand Budapest Hotel“?",
+    "correctAnswer": "Wes Anderson",
+    "tagsSuggested": [
+      "Wes Anderson",
+      "Bildstil",
+      "The Grand Budapest Hotel",
+      "1996",
+      "Paul Thomas Anderson",
+      "Bottle Rocket",
+      "Handschrift"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-film-06",
+    "topic": "film",
+    "difficulty": 5,
+    "type": "multiple-choice",
+    "question": "Welcher Cinematographer arbeitete an „Blade Runner 2049“, „Sicario“ und „1917“ und gilt als Meister des Naturlichts?",
+    "correctAnswer": "Roger Deakins",
+    "tagsSuggested": [
+      "Roger Deakins",
+      "2049",
+      "1917",
+      "Blade Runner",
+      "Sicario",
+      "Naturlichts",
+      "2018",
+      "2020"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-film-07",
+    "topic": "film",
+    "difficulty": 2,
+    "type": "multiple-choice",
+    "question": "Welcher Schauspieler spielt Jack Dawson in „Titanic\" (1997)?",
+    "correctAnswer": "Leonardo DiCaprio",
+    "gmNote": "Der Film brachte DiCaprio den internationalen Durchbruch.",
+    "tagsSuggested": [
+      "Leonardo DiCaprio",
+      "1997",
+      "Jack Dawson",
+      "Titanic",
+      "Durchbruch"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-film-08",
+    "topic": "film",
+    "difficulty": 2,
+    "type": "multiple-choice",
+    "question": "Wer führte bei der Original-„Star Wars\"-Trilogie Regie beim ersten Film „Krieg der Sterne\" (1977)?",
+    "correctAnswer": "George Lucas",
+    "gmNote": "Lucas schrieb auch das Drehbuch und finanzierte den Film teilweise selbst.",
+    "tagsSuggested": [
+      "George Lucas",
+      "1977",
+      "Original",
+      "Star Wars",
+      "Trilogie Regie",
+      "Krieg",
+      "Sterne",
+      "Lucas"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-flash-09",
+    "topic": "film",
+    "difficulty": 4,
+    "type": "true-false",
+    "question": "Der Name „James Bond“ stammt von einem Ornithologen.",
+    "correctAnswer": true,
+    "tagsSuggested": [
+      "James Bond",
+      "Ornithologen",
+      "Ian Fleming",
+      "Namen",
+      "Vogelbuch",
+      "Birds",
+      "West Indies",
+      "Ornithologen James Bond"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-film-09",
+    "topic": "film",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Welcher Film gewann 1994 den Oscar für den besten Film und behandelt einen Häftling und einen Bankier in Shawshank?",
+    "correctAnswer": "Forrest Gump",
+    "gmNote": "„Die Verurteilten\" (Shawshank Redemption) verlor damals; „Forrest Gump\" gewann.",
+    "tagsSuggested": [
+      "Forrest Gump",
+      "1994",
+      "Oscar",
+      "Häftling",
+      "Bankier",
+      "Shawshank",
+      "Shawshank Redemption"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-film-10",
+    "topic": "film",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "In welcher Stadt spielt der Großteil der Handlung von Christopher Nolans „Inception\"?",
+    "correctAnswer": "keiner Stadt konkret zuzuordnen",
+    "gmNote": "Die Traumebenen sind bewusst abstrakt; Realität-Szenen springen zwischen Paris, Tokio und LA.",
+    "tagsSuggested": [
+      "keiner Stadt konkret zuzuordnen",
+      "Großteil",
+      "Handlung",
+      "Christopher Nolans",
+      "Inception",
+      "Realität-Szenen",
+      "Paris",
+      "Tokio"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-film-11",
+    "topic": "film",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Welches Studio produzierte „Der Herr der Ringe\"-Trilogie unter Regie von Peter Jackson?",
+    "correctAnswer": "New Line Cinema",
+    "gmNote": "New Line Cinema war damals ein Time-Warner-Tochterunternehmen und ging mit dem Projekt große Risiken ein.",
+    "tagsSuggested": [
+      "New Line Cinema",
+      "Ringe",
+      "Trilogie",
+      "Peter Jackson",
+      "Time-Warner-Tochterunternehmen",
+      "Projekt",
+      "Risiken"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-film-12",
+    "topic": "film",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "Welcher deutsche Film gewann 1979 als erster den Oscar für den besten fremdsprachigen Film?",
+    "correctAnswer": "Die Blechtrommel",
+    "gmNote": "Volker Schlöndorffs Verfilmung des Grass-Romans.",
+    "tagsSuggested": [
+      "Die Blechtrommel",
+      "1979",
+      "Oscar",
+      "Volker Schlöndorffs Verfilmung",
+      "Grass-Romans"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-film-13",
+    "topic": "film",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "Wer komponierte die Filmmusik zu „Der Pate\", „Chinatown\" und „Cinema Paradiso\"?",
+    "correctAnswer": "Nino Rota",
+    "gmNote": "Rota schrieb das Hauptthema zu „Der Pate\"; „Chinatown\" komponierte Jerry Goldsmith — falsche Frage, Korrekt ist: nur Rota bei „Der Pate\".",
+    "tagsSuggested": [
+      "Nino Rota",
+      "Filmmusik",
+      "Chinatown",
+      "Cinema Paradiso",
+      "Rota",
+      "Hauptthema",
+      "Jerry Goldsmith",
+      "Frage"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-film-14",
+    "topic": "film",
+    "difficulty": 5,
+    "type": "multiple-choice",
+    "question": "Welcher Regisseur drehte „The Tree of Life\" (2011) und ist bekannt für sehr wenige, poetische Filme?",
+    "correctAnswer": "Terrence Malick",
+    "gmNote": "Malick nahm zwischen „Badlands\" (1973) und „Der schmale Grat\" (1998) eine 20-Jahre-Pause.",
+    "tagsSuggested": [
+      "Terrence Malick",
+      "2011",
+      "The Tree",
+      "Life",
+      "1973",
+      "1998",
+      "Malick",
+      "Badlands"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-film-15",
+    "topic": "film",
+    "difficulty": 2,
+    "type": "true-false",
+    "question": "Der Film „Der Pate\" (1972) wurde von Francis Ford Coppola inszeniert.",
+    "correctAnswer": true,
+    "gmNote": "Coppola gewann den Oscar für die Regie beim zweiten Teil (1974).",
+    "tagsSuggested": [
+      "1972",
+      "Francis Ford Coppola",
+      "1974",
+      "Coppola",
+      "Oscar",
+      "Teil"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-flash-16",
+    "topic": "film",
+    "difficulty": 3,
+    "type": "true-false",
+    "question": "Der Film „Titanic“ (1997) gewann elf Oscars.",
+    "correctAnswer": true,
+    "tagsSuggested": [
+      "1997",
+      "Titanic",
+      "Oscars",
+      "1959",
+      "2003",
+      "Damit",
+      "Ben Hur",
+      "Königs"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-film-16",
+    "topic": "film",
+    "difficulty": 3,
+    "type": "true-false",
+    "question": "Alfred Hitchcock hat in „Vertigo\" (1958) einen kurzen Cameo-Auftritt.",
+    "correctAnswer": true,
+    "gmNote": "Hitchcock hatte in fast allen seinen Filmen einen kleinen Auftritt — Markenzeichen.",
+    "tagsSuggested": [
+      "1958",
+      "Alfred Hitchcock",
+      "Vertigo",
+      "Cameo-Auftritt",
+      "Hitchcock",
+      "Filmen",
+      "Auftritt",
+      "Markenzeichen"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-flash-28",
+    "topic": "film",
+    "difficulty": 4,
+    "type": "true-false",
+    "question": "Der Film „Casablanca“ gewann bei der Oscar-Verleihung 1944 den Preis für den besten Film.",
+    "correctAnswer": true,
+    "tagsSuggested": [
+      "1944",
+      "Casablanca",
+      "Oscar-Verleihung",
+      "Preis",
+      "Zusätzlich",
+      "Oscars",
+      "Michael Curtiz",
+      "Drehbuch"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-games-01",
+    "topic": "games",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Welches Studio entwickelte das Rollenspiel „The Witcher 3: Wild Hunt“?",
+    "correctAnswer": "CD Projekt Red",
+    "gmNote": "Sitz in Warschau. Die Vorlage stammt vom polnischen Autor Andrzej Sapkowski.",
+    "tagsSuggested": [
+      "CD Projekt Red",
+      "Rollenspiel",
+      "The Witcher",
+      "Wild Hunt",
+      "Sitz",
+      "Warschau"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-games-02",
+    "topic": "games",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "In welchem Jahr erschien die offizielle Vollversion 1.0 von „Minecraft“?",
+    "correctAnswer": "2011",
+    "gmNote": "18. November 2011 auf der MineCon in Las Vegas. Die Alpha lief seit 2009.",
+    "tagsSuggested": [
+      "2011",
+      "Vollversion",
+      "Minecraft",
+      "2009",
+      "November",
+      "Las Vegas"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-games-03",
+    "topic": "games",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "Welche Heimkonsole führte 1996 einen Analog-Stick als Standardsteuerung ein?",
+    "correctAnswer": "Nintendo 64",
+    "gmNote": "Der Controller mit dem markanten Drei-Griff-Design war für „Super Mario 64“ mitgedacht.",
+    "tagsSuggested": [
+      "Nintendo 64",
+      "1996",
+      "Analog-Stick",
+      "Standardsteuerung",
+      "Drei-Griff-Design",
+      "Super Mario"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-games-04",
+    "topic": "games",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Welcher Publisher steht seit den 1980ern hinter der Videospielserie „The Legend of Zelda“?",
+    "correctAnswer": "Nintendo",
+    "tagsSuggested": [
+      "Nintendo",
+      "Videospielserie",
+      "The Legend",
+      "Zelda",
+      "1986",
+      "Shigeru Miyamoto",
+      "Reihe",
+      "Alle Hauptteile"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-games-05",
+    "topic": "games",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "Welches unabhängige Studio veröffentlichte 2020 den vielfach ausgezeichneten Rogue-Like-Titel „Hades“?",
+    "correctAnswer": "Supergiant Games",
+    "tagsSuggested": [
+      "Supergiant Games",
+      "2020",
+      "Studio",
+      "Rogue-Like-Titel",
+      "Hades",
+      "Supergiant",
+      "San Francisco",
+      "Bastion"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-games-06",
+    "topic": "games",
+    "difficulty": 5,
+    "type": "multiple-choice",
+    "question": "In welchem Jahr veröffentlichte Atari das Arcade-Spiel „Pong“ — einen der Meilensteine der Videospielgeschichte?",
+    "correctAnswer": "1972",
+    "tagsSuggested": [
+      "1972",
+      "Atari",
+      "Arcade-Spiel",
+      "Pong",
+      "Meilensteine",
+      "Videospielgeschichte",
+      "Allan Alcorn",
+      "Prototyp"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-games-07",
+    "topic": "games",
+    "difficulty": 2,
+    "type": "multiple-choice",
+    "question": "Welche Spielfigur ist das langjährige Maskottchen von SEGA?",
+    "correctAnswer": "Sonic the Hedgehog",
+    "gmNote": "Sonic wurde 1991 auf dem Sega Mega Drive als Gegenentwurf zu Mario eingeführt.",
+    "tagsSuggested": [
+      "Sonic the Hedgehog",
+      "Maskottchen",
+      "1991",
+      "Sonic",
+      "Sega Mega Drive",
+      "Gegenentwurf",
+      "Mario"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-games-08",
+    "topic": "games",
+    "difficulty": 2,
+    "type": "multiple-choice",
+    "question": "In welchem Studio entstand die „Portal\"-Serie und „Half-Life\"?",
+    "correctAnswer": "Valve",
+    "gmNote": "Valve entwickelte auch die Vertriebs-Plattform Steam, die 2003 startete.",
+    "tagsSuggested": [
+      "Valve",
+      "Studio",
+      "Portal",
+      "Half-Life",
+      "2003",
+      "Vertriebs-Plattform Steam"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-games-09",
+    "topic": "games",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Welches Rollenspiel erschien 2011, spielt in der Provinz Skyrim und stammt von Bethesda?",
+    "correctAnswer": "The Elder Scrolls V: Skyrim",
+    "gmNote": "Fünfter Teil der Elder-Scrolls-Reihe; wird bis heute regelmäßig auf neue Plattformen portiert.",
+    "tagsSuggested": [
+      "The Elder Scrolls V: Skyrim",
+      "2011",
+      "Provinz Skyrim",
+      "Bethesda",
+      "Fünfter Teil",
+      "Elder-Scrolls-Reihe",
+      "Plattformen"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-games-10",
+    "topic": "games",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Welches japanische Studio entwickelte die „Souls\"-Reihe sowie „Elden Ring\" (2022)?",
+    "correctAnswer": "FromSoftware",
+    "gmNote": "Regisseur Hidetaka Miyazaki prägte den Sub-Genre-Begriff „Soulslike\".",
+    "tagsSuggested": [
+      "FromSoftware",
+      "2022",
+      "Studio",
+      "Souls",
+      "Reihe",
+      "Elden Ring",
+      "Sub-Genre-Begriff",
+      "Soulslike"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-games-11",
+    "topic": "games",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Welches Battle-Royale-Spiel wurde 2017 populär und stammt vom südkoreanischen Studio KRAFTON?",
+    "correctAnswer": "PUBG: Battlegrounds",
+    "gmNote": "PlayerUnknown's Battlegrounds prägte das Genre; Fortnite folgte kurz darauf mit einem eigenen Modus.",
+    "tagsSuggested": [
+      "PUBG: Battlegrounds",
+      "2017",
+      "Studio",
+      "Battlegrounds",
+      "Genre",
+      "Fortnite",
+      "Modus"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-games-12",
+    "topic": "games",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "Welches PC-Spiel gilt als das meistverkaufte Videospiel aller Zeiten?",
+    "correctAnswer": "Minecraft",
+    "gmNote": "Minecraft hat über 300 Millionen verkaufte Exemplare (Stand 2023). Tetris folgt mit ~200 Millionen (alle Versionen zusammen).",
+    "tagsSuggested": [
+      "Minecraft",
+      "Spiel",
+      "Videospiel",
+      "Zeiten",
+      "2023",
+      "Millionen",
+      "Exemplare",
+      "Stand"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-games-13",
+    "topic": "games",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "Welches 2001 erschienene Spiel wurde als frühes Beispiel für ein offenes, storybasiertes 3D-Actionspiel wegweisend?",
+    "correctAnswer": "Grand Theft Auto III",
+    "gmNote": "GTA III führte offene Welten mit voller 3D-Steuerung in den Mainstream.",
+    "tagsSuggested": [
+      "Grand Theft Auto III",
+      "2001",
+      "Spiel",
+      "Beispiel",
+      "Actionspiel",
+      "Welten",
+      "Steuerung",
+      "Mainstream"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-games-14",
+    "topic": "games",
+    "difficulty": 5,
+    "type": "multiple-choice",
+    "question": "Welcher Programmierer erschuf 1984 „Tetris\" im Rechenzentrum der Sowjetischen Akademie der Wissenschaften?",
+    "correctAnswer": "Alexey Pajitnov",
+    "gmNote": "Pajitnov erhielt jahrzehntelang keine Lizenzgelder für sein Spiel wegen sowjetischer Rechteregelung.",
+    "tagsSuggested": [
+      "Alexey Pajitnov",
+      "1984",
+      "Tetris",
+      "Rechenzentrum",
+      "Sowjetischen Akademie",
+      "Wissenschaften",
+      "Pajitnov",
+      "Lizenzgelder"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-games-15",
+    "topic": "games",
+    "difficulty": 3,
+    "type": "true-false",
+    "question": "Das Spiel „Pac-Man\" (1980) hat einen inoffiziellen „Kill Screen\" bei Level 256.",
+    "correctAnswer": true,
+    "gmNote": "Ein 8-Bit-Integer-Overflow lässt die Hälfte des Bildschirms zerbrechen — ein legendärer Programmierfehler.",
+    "tagsSuggested": [
+      "1980",
+      "Pac-Man",
+      "Kill Screen",
+      "Level",
+      "Bit-Integer-Overflow",
+      "Hälfte",
+      "Bildschirms",
+      "Programmierfehler"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-flash-19",
+    "topic": "games",
+    "difficulty": 2,
+    "type": "true-false",
+    "question": "Mario, das Maskottchen von Nintendo, war in seinem allerersten Auftritt bereits als Klempner konzipiert.",
+    "correctAnswer": false,
+    "tagsSuggested": [
+      "Mario",
+      "Maskottchen",
+      "Nintendo",
+      "Auftritt",
+      "Klempner",
+      "1981",
+      "1983",
+      "Donkey Kong"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-geo-01",
+    "topic": "geografie",
+    "difficulty": 2,
+    "type": "multiple-choice",
+    "question": "Welches Land besitzt die längste Küstenlinie der Erde?",
+    "correctAnswer": "Kanada",
+    "gmNote": "Rund 202.000 km — bedingt durch die zerklüftete Arktis-Küste und die vielen Inseln im Norden.",
+    "tagsSuggested": [
+      "Kanada",
+      "Küstenlinie",
+      "Erde",
+      "Rund",
+      "Arktis-Küste",
+      "Inseln",
+      "Norden"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-geo-02",
+    "topic": "geografie",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Welche der folgenden Hauptstädte liegt am weitesten nördlich?",
+    "correctAnswer": "Helsinki",
+    "gmNote": "Helsinki liegt auf ~60,2° Nord. Reykjavík wäre noch nördlicher, war aber nicht in den Optionen.",
+    "tagsSuggested": [
+      "Helsinki",
+      "Hauptstädte",
+      "Nord",
+      "Optionen"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-geo-03",
+    "topic": "geografie",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "Welchem Staat gehört die Insel Sokotra mit ihrer einzigartigen Flora?",
+    "correctAnswer": "Jemen",
+    "gmNote": "Sokotra liegt im Golf von Aden. Der Drachenblutbaum ist eines der ikonischen Wahrzeichen der Insel.",
+    "tagsSuggested": [
+      "Jemen",
+      "Insel Sokotra",
+      "Flora",
+      "Sokotra",
+      "Golf",
+      "Aden",
+      "Wahrzeichen",
+      "Insel"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-geografie-04",
+    "topic": "geografie",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Welches ist das flächenmäßig größte Land Afrikas?",
+    "correctAnswer": "Algerien",
+    "tagsSuggested": [
+      "Algerien",
+      "2011",
+      "Mio",
+      "Teilung",
+      "Sudan",
+      "Davor",
+      "Gesamt"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-geografie-05",
+    "topic": "geografie",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "Welche Bezeichnung trägt die charakteristische Trichtermündung der Elbe in die Nordsee?",
+    "correctAnswer": "Ästuar",
+    "tagsSuggested": [
+      "Ästuar",
+      "Trichtermündung",
+      "Elbe",
+      "Nordsee",
+      "Ästuare",
+      "Gezeiten",
+      "Flussbett",
+      "Auch Themse"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-geografie-06",
+    "topic": "geografie",
+    "difficulty": 5,
+    "type": "multiple-choice",
+    "question": "Wie hoch ist der Kilimandscharo, der höchste Berg Afrikas, auf hundert Meter gerundet?",
+    "correctAnswer": "5900 m",
+    "tagsSuggested": [
+      "5900 m",
+      "Kilimandscharo",
+      "Berg Afrikas",
+      "Meter",
+      "Kibo-Krater",
+      "Vulkan",
+      "Teil",
+      "Kette"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-geografie-07",
+    "topic": "geografie",
+    "difficulty": 2,
+    "type": "multiple-choice",
+    "question": "Welcher ist der längste Fluss der Welt (nach den meisten Quellen)?",
+    "correctAnswer": "Nil",
+    "gmNote": "Konventionell ~6.650 km. Neuere Messungen argumentieren, der Amazonas sei länger — international ist der Nil aber als längster geführt.",
+    "tagsSuggested": [
+      "Nil",
+      "Fluss",
+      "Welt",
+      "Quellen",
+      "Konventionell",
+      "Neuere Messungen",
+      "Amazonas"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-flash-08",
+    "topic": "geografie",
+    "difficulty": 2,
+    "type": "true-false",
+    "question": "Der Eiffelturm ist bis heute der höchste Turm der Welt.",
+    "correctAnswer": false,
+    "tagsSuggested": [
+      "Turm",
+      "Welt",
+      "Tokyo Skytree",
+      "Fernsehtürme"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-geografie-08",
+    "topic": "geografie",
+    "difficulty": 2,
+    "type": "multiple-choice",
+    "question": "Welche Wüste bedeckt den Großteil Nordafrikas?",
+    "correctAnswer": "Sahara",
+    "gmNote": "Die Sahara ist mit ~9,2 Mio. km² die größte Trockenwüste der Erde.",
+    "tagsSuggested": [
+      "Sahara",
+      "Großteil Nordafrikas",
+      "Mio",
+      "Trockenwüste",
+      "Erde"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-geografie-09",
+    "topic": "geografie",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Welche Meerenge trennt Europa von Afrika an ihrer schmalsten Stelle?",
+    "correctAnswer": "Straße von Gibraltar",
+    "gmNote": "An der schmalsten Stelle nur rund 14 Kilometer breit.",
+    "tagsSuggested": [
+      "Straße von Gibraltar",
+      "Europa",
+      "Afrika",
+      "Stelle",
+      "Kilometer"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-geografie-10",
+    "topic": "geografie",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Welcher Staat besteht aus etwa 17.500 Inseln und ist damit der größte Inselstaat der Welt?",
+    "correctAnswer": "Indonesien",
+    "gmNote": "Indonesien erstreckt sich über etwa 5.000 km Ost-West und hat rund 270 Millionen Einwohner.",
+    "tagsSuggested": [
+      "Indonesien",
+      "Inseln",
+      "Inselstaat",
+      "Welt",
+      "Ost-West",
+      "Millionen Einwohner"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-flash-11",
+    "topic": "geografie",
+    "difficulty": 2,
+    "type": "true-false",
+    "question": "Die Transsibirische Eisenbahn ist die längste durchgehende Bahnstrecke der Welt.",
+    "correctAnswer": true,
+    "tagsSuggested": [
+      "Bahnstrecke",
+      "Welt",
+      "Moskau",
+      "Wladiwostok",
+      "Kilometer",
+      "Zeitzonen",
+      "Reine Fahrzeit",
+      "Aufenthalte"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-geografie-11",
+    "topic": "geografie",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Welcher See ist der tiefste der Erde?",
+    "correctAnswer": "Baikalsee",
+    "gmNote": "Der Baikalsee in Sibirien reicht 1.642 m tief und enthält rund 20 % des flüssigen Süßwassers der Erde.",
+    "tagsSuggested": [
+      "Baikalsee",
+      "Erde",
+      "Sibirien",
+      "Süßwassers"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-geografie-12",
+    "topic": "geografie",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "Welches Land hat die meisten Zeitzonen?",
+    "correctAnswer": "Frankreich",
+    "gmNote": "Frankreich hat wegen seiner Überseegebiete zwölf Zeitzonen. Russland kommt auf elf, China nutzt trotz Ausdehnung nur eine.",
+    "tagsSuggested": [
+      "Frankreich",
+      "Zeitzonen",
+      "Überseegebiete",
+      "Russland",
+      "China",
+      "Ausdehnung"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-geografie-13",
+    "topic": "geografie",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "An welchen zwei Ozeanen liegt der Panamakanal?",
+    "correctAnswer": "Pazifik und Karibik/Atlantik",
+    "gmNote": "Die Kanaldurchfahrt verbindet den Atlantik (über Karibik) mit dem Pazifik — Schiffe sparen die Umfahrung von Südamerika.",
+    "tagsSuggested": [
+      "Pazifik und Karibik/Atlantik",
+      "Ozeanen",
+      "Panamakanal",
+      "Atlantik",
+      "Karibik",
+      "Pazifik",
+      "Schiffe",
+      "Umfahrung"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-flash-14",
+    "topic": "geografie",
+    "difficulty": 4,
+    "type": "true-false",
+    "question": "Australien ist an seiner breitesten Stelle breiter als der Durchmesser des Mondes.",
+    "correctAnswer": true,
+    "tagsSuggested": [
+      "Australien",
+      "Stelle",
+      "Durchmesser",
+      "Mondes",
+      "Mond",
+      "Sitzt",
+      "Nennung"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-geografie-14",
+    "topic": "geografie",
+    "difficulty": 5,
+    "type": "multiple-choice",
+    "question": "Welche Hauptstadt liegt geografisch am höchsten (rund 3.640 m ü. NN)?",
+    "correctAnswer": "La Paz",
+    "gmNote": "La Paz ist Regierungssitz Boliviens; die offizielle Hauptstadt ist Sucre, aber La Paz ist Sitz von Regierung und Parlament.",
+    "tagsSuggested": [
+      "La Paz",
+      "Regierungssitz Boliviens",
+      "Hauptstadt",
+      "Sucre",
+      "Sitz",
+      "Regierung",
+      "Parlament"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-geografie-15",
+    "topic": "geografie",
+    "difficulty": 3,
+    "type": "true-false",
+    "question": "Die Antarktis ist der trockenste Kontinent der Erde.",
+    "correctAnswer": true,
+    "gmNote": "Trotz Eis: der Niederschlag ist so gering (< 200 mm/Jahr), dass Teile als Wüste gelten.",
+    "tagsSuggested": [
+      "Kontinent",
+      "Erde",
+      "Trotz Eis",
+      "Niederschlag",
+      "Teile",
+      "Wüste"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-geografie-16",
+    "topic": "geografie",
+    "difficulty": 2,
+    "type": "true-false",
+    "question": "Der Mount Everest ist der höchste Berg, wenn man vom Meeresspiegel aus misst.",
+    "correctAnswer": true,
+    "gmNote": "8.849 m NN. Vom Fuß auf Ozeanboden gemessen ist der Mauna Kea auf Hawaii höher.",
+    "tagsSuggested": [
+      "Berg",
+      "Meeresspiegel",
+      "Vom Fuß",
+      "Ozeanboden",
+      "Mauna Kea",
+      "Hawaii"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-geografie-17",
+    "topic": "geografie",
+    "difficulty": 4,
+    "type": "true-false",
+    "question": "Die Datumsgrenze verläuft in gerader Linie exakt entlang des 180. Längengrads.",
+    "correctAnswer": false,
+    "gmNote": "Sie hat mehrere Zickzacks, u.a. um Kiribati und die Aleuten herum, damit ganze Länder in derselben Zeitzone bleiben.",
+    "tagsSuggested": [
+      "Linie",
+      "Längengrads",
+      "Zickzacks",
+      "Kiribati",
+      "Aleuten",
+      "Zeitzone"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-flash-20",
+    "topic": "geografie",
+    "difficulty": 2,
+    "type": "true-false",
+    "question": "Australien ist gleichzeitig ein Land und ein eigenständiger Kontinent.",
+    "correctAnswer": true,
+    "tagsSuggested": [
+      "Australien",
+      "Kontinent",
+      "Staat",
+      "Ozeanien",
+      "Neuseeland",
+      "Papua-Neuguinea",
+      "Pazifik-Inselstaaten"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-gesch-01",
+    "topic": "geschichte",
+    "difficulty": 2,
+    "type": "multiple-choice",
+    "question": "In welchem Jahr fiel die Berliner Mauer?",
+    "correctAnswer": "1989",
+    "gmNote": "9. November — Günter Schabowskis Pressekonferenz löste den unkontrollierten Grenzöffnungs-Ansturm aus.",
+    "tagsSuggested": [
+      "1989",
+      "Berliner Mauer",
+      "November",
+      "Günter Schabowskis Pressekonferenz",
+      "Grenzöffnungs-Ansturm"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-gesch-02",
+    "topic": "geschichte",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Welches Reich beherrschte im 13. Jahrhundert die größte zusammenhängende Landfläche der Geschichte?",
+    "correctAnswer": "Mongolisches Reich",
+    "gmNote": "Rund 24 Millionen km² auf dem Höhepunkt unter Dschingis Khans Nachfolgern.",
+    "tagsSuggested": [
+      "Mongolisches Reich",
+      "Landfläche",
+      "Geschichte",
+      "Rund",
+      "Millionen",
+      "Höhepunkt",
+      "Dschingis Khans Nachfolgern"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-gesch-03",
+    "topic": "geschichte",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "Welcher Vertrag beendete 1648 den Dreißigjährigen Krieg?",
+    "correctAnswer": "Westfälischer Friede",
+    "gmNote": "Unterzeichnet in Münster und Osnabrück. Der Ausgangspunkt der modernen Staatensouveränität.",
+    "tagsSuggested": [
+      "Westfälischer Friede",
+      "Dreißigjährigen Krieg",
+      "Unterzeichnet",
+      "Münster",
+      "Osnabrück",
+      "Staatensouveränität"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-geschichte-04",
+    "topic": "geschichte",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "In welchem Jahr fiel die Berliner Mauer?",
+    "correctAnswer": "1989",
+    "tagsSuggested": [
+      "1989",
+      "Berliner Mauer",
+      "1990",
+      "Am Abend",
+      "November",
+      "Grenzübergänge",
+      "Pressekonferenz",
+      "Günter Schabowski"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-flash-05",
+    "topic": "geschichte",
+    "difficulty": 3,
+    "type": "true-false",
+    "question": "Napoleon Bonaparte war für seine Zeit ungewöhnlich klein.",
+    "correctAnswer": false,
+    "tagsSuggested": [
+      "Napoleon Bonaparte",
+      "Zeit",
+      "Durchschnittsgröße",
+      "Frankreich",
+      "Verwechslung",
+      "Zolleinheiten",
+      "Karikaturen"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-geschichte-05",
+    "topic": "geschichte",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "Unter welchem Sultan erreichte das Osmanische Reich im 16. Jahrhundert seinen territorialen Höhepunkt?",
+    "correctAnswer": "Süleyman der Prächtige",
+    "tagsSuggested": [
+      "Süleyman der Prächtige",
+      "Sultan",
+      "Osmanische Reich",
+      "Höhepunkt",
+      "Süleyman",
+      "Reich",
+      "Wien",
+      "Prächtige"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-geschichte-06",
+    "topic": "geschichte",
+    "difficulty": 5,
+    "type": "multiple-choice",
+    "question": "Wer war der erste Reichspräsident der Weimarer Republik von 1919 bis 1925?",
+    "correctAnswer": "Friedrich Ebert",
+    "tagsSuggested": [
+      "Friedrich Ebert",
+      "1919",
+      "1925",
+      "Reichspräsident",
+      "Weimarer Republik",
+      "Nationalversammlung",
+      "Tod",
+      "Paul"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-geschichte-07",
+    "topic": "geschichte",
+    "difficulty": 2,
+    "type": "multiple-choice",
+    "question": "In welchem Jahr endete der Zweite Weltkrieg in Europa mit der bedingungslosen Kapitulation Deutschlands?",
+    "correctAnswer": "1945",
+    "gmNote": "8. Mai 1945 (in Russland als 9. Mai gefeiert wegen Zeitverschiebung der Unterzeichnung).",
+    "tagsSuggested": [
+      "1945",
+      "Zweite Weltkrieg",
+      "Europa",
+      "Kapitulation Deutschlands",
+      "Mai",
+      "Russland",
+      "Zeitverschiebung",
+      "Unterzeichnung"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-geschichte-08",
+    "topic": "geschichte",
+    "difficulty": 2,
+    "type": "multiple-choice",
+    "question": "Welche Zivilisation baute die Pyramiden von Gizeh?",
+    "correctAnswer": "Ägypter",
+    "gmNote": "Die Cheops-Pyramide entstand ca. 2560 v. Chr. und war fast 4.000 Jahre das höchste Bauwerk der Welt.",
+    "tagsSuggested": [
+      "Ägypter",
+      "Pyramiden",
+      "Gizeh",
+      "Chr",
+      "Bauwerk",
+      "Welt"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-geschichte-09",
+    "topic": "geschichte",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Welche englische Königin regierte 1558 bis 1603 und gilt als Namensgeberin einer literarischen Blütezeit?",
+    "correctAnswer": "Elisabeth I.",
+    "gmNote": "Elisabeth I. — das Elisabethanische Zeitalter brachte u.a. William Shakespeare hervor.",
+    "tagsSuggested": [
+      "Elisabeth I.",
+      "Königin",
+      "Namensgeberin",
+      "Blütezeit",
+      "Elisabeth",
+      "Elisabethanische Zeitalter",
+      "William Shakespeare"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-geschichte-10",
+    "topic": "geschichte",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Wer war der erste Bundeskanzler der Bundesrepublik Deutschland?",
+    "correctAnswer": "Konrad Adenauer",
+    "gmNote": "Adenauer amtierte 1949-1963 und prägte die Westintegration Westdeutschlands.",
+    "tagsSuggested": [
+      "Konrad Adenauer",
+      "Bundeskanzler",
+      "Bundesrepublik Deutschland",
+      "1949",
+      "1963",
+      "Adenauer",
+      "Westintegration Westdeutschlands"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-geschichte-11",
+    "topic": "geschichte",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Welche Revolution begann 1789 mit dem Sturm auf die Bastille?",
+    "correctAnswer": "Französische Revolution",
+    "gmNote": "14. Juli 1789 — der Sturm auf das Pariser Staatsgefängnis wurde zum Symbol des Volksaufstandes.",
+    "tagsSuggested": [
+      "Französische Revolution",
+      "Sturm",
+      "Bastille",
+      "Juli",
+      "Pariser Staatsgefängnis",
+      "Symbol",
+      "Volksaufstandes"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-geschichte-12",
+    "topic": "geschichte",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "Wer war der letzte Zar Russlands, der 1917 zur Abdankung gezwungen wurde?",
+    "correctAnswer": "Nikolaus II.",
+    "gmNote": "Nikolaus II. und seine Familie wurden 1918 in Jekaterinburg von Bolschewiki ermordet.",
+    "tagsSuggested": [
+      "Nikolaus II.",
+      "1917",
+      "Zar Russlands",
+      "Abdankung",
+      "1918",
+      "Nikolaus",
+      "Familie",
+      "Jekaterinburg"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-geschichte-13",
+    "topic": "geschichte",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "Welches Ereignis 1962 brachte die Welt an den Rand eines Atomkriegs zwischen den USA und der Sowjetunion?",
+    "correctAnswer": "Kubakrise",
+    "gmNote": "Nach 13 Tagen zog Chruschtschow die sowjetischen Raketen aus Kuba ab — im Gegenzug entfernten die USA Raketen aus der Türkei.",
+    "tagsSuggested": [
+      "Kubakrise",
+      "1962",
+      "Welt",
+      "Rand",
+      "Atomkriegs",
+      "Sowjetunion",
+      "Tagen",
+      "Chruschtschow"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-geschichte-14",
+    "topic": "geschichte",
+    "difficulty": 5,
+    "type": "multiple-choice",
+    "question": "Welche zwei Vertragswerke, unterzeichnet 1494 und 1529, teilten die außereuropäische Welt zwischen Spanien und Portugal auf?",
+    "correctAnswer": "Vertrag von Tordesillas und Saragossa",
+    "gmNote": "Tordesillas (1494) teilte die Neue Welt entlang eines Meridians; Saragossa (1529) verlängerte die Grenze durch Asien.",
+    "tagsSuggested": [
+      "Vertrag von Tordesillas und Saragossa",
+      "Vertragswerke",
+      "Welt",
+      "Spanien",
+      "Portugal",
+      "Tordesillas",
+      "Neue Welt",
+      "Meridians"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-flash-15",
+    "topic": "geschichte",
+    "difficulty": 3,
+    "type": "true-false",
+    "question": "Isaac Newton wurde tatsächlich von einem herabfallenden Apfel am Kopf getroffen.",
+    "correctAnswer": false,
+    "tagsSuggested": [
+      "Isaac Newton",
+      "Apfel",
+      "Kopf",
+      "Erzählung",
+      "Garten",
+      "Mutter",
+      "Verzierung"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-geschichte-15",
+    "topic": "geschichte",
+    "difficulty": 2,
+    "type": "true-false",
+    "question": "Die Berliner Mauer stand länger als 25 Jahre.",
+    "correctAnswer": true,
+    "gmNote": "1961 bis 1989 — 28 Jahre.",
+    "tagsSuggested": [
+      "1961",
+      "1989"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-geschichte-16",
+    "topic": "geschichte",
+    "difficulty": 3,
+    "type": "true-false",
+    "question": "Cleopatra lebte zeitlich näher an der Erfindung des iPhones als am Bau der Cheops-Pyramide.",
+    "correctAnswer": true,
+    "gmNote": "Pyramide: ~2560 v. Chr., Cleopatra: 69-30 v. Chr., iPhone: 2007. Die Zeitdistanz Pyramide → Cleopatra ist rund 2500 Jahre, Cleopatra → iPhone rund 2000 Jahre.",
+    "tagsSuggested": [
+      "Cleopatra",
+      "Erfindung",
+      "Bau",
+      "Cheops-Pyramide",
+      "2007",
+      "2000",
+      "Pyramide",
+      "Chr"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-flash-21",
+    "topic": "geschichte",
+    "difficulty": 3,
+    "type": "true-false",
+    "question": "Napoleon Bonaparte wurde in Frankreich geboren.",
+    "correctAnswer": false,
+    "tagsSuggested": [
+      "Napoleon Bonaparte",
+      "Frankreich",
+      "August",
+      "Korsika",
+      "Insel",
+      "Korsisch",
+      "Französisch"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-kurios-01",
+    "topic": "kurioses",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Wie viele Herzen hat ein Krake?",
+    "correctAnswer": "3",
+    "gmNote": "Ein Hauptherz für den Körper, zwei Kiemenherzen. Das Blut ist blau (Hämocyanin statt Hämoglobin).",
+    "tagsSuggested": [
+      "3",
+      "Herzen",
+      "Krake",
+      "Körper",
+      "Kiemenherzen",
+      "Hämocyanin",
+      "Hämoglobin"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-flash-01",
+    "topic": "kurioses",
+    "difficulty": 2,
+    "type": "true-false",
+    "question": "Die Chinesische Mauer ist mit bloßem Auge aus dem Weltall sichtbar.",
+    "correctAnswer": false,
+    "tagsSuggested": [
+      "Auge",
+      "Weltall",
+      "Mythos",
+      "Astronaut",
+      "Mauer",
+      "Orbit",
+      "Hilfsmittel"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-klick-01",
+    "topic": "kurioses",
+    "difficulty": 3,
+    "type": "warmup-riddle",
+    "question": "Warum haben Golfbälle keine glatte Oberfläche, sondern kleine Dellen?",
+    "solution": "Die Dellen erzeugen kontrollierte Turbulenzen um den Ball. Das verkleinert das Windschatten-Gebiet hinter dem Ball und reduziert den Luftwiderstand — ein glatter Ball würde nur die halbe Distanz erreichen. Entdeckt Ende des 19. Jahrhunderts, als alte, zerbeulte Bälle sich besser schlagen ließen als neue.",
+    "tagsSuggested": [
+      "Golfbälle",
+      "Oberfläche",
+      "Dellen"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-kurios-02",
+    "topic": "kurioses",
+    "difficulty": 2,
+    "type": "multiple-choice",
+    "question": "Aus welchem Material besteht der Großteil des menschlichen Gehirns?",
+    "correctAnswer": "Fett",
+    "gmNote": "Rund 60 % der Trockenmasse — deshalb sind essenzielle Fettsäuren so wichtig für die Hirnentwicklung.",
+    "tagsSuggested": [
+      "Fett",
+      "Material",
+      "Großteil",
+      "Gehirns",
+      "Rund",
+      "Trockenmasse",
+      "Fettsäuren",
+      "Hirnentwicklung"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-klick-02",
+    "topic": "kurioses",
+    "difficulty": 2,
+    "type": "warmup-riddle",
+    "question": "Warum hat der Deckel eines Marmeladenglases oben in der Mitte eine leichte Delle, die beim ersten Öffnen laut „klickt“?",
+    "solution": "Die Delle ist ein Vakuum-Indikator. Nach dem heißen Abfüllen und Verschließen entsteht durch die Abkühlung Unterdruck im Glas — der zieht den Deckel leicht nach innen. Beim ersten Öffnen strömt Luft ein, die Delle springt hoch und macht das typische „Klick“. Ist die Delle schon draußen, wurde das Glas eventuell schon geöffnet.",
+    "tagsSuggested": [
+      "Deckel",
+      "Marmeladenglases",
+      "Mitte",
+      "Delle",
+      "Öffnen"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-kurios-03",
+    "topic": "kurioses",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Welches Säugetier hat die längste durchschnittliche Tragezeit?",
+    "correctAnswer": "Afrikanischer Elefant",
+    "gmNote": "Rund 22 Monate. Kälber wiegen bei der Geburt schon etwa 120 kg.",
+    "tagsSuggested": [
+      "Afrikanischer Elefant",
+      "Tragezeit",
+      "Rund",
+      "Monate",
+      "Kälber",
+      "Geburt"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-klick-03",
+    "topic": "kurioses",
+    "difficulty": 3,
+    "type": "warmup-riddle",
+    "question": "Warum meint man das Meer zu hören, wenn man eine große Muschel ans Ohr hält?",
+    "solution": "Die Hohlkammer der Muschel wirkt wie ein akustischer Resonator und verstärkt selektiv Umgebungsgeräusche in bestimmten Frequenzen. Das dumpfe Rauschen, das wir als „Meer“ interpretieren, ist eine gefilterte Mischung aus Umgebungslärm, dem Blutfluss im Ohr und der Muschel-Resonanz. Denselben Effekt bekommt man mit einer hohlen Tasse.",
+    "tagsSuggested": [
+      "Meer",
+      "Muschel",
+      "Ohr"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-klick-04",
+    "topic": "kurioses",
+    "difficulty": 2,
+    "type": "warmup-riddle",
+    "question": "Warum sind Feuerlöscher überall auf der Welt knallrot?",
+    "solution": "Rot ist die international per DIN/ISO genormte Farbe für Brandschutzausrüstung. Sie signalisiert Gefahr, hebt sich vor fast jedem Hintergrund ab und stellt sicher, dass Feuerlöscher weltweit auf einen Blick erkannt werden — auch unter Stress. In besonderen Umgebungen (Rot-Grün-Kliniken, Schiffe) gibt es dokumentierte Ausnahmen mit Neongelb.",
+    "tagsSuggested": [
+      "Feuerlöscher",
+      "Welt"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-kurioses-04",
+    "topic": "kurioses",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Welcher Berg ist mit rund 22 Kilometern Höhe der größte bekannte Vulkan im Sonnensystem?",
+    "correctAnswer": "Olympus Mons",
+    "tagsSuggested": [
+      "Olympus Mons",
+      "Kilometern Höhe",
+      "Vulkan",
+      "Sonnensystem",
+      "Mars",
+      "Mount Everest",
+      "Marsatmosphäre"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-klick-05",
+    "topic": "kurioses",
+    "difficulty": 3,
+    "type": "warmup-riddle",
+    "question": "Warum haben Bananen aus dem Supermarkt keine Kerne, obwohl sie botanisch Früchte sind?",
+    "solution": "Alle handelsüblichen Bananen sind sterile Klone einer einzigen Sorte — in Europa fast ausschließlich die Cavendish. Sie werden vegetativ vermehrt, jede Pflanze ist genetisch identisch zur Mutterpflanze. Wildbananen wären kaum essbar. Nachteil der Monokultur: ein einziger Pilz (etwa TR4) kann die weltweite Ernte gefährden.",
+    "tagsSuggested": [
+      "Bananen",
+      "Supermarkt",
+      "Kerne",
+      "Früchte"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-kurioses-05",
+    "topic": "kurioses",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "Wie viele Chromosomenpaare hat eine normale menschliche Körperzelle?",
+    "correctAnswer": "23",
+    "tagsSuggested": [
+      "23",
+      "Chromosomenpaare",
+      "Körperzelle",
+      "Paare",
+      "Chromosomen",
+      "Autosomen-Paare",
+      "Geschlechtschromosomen",
+      "Keimzellen"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-klick-06",
+    "topic": "kurioses",
+    "difficulty": 2,
+    "type": "warmup-riddle",
+    "question": "Warum knallen Champagnerkorken so laut, wenn man die Flasche öffnet?",
+    "solution": "In einer Champagnerflasche stehen etwa 5 bis 6 Bar Druck an — drei- bis viermal so viel wie in einem Autoreifen. Springt der Korken, entweicht das eingeschlossene CO₂ blitzartig, expandiert und erzeugt eine kleine Schockwelle: den „Knall“. Das Geräusch entsteht also durch die schlagartige Druckentspannung, nicht durch den Korken selbst.",
+    "tagsSuggested": [
+      "Champagnerkorken",
+      "Flasche"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-kurioses-06",
+    "topic": "kurioses",
+    "difficulty": 5,
+    "type": "multiple-choice",
+    "question": "Wie viele Erdenjahre braucht der Planet Uranus für einen kompletten Umlauf um die Sonne (auf volle Jahre gerundet)?",
+    "correctAnswer": "84",
+    "tagsSuggested": [
+      "84",
+      "Erdenjahre",
+      "Planet Uranus",
+      "Umlauf",
+      "Sonne",
+      "Etwa",
+      "Uranus",
+      "Umläufe"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-flash-07",
+    "topic": "kurioses",
+    "difficulty": 3,
+    "type": "true-false",
+    "question": "Der Große Panda gehört biologisch zur Familie der Bären.",
+    "correctAnswer": true,
+    "tagsSuggested": [
+      "Familie",
+      "Bären",
+      "Lange",
+      "Analysen",
+      "Ursidae"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-kurioses-07",
+    "topic": "kurioses",
+    "difficulty": 2,
+    "type": "multiple-choice",
+    "question": "Wie viele Farben hat ein Regenbogen laut klassischer Aufzählung nach Newton?",
+    "correctAnswer": "7",
+    "gmNote": "Newton fügte „Indigo\" hinzu, um auf sieben Farben zu kommen — analog zur diatonischen Tonleiter.",
+    "tagsSuggested": [
+      "7",
+      "Farben",
+      "Regenbogen",
+      "Aufzählung",
+      "Newton",
+      "Indigo",
+      "Tonleiter"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-kurioses-08",
+    "topic": "kurioses",
+    "difficulty": 2,
+    "type": "multiple-choice",
+    "question": "Welche Tiere haben die meisten Chromosomen unter den bekannten Wirbeltieren?",
+    "correctAnswer": "Karpfen",
+    "gmNote": "Karpfen haben etwa 100 Chromosomenpaare. Farne (kein Wirbeltier) haben teils >600 — die Frage ist trickreich formuliert.",
+    "tagsSuggested": [
+      "Karpfen",
+      "Chromosomen",
+      "Wirbeltieren",
+      "Chromosomenpaare",
+      "Farne",
+      "Wirbeltier",
+      "Frage"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-kurioses-09",
+    "topic": "kurioses",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Wie hoch springt ein Floh im Vergleich zu seiner Körperlänge maximal?",
+    "correctAnswer": "150-200-mal",
+    "gmNote": "Rund 150- bis 200-fache Körperlänge — hätte ein Mensch dieselbe Sprungkraft, käme er etwa 300 m hoch.",
+    "tagsSuggested": [
+      "150-200-mal",
+      "Floh",
+      "Vergleich",
+      "Körperlänge",
+      "Rund",
+      "Mensch",
+      "Sprungkraft"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-kurioses-10",
+    "topic": "kurioses",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Warum haben Zebras Streifen — was ist die aktuelle wissenschaftliche Haupterklärung?",
+    "correctAnswer": "Schutz vor Blutsaugerinsekten",
+    "gmNote": "Studien seit ca. 2014 zeigen: Streifenmuster reduziert Landeversuche von Tsetsefliegen deutlich.",
+    "tagsSuggested": [
+      "Schutz vor Blutsaugerinsekten",
+      "Zebras Streifen",
+      "Haupterklärung",
+      "2014",
+      "Studien",
+      "Streifenmuster",
+      "Landeversuche",
+      "Tsetsefliegen"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-kurioses-11",
+    "topic": "kurioses",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Welches Tier hat blaues Blut?",
+    "correctAnswer": "Krake",
+    "gmNote": "Kraken (und andere Cephalopoden) nutzen kupferbasiertes Hämocyanin statt eisenhaltigem Hämoglobin — daher blaue Farbe.",
+    "tagsSuggested": [
+      "Krake",
+      "Blut",
+      "Kraken",
+      "Cephalopoden",
+      "Hämocyanin",
+      "Hämoglobin",
+      "Farbe"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-kurioses-12",
+    "topic": "kurioses",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "Welche Frucht war die erste, die im Weltall wuchs — angepflanzt auf der ISS?",
+    "correctAnswer": "Chili",
+    "gmNote": "2021 wuchsen die ersten Chilis auf der ISS als Teil des „Plant Habitat-04\"-Experiments.",
+    "tagsSuggested": [
+      "Chili",
+      "Weltall",
+      "2021",
+      "Chilis",
+      "Teil",
+      "Plant Habitat",
+      "Experiments"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-kurioses-13",
+    "topic": "kurioses",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "Wie lange dauert ein Wimpernschlag im Durchschnitt (in Millisekunden)?",
+    "correctAnswer": "100-150 ms",
+    "gmNote": "100-150 Millisekunden — der englische Idiom „in the blink of an eye\" ist wörtlich rund eine Zehntelsekunde.",
+    "tagsSuggested": [
+      "100-150 ms",
+      "Wimpernschlag",
+      "Durchschnitt",
+      "Millisekunden",
+      "Idiom",
+      "Zehntelsekunde"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-kurioses-14",
+    "topic": "kurioses",
+    "difficulty": 5,
+    "type": "multiple-choice",
+    "question": "Welche Farbe kann das menschliche Auge NICHT sehen, obwohl sie physikalisch existiert?",
+    "correctAnswer": "Ultraviolett",
+    "gmNote": "Ultraviolett liegt außerhalb des sichtbaren Spektrums (unter 380 nm). Manche Insekten wie Bienen können UV sehen.",
+    "tagsSuggested": [
+      "Ultraviolett",
+      "Auge",
+      "Spektrums",
+      "Manche Insekten",
+      "Bienen"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-kurioses-15",
+    "topic": "kurioses",
+    "difficulty": 3,
+    "type": "warmup-riddle",
+    "question": "Warum ist der Himmel tagsüber blau, aber Sonnenuntergänge rot?",
+    "solution": "Rayleigh-Streuung: Blaues Licht wird stärker gestreut als rotes. Tagsüber ist es überall blau, weil Blau von allen Seiten kommt. Beim Sonnenuntergang muss das Licht durch mehr Atmosphäre — das meiste Blau ist längst weggestreut, nur Rot und Orange kommen direkt bei uns an.",
+    "tagsSuggested": [
+      "Himmel",
+      "Sonnenuntergänge"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-kurioses-16",
+    "topic": "kurioses",
+    "difficulty": 2,
+    "type": "warmup-riddle",
+    "question": "Warum knallt es, wenn ein Überschallflieger die Schallmauer durchbricht?",
+    "solution": "Beim Überschallflug schiebt der Flieger die Luftmoleküle so schnell zusammen, dass sich eine kegelförmige Stoßwelle bildet. Wenn diese Druckfront einen Beobachter erreicht, hört er einen kurzen, lauten Knall — den „Sonic Boom\". Das passiert kontinuierlich, nicht nur beim Durchbrechen.",
+    "tagsSuggested": [
+      "Überschallflieger",
+      "Schallmauer"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-kurioses-17",
+    "topic": "kurioses",
+    "difficulty": 3,
+    "type": "warmup-riddle",
+    "question": "Warum kann man in kaltem Wasser länger schwimmen als in bathwannenwarmem?",
+    "solution": "Der menschliche Körper produziert beim Schwimmen viel Wärme. In warmem Wasser kann er diese nicht loswerden und überhitzt schnell. Kaltes Wasser (18-22 °C) leitet die produzierte Wärme ab — genug, aber nicht zu viel. Deshalb sind Wettkampf-Schwimmbecken kühl, nicht warm.",
+    "tagsSuggested": [
+      "Wasser"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-kurioses-18",
+    "topic": "kurioses",
+    "difficulty": 3,
+    "type": "warmup-riddle",
+    "question": "Warum machen Möwen an heißen Tagen mit ihren Füßen so einen Tanz auf dem Sand?",
+    "solution": "Möwen (und einige andere Vögel) trippeln rhythmisch auf dem nassen Sand, um Vibrationen wie fallende Regentropfen zu erzeugen. Würmer und andere Bodenlebewesen kommen bei Regen an die Oberfläche, um nicht zu ertrinken — dieses „Regentanz-Verhalten\" nutzt diesen Reflex aus. Die Möwe hat dann leichte Beute.",
+    "tagsSuggested": [
+      "Möwen",
+      "Tagen",
+      "Füßen",
+      "Tanz",
+      "Sand"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-kurioses-19",
+    "topic": "kurioses",
+    "difficulty": 3,
+    "type": "warmup-riddle",
+    "question": "Warum hat eine Kompassnadel überhaupt eine Richtung — was zieht sie an?",
+    "solution": "Der Erdkern besteht überwiegend aus flüssigem Eisen und Nickel, die ständig in Bewegung sind. Diese Konvektionsströme erzeugen ein globales Magnetfeld — die Erde wirkt wie ein riesiger Stabmagnet. Die Kompassnadel richtet sich entlang dieses Feldes aus, nordwärts. Der magnetische Nordpol wandert übrigens langsam, aktuell etwa 40 km pro Jahr Richtung Sibirien.",
+    "tagsSuggested": [
+      "Kompassnadel",
+      "Richtung"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-kurioses-20",
+    "topic": "kurioses",
+    "difficulty": 2,
+    "type": "warmup-riddle",
+    "question": "Warum wird ein geschnittener Apfel braun, wenn man ihn liegen lässt?",
+    "solution": "Beim Schneiden werden Zellen im Apfel aufgeschnitten. Das freigelegte Enzym Polyphenoloxidase (PPO) reagiert mit Sauerstoff aus der Luft und färbt Phenol-Verbindungen im Apfel braun — ähnlich wie beim Rosten von Eisen. Zitronensaft (Vitamin C) verhindert die Reaktion, weil er das Enzym hemmt.",
+    "tagsSuggested": [
+      "Apfel"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-flash-27",
+    "topic": "kurioses",
+    "difficulty": 3,
+    "type": "true-false",
+    "question": "Der Fußabdruck von Neil Armstrong auf dem Mond bleibt praktisch für alle Zeiten erhalten.",
+    "correctAnswer": true,
+    "tagsSuggested": [
+      "Neil Armstrong",
+      "Mond",
+      "Zeiten",
+      "Keine Atmosphäre",
+      "Wind",
+      "Wasser",
+      "Abdrücke",
+      "Apollo"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-flash-30",
+    "topic": "kurioses",
+    "difficulty": 4,
+    "type": "true-false",
+    "question": "Der Nordpol liegt auf einer schwimmenden Eisdecke — nicht auf Landmasse.",
+    "correctAnswer": true,
+    "tagsSuggested": [
+      "Eisdecke",
+      "Landmasse",
+      "Anders",
+      "Antarktis",
+      "Kontinent",
+      "Eis",
+      "Arktische Ozean",
+      "Meereis"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-musik-01",
+    "topic": "musik",
+    "difficulty": 2,
+    "type": "multiple-choice",
+    "question": "Welches Album gilt als das meistverkaufte der Welt?",
+    "correctAnswer": "Thriller",
+    "gmNote": "Rund 70 Millionen verkaufte Einheiten weltweit seit 1982.",
+    "tagsSuggested": [
+      "Thriller",
+      "Welt",
+      "1982",
+      "Rund",
+      "Millionen",
+      "Einheiten"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-musik-02",
+    "topic": "musik",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Aus welchem Land stammt der Musikstil Bossa Nova?",
+    "correctAnswer": "Brasilien",
+    "gmNote": "Entstanden in Rio de Janeiro Ende der 1950er, verschmelzt Samba mit Cool Jazz. Klassiker: „The Girl from Ipanema“.",
+    "tagsSuggested": [
+      "Brasilien",
+      "Musikstil Bossa Nova",
+      "Entstanden",
+      "Rio",
+      "Janeiro Ende",
+      "Samba",
+      "Cool Jazz",
+      "Klassiker"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-musik-03",
+    "topic": "musik",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "Welcher Komponist schrieb die Oper „Die Zauberflöte“?",
+    "correctAnswer": "Wolfgang Amadeus Mozart",
+    "gmNote": "Uraufführung 1791 in Wien, wenige Wochen vor Mozarts Tod. Libretto von Emanuel Schikaneder.",
+    "tagsSuggested": [
+      "Wolfgang Amadeus Mozart",
+      "Oper",
+      "Uraufführung",
+      "Wien",
+      "Wochen",
+      "Mozarts Tod",
+      "Libretto",
+      "Emanuel Schikaneder"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-musik-04",
+    "topic": "musik",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Auf welchem Beatles-Album erschien der Song „Yesterday“ ursprünglich im Jahr 1965?",
+    "correctAnswer": "Help!",
+    "tagsSuggested": [
+      "Help!",
+      "1965",
+      "Beatles-Album",
+      "Yesterday",
+      "Paul",
+      "Melodie",
+      "Plagiat",
+      "Original"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-musik-05",
+    "topic": "musik",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "In welcher deutschen Stadt wurde die Elektronik-Band Kraftwerk 1970 gegründet?",
+    "correctAnswer": "Düsseldorf",
+    "tagsSuggested": [
+      "Düsseldorf",
+      "1970",
+      "Elektronik-Band Kraftwerk",
+      "Ralf Hütter",
+      "Florian Schneider",
+      "Kraftwerk",
+      "Zentrum",
+      "Elektronik-Sounds"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-musik-06",
+    "topic": "musik",
+    "difficulty": 5,
+    "type": "multiple-choice",
+    "question": "Welcher österreichische Komponist gilt als Pionier der Zwölftontechnik in der modernen Kompositionslehre?",
+    "correctAnswer": "Arnold Schönberg",
+    "tagsSuggested": [
+      "Arnold Schönberg",
+      "Komponist",
+      "Pionier",
+      "Zwölftontechnik",
+      "Kompositionslehre",
+      "1921",
+      "Schönberg",
+      "Grundlage"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-musik-07",
+    "topic": "musik",
+    "difficulty": 2,
+    "type": "multiple-choice",
+    "question": "Welche Sängerin veröffentlichte 2016 das Album „Lemonade\" mit dem Song „Formation\"?",
+    "correctAnswer": "Beyoncé",
+    "gmNote": "Beyoncé überraschte mit einem visuellen Album ohne Vorankündigung.",
+    "tagsSuggested": [
+      "Beyoncé",
+      "2016",
+      "Lemonade",
+      "Formation",
+      "Vorankündigung"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-musik-08",
+    "topic": "musik",
+    "difficulty": 2,
+    "type": "multiple-choice",
+    "question": "Welche Band schrieb den Song „Bohemian Rhapsody\"?",
+    "correctAnswer": "Queen",
+    "gmNote": "Freddie Mercury komponierte das Stück; die Album-Version dauert 5:55 Minuten.",
+    "tagsSuggested": [
+      "Queen",
+      "Bohemian Rhapsody",
+      "Freddie Mercury",
+      "Stück",
+      "Album-Version",
+      "Minuten"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-musik-09",
+    "topic": "musik",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Welcher Produzent gilt als Erfinder der „Wall of Sound\"-Aufnahmetechnik in den 1960er Jahren?",
+    "correctAnswer": "Phil Spector",
+    "gmNote": "Spector produzierte u.a. „You've Lost That Lovin' Feelin'\" und später „Let It Be\" für die Beatles.",
+    "tagsSuggested": [
+      "Phil Spector",
+      "Erfinder",
+      "Wall",
+      "Sound",
+      "Aufnahmetechnik",
+      "Spector",
+      "You",
+      "Lost That Lovin"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-musik-10",
+    "topic": "musik",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Aus welcher deutschen Stadt stammt die Band Scorpions?",
+    "correctAnswer": "Hannover",
+    "gmNote": "Gegründet 1965 von Rudolf Schenker; „Wind of Change\" wurde zum inoffiziellen Hymne der Wende.",
+    "tagsSuggested": [
+      "Hannover",
+      "1965",
+      "Gegründet",
+      "Rudolf Schenker",
+      "Wind",
+      "Change",
+      "Hymne",
+      "Wende"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-musik-11",
+    "topic": "musik",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Welches Instrument spielte der Jazzmusiker John Coltrane hauptsächlich?",
+    "correctAnswer": "Saxophon",
+    "gmNote": "Sopran- und Tenorsaxophon. Sein Album „A Love Supreme\" gilt als Meilenstein des spirituellen Jazz.",
+    "tagsSuggested": [
+      "Saxophon",
+      "Jazzmusiker John Coltrane",
+      "Sopran",
+      "Tenorsaxophon",
+      "Love Supreme",
+      "Meilenstein",
+      "Jazz"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-musik-12",
+    "topic": "musik",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "Wer schrieb das Libretto zu Mozarts Opern „Le nozze di Figaro\", „Don Giovanni\" und „Così fan tutte\"?",
+    "correctAnswer": "Lorenzo Da Ponte",
+    "gmNote": "Da Ponte wanderte später nach New York aus und wurde erster Italienisch-Professor an der Columbia University.",
+    "tagsSuggested": [
+      "Lorenzo Da Ponte",
+      "Libretto",
+      "Mozarts Opern",
+      "Le",
+      "Figaro",
+      "Don Giovanni",
+      "Da Ponte",
+      "New York"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-musik-13",
+    "topic": "musik",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "Welche englische Post-Punk-Band aus Manchester veröffentlichte 1979 „Unknown Pleasures\"?",
+    "correctAnswer": "Joy Division",
+    "gmNote": "Frontmann Ian Curtis nahm sich 1980 das Leben; die verbleibenden Mitglieder gründeten New Order.",
+    "tagsSuggested": [
+      "Joy Division",
+      "1979",
+      "Post-Punk-Band",
+      "Manchester",
+      "Unknown Pleasures",
+      "1980",
+      "Frontmann Ian Curtis",
+      "Leben"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-musik-14",
+    "topic": "musik",
+    "difficulty": 5,
+    "type": "multiple-choice",
+    "question": "Welche österreichische Komponistin schrieb im 19. Jahrhundert Lieder und Kammermusik und heiratete Robert Schumann?",
+    "correctAnswer": "Clara Wieck",
+    "gmNote": "Clara Wieck war zu Lebzeiten eine der berühmtesten Konzertpianistinnen Europas.",
+    "tagsSuggested": [
+      "Clara Wieck",
+      "Komponistin",
+      "Kammermusik",
+      "Robert Schumann",
+      "Lebzeiten",
+      "Konzertpianistinnen Europas"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-musik-15",
+    "topic": "musik",
+    "difficulty": 2,
+    "type": "true-false",
+    "question": "Elvis Presley starb 1977 in seinem Anwesen Graceland.",
+    "correctAnswer": true,
+    "gmNote": "16. August 1977, mit 42 Jahren.",
+    "tagsSuggested": [
+      "1977",
+      "Elvis Presley",
+      "Anwesen Graceland",
+      "August"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-musik-16",
+    "topic": "musik",
+    "difficulty": 3,
+    "type": "true-false",
+    "question": "Der Song „Happy Birthday to You\" ist erst seit 2016 gemeinfrei nutzbar.",
+    "correctAnswer": true,
+    "gmNote": "Ein US-Gericht erklärte 2016 die Urheberrechte für nichtig — vorher zahlte Warner/Chappell Millionen an Lizenzgebühren.",
+    "tagsSuggested": [
+      "2016",
+      "Happy Birthday",
+      "You",
+      "Gericht",
+      "Urheberrechte",
+      "Warner",
+      "Chappell Millionen",
+      "Lizenzgebühren"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-flash-18",
+    "topic": "musik",
+    "difficulty": 3,
+    "type": "true-false",
+    "question": "Ludwig van Beethoven war zum Zeitpunkt der Uraufführung seiner 9. Sinfonie 1824 nahezu vollständig taub.",
+    "correctAnswer": true,
+    "tagsSuggested": [
+      "1824",
+      "Ludwig",
+      "Beethoven",
+      "Zeitpunkt",
+      "Uraufführung",
+      "Sinfonie",
+      "Wiener Uraufführung",
+      "Bühne"
     ],
     "tags": []
   },
@@ -119,279 +2595,266 @@
     "tags": []
   },
   {
-    "id": "q-musik-01",
-    "topic": "musik",
-    "difficulty": 2,
-    "type": "multiple-choice",
-    "question": "Welches Album gilt als das meistverkaufte der Welt?",
-    "correctAnswer": "Thriller",
-    "gmNote": "Rund 70 Millionen verkaufte Einheiten weltweit seit 1982.",
-    "tagsSuggested": [
-      "Thriller",
-      "Welt",
-      "1982",
-      "Rund",
-      "Millionen",
-      "Einheiten"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-musik-02",
-    "topic": "musik",
+    "id": "q-serien-04",
+    "topic": "serien",
     "difficulty": 3,
     "type": "multiple-choice",
-    "question": "Aus welchem Land stammt der Musikstil Bossa Nova?",
-    "correctAnswer": "Brasilien",
-    "gmNote": "Entstanden in Rio de Janeiro Ende der 1950er, verschmelzt Samba mit Cool Jazz. Klassiker: „The Girl from Ipanema“.",
+    "question": "In welcher US-Stadt spielt die HBO-Serie „The Wire“, die als eine der besten Fernsehserien aller Zeiten gilt?",
+    "correctAnswer": "Baltimore",
     "tagsSuggested": [
-      "Brasilien",
-      "Musikstil Bossa Nova",
-      "Entstanden",
-      "Rio",
-      "Janeiro Ende",
-      "Samba",
-      "Cool Jazz",
-      "Klassiker"
+      "Baltimore",
+      "The Wire",
+      "Fernsehserien",
+      "Zeiten",
+      "Serienschöpfer David Simon",
+      "Polizeireporter",
+      "Baltimore Sun",
+      "Institutionen"
     ],
     "tags": []
   },
   {
-    "id": "q-musik-03",
-    "topic": "musik",
+    "id": "q-serien-05",
+    "topic": "serien",
     "difficulty": 4,
     "type": "multiple-choice",
-    "question": "Welcher Komponist schrieb die Oper „Die Zauberflöte“?",
-    "correctAnswer": "Wolfgang Amadeus Mozart",
-    "gmNote": "Uraufführung 1791 in Wien, wenige Wochen vor Mozarts Tod. Libretto von Emanuel Schikaneder.",
+    "question": "Wer schuf und produzierte die Netflix-Zeichentrickserie „BoJack Horseman“?",
+    "correctAnswer": "Raphael Bob-Waksberg",
     "tagsSuggested": [
-      "Wolfgang Amadeus Mozart",
-      "Oper",
-      "Uraufführung",
-      "Wien",
-      "Wochen",
-      "Mozarts Tod",
-      "Libretto",
-      "Emanuel Schikaneder"
+      "Raphael Bob-Waksberg",
+      "Netflix-Zeichentrickserie",
+      "Horseman",
+      "2014",
+      "2020",
+      "Bob-Waksberg",
+      "Show",
+      "Illustratorin Lisa Hanawalt"
     ],
     "tags": []
   },
   {
-    "id": "q-games-01",
-    "topic": "games",
-    "difficulty": 3,
+    "id": "q-serien-06",
+    "topic": "serien",
+    "difficulty": 5,
     "type": "multiple-choice",
-    "question": "Welches Studio entwickelte das Rollenspiel „The Witcher 3: Wild Hunt“?",
-    "correctAnswer": "CD Projekt Red",
-    "gmNote": "Sitz in Warschau. Die Vorlage stammt vom polnischen Autor Andrzej Sapkowski.",
+    "question": "Welcher Regisseur schuf zusammen mit Mark Frost die Mystery-Serie „Twin Peaks“, deren dritte Staffel 2017 in „The Return“ mündete?",
+    "correctAnswer": "David Lynch",
     "tagsSuggested": [
-      "CD Projekt Red",
-      "Rollenspiel",
-      "The Witcher",
-      "Wild Hunt",
-      "Sitz",
-      "Warschau"
+      "David Lynch",
+      "2017",
+      "Mark Frost",
+      "Mystery-Serie",
+      "Twin Peaks",
+      "Staffel",
+      "The Return",
+      "1990"
     ],
     "tags": []
   },
   {
-    "id": "q-games-02",
-    "topic": "games",
-    "difficulty": 3,
-    "type": "multiple-choice",
-    "question": "In welchem Jahr erschien die offizielle Vollversion 1.0 von „Minecraft“?",
-    "correctAnswer": "2011",
-    "gmNote": "18. November 2011 auf der MineCon in Las Vegas. Die Alpha lief seit 2009.",
-    "tagsSuggested": [
-      "2011",
-      "Vollversion",
-      "Minecraft",
-      "2009",
-      "November",
-      "Las Vegas"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-games-03",
-    "topic": "games",
-    "difficulty": 4,
-    "type": "multiple-choice",
-    "question": "Welche Heimkonsole führte 1996 einen Analog-Stick als Standardsteuerung ein?",
-    "correctAnswer": "Nintendo 64",
-    "gmNote": "Der Controller mit dem markanten Drei-Griff-Design war für „Super Mario 64“ mitgedacht.",
-    "tagsSuggested": [
-      "Nintendo 64",
-      "1996",
-      "Analog-Stick",
-      "Standardsteuerung",
-      "Drei-Griff-Design",
-      "Super Mario"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-geo-01",
-    "topic": "geografie",
+    "id": "q-serien-07",
+    "topic": "serien",
     "difficulty": 2,
     "type": "multiple-choice",
-    "question": "Welches Land besitzt die längste Küstenlinie der Erde?",
-    "correctAnswer": "Kanada",
-    "gmNote": "Rund 202.000 km — bedingt durch die zerklüftete Arktis-Küste und die vielen Inseln im Norden.",
+    "question": "Welche Serie beginnt mit dem Chemielehrer Walter White, der zu einem Meth-Koch wird?",
+    "correctAnswer": "Breaking Bad",
+    "gmNote": "Vince Gilligans „Breaking Bad\" lief 2008-2013 auf AMC.",
     "tagsSuggested": [
-      "Kanada",
-      "Küstenlinie",
-      "Erde",
-      "Rund",
-      "Arktis-Küste",
-      "Inseln",
-      "Norden"
+      "Breaking Bad",
+      "Chemielehrer Walter White",
+      "Meth-Koch",
+      "2008",
+      "2013",
+      "Vince Gilligans"
     ],
     "tags": []
   },
   {
-    "id": "q-geo-02",
-    "topic": "geografie",
-    "difficulty": 3,
-    "type": "multiple-choice",
-    "question": "Welche der folgenden Hauptstädte liegt am weitesten nördlich?",
-    "correctAnswer": "Helsinki",
-    "gmNote": "Helsinki liegt auf ~60,2° Nord. Reykjavík wäre noch nördlicher, war aber nicht in den Optionen.",
-    "tagsSuggested": [
-      "Helsinki",
-      "Hauptstädte",
-      "Nord",
-      "Optionen"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-geo-03",
-    "topic": "geografie",
-    "difficulty": 4,
-    "type": "multiple-choice",
-    "question": "Welchem Staat gehört die Insel Sokotra mit ihrer einzigartigen Flora?",
-    "correctAnswer": "Jemen",
-    "gmNote": "Sokotra liegt im Golf von Aden. Der Drachenblutbaum ist eines der ikonischen Wahrzeichen der Insel.",
-    "tagsSuggested": [
-      "Jemen",
-      "Insel Sokotra",
-      "Flora",
-      "Sokotra",
-      "Golf",
-      "Aden",
-      "Wahrzeichen",
-      "Insel"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-gesch-01",
-    "topic": "geschichte",
+    "id": "q-serien-08",
+    "topic": "serien",
     "difficulty": 2,
     "type": "multiple-choice",
-    "question": "In welchem Jahr fiel die Berliner Mauer?",
-    "correctAnswer": "1989",
-    "gmNote": "9. November — Günter Schabowskis Pressekonferenz löste den unkontrollierten Grenzöffnungs-Ansturm aus.",
+    "question": "In welcher fiktiven Kleinstadt aus Indiana spielt die Netflix-Serie „Stranger Things\"?",
+    "correctAnswer": "Hawkins",
+    "gmNote": "Hawkins ist an das Duffer-Brüder-inspirierte Amblin-Kino der 80er angelehnt.",
     "tagsSuggested": [
+      "Hawkins",
+      "Kleinstadt",
+      "Indiana",
+      "Netflix-Serie",
+      "Stranger Things",
+      "Duffer-Brüder",
+      "Amblin-Kino"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-serien-09",
+    "topic": "serien",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Welche Sitcom über sechs Freunde in New York lief 1994-2004 auf NBC?",
+    "correctAnswer": "Friends",
+    "gmNote": "Zehn Staffeln, 236 Folgen — bis heute massiv in Streaming präsent.",
+    "tagsSuggested": [
+      "Friends",
+      "1994",
+      "2004",
+      "Freunde",
+      "New York",
+      "Zehn Staffeln",
+      "Folgen",
+      "Streaming"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-serien-10",
+    "topic": "serien",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Welche HBO-Serie porträtiert die Machtkämpfe um das Roy-Familien-Medienimperium?",
+    "correctAnswer": "Succession",
+    "gmNote": "Jesse Armstrongs „Succession\" (2018-2023) gewann drei Emmys als beste Dramaserie.",
+    "tagsSuggested": [
+      "Succession",
+      "Machtkämpfe",
+      "Roy-Familien-Medienimperium",
+      "2018",
+      "2023",
+      "Jesse Armstrongs",
+      "Emmys",
+      "Dramaserie"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-serien-11",
+    "topic": "serien",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "In welcher Anwaltskanzlei arbeitet Harvey Specter in der Serie „Suits\"?",
+    "correctAnswer": "Pearson Hardman",
+    "gmNote": "Später umbenannt in Pearson Specter, Pearson Specter Litt etc. — der Firmenname wechselt fast in jeder Staffel.",
+    "tagsSuggested": [
+      "Pearson Hardman",
+      "Anwaltskanzlei",
+      "Harvey Specter",
+      "Suits",
+      "Später",
+      "Pearson Specter",
+      "Pearson Specter Litt",
+      "Firmenname"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-serien-12",
+    "topic": "serien",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "Welche Serie schuf Matthew Weiner, der zuvor Autor bei „The Sopranos\" war?",
+    "correctAnswer": "Mad Men",
+    "gmNote": "Mad Men lief 2007-2015 auf AMC und ist Referenz für Retro-Design bis heute.",
+    "tagsSuggested": [
+      "Mad Men",
+      "Matthew Weiner",
+      "The Sopranos",
+      "2007",
+      "2015",
+      "Referenz",
+      "Retro-Design"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-serien-13",
+    "topic": "serien",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "Welche südkoreanische Netflix-Serie wurde 2021 zur meistgesehenen Serie der Plattform in ihrer Startwoche?",
+    "correctAnswer": "Squid Game",
+    "gmNote": "Squid Game von Hwang Dong-hyuk brach nahezu jeden Netflix-Rekord.",
+    "tagsSuggested": [
+      "Squid Game",
+      "2021",
+      "Netflix-Serie",
+      "Plattform",
+      "Startwoche",
+      "Hwang Dong",
+      "Netflix-Rekord"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-serien-14",
+    "topic": "serien",
+    "difficulty": 5,
+    "type": "multiple-choice",
+    "question": "Welche italienische Serie über zwei Freundinnen in Neapel basiert auf Elena Ferrantes Romantetralogie?",
+    "correctAnswer": "Meine geniale Freundin",
+    "gmNote": "„L'amica geniale\" (2018-2024) verfilmt alle vier Bücher der „Neapolitanischen Saga\".",
+    "tagsSuggested": [
+      "Meine geniale Freundin",
+      "Freundinnen",
+      "Neapel",
+      "Elena Ferrantes Romantetralogie",
+      "2018",
+      "2024",
+      "Neapolitanischen Saga"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-serien-15",
+    "topic": "serien",
+    "difficulty": 3,
+    "type": "true-false",
+    "question": "Die HBO-Serie „The Sopranos\" endet mit einem klaren, aufgelösten Finale.",
+    "correctAnswer": false,
+    "gmNote": "Die Serie endet 2007 mit einem abrupten Schwarzbild bei laufendem Musikstück — bewusst mehrdeutig.",
+    "tagsSuggested": [
+      "The Sopranos",
+      "Finale",
+      "2007",
+      "Schwarzbild",
+      "Musikstück"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-serien-16",
+    "topic": "serien",
+    "difficulty": 2,
+    "type": "true-false",
+    "question": "Die Simpsons haben mehr Staffeln als jede andere US-Prime-Time-Serie.",
+    "correctAnswer": true,
+    "gmNote": "Seit 1989 laufend, mit über 35 Staffeln der längste laufende Sitcom-Klassiker.",
+    "tagsSuggested": [
+      "Staffeln",
+      "Prime-Time-Serie",
       "1989",
-      "Berliner Mauer",
-      "November",
-      "Günter Schabowskis Pressekonferenz",
-      "Grenzöffnungs-Ansturm"
+      "Seit",
+      "Sitcom-Klassiker"
     ],
     "tags": []
   },
   {
-    "id": "q-gesch-02",
-    "topic": "geschichte",
-    "difficulty": 3,
-    "type": "multiple-choice",
-    "question": "Welches Reich beherrschte im 13. Jahrhundert die größte zusammenhängende Landfläche der Geschichte?",
-    "correctAnswer": "Mongolisches Reich",
-    "gmNote": "Rund 24 Millionen km² auf dem Höhepunkt unter Dschingis Khans Nachfolgern.",
-    "tagsSuggested": [
-      "Mongolisches Reich",
-      "Landfläche",
-      "Geschichte",
-      "Rund",
-      "Millionen",
-      "Höhepunkt",
-      "Dschingis Khans Nachfolgern"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-gesch-03",
-    "topic": "geschichte",
-    "difficulty": 4,
-    "type": "multiple-choice",
-    "question": "Welcher Vertrag beendete 1648 den Dreißigjährigen Krieg?",
-    "correctAnswer": "Westfälischer Friede",
-    "gmNote": "Unterzeichnet in Münster und Osnabrück. Der Ausgangspunkt der modernen Staatensouveränität.",
-    "tagsSuggested": [
-      "Westfälischer Friede",
-      "Dreißigjährigen Krieg",
-      "Unterzeichnet",
-      "Münster",
-      "Osnabrück",
-      "Staatensouveränität"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-wiss-01",
-    "topic": "wissenschaft",
+    "id": "q-flash-17",
+    "topic": "serien",
     "difficulty": 2,
-    "type": "multiple-choice",
-    "question": "Welches Element hat die Ordnungszahl 79 im Periodensystem?",
-    "correctAnswer": "Gold",
-    "gmNote": "Symbol Au (von lat. „aurum“). Rund 205.000 Tonnen wurden bis heute weltweit gefördert.",
+    "type": "true-false",
+    "question": "Die HBO-Serie „Game of Thrones“ basiert auf einer Romanreihe von J. R. R. Tolkien.",
+    "correctAnswer": false,
     "tagsSuggested": [
-      "Gold",
-      "Ordnungszahl",
-      "Periodensystem",
-      "Symbol Au",
-      "Rund",
-      "Tonnen"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-wiss-02",
-    "topic": "wissenschaft",
-    "difficulty": 2,
-    "type": "multiple-choice",
-    "question": "Wie viele Chromosomen enthält eine typische menschliche Körperzelle?",
-    "correctAnswer": "46",
-    "gmNote": "23 Paare — 22 Autosomen plus ein Geschlechtschromosomen-Paar.",
-    "tagsSuggested": [
-      "46",
-      "Chromosomen",
-      "Körperzelle",
-      "Paare",
-      "Autosomen",
-      "Geschlechtschromosomen-Paar"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-wiss-03",
-    "topic": "wissenschaft",
-    "difficulty": 4,
-    "type": "multiple-choice",
-    "question": "Welche fundamentale Kraft hält Elektronen im Atom an den Kern gebunden?",
-    "correctAnswer": "elektromagnetische Kraft",
-    "gmNote": "Die starke Kernkraft bindet die Quarks im Kern selbst. Für die Bindung der Elektronen ist die elektromagnetische Anziehung zuständig.",
-    "tagsSuggested": [
-      "elektromagnetische Kraft",
-      "Kraft",
-      "Elektronen",
-      "Atom",
-      "Kern",
-      "Kernkraft",
-      "Quarks",
-      "Bindung"
+      "Game",
+      "Thrones",
+      "Romanreihe",
+      "Tolkien",
+      "1996",
+      "George",
+      "Martin",
+      "Eis"
     ],
     "tags": []
   },
@@ -454,117 +2917,293 @@
     "tags": []
   },
   {
-    "id": "q-essen-01",
-    "topic": "essen",
+    "id": "q-sport-04",
+    "topic": "sport",
     "difficulty": 3,
     "type": "multiple-choice",
-    "question": "Als welches Pflanzenteil klassifiziert die Botanik die Kartoffel?",
-    "correctAnswer": "Sprossknolle",
-    "gmNote": "Die Knolle sitzt unterirdisch am Ausläufer der Sprossachse — kein Wurzelgewebe.",
+    "question": "Welches Land wurde 1974 Fußball-Weltmeister im eigenen Land?",
+    "correctAnswer": "Deutschland",
     "tagsSuggested": [
-      "Sprossknolle",
-      "Pflanzenteil",
-      "Botanik",
-      "Kartoffel",
-      "Ausläufer",
-      "Sprossachse",
-      "Wurzelgewebe"
+      "Deutschland",
+      "1974",
+      "Fußball-Weltmeister",
+      "Finale",
+      "München",
+      "Niederlande",
+      "Johan Cruyff",
+      "Kapitän Franz Beckenbauer"
     ],
     "tags": []
   },
   {
-    "id": "q-essen-02",
-    "topic": "essen",
+    "id": "q-sport-05",
+    "topic": "sport",
     "difficulty": 4,
     "type": "multiple-choice",
-    "question": "Aus welcher italienischen Region stammt die Nudel Orecchiette ursprünglich?",
-    "correctAnswer": "Apulien",
-    "gmNote": "Bari und Umgebung — der Name bedeutet „kleine Ohren“. Klassisch mit Cime di Rapa (Stängelkohl).",
+    "question": "Welcher NBA-Spieler hält den Rekord für die meisten regulären Saison-MVP-Auszeichnungen mit sechs Titeln?",
+    "correctAnswer": "Kareem Abdul-Jabbar",
     "tagsSuggested": [
-      "Apulien",
-      "Nudel Orecchiette",
-      "Bari",
-      "Umgebung",
-      "Name",
-      "Ohren",
-      "Klassisch",
-      "Cime"
+      "Kareem Abdul-Jabbar",
+      "Rekord",
+      "Saison",
+      "Auszeichnungen",
+      "Titeln",
+      "1971",
+      "1980",
+      "Kareem"
     ],
     "tags": []
   },
   {
-    "id": "q-essen-03",
-    "topic": "essen",
-    "difficulty": 4,
+    "id": "q-sport-06",
+    "topic": "sport",
+    "difficulty": 5,
     "type": "multiple-choice",
-    "question": "Welche Rebsorte galt in Europa lange als ausgestorben und wurde in Chile wiederentdeckt?",
-    "correctAnswer": "Carménère",
-    "gmNote": "Ursprünglich Bordeaux. Nach der Reblausplage fand man den Wein Ende der 1990er in chilenischen Weinbergen wieder.",
+    "question": "Wie viele Formel-1-Weltmeistertitel halten Michael Schumacher und Lewis Hamilton (Stand 2024) — jeweils?",
+    "correctAnswer": "je 7",
     "tagsSuggested": [
-      "Carménère",
-      "Europa",
-      "Chile",
-      "Ursprünglich Bordeaux",
-      "Reblausplage",
-      "Wein Ende",
-      "Weinbergen"
+      "je 7",
+      "2024",
+      "Formel",
+      "Weltmeistertitel",
+      "Michael Schumacher",
+      "Lewis Hamilton",
+      "Stand",
+      "2020"
     ],
     "tags": []
   },
   {
-    "id": "q-tech-01",
-    "topic": "technik",
+    "id": "q-sport-07",
+    "topic": "sport",
+    "difficulty": 2,
+    "type": "multiple-choice",
+    "question": "Wie viele Ringe hat das Olympia-Emblem?",
+    "correctAnswer": "5",
+    "gmNote": "Fünf Ringe symbolisieren die fünf Kontinente. Farben: Blau, Gelb, Schwarz, Grün, Rot.",
+    "tagsSuggested": [
+      "5",
+      "Ringe",
+      "Olympia-Emblem",
+      "Fünf Ringe",
+      "Kontinente",
+      "Farben",
+      "Blau",
+      "Gelb"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-sport-08",
+    "topic": "sport",
+    "difficulty": 2,
+    "type": "multiple-choice",
+    "question": "In welcher Sportart wird der „Grand Slam\" bei den Turnieren Australian Open, French Open, Wimbledon und US Open ausgespielt?",
+    "correctAnswer": "Tennis",
+    "gmNote": "Ein Karrierewinner der vier Grand Slams heißt „Career Grand Slam\"; im selben Kalenderjahr = „Kalender-Grand-Slam\".",
+    "tagsSuggested": [
+      "Tennis",
+      "Grand Slam",
+      "Turnieren Australian Open",
+      "French Open",
+      "Wimbledon",
+      "Open",
+      "Grand Slams",
+      "Career Grand Slam"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-sport-09",
+    "topic": "sport",
     "difficulty": 3,
     "type": "multiple-choice",
-    "question": "Wer veröffentlichte 1991 die erste Version des Linux-Kernels?",
-    "correctAnswer": "Linus Torvalds",
-    "gmNote": "Als Student in Helsinki. Der Name entstand aus Torvalds' Vornamen plus dem verbreiteten Unix-Suffix.",
+    "question": "In welchem Land wurde die Formel-1-Weltmeisterschaft 1950 offiziell gestartet?",
+    "correctAnswer": "Großbritannien",
+    "gmNote": "Das erste Rennen fand am 13. Mai 1950 in Silverstone statt; Giuseppe Farina gewann.",
     "tagsSuggested": [
-      "Linus Torvalds",
-      "1991",
-      "Version",
-      "Linux-Kernels",
-      "Helsinki",
-      "Torvalds",
-      "Vornamen",
-      "Unix-Suffix"
+      "Großbritannien",
+      "1950",
+      "Formel",
+      "Weltmeisterschaft",
+      "Rennen",
+      "Mai",
+      "Silverstone",
+      "Giuseppe Farina"
     ],
     "tags": []
   },
   {
-    "id": "q-tech-02",
-    "topic": "technik",
-    "difficulty": 4,
+    "id": "q-sport-10",
+    "topic": "sport",
+    "difficulty": 3,
     "type": "multiple-choice",
-    "question": "Wie viele Bit umfasst eine IPv6-Adresse?",
-    "correctAnswer": "128",
-    "gmNote": "IPv4 hatte 32 Bit — etwa 4,3 Milliarden Adressen. IPv6 kommt auf 3,4 × 10^38 mögliche Adressen.",
+    "question": "Wie viele Punkte gibt ein Touchdown im American Football (ohne Extra-Punkt-Versuch)?",
+    "correctAnswer": "6",
+    "gmNote": "Sechs Punkte. Danach folgt entweder ein 1-Punkt-Extrapunkt (PAT) oder ein 2-Punkt-Conversion-Versuch.",
     "tagsSuggested": [
-      "128",
-      "Bit",
-      "Adresse",
-      "Milliarden Adressen",
-      "Adressen"
+      "6",
+      "Punkte",
+      "Touchdown",
+      "American Football",
+      "Extra-Punkt-Versuch",
+      "Sechs Punkte",
+      "Danach",
+      "Punkt-Extrapunkt"
     ],
     "tags": []
   },
   {
-    "id": "q-tech-03",
-    "topic": "technik",
+    "id": "q-sport-11",
+    "topic": "sport",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Welche Farbe trägt der Führende in der Gesamtwertung der Tour de France?",
+    "correctAnswer": "Gelb",
+    "gmNote": "Das Maillot Jaune (Gelbes Trikot) — die Farbe erinnert an das Papier der Sportzeitung „L'Auto\".",
+    "tagsSuggested": [
+      "Gelb",
+      "Führende",
+      "Gesamtwertung",
+      "Tour",
+      "France",
+      "Gelbes Trikot",
+      "Farbe",
+      "Papier"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-sport-12",
+    "topic": "sport",
     "difficulty": 4,
     "type": "multiple-choice",
-    "question": "Welches Unternehmen entwickelte die legendäre Voodoo-Grafikkarte für 3D-Beschleunigung?",
-    "correctAnswer": "3dfx",
-    "gmNote": "Voodoo Graphics erschien 1996 und dominierte den PC-3D-Markt, bis NVIDIA das Unternehmen 2000 übernahm.",
+    "question": "In welcher Sportart tritt „Perfect Game\" auf, ein Werfer der 27 aufeinanderfolgende Batter aus dem Spiel wirft ohne einen einzigen auf Base zu lassen?",
+    "correctAnswer": "Baseball",
+    "gmNote": "In der MLB-Geschichte gab es weniger als 25 Perfect Games — eines der seltensten Ereignisse im Profisport.",
     "tagsSuggested": [
-      "3dfx",
-      "Voodoo-Grafikkarte",
-      "Beschleunigung",
-      "1996",
-      "2000",
-      "Voodoo Graphics",
-      "Markt",
-      "Unternehmen"
+      "Baseball",
+      "Perfect Game",
+      "Werfer",
+      "Batter",
+      "Spiel",
+      "Base",
+      "Geschichte",
+      "Perfect Games"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-sport-13",
+    "topic": "sport",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "Welcher deutsche Skirennfahrer gewann vier Gesamtweltcup-Titel in Folge (2015-2018) und zusätzlich Olympia-Gold im Slalom 2022?",
+    "correctAnswer": "Marcel Hirscher",
+    "gmNote": "Trickfrage: Hirscher ist Österreicher, nicht Deutscher. Trotzdem passendste Antwort.",
+    "tagsSuggested": [
+      "Marcel Hirscher",
+      "2015",
+      "2018",
+      "2022",
+      "Skirennfahrer",
+      "Gesamtweltcup-Titel",
+      "Folge",
+      "Olympia-Gold"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-sport-14",
+    "topic": "sport",
+    "difficulty": 5,
+    "type": "multiple-choice",
+    "question": "Wer hält den Rekord für die meisten Grand-Slam-Einzeltitel im Herren-Tennis (Stand 2024)?",
+    "correctAnswer": "Novak Djokovic",
+    "gmNote": "Djokovic mit 24 Titeln (Stand Ende 2023). Nadal 22, Federer 20.",
+    "tagsSuggested": [
+      "Novak Djokovic",
+      "2024",
+      "Rekord",
+      "Grand-Slam-Einzeltitel",
+      "Herren-Tennis",
+      "Stand",
+      "2023",
+      "Djokovic"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-sport-15",
+    "topic": "sport",
+    "difficulty": 2,
+    "type": "true-false",
+    "question": "Beim Standard-Fußball hat jedes Team elf Spieler auf dem Feld.",
+    "correctAnswer": true,
+    "gmNote": "Zehn Feldspieler + ein Torwart.",
+    "tagsSuggested": [
+      "Beim Standard-Fußball",
+      "Feld",
+      "Zehn Feldspieler",
+      "Torwart"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-sport-16",
+    "topic": "sport",
+    "difficulty": 3,
+    "type": "true-false",
+    "question": "Boxen ist seit den ersten neuzeitlichen Olympischen Spielen 1896 Teil des Programms.",
+    "correctAnswer": false,
+    "gmNote": "Boxen wurde erst 1904 in St. Louis olympisch.",
+    "tagsSuggested": [
+      "1896",
+      "Boxen",
+      "Olympischen Spielen",
+      "Teil",
+      "Programms",
+      "1904",
+      "St",
+      "Louis"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-flash-23",
+    "topic": "sport",
+    "difficulty": 3,
+    "type": "true-false",
+    "question": "Bei den ersten Olympischen Spielen der Neuzeit 1896 in Athen nahmen ausschließlich männliche Athleten teil.",
+    "correctAnswer": true,
+    "tagsSuggested": [
+      "1896",
+      "Olympischen Spielen",
+      "Neuzeit",
+      "Athen",
+      "Athleten",
+      "1900",
+      "Frauen",
+      "Paris"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-flash-29",
+    "topic": "sport",
+    "difficulty": 4,
+    "type": "true-false",
+    "question": "Cricket zählt gemessen an aktiven Fans weltweit zu den populärsten Sportarten nach Fußball.",
+    "correctAnswer": true,
+    "tagsSuggested": [
+      "Cricket",
+      "Fans",
+      "Sportarten",
+      "Fußball",
+      "Milliarden Fans",
+      "Indien",
+      "Pakistan",
+      "Australien"
     ],
     "tags": []
   },
@@ -627,99 +3266,6 @@
     "tags": []
   },
   {
-    "id": "q-kurios-01",
-    "topic": "kurioses",
-    "difficulty": 3,
-    "type": "multiple-choice",
-    "question": "Wie viele Herzen hat ein Krake?",
-    "correctAnswer": "3",
-    "gmNote": "Ein Hauptherz für den Körper, zwei Kiemenherzen. Das Blut ist blau (Hämocyanin statt Hämoglobin).",
-    "tagsSuggested": [
-      "3",
-      "Herzen",
-      "Krake",
-      "Körper",
-      "Kiemenherzen",
-      "Hämocyanin",
-      "Hämoglobin"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-kurios-02",
-    "topic": "kurioses",
-    "difficulty": 2,
-    "type": "multiple-choice",
-    "question": "Aus welchem Material besteht der Großteil des menschlichen Gehirns?",
-    "correctAnswer": "Fett",
-    "gmNote": "Rund 60 % der Trockenmasse — deshalb sind essenzielle Fettsäuren so wichtig für die Hirnentwicklung.",
-    "tagsSuggested": [
-      "Fett",
-      "Material",
-      "Großteil",
-      "Gehirns",
-      "Rund",
-      "Trockenmasse",
-      "Fettsäuren",
-      "Hirnentwicklung"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-kurios-03",
-    "topic": "kurioses",
-    "difficulty": 3,
-    "type": "multiple-choice",
-    "question": "Welches Säugetier hat die längste durchschnittliche Tragezeit?",
-    "correctAnswer": "Afrikanischer Elefant",
-    "gmNote": "Rund 22 Monate. Kälber wiegen bei der Geburt schon etwa 120 kg.",
-    "tagsSuggested": [
-      "Afrikanischer Elefant",
-      "Tragezeit",
-      "Rund",
-      "Monate",
-      "Kälber",
-      "Geburt"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-flash-01",
-    "topic": "kurioses",
-    "difficulty": 2,
-    "type": "true-false",
-    "question": "Die Chinesische Mauer ist mit bloßem Auge aus dem Weltall sichtbar.",
-    "correctAnswer": false,
-    "tagsSuggested": [
-      "Auge",
-      "Weltall",
-      "Mythos",
-      "Astronaut",
-      "Mauer",
-      "Orbit",
-      "Hilfsmittel"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-flash-02",
-    "topic": "wissenschaft",
-    "difficulty": 2,
-    "type": "true-false",
-    "question": "Menschen nutzen nur etwa zehn Prozent ihres Gehirns.",
-    "correctAnswer": false,
-    "tagsSuggested": [
-      "Menschen",
-      "Prozent",
-      "Gehirns",
-      "Auch",
-      "Alltag",
-      "Hirnregionen",
-      "Mythos"
-    ],
-    "tags": []
-  },
-  {
     "id": "q-flash-03",
     "topic": "sprache",
     "difficulty": 2,
@@ -732,860 +3278,6 @@
       "Erbe",
       "Kolonialzeit",
       "Alle Nachbarländer"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-flash-04",
-    "topic": "wissenschaft",
-    "difficulty": 3,
-    "type": "true-false",
-    "question": "Ein Tag auf der Venus dauert länger als ein Jahr auf der Venus.",
-    "correctAnswer": true,
-    "tagsSuggested": [
-      "Venus",
-      "Erdtage",
-      "Umdrehung",
-      "Sonne",
-      "Erdtagen"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-flash-05",
-    "topic": "geschichte",
-    "difficulty": 3,
-    "type": "true-false",
-    "question": "Napoleon Bonaparte war für seine Zeit ungewöhnlich klein.",
-    "correctAnswer": false,
-    "tagsSuggested": [
-      "Napoleon Bonaparte",
-      "Zeit",
-      "Durchschnittsgröße",
-      "Frankreich",
-      "Verwechslung",
-      "Zolleinheiten",
-      "Karikaturen"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-flash-06",
-    "topic": "essen",
-    "difficulty": 3,
-    "type": "true-false",
-    "question": "Die Cashew-Nuss wächst außerhalb der eigentlichen Frucht.",
-    "correctAnswer": true,
-    "tagsSuggested": [
-      "Frucht",
-      "Cashew-Apfel",
-      "Kern",
-      "Steinfrucht"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-flash-07",
-    "topic": "kurioses",
-    "difficulty": 3,
-    "type": "true-false",
-    "question": "Der Große Panda gehört biologisch zur Familie der Bären.",
-    "correctAnswer": true,
-    "tagsSuggested": [
-      "Familie",
-      "Bären",
-      "Lange",
-      "Analysen",
-      "Ursidae"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-flash-08",
-    "topic": "geografie",
-    "difficulty": 2,
-    "type": "true-false",
-    "question": "Der Eiffelturm ist bis heute der höchste Turm der Welt.",
-    "correctAnswer": false,
-    "tagsSuggested": [
-      "Turm",
-      "Welt",
-      "Tokyo Skytree",
-      "Fernsehtürme"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-flash-09",
-    "topic": "film",
-    "difficulty": 4,
-    "type": "true-false",
-    "question": "Der Name „James Bond“ stammt von einem Ornithologen.",
-    "correctAnswer": true,
-    "tagsSuggested": [
-      "James Bond",
-      "Ornithologen",
-      "Ian Fleming",
-      "Namen",
-      "Vogelbuch",
-      "Birds",
-      "West Indies",
-      "Ornithologen James Bond"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-flash-10",
-    "topic": "wissenschaft",
-    "difficulty": 3,
-    "type": "true-false",
-    "question": "Fledermäuse sind blind und orientieren sich ausschließlich per Echoortung.",
-    "correctAnswer": false,
-    "tagsSuggested": [
-      "Fledermäuse",
-      "Echoortung",
-      "Arten",
-      "Sicht",
-      "Nacht"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-flash-11",
-    "topic": "geografie",
-    "difficulty": 2,
-    "type": "true-false",
-    "question": "Die Transsibirische Eisenbahn ist die längste durchgehende Bahnstrecke der Welt.",
-    "correctAnswer": true,
-    "tagsSuggested": [
-      "Bahnstrecke",
-      "Welt",
-      "Moskau",
-      "Wladiwostok",
-      "Kilometer",
-      "Zeitzonen",
-      "Reine Fahrzeit",
-      "Aufenthalte"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-flash-12",
-    "topic": "sprache",
-    "difficulty": 4,
-    "type": "true-false",
-    "question": "Auf das englische Wort „orange“ gibt es kein einziges perfekt reimendes Wort in der Alltagssprache.",
-    "correctAnswer": true,
-    "tagsSuggested": [
-      "Wort",
-      "Alltagssprache",
-      "Berühmte Reim-Falle",
-      "Einzige",
-      "Ausnahme",
-      "Sporenbehälter"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-flash-13",
-    "topic": "wissenschaft",
-    "difficulty": 2,
-    "type": "true-false",
-    "question": "Ein Blitz schlägt nie zweimal an derselben Stelle ein.",
-    "correctAnswer": false,
-    "tagsSuggested": [
-      "Stelle",
-      "Hohe Gebäude",
-      "Empire State Building"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-flash-14",
-    "topic": "geografie",
-    "difficulty": 4,
-    "type": "true-false",
-    "question": "Australien ist an seiner breitesten Stelle breiter als der Durchmesser des Mondes.",
-    "correctAnswer": true,
-    "tagsSuggested": [
-      "Australien",
-      "Stelle",
-      "Durchmesser",
-      "Mondes",
-      "Mond",
-      "Sitzt",
-      "Nennung"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-flash-15",
-    "topic": "geschichte",
-    "difficulty": 3,
-    "type": "true-false",
-    "question": "Isaac Newton wurde tatsächlich von einem herabfallenden Apfel am Kopf getroffen.",
-    "correctAnswer": false,
-    "tagsSuggested": [
-      "Isaac Newton",
-      "Apfel",
-      "Kopf",
-      "Erzählung",
-      "Garten",
-      "Mutter",
-      "Verzierung"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-klick-01",
-    "topic": "kurioses",
-    "difficulty": 3,
-    "type": "warmup-riddle",
-    "question": "Warum haben Golfbälle keine glatte Oberfläche, sondern kleine Dellen?",
-    "solution": "Die Dellen erzeugen kontrollierte Turbulenzen um den Ball. Das verkleinert das Windschatten-Gebiet hinter dem Ball und reduziert den Luftwiderstand — ein glatter Ball würde nur die halbe Distanz erreichen. Entdeckt Ende des 19. Jahrhunderts, als alte, zerbeulte Bälle sich besser schlagen ließen als neue.",
-    "tagsSuggested": [
-      "Golfbälle",
-      "Oberfläche",
-      "Dellen"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-klick-02",
-    "topic": "kurioses",
-    "difficulty": 2,
-    "type": "warmup-riddle",
-    "question": "Warum hat der Deckel eines Marmeladenglases oben in der Mitte eine leichte Delle, die beim ersten Öffnen laut „klickt“?",
-    "solution": "Die Delle ist ein Vakuum-Indikator. Nach dem heißen Abfüllen und Verschließen entsteht durch die Abkühlung Unterdruck im Glas — der zieht den Deckel leicht nach innen. Beim ersten Öffnen strömt Luft ein, die Delle springt hoch und macht das typische „Klick“. Ist die Delle schon draußen, wurde das Glas eventuell schon geöffnet.",
-    "tagsSuggested": [
-      "Deckel",
-      "Marmeladenglases",
-      "Mitte",
-      "Delle",
-      "Öffnen"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-klick-03",
-    "topic": "kurioses",
-    "difficulty": 3,
-    "type": "warmup-riddle",
-    "question": "Warum meint man das Meer zu hören, wenn man eine große Muschel ans Ohr hält?",
-    "solution": "Die Hohlkammer der Muschel wirkt wie ein akustischer Resonator und verstärkt selektiv Umgebungsgeräusche in bestimmten Frequenzen. Das dumpfe Rauschen, das wir als „Meer“ interpretieren, ist eine gefilterte Mischung aus Umgebungslärm, dem Blutfluss im Ohr und der Muschel-Resonanz. Denselben Effekt bekommt man mit einer hohlen Tasse.",
-    "tagsSuggested": [
-      "Meer",
-      "Muschel",
-      "Ohr"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-klick-04",
-    "topic": "kurioses",
-    "difficulty": 2,
-    "type": "warmup-riddle",
-    "question": "Warum sind Feuerlöscher überall auf der Welt knallrot?",
-    "solution": "Rot ist die international per DIN/ISO genormte Farbe für Brandschutzausrüstung. Sie signalisiert Gefahr, hebt sich vor fast jedem Hintergrund ab und stellt sicher, dass Feuerlöscher weltweit auf einen Blick erkannt werden — auch unter Stress. In besonderen Umgebungen (Rot-Grün-Kliniken, Schiffe) gibt es dokumentierte Ausnahmen mit Neongelb.",
-    "tagsSuggested": [
-      "Feuerlöscher",
-      "Welt"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-klick-05",
-    "topic": "kurioses",
-    "difficulty": 3,
-    "type": "warmup-riddle",
-    "question": "Warum haben Bananen aus dem Supermarkt keine Kerne, obwohl sie botanisch Früchte sind?",
-    "solution": "Alle handelsüblichen Bananen sind sterile Klone einer einzigen Sorte — in Europa fast ausschließlich die Cavendish. Sie werden vegetativ vermehrt, jede Pflanze ist genetisch identisch zur Mutterpflanze. Wildbananen wären kaum essbar. Nachteil der Monokultur: ein einziger Pilz (etwa TR4) kann die weltweite Ernte gefährden.",
-    "tagsSuggested": [
-      "Bananen",
-      "Supermarkt",
-      "Kerne",
-      "Früchte"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-klick-06",
-    "topic": "kurioses",
-    "difficulty": 2,
-    "type": "warmup-riddle",
-    "question": "Warum knallen Champagnerkorken so laut, wenn man die Flasche öffnet?",
-    "solution": "In einer Champagnerflasche stehen etwa 5 bis 6 Bar Druck an — drei- bis viermal so viel wie in einem Autoreifen. Springt der Korken, entweicht das eingeschlossene CO₂ blitzartig, expandiert und erzeugt eine kleine Schockwelle: den „Knall“. Das Geräusch entsteht also durch die schlagartige Druckentspannung, nicht durch den Korken selbst.",
-    "tagsSuggested": [
-      "Champagnerkorken",
-      "Flasche"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-film-04",
-    "topic": "film",
-    "difficulty": 3,
-    "type": "multiple-choice",
-    "question": "Welcher deutsche Regisseur gewann 2007 den Oscar für den besten fremdsprachigen Film mit „Das Leben der Anderen“?",
-    "correctAnswer": "Florian Henckel von Donnersmarck",
-    "tagsSuggested": [
-      "Florian Henckel von Donnersmarck",
-      "2007",
-      "Oscar",
-      "Anderen",
-      "Donnersmarcks Regie-Debüt",
-      "Stasi-Offizier",
-      "Kulturüberwachung",
-      "Außenseiter"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-film-05",
-    "topic": "film",
-    "difficulty": 4,
-    "type": "multiple-choice",
-    "question": "Welcher US-Regisseur ist für seinen markanten symmetrischen Bildstil bekannt und drehte unter anderem „The Grand Budapest Hotel“?",
-    "correctAnswer": "Wes Anderson",
-    "tagsSuggested": [
-      "Wes Anderson",
-      "Bildstil",
-      "The Grand Budapest Hotel",
-      "1996",
-      "Paul Thomas Anderson",
-      "Bottle Rocket",
-      "Handschrift"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-film-06",
-    "topic": "film",
-    "difficulty": 5,
-    "type": "multiple-choice",
-    "question": "Welcher Cinematographer arbeitete an „Blade Runner 2049“, „Sicario“ und „1917“ und gilt als Meister des Naturlichts?",
-    "correctAnswer": "Roger Deakins",
-    "tagsSuggested": [
-      "Roger Deakins",
-      "2049",
-      "1917",
-      "Blade Runner",
-      "Sicario",
-      "Naturlichts",
-      "2018",
-      "2020"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-serien-04",
-    "topic": "serien",
-    "difficulty": 3,
-    "type": "multiple-choice",
-    "question": "In welcher US-Stadt spielt die HBO-Serie „The Wire“, die als eine der besten Fernsehserien aller Zeiten gilt?",
-    "correctAnswer": "Baltimore",
-    "tagsSuggested": [
-      "Baltimore",
-      "The Wire",
-      "Fernsehserien",
-      "Zeiten",
-      "Serienschöpfer David Simon",
-      "Polizeireporter",
-      "Baltimore Sun",
-      "Institutionen"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-serien-05",
-    "topic": "serien",
-    "difficulty": 4,
-    "type": "multiple-choice",
-    "question": "Wer schuf und produzierte die Netflix-Zeichentrickserie „BoJack Horseman“?",
-    "correctAnswer": "Raphael Bob-Waksberg",
-    "tagsSuggested": [
-      "Raphael Bob-Waksberg",
-      "Netflix-Zeichentrickserie",
-      "Horseman",
-      "2014",
-      "2020",
-      "Bob-Waksberg",
-      "Show",
-      "Illustratorin Lisa Hanawalt"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-serien-06",
-    "topic": "serien",
-    "difficulty": 5,
-    "type": "multiple-choice",
-    "question": "Welcher Regisseur schuf zusammen mit Mark Frost die Mystery-Serie „Twin Peaks“, deren dritte Staffel 2017 in „The Return“ mündete?",
-    "correctAnswer": "David Lynch",
-    "tagsSuggested": [
-      "David Lynch",
-      "2017",
-      "Mark Frost",
-      "Mystery-Serie",
-      "Twin Peaks",
-      "Staffel",
-      "The Return",
-      "1990"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-musik-04",
-    "topic": "musik",
-    "difficulty": 3,
-    "type": "multiple-choice",
-    "question": "Auf welchem Beatles-Album erschien der Song „Yesterday“ ursprünglich im Jahr 1965?",
-    "correctAnswer": "Help!",
-    "tagsSuggested": [
-      "Help!",
-      "1965",
-      "Beatles-Album",
-      "Yesterday",
-      "Paul",
-      "Melodie",
-      "Plagiat",
-      "Original"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-musik-05",
-    "topic": "musik",
-    "difficulty": 4,
-    "type": "multiple-choice",
-    "question": "In welcher deutschen Stadt wurde die Elektronik-Band Kraftwerk 1970 gegründet?",
-    "correctAnswer": "Düsseldorf",
-    "tagsSuggested": [
-      "Düsseldorf",
-      "1970",
-      "Elektronik-Band Kraftwerk",
-      "Ralf Hütter",
-      "Florian Schneider",
-      "Kraftwerk",
-      "Zentrum",
-      "Elektronik-Sounds"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-musik-06",
-    "topic": "musik",
-    "difficulty": 5,
-    "type": "multiple-choice",
-    "question": "Welcher österreichische Komponist gilt als Pionier der Zwölftontechnik in der modernen Kompositionslehre?",
-    "correctAnswer": "Arnold Schönberg",
-    "tagsSuggested": [
-      "Arnold Schönberg",
-      "Komponist",
-      "Pionier",
-      "Zwölftontechnik",
-      "Kompositionslehre",
-      "1921",
-      "Schönberg",
-      "Grundlage"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-games-04",
-    "topic": "games",
-    "difficulty": 3,
-    "type": "multiple-choice",
-    "question": "Welcher Publisher steht seit den 1980ern hinter der Videospielserie „The Legend of Zelda“?",
-    "correctAnswer": "Nintendo",
-    "tagsSuggested": [
-      "Nintendo",
-      "Videospielserie",
-      "The Legend",
-      "Zelda",
-      "1986",
-      "Shigeru Miyamoto",
-      "Reihe",
-      "Alle Hauptteile"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-games-05",
-    "topic": "games",
-    "difficulty": 4,
-    "type": "multiple-choice",
-    "question": "Welches unabhängige Studio veröffentlichte 2020 den vielfach ausgezeichneten Rogue-Like-Titel „Hades“?",
-    "correctAnswer": "Supergiant Games",
-    "tagsSuggested": [
-      "Supergiant Games",
-      "2020",
-      "Studio",
-      "Rogue-Like-Titel",
-      "Hades",
-      "Supergiant",
-      "San Francisco",
-      "Bastion"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-games-06",
-    "topic": "games",
-    "difficulty": 5,
-    "type": "multiple-choice",
-    "question": "In welchem Jahr veröffentlichte Atari das Arcade-Spiel „Pong“ — einen der Meilensteine der Videospielgeschichte?",
-    "correctAnswer": "1972",
-    "tagsSuggested": [
-      "1972",
-      "Atari",
-      "Arcade-Spiel",
-      "Pong",
-      "Meilensteine",
-      "Videospielgeschichte",
-      "Allan Alcorn",
-      "Prototyp"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-geografie-04",
-    "topic": "geografie",
-    "difficulty": 3,
-    "type": "multiple-choice",
-    "question": "Welches ist das flächenmäßig größte Land Afrikas?",
-    "correctAnswer": "Algerien",
-    "tagsSuggested": [
-      "Algerien",
-      "2011",
-      "Mio",
-      "Teilung",
-      "Sudan",
-      "Davor",
-      "Gesamt"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-geografie-05",
-    "topic": "geografie",
-    "difficulty": 4,
-    "type": "multiple-choice",
-    "question": "Welche Bezeichnung trägt die charakteristische Trichtermündung der Elbe in die Nordsee?",
-    "correctAnswer": "Ästuar",
-    "tagsSuggested": [
-      "Ästuar",
-      "Trichtermündung",
-      "Elbe",
-      "Nordsee",
-      "Ästuare",
-      "Gezeiten",
-      "Flussbett",
-      "Auch Themse"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-geografie-06",
-    "topic": "geografie",
-    "difficulty": 5,
-    "type": "multiple-choice",
-    "question": "Wie hoch ist der Kilimandscharo, der höchste Berg Afrikas, auf hundert Meter gerundet?",
-    "correctAnswer": "5900 m",
-    "tagsSuggested": [
-      "5900 m",
-      "Kilimandscharo",
-      "Berg Afrikas",
-      "Meter",
-      "Kibo-Krater",
-      "Vulkan",
-      "Teil",
-      "Kette"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-geschichte-04",
-    "topic": "geschichte",
-    "difficulty": 3,
-    "type": "multiple-choice",
-    "question": "In welchem Jahr fiel die Berliner Mauer?",
-    "correctAnswer": "1989",
-    "tagsSuggested": [
-      "1989",
-      "Berliner Mauer",
-      "1990",
-      "Am Abend",
-      "November",
-      "Grenzübergänge",
-      "Pressekonferenz",
-      "Günter Schabowski"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-geschichte-05",
-    "topic": "geschichte",
-    "difficulty": 4,
-    "type": "multiple-choice",
-    "question": "Unter welchem Sultan erreichte das Osmanische Reich im 16. Jahrhundert seinen territorialen Höhepunkt?",
-    "correctAnswer": "Süleyman der Prächtige",
-    "tagsSuggested": [
-      "Süleyman der Prächtige",
-      "Sultan",
-      "Osmanische Reich",
-      "Höhepunkt",
-      "Süleyman",
-      "Reich",
-      "Wien",
-      "Prächtige"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-geschichte-06",
-    "topic": "geschichte",
-    "difficulty": 5,
-    "type": "multiple-choice",
-    "question": "Wer war der erste Reichspräsident der Weimarer Republik von 1919 bis 1925?",
-    "correctAnswer": "Friedrich Ebert",
-    "tagsSuggested": [
-      "Friedrich Ebert",
-      "1919",
-      "1925",
-      "Reichspräsident",
-      "Weimarer Republik",
-      "Nationalversammlung",
-      "Tod",
-      "Paul"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-wissenschaft-04",
-    "topic": "wissenschaft",
-    "difficulty": 3,
-    "type": "multiple-choice",
-    "question": "Welches chemische Element trägt im Periodensystem das Symbol „Na“?",
-    "correctAnswer": "Natrium",
-    "tagsSuggested": [
-      "Natrium",
-      "Element",
-      "Periodensystem",
-      "Symbol",
-      "Na",
-      "Vom",
-      "Wasser",
-      "Chlor"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-wissenschaft-05",
-    "topic": "wissenschaft",
-    "difficulty": 4,
-    "type": "multiple-choice",
-    "question": "In welchen zwei Naturwissenschaften erhielt Marie Curie ihre Nobelpreise — bis heute einzigartig für eine Person?",
-    "correctAnswer": "Physik und Chemie",
-    "tagsSuggested": [
-      "Physik und Chemie",
-      "Naturwissenschaften",
-      "Marie Curie",
-      "Nobelpreise",
-      "Person",
-      "1903",
-      "1911",
-      "Physik"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-wissenschaft-06",
-    "topic": "wissenschaft",
-    "difficulty": 5,
-    "type": "multiple-choice",
-    "question": "Welche fundamentale physikalische Konstante beschreibt die Stärke der elektromagnetischen Wechselwirkung und liegt bei etwa 1/137?",
-    "correctAnswer": "Feinstrukturkonstante",
-    "tagsSuggested": [
-      "Feinstrukturkonstante",
-      "Konstante",
-      "Stärke",
-      "Wechselwirkung",
-      "Zivilisation",
-      "Zahlenwert",
-      "Wert",
-      "Rätsel"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-sport-04",
-    "topic": "sport",
-    "difficulty": 3,
-    "type": "multiple-choice",
-    "question": "Welches Land wurde 1974 Fußball-Weltmeister im eigenen Land?",
-    "correctAnswer": "Deutschland",
-    "tagsSuggested": [
-      "Deutschland",
-      "1974",
-      "Fußball-Weltmeister",
-      "Finale",
-      "München",
-      "Niederlande",
-      "Johan Cruyff",
-      "Kapitän Franz Beckenbauer"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-sport-05",
-    "topic": "sport",
-    "difficulty": 4,
-    "type": "multiple-choice",
-    "question": "Welcher NBA-Spieler hält den Rekord für die meisten regulären Saison-MVP-Auszeichnungen mit sechs Titeln?",
-    "correctAnswer": "Kareem Abdul-Jabbar",
-    "tagsSuggested": [
-      "Kareem Abdul-Jabbar",
-      "Rekord",
-      "Saison",
-      "Auszeichnungen",
-      "Titeln",
-      "1971",
-      "1980",
-      "Kareem"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-sport-06",
-    "topic": "sport",
-    "difficulty": 5,
-    "type": "multiple-choice",
-    "question": "Wie viele Formel-1-Weltmeistertitel halten Michael Schumacher und Lewis Hamilton (Stand 2024) — jeweils?",
-    "correctAnswer": "je 7",
-    "tagsSuggested": [
-      "je 7",
-      "2024",
-      "Formel",
-      "Weltmeistertitel",
-      "Michael Schumacher",
-      "Lewis Hamilton",
-      "Stand",
-      "2020"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-essen-04",
-    "topic": "essen",
-    "difficulty": 3,
-    "type": "multiple-choice",
-    "question": "Aus welcher deutschen Region stammt das klassische Rezept für den Sauerbraten mit dunkler Marinade und Rosinen?",
-    "correctAnswer": "Rheinland",
-    "tagsSuggested": [
-      "Rheinland",
-      "Rezept",
-      "Sauerbraten",
-      "Marinade",
-      "Rosinen",
-      "Rotwein-Essig-Sud",
-      "Printenbröseln",
-      "Fränkische"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-essen-05",
-    "topic": "essen",
-    "difficulty": 4,
-    "type": "multiple-choice",
-    "question": "Welche rote Rebsorte dominiert die klassischen Weine der spanischen Rioja-Region?",
-    "correctAnswer": "Tempranillo",
-    "tagsSuggested": [
-      "Tempranillo",
-      "Rebsorte",
-      "Weine",
-      "Rioja-Region",
-      "Portugiesisch",
-      "Tinta Roriz",
-      "Name",
-      "Rioja"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-essen-06",
-    "topic": "essen",
-    "difficulty": 5,
-    "type": "multiple-choice",
-    "question": "Aus welcher italienischen Region stammt der klassische Aceto Balsamico Tradizionale mit DOP-Siegel?",
-    "correctAnswer": "Emilia-Romagna",
-    "tagsSuggested": [
-      "Emilia-Romagna",
-      "Aceto Balsamico Tradizionale",
-      "Siegel",
-      "Modena",
-      "Reggio Emilia",
-      "Bezeichnung",
-      "Mindestens",
-      "Holzfässern"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-technik-04",
-    "topic": "technik",
-    "difficulty": 3,
-    "type": "multiple-choice",
-    "question": "In welchem Jahr stellte Apple das erste iPhone vor?",
-    "correctAnswer": "2007",
-    "tagsSuggested": [
-      "2007",
-      "Apple",
-      "Steve Jobs",
-      "Januar",
-      "Macworld",
-      "Verkaufsstart",
-      "Juni",
-      "Blackberry"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-technik-05",
-    "topic": "technik",
-    "difficulty": 4,
-    "type": "multiple-choice",
-    "question": "Welche Programmiersprache belegt seit Jahren regelmäßig Spitzenplätze im TIOBE-Index und wurde 1991 von Guido van Rossum veröffentlicht?",
-    "correctAnswer": "Python",
-    "tagsSuggested": [
-      "Python",
-      "1991",
-      "Spitzenplätze",
-      "Index",
-      "Guido",
-      "Rossum",
-      "Comedy-Ensemble Monty Python",
-      "Schlange"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-technik-06",
-    "topic": "technik",
-    "difficulty": 5,
-    "type": "multiple-choice",
-    "question": "In welchem Jahr stellte Intel den 4004 vor, den ersten kommerziell erhältlichen Mikroprozessor der Welt?",
-    "correctAnswer": "1971",
-    "tagsSuggested": [
-      "1971",
-      "Intel",
-      "Mikroprozessor",
-      "Welt",
-      "Bit-Prozessor",
-      "Transistoren",
-      "November",
-      "Chefdesigner"
     ],
     "tags": []
   },
@@ -1647,246 +3339,185 @@
     "tags": []
   },
   {
-    "id": "q-kurioses-04",
-    "topic": "kurioses",
+    "id": "q-sprache-07",
+    "topic": "sprache",
+    "difficulty": 2,
+    "type": "multiple-choice",
+    "question": "Welche Sprache hat die meisten Muttersprachler weltweit?",
+    "correctAnswer": "Mandarin",
+    "gmNote": "Mandarin-Chinesisch mit rund 900 Millionen. Englisch hat mehr Zweitsprachler, aber weniger Muttersprachler.",
+    "tagsSuggested": [
+      "Mandarin",
+      "Muttersprachler",
+      "Mandarin-Chinesisch",
+      "Millionen",
+      "Englisch",
+      "Zweitsprachler"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-sprache-08",
+    "topic": "sprache",
+    "difficulty": 2,
+    "type": "multiple-choice",
+    "question": "In welcher Sprache wird das Wort „Kindergarten\" so verwendet, wie im Deutschen — als Lehnwort?",
+    "correctAnswer": "Englisch",
+    "gmNote": "Englisch übernahm das deutsche „Kindergarten\" praktisch unverändert (auch in der Schreibweise).",
+    "tagsSuggested": [
+      "Englisch",
+      "Sprache",
+      "Wort",
+      "Kindergarten",
+      "Deutschen",
+      "Lehnwort",
+      "Schreibweise"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-sprache-09",
+    "topic": "sprache",
     "difficulty": 3,
     "type": "multiple-choice",
-    "question": "Welcher Berg ist mit rund 22 Kilometern Höhe der größte bekannte Vulkan im Sonnensystem?",
-    "correctAnswer": "Olympus Mons",
+    "question": "Welche der folgenden Sprachen wird in lateinischer Schrift, aber ohne Vokale zwischen Konsonanten geschrieben?",
+    "correctAnswer": "Arabisch (in Umschrift)",
+    "gmNote": "Arabisch: Vokale werden in der klassischen Schriftform meist nicht mitgeschrieben, sondern nur bei Bedarf durch diakritische Zeichen ergänzt.",
     "tagsSuggested": [
-      "Olympus Mons",
-      "Kilometern Höhe",
-      "Vulkan",
-      "Sonnensystem",
-      "Mars",
-      "Mount Everest",
-      "Marsatmosphäre"
+      "Arabisch (in Umschrift)",
+      "Sprachen",
+      "Schrift",
+      "Vokale",
+      "Konsonanten",
+      "Arabisch",
+      "Schriftform",
+      "Bedarf"
     ],
     "tags": []
   },
   {
-    "id": "q-kurioses-05",
-    "topic": "kurioses",
+    "id": "q-sprache-10",
+    "topic": "sprache",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Was bedeutet das lateinische „Cave canem\" wörtlich?",
+    "correctAnswer": "Vorsicht vor dem Hund",
+    "gmNote": "Berühmte Warntafel-Inschrift auf Fußbodenmosaiken in Pompeji.",
+    "tagsSuggested": [
+      "Vorsicht vor dem Hund",
+      "Cave",
+      "Berühmte Warntafel-Inschrift",
+      "Fußbodenmosaiken",
+      "Pompeji"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-sprache-11",
+    "topic": "sprache",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Aus welcher Sprache stammt das deutsche Wort „Kiosk\"?",
+    "correctAnswer": "Türkisch",
+    "gmNote": "Türkisch „köşk\" = Gartenhäuschen, ursprünglich aus dem Persischen „kušk\".",
+    "tagsSuggested": [
+      "Türkisch",
+      "Sprache",
+      "Wort",
+      "Kiosk",
+      "Gartenhäuschen",
+      "Persischen"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-flash-12",
+    "topic": "sprache",
+    "difficulty": 4,
+    "type": "true-false",
+    "question": "Auf das englische Wort „orange“ gibt es kein einziges perfekt reimendes Wort in der Alltagssprache.",
+    "correctAnswer": true,
+    "tagsSuggested": [
+      "Wort",
+      "Alltagssprache",
+      "Berühmte Reim-Falle",
+      "Einzige",
+      "Ausnahme",
+      "Sporenbehälter"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-sprache-12",
+    "topic": "sprache",
     "difficulty": 4,
     "type": "multiple-choice",
-    "question": "Wie viele Chromosomenpaare hat eine normale menschliche Körperzelle?",
-    "correctAnswer": "23",
+    "question": "Welche europäische Sprache ist keine indoeuropäische Sprache?",
+    "correctAnswer": "Ungarisch",
+    "gmNote": "Ungarisch gehört zur uralischen Sprachfamilie (mit Finnisch und Estnisch).",
     "tagsSuggested": [
-      "23",
-      "Chromosomenpaare",
-      "Körperzelle",
-      "Paare",
-      "Chromosomen",
-      "Autosomen-Paare",
-      "Geschlechtschromosomen",
-      "Keimzellen"
+      "Ungarisch",
+      "Sprache",
+      "Sprachfamilie",
+      "Finnisch",
+      "Estnisch"
     ],
     "tags": []
   },
   {
-    "id": "q-kurioses-06",
-    "topic": "kurioses",
+    "id": "q-sprache-13",
+    "topic": "sprache",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "Wie viele grammatikalische Fälle hat Latein?",
+    "correctAnswer": "6",
+    "gmNote": "Sechs: Nominativ, Genitiv, Dativ, Akkusativ, Ablativ, Vokativ. Deutsch hat vier, Finnisch etwa 15.",
+    "tagsSuggested": [
+      "6",
+      "Fälle",
+      "Latein",
+      "Sechs",
+      "Nominativ",
+      "Genitiv",
+      "Dativ",
+      "Akkusativ"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-sprache-14",
+    "topic": "sprache",
     "difficulty": 5,
     "type": "multiple-choice",
-    "question": "Wie viele Erdenjahre braucht der Planet Uranus für einen kompletten Umlauf um die Sonne (auf volle Jahre gerundet)?",
-    "correctAnswer": "84",
+    "question": "Welches Alphabet besteht aus 33 Buchstaben und wird u.a. für Russisch, Bulgarisch und Serbisch verwendet?",
+    "correctAnswer": "Kyrillisch",
+    "gmNote": "Kyrillisch — benannt nach Kyrill von Saloniki, der im 9. Jahrhundert das Vorgänger-Alphabet Glagolitisch entwickelte.",
     "tagsSuggested": [
-      "84",
-      "Erdenjahre",
-      "Planet Uranus",
-      "Umlauf",
-      "Sonne",
-      "Etwa",
-      "Uranus",
-      "Umläufe"
+      "Kyrillisch",
+      "Buchstaben",
+      "Russisch",
+      "Bulgarisch",
+      "Serbisch",
+      "Kyrill",
+      "Saloniki",
+      "Vorgänger-Alphabet Glagolitisch"
     ],
     "tags": []
   },
   {
-    "id": "q-flash-16",
-    "topic": "film",
+    "id": "q-sprache-15",
+    "topic": "sprache",
     "difficulty": 3,
     "type": "true-false",
-    "question": "Der Film „Titanic“ (1997) gewann elf Oscars.",
-    "correctAnswer": true,
-    "tagsSuggested": [
-      "1997",
-      "Titanic",
-      "Oscars",
-      "1959",
-      "2003",
-      "Damit",
-      "Ben Hur",
-      "Königs"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-flash-17",
-    "topic": "serien",
-    "difficulty": 2,
-    "type": "true-false",
-    "question": "Die HBO-Serie „Game of Thrones“ basiert auf einer Romanreihe von J. R. R. Tolkien.",
+    "question": "Das englische Wort „quiz\" wurde ursprünglich als Wette erfunden, um ein sinnloses Wort in die Sprache einzuführen.",
     "correctAnswer": false,
+    "gmNote": "Diese Anekdote ist eine populäre Legende, aber historisch nicht belegt. Etymologisch unklar.",
     "tagsSuggested": [
-      "Game",
-      "Thrones",
-      "Romanreihe",
-      "Tolkien",
-      "1996",
-      "George",
-      "Martin",
-      "Eis"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-flash-18",
-    "topic": "musik",
-    "difficulty": 3,
-    "type": "true-false",
-    "question": "Ludwig van Beethoven war zum Zeitpunkt der Uraufführung seiner 9. Sinfonie 1824 nahezu vollständig taub.",
-    "correctAnswer": true,
-    "tagsSuggested": [
-      "1824",
-      "Ludwig",
-      "Beethoven",
-      "Zeitpunkt",
-      "Uraufführung",
-      "Sinfonie",
-      "Wiener Uraufführung",
-      "Bühne"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-flash-19",
-    "topic": "games",
-    "difficulty": 2,
-    "type": "true-false",
-    "question": "Mario, das Maskottchen von Nintendo, war in seinem allerersten Auftritt bereits als Klempner konzipiert.",
-    "correctAnswer": false,
-    "tagsSuggested": [
-      "Mario",
-      "Maskottchen",
-      "Nintendo",
-      "Auftritt",
-      "Klempner",
-      "1981",
-      "1983",
-      "Donkey Kong"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-flash-20",
-    "topic": "geografie",
-    "difficulty": 2,
-    "type": "true-false",
-    "question": "Australien ist gleichzeitig ein Land und ein eigenständiger Kontinent.",
-    "correctAnswer": true,
-    "tagsSuggested": [
-      "Australien",
-      "Kontinent",
-      "Staat",
-      "Ozeanien",
-      "Neuseeland",
-      "Papua-Neuguinea",
-      "Pazifik-Inselstaaten"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-flash-21",
-    "topic": "geschichte",
-    "difficulty": 3,
-    "type": "true-false",
-    "question": "Napoleon Bonaparte wurde in Frankreich geboren.",
-    "correctAnswer": false,
-    "tagsSuggested": [
-      "Napoleon Bonaparte",
-      "Frankreich",
-      "August",
-      "Korsika",
-      "Insel",
-      "Korsisch",
-      "Französisch"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-flash-22",
-    "topic": "wissenschaft",
-    "difficulty": 3,
-    "type": "true-false",
-    "question": "Licht bewegt sich in einem Medium wie Wasser oder Glas langsamer als im Vakuum.",
-    "correctAnswer": true,
-    "tagsSuggested": [
-      "Licht",
-      "Medium",
-      "Wasser",
-      "Glas",
-      "Vakuum",
-      "Vakuumgeschwindigkeit",
-      "Diamant",
-      "Deshalb"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-flash-23",
-    "topic": "sport",
-    "difficulty": 3,
-    "type": "true-false",
-    "question": "Bei den ersten Olympischen Spielen der Neuzeit 1896 in Athen nahmen ausschließlich männliche Athleten teil.",
-    "correctAnswer": true,
-    "tagsSuggested": [
-      "1896",
-      "Olympischen Spielen",
-      "Neuzeit",
-      "Athen",
-      "Athleten",
-      "1900",
-      "Frauen",
-      "Paris"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-flash-24",
-    "topic": "essen",
-    "difficulty": 4,
-    "type": "true-false",
-    "question": "Weißer Balsamico trägt dieselbe DOP-Herkunftsbezeichnung wie klassischer Aceto Balsamico Tradizionale.",
-    "correctAnswer": false,
-    "tagsSuggested": [
-      "Weißer Balsamico",
-      "Herkunftsbezeichnung",
-      "Aceto Balsamico Tradizionale",
-      "Modena",
-      "Kategorie",
-      "Condimento",
-      "Schutz",
-      "Tradizionale"
-    ],
-    "tags": []
-  },
-  {
-    "id": "q-flash-25",
-    "topic": "technik",
-    "difficulty": 2,
-    "type": "true-false",
-    "question": "Das World Wide Web wurde am Kernforschungszentrum CERN in Genf entwickelt.",
-    "correctAnswer": true,
-    "tagsSuggested": [
-      "Kernforschungszentrum",
-      "Genf",
-      "1989",
-      "1991",
-      "Tim Berners-Lee",
-      "Vorschlag",
-      "Web-Server",
-      "Ursprünglicher Zweck"
+      "Wort",
+      "Wette",
+      "Sprache",
+      "Legende",
+      "Etymologisch"
     ],
     "tags": []
   },
@@ -1910,78 +3541,722 @@
     "tags": []
   },
   {
-    "id": "q-flash-27",
-    "topic": "kurioses",
+    "id": "q-tech-01",
+    "topic": "technik",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Wer veröffentlichte 1991 die erste Version des Linux-Kernels?",
+    "correctAnswer": "Linus Torvalds",
+    "gmNote": "Als Student in Helsinki. Der Name entstand aus Torvalds' Vornamen plus dem verbreiteten Unix-Suffix.",
+    "tagsSuggested": [
+      "Linus Torvalds",
+      "1991",
+      "Version",
+      "Linux-Kernels",
+      "Helsinki",
+      "Torvalds",
+      "Vornamen",
+      "Unix-Suffix"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-tech-02",
+    "topic": "technik",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "Wie viele Bit umfasst eine IPv6-Adresse?",
+    "correctAnswer": "128",
+    "gmNote": "IPv4 hatte 32 Bit — etwa 4,3 Milliarden Adressen. IPv6 kommt auf 3,4 × 10^38 mögliche Adressen.",
+    "tagsSuggested": [
+      "128",
+      "Bit",
+      "Adresse",
+      "Milliarden Adressen",
+      "Adressen"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-tech-03",
+    "topic": "technik",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "Welches Unternehmen entwickelte die legendäre Voodoo-Grafikkarte für 3D-Beschleunigung?",
+    "correctAnswer": "3dfx",
+    "gmNote": "Voodoo Graphics erschien 1996 und dominierte den PC-3D-Markt, bis NVIDIA das Unternehmen 2000 übernahm.",
+    "tagsSuggested": [
+      "3dfx",
+      "Voodoo-Grafikkarte",
+      "Beschleunigung",
+      "1996",
+      "2000",
+      "Voodoo Graphics",
+      "Markt",
+      "Unternehmen"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-technik-04",
+    "topic": "technik",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "In welchem Jahr stellte Apple das erste iPhone vor?",
+    "correctAnswer": "2007",
+    "tagsSuggested": [
+      "2007",
+      "Apple",
+      "Steve Jobs",
+      "Januar",
+      "Macworld",
+      "Verkaufsstart",
+      "Juni",
+      "Blackberry"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-technik-05",
+    "topic": "technik",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "Welche Programmiersprache belegt seit Jahren regelmäßig Spitzenplätze im TIOBE-Index und wurde 1991 von Guido van Rossum veröffentlicht?",
+    "correctAnswer": "Python",
+    "tagsSuggested": [
+      "Python",
+      "1991",
+      "Spitzenplätze",
+      "Index",
+      "Guido",
+      "Rossum",
+      "Comedy-Ensemble Monty Python",
+      "Schlange"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-technik-06",
+    "topic": "technik",
+    "difficulty": 5,
+    "type": "multiple-choice",
+    "question": "In welchem Jahr stellte Intel den 4004 vor, den ersten kommerziell erhältlichen Mikroprozessor der Welt?",
+    "correctAnswer": "1971",
+    "tagsSuggested": [
+      "1971",
+      "Intel",
+      "Mikroprozessor",
+      "Welt",
+      "Bit-Prozessor",
+      "Transistoren",
+      "November",
+      "Chefdesigner"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-technik-07",
+    "topic": "technik",
+    "difficulty": 2,
+    "type": "multiple-choice",
+    "question": "Was steht die Abkürzung „HTTP\" bei Webadressen für?",
+    "correctAnswer": "HyperText Transfer Protocol",
+    "gmNote": "„HyperText Transfer Protocol\" — 1989-1991 von Tim Berners-Lee am CERN definiert.",
+    "tagsSuggested": [
+      "HyperText Transfer Protocol",
+      "Abkürzung",
+      "Webadressen",
+      "1989",
+      "1991",
+      "Transfer Protocol",
+      "Tim Berners-Lee"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-technik-08",
+    "topic": "technik",
+    "difficulty": 2,
+    "type": "multiple-choice",
+    "question": "Welches Unternehmen entwickelte das Betriebssystem Android?",
+    "correctAnswer": "Google",
+    "gmNote": "Ursprünglich vom Start-up Android Inc. entwickelt, 2005 von Google übernommen.",
+    "tagsSuggested": [
+      "Google",
+      "Betriebssystem Android",
+      "2005",
+      "Ursprünglich",
+      "Start",
+      "Android Inc"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-technik-09",
+    "topic": "technik",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Wie viele Bit umfasst ein klassisches Byte?",
+    "correctAnswer": "8",
+    "gmNote": "Acht Bit — ein Byte kann 256 verschiedene Werte darstellen (2^8).",
+    "tagsSuggested": [
+      "8",
+      "Bit",
+      "Byte",
+      "Acht Bit",
+      "Werte"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-technik-10",
+    "topic": "technik",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Welche Programmiersprache wurde 1995 von James Gosling bei Sun Microsystems entwickelt?",
+    "correctAnswer": "Java",
+    "gmNote": "Ursprünglich für Set-Top-Boxen gedacht, wurde Java durch das Web-Browser-Plugin und später Android massiv verbreitet.",
+    "tagsSuggested": [
+      "Java",
+      "1995",
+      "James Gosling",
+      "Sun Microsystems",
+      "Ursprünglich",
+      "Set-Top-Boxen",
+      "Web-Browser-Plugin",
+      "Android"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-technik-11",
+    "topic": "technik",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Welches Speichermedium wurde 1971 von IBM eingeführt und war bis in die 90er Standard für Datentransfer?",
+    "correctAnswer": "Diskette",
+    "gmNote": "Die 8-Zoll-Diskette, gefolgt von 5¼- und 3½-Zoll-Varianten.",
+    "tagsSuggested": [
+      "Diskette",
+      "1971",
+      "Standard",
+      "Datentransfer",
+      "Zoll-Diskette",
+      "Zoll-Varianten"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-technik-12",
+    "topic": "technik",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "Welches Datenkomprimierungs-Format wurde 1993 als „MP3\" standardisiert und durch das Fraunhofer-Institut mitentwickelt?",
+    "correctAnswer": "MPEG-1 Audio Layer III",
+    "gmNote": "Der offizielle Name ist MPEG-1 Audio Layer 3. Karlheinz Brandenburg leitete die Entwicklung am Fraunhofer IIS.",
+    "tagsSuggested": [
+      "MPEG-1 Audio Layer III",
+      "1993",
+      "Fraunhofer-Institut",
+      "Name",
+      "Audio Layer",
+      "Karlheinz Brandenburg",
+      "Entwicklung",
+      "Fraunhofer"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-technik-13",
+    "topic": "technik",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "Wie viele Personen können maximal gleichzeitig in einem klassischen HTTP/1.1-Header-Feld genannt werden — ist das durch das Protokoll begrenzt?",
+    "correctAnswer": "Nein, keine feste Grenze",
+    "gmNote": "HTTP-Header haben keine feste Empfänger-Grenze; Server können aber Header-Länge und -Anzahl selbst limitieren.",
+    "tagsSuggested": [
+      "Nein, keine feste Grenze",
+      "Personen",
+      "Header-Feld",
+      "Protokoll",
+      "Header",
+      "Empfänger-Grenze",
+      "Server",
+      "Header-Länge"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-technik-14",
+    "topic": "technik",
+    "difficulty": 5,
+    "type": "multiple-choice",
+    "question": "In welchem Jahr wurde das TCP/IP-Protokoll offiziell zum Standard für das ARPANET?",
+    "correctAnswer": "1983",
+    "gmNote": "1. Januar 1983 — der „Flag Day\", an dem das gesamte ARPANET von NCP auf TCP/IP umgestellt wurde.",
+    "tagsSuggested": [
+      "1983",
+      "Protokoll",
+      "Standard",
+      "Januar",
+      "Flag Day"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-technik-15",
+    "topic": "technik",
     "difficulty": 3,
     "type": "true-false",
-    "question": "Der Fußabdruck von Neil Armstrong auf dem Mond bleibt praktisch für alle Zeiten erhalten.",
+    "question": "Der erste Computervirus im weiten Sinne stammt aus den 1970er Jahren.",
+    "correctAnswer": true,
+    "gmNote": "„Creeper\" von 1971 im ARPANET zeigte die Nachricht „I'm the creeper, catch me if you can!\".",
+    "tagsSuggested": [
+      "Computervirus",
+      "Sinne",
+      "1971",
+      "Creeper",
+      "Nachricht"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-flash-25",
+    "topic": "technik",
+    "difficulty": 2,
+    "type": "true-false",
+    "question": "Das World Wide Web wurde am Kernforschungszentrum CERN in Genf entwickelt.",
     "correctAnswer": true,
     "tagsSuggested": [
-      "Neil Armstrong",
-      "Mond",
-      "Zeiten",
-      "Keine Atmosphäre",
-      "Wind",
+      "Kernforschungszentrum",
+      "Genf",
+      "1989",
+      "1991",
+      "Tim Berners-Lee",
+      "Vorschlag",
+      "Web-Server",
+      "Ursprünglicher Zweck"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-wiss-01",
+    "topic": "wissenschaft",
+    "difficulty": 2,
+    "type": "multiple-choice",
+    "question": "Welches Element hat die Ordnungszahl 79 im Periodensystem?",
+    "correctAnswer": "Gold",
+    "gmNote": "Symbol Au (von lat. „aurum“). Rund 205.000 Tonnen wurden bis heute weltweit gefördert.",
+    "tagsSuggested": [
+      "Gold",
+      "Ordnungszahl",
+      "Periodensystem",
+      "Symbol Au",
+      "Rund",
+      "Tonnen"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-wiss-02",
+    "topic": "wissenschaft",
+    "difficulty": 2,
+    "type": "multiple-choice",
+    "question": "Wie viele Chromosomen enthält eine typische menschliche Körperzelle?",
+    "correctAnswer": "46",
+    "gmNote": "23 Paare — 22 Autosomen plus ein Geschlechtschromosomen-Paar.",
+    "tagsSuggested": [
+      "46",
+      "Chromosomen",
+      "Körperzelle",
+      "Paare",
+      "Autosomen",
+      "Geschlechtschromosomen-Paar"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-flash-02",
+    "topic": "wissenschaft",
+    "difficulty": 2,
+    "type": "true-false",
+    "question": "Menschen nutzen nur etwa zehn Prozent ihres Gehirns.",
+    "correctAnswer": false,
+    "tagsSuggested": [
+      "Menschen",
+      "Prozent",
+      "Gehirns",
+      "Auch",
+      "Alltag",
+      "Hirnregionen",
+      "Mythos"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-wiss-03",
+    "topic": "wissenschaft",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "Welche fundamentale Kraft hält Elektronen im Atom an den Kern gebunden?",
+    "correctAnswer": "elektromagnetische Kraft",
+    "gmNote": "Die starke Kernkraft bindet die Quarks im Kern selbst. Für die Bindung der Elektronen ist die elektromagnetische Anziehung zuständig.",
+    "tagsSuggested": [
+      "elektromagnetische Kraft",
+      "Kraft",
+      "Elektronen",
+      "Atom",
+      "Kern",
+      "Kernkraft",
+      "Quarks",
+      "Bindung"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-flash-04",
+    "topic": "wissenschaft",
+    "difficulty": 3,
+    "type": "true-false",
+    "question": "Ein Tag auf der Venus dauert länger als ein Jahr auf der Venus.",
+    "correctAnswer": true,
+    "tagsSuggested": [
+      "Venus",
+      "Erdtage",
+      "Umdrehung",
+      "Sonne",
+      "Erdtagen"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-wissenschaft-04",
+    "topic": "wissenschaft",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Welches chemische Element trägt im Periodensystem das Symbol „Na“?",
+    "correctAnswer": "Natrium",
+    "tagsSuggested": [
+      "Natrium",
+      "Element",
+      "Periodensystem",
+      "Symbol",
+      "Na",
+      "Vom",
       "Wasser",
-      "Abdrücke",
-      "Apollo"
+      "Chlor"
     ],
     "tags": []
   },
   {
-    "id": "q-flash-28",
-    "topic": "film",
+    "id": "q-wissenschaft-05",
+    "topic": "wissenschaft",
     "difficulty": 4,
-    "type": "true-false",
-    "question": "Der Film „Casablanca“ gewann bei der Oscar-Verleihung 1944 den Preis für den besten Film.",
-    "correctAnswer": true,
+    "type": "multiple-choice",
+    "question": "In welchen zwei Naturwissenschaften erhielt Marie Curie ihre Nobelpreise — bis heute einzigartig für eine Person?",
+    "correctAnswer": "Physik und Chemie",
     "tagsSuggested": [
-      "1944",
-      "Casablanca",
-      "Oscar-Verleihung",
-      "Preis",
-      "Zusätzlich",
-      "Oscars",
-      "Michael Curtiz",
-      "Drehbuch"
+      "Physik und Chemie",
+      "Naturwissenschaften",
+      "Marie Curie",
+      "Nobelpreise",
+      "Person",
+      "1903",
+      "1911",
+      "Physik"
     ],
     "tags": []
   },
   {
-    "id": "q-flash-29",
-    "topic": "sport",
-    "difficulty": 4,
-    "type": "true-false",
-    "question": "Cricket zählt gemessen an aktiven Fans weltweit zu den populärsten Sportarten nach Fußball.",
-    "correctAnswer": true,
+    "id": "q-wissenschaft-06",
+    "topic": "wissenschaft",
+    "difficulty": 5,
+    "type": "multiple-choice",
+    "question": "Welche fundamentale physikalische Konstante beschreibt die Stärke der elektromagnetischen Wechselwirkung und liegt bei etwa 1/137?",
+    "correctAnswer": "Feinstrukturkonstante",
     "tagsSuggested": [
-      "Cricket",
-      "Fans",
-      "Sportarten",
-      "Fußball",
-      "Milliarden Fans",
-      "Indien",
-      "Pakistan",
-      "Australien"
+      "Feinstrukturkonstante",
+      "Konstante",
+      "Stärke",
+      "Wechselwirkung",
+      "Zivilisation",
+      "Zahlenwert",
+      "Wert",
+      "Rätsel"
     ],
     "tags": []
   },
   {
-    "id": "q-flash-30",
-    "topic": "kurioses",
+    "id": "q-wissenschaft-07",
+    "topic": "wissenschaft",
+    "difficulty": 2,
+    "type": "multiple-choice",
+    "question": "Welches Planeten-Objekt ist der uns nächste Stern (ohne die Sonne)?",
+    "correctAnswer": "Proxima Centauri",
+    "gmNote": "Proxima Centauri, rund 4,24 Lichtjahre entfernt. Teil des Alpha-Centauri-Systems.",
+    "tagsSuggested": [
+      "Proxima Centauri",
+      "Stern",
+      "Sonne",
+      "Lichtjahre",
+      "Teil",
+      "Alpha-Centauri-Systems"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-wissenschaft-08",
+    "topic": "wissenschaft",
+    "difficulty": 2,
+    "type": "multiple-choice",
+    "question": "Welches ist das häufigste chemische Element im Universum?",
+    "correctAnswer": "Wasserstoff",
+    "gmNote": "Wasserstoff macht rund 74 % der baryonischen Masse aus, Helium etwa 24 %.",
+    "tagsSuggested": [
+      "Wasserstoff",
+      "Element",
+      "Universum",
+      "Masse",
+      "Helium"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-wissenschaft-09",
+    "topic": "wissenschaft",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Welche Krankheit wird durch das Bakterium Yersinia pestis ausgelöst?",
+    "correctAnswer": "Pest",
+    "gmNote": "Verursacher der drei großen historischen Pest-Pandemien, u.a. des „Schwarzen Todes\" im 14. Jahrhundert.",
+    "tagsSuggested": [
+      "Pest",
+      "Bakterium Yersinia",
+      "Verursacher",
+      "Pest-Pandemien",
+      "Schwarzen Todes"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-flash-10",
+    "topic": "wissenschaft",
+    "difficulty": 3,
+    "type": "true-false",
+    "question": "Fledermäuse sind blind und orientieren sich ausschließlich per Echoortung.",
+    "correctAnswer": false,
+    "tagsSuggested": [
+      "Fledermäuse",
+      "Echoortung",
+      "Arten",
+      "Sicht",
+      "Nacht"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-wissenschaft-10",
+    "topic": "wissenschaft",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Wer entwickelte 1928 die Antibiotika-Wirkung des Penicillins durch Zufall?",
+    "correctAnswer": "Alexander Fleming",
+    "gmNote": "Fleming bemerkte, dass Schimmelpilzsporen (Penicillium) in einer Petrischale Bakterien abtöteten.",
+    "tagsSuggested": [
+      "Alexander Fleming",
+      "1928",
+      "Antibiotika-Wirkung",
+      "Penicillins",
+      "Zufall",
+      "Fleming",
+      "Schimmelpilzsporen",
+      "Penicillium"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-wissenschaft-11",
+    "topic": "wissenschaft",
+    "difficulty": 3,
+    "type": "multiple-choice",
+    "question": "Welche Einheit misst die elektrische Spannung?",
+    "correctAnswer": "Volt",
+    "gmNote": "Benannt nach Alessandro Volta, dem Erfinder der ersten Batterie um 1800.",
+    "tagsSuggested": [
+      "Volt",
+      "Spannung",
+      "1800",
+      "Benannt",
+      "Alessandro Volta",
+      "Erfinder",
+      "Batterie"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-wissenschaft-12",
+    "topic": "wissenschaft",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "Welche Teilchen entdeckte Ernest Rutherford durch sein berühmtes Streuexperiment mit Goldfolie?",
+    "correctAnswer": "Atomkerne",
+    "gmNote": "Das Experiment 1911 zeigte, dass Atome einen kleinen, dichten positiv geladenen Kern haben.",
+    "tagsSuggested": [
+      "Atomkerne",
+      "Ernest Rutherford",
+      "Streuexperiment",
+      "Goldfolie",
+      "1911",
+      "Atome",
+      "Kern"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-flash-13",
+    "topic": "wissenschaft",
+    "difficulty": 2,
+    "type": "true-false",
+    "question": "Ein Blitz schlägt nie zweimal an derselben Stelle ein.",
+    "correctAnswer": false,
+    "tagsSuggested": [
+      "Stelle",
+      "Hohe Gebäude",
+      "Empire State Building"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-wissenschaft-13",
+    "topic": "wissenschaft",
+    "difficulty": 4,
+    "type": "multiple-choice",
+    "question": "Welches Naturgesetz besagt, dass in einem geschlossenen System die Entropie nie abnimmt?",
+    "correctAnswer": "Zweiter Hauptsatz der Thermodynamik",
+    "gmNote": "Der zweite Hauptsatz erklärt, warum Wärme immer vom heißeren zum kälteren Körper fließt.",
+    "tagsSuggested": [
+      "Zweiter Hauptsatz der Thermodynamik",
+      "System",
+      "Entropie",
+      "Hauptsatz",
+      "Wärme",
+      "Körper"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-wissenschaft-14",
+    "topic": "wissenschaft",
+    "difficulty": 5,
+    "type": "multiple-choice",
+    "question": "Welche zwei Isotope machen den Löwenanteil des irdischen Wasserstoffs aus?",
+    "correctAnswer": "Wasserstoff-1 und Deuterium",
+    "gmNote": "99,98 % ist ¹H (Protium), ca. 0,02 % Deuterium (²H). Tritium ist radioaktiv und nur in Spuren vorhanden.",
+    "tagsSuggested": [
+      "Wasserstoff-1 und Deuterium",
+      "Isotope",
+      "Löwenanteil",
+      "Wasserstoffs",
+      "Protium",
+      "Deuterium",
+      "Tritium",
+      "Spuren"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-wissenschaft-15",
+    "topic": "wissenschaft",
+    "difficulty": 2,
+    "type": "true-false",
+    "question": "Wasser besteht aus zwei Wasserstoff- und einem Sauerstoffatom.",
+    "correctAnswer": true,
+    "gmNote": "H₂O — die Molekülform ist gewinkelt (~104,5°), nicht linear.",
+    "tagsSuggested": [
+      "Wasser",
+      "Wasserstoff",
+      "Sauerstoffatom",
+      "Molekülform"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-wissenschaft-16",
+    "topic": "wissenschaft",
+    "difficulty": 3,
+    "type": "true-false",
+    "question": "Ein Blitz ist heißer als die Oberfläche der Sonne.",
+    "correctAnswer": true,
+    "gmNote": "Blitz kann kurzfristig ~30.000 °C erreichen, Sonnenoberfläche ~5.500 °C.",
+    "tagsSuggested": [
+      "Oberfläche",
+      "Sonne",
+      "Blitz",
+      "Sonnenoberfläche"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-wissenschaft-17",
+    "topic": "wissenschaft",
     "difficulty": 4,
     "type": "true-false",
-    "question": "Der Nordpol liegt auf einer schwimmenden Eisdecke — nicht auf Landmasse.",
+    "question": "Alle Diamanten auf der Erde sind älter als eine Milliarde Jahre.",
+    "correctAnswer": true,
+    "gmNote": "Die meisten sind 1-3 Milliarden Jahre alt und entstanden tief im Erdmantel.",
+    "tagsSuggested": [
+      "Alle Diamanten",
+      "Erde",
+      "Milliarde Jahre",
+      "Milliarden Jahre",
+      "Erdmantel"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-wissenschaft-18",
+    "topic": "wissenschaft",
+    "difficulty": 3,
+    "type": "warmup-riddle",
+    "question": "Warum sehen wir bei Vollmond keinen Schatten der Erde auf dem Mond?",
+    "solution": "Bei Vollmond stehen Sonne, Erde und Mond fast in einer Linie. Wenn sie perfekt zusammenkommen, gibt es eine Mondfinsternis — die Erde wirft ihren Schatten auf den Mond. Normalerweise ist die Mondbahn aber leicht geneigt (5°) und der Mond fliegt am Erdschatten vorbei. Deswegen sind Mondfinsternisse nicht jeden Monat.",
+    "tagsSuggested": [
+      "Vollmond",
+      "Schatten",
+      "Erde",
+      "Mond"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-wissenschaft-19",
+    "topic": "wissenschaft",
+    "difficulty": 4,
+    "type": "warmup-riddle",
+    "question": "Warum ist ein trockener Baumstamm besser als Feuerholz als ein frisch geschlagener?",
+    "solution": "Frisches Holz enthält 30-60 % Wasser. Beim Anzünden muss diese Feuchtigkeit zuerst verdampfen — das verbraucht enorm viel Energie und kühlt das Feuer ab. Deswegen brennen nasse Scheite schlecht, qualmen viel und geben wenig Wärme ab. Trockenes Holz (unter ~20 % Feuchte) brennt heißer, sauberer und effizienter.",
+    "tagsSuggested": [
+      "Baumstamm",
+      "Feuerholz"
+    ],
+    "tags": []
+  },
+  {
+    "id": "q-flash-22",
+    "topic": "wissenschaft",
+    "difficulty": 3,
+    "type": "true-false",
+    "question": "Licht bewegt sich in einem Medium wie Wasser oder Glas langsamer als im Vakuum.",
     "correctAnswer": true,
     "tagsSuggested": [
-      "Eisdecke",
-      "Landmasse",
-      "Anders",
-      "Antarktis",
-      "Kontinent",
-      "Eis",
-      "Arktische Ozean",
-      "Meereis"
+      "Licht",
+      "Medium",
+      "Wasser",
+      "Glas",
+      "Vakuum",
+      "Vakuumgeschwindigkeit",
+      "Diamant",
+      "Deshalb"
     ],
     "tags": []
   }
