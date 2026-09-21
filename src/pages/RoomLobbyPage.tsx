@@ -14,7 +14,7 @@
  * Server-authoritative Basis-View.
  */
 
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import {
@@ -27,11 +27,17 @@ import {
 } from 'lucide-react'
 import type {
   AroundCornerLive,
+  CategoryBoardLive,
   CategoryDuelLive,
+  DuelLive,
+  EliminationLive,
+  ExpertsLive,
   FlashLive,
   GameAction,
   GameState,
+  PointsLadderLive,
   SpotlightLive,
+  SprinterLive,
 } from '@quizapp/shared'
 import type { Player, SkillLevel, Topic } from '@quizapp/shared'
 import {
@@ -415,6 +421,24 @@ function PhaseView({
             send={send}
           />
         )
+      }
+      if (live?.kind === 'points-ladder') {
+        return <LadderRoomView state={state} live={live} playerId={playerId} canDispatch={canDispatch} send={send} />
+      }
+      if (live?.kind === 'sprinter') {
+        return <SprinterRoomView state={state} live={live} playerId={playerId} canDispatch={canDispatch} send={send} />
+      }
+      if (live?.kind === 'elimination') {
+        return <EliminationRoomView state={state} live={live} playerId={playerId} canDispatch={canDispatch} send={send} />
+      }
+      if (live?.kind === 'category-board') {
+        return <BoardRoomView state={state} live={live} playerId={playerId} canDispatch={canDispatch} send={send} />
+      }
+      if (live?.kind === 'duel-1v1') {
+        return <DuelRoomView state={state} live={live} playerId={playerId} canDispatch={canDispatch} send={send} />
+      }
+      if (live?.kind === 'experts') {
+        return <ExpertsRoomView state={state} live={live} playerId={playerId} canDispatch={canDispatch} send={send} />
       }
       return <PlayingPhaseView state={state} canDispatch={canDispatch} send={send} />
     }
@@ -2196,6 +2220,1438 @@ function TfButton({
     >
       {label}
     </button>
+  )
+}
+
+// ============================================================================
+// Weitere Modi (Ladder / Sprinter / Elimination / Board / Duel / Experts)
+// ============================================================================
+//
+// Alle sechs folgen dem gleichen Aufbau wie Flash/Themen-Battle/Spotlight/
+// AroundCorner: eine Root-Komponente pro `live.kind`, phase-abhängige
+// Sub-Views, kompaktes Master-Presenter-Styling. Der Reducer + alle Actions
+// existieren bereits — hier ist reine UI-Verdrahtung.
+
+// ---------- Ladder (Alles oder Nichts) --------------------------------------
+
+function LadderRoomView({
+  state,
+  live,
+  playerId,
+  canDispatch,
+  send,
+}: {
+  state: GameState
+  live: PointsLadderLive
+  playerId: string | null
+  canDispatch: boolean
+  send: (a: GameAction) => void
+}) {
+  if (!state.round) return <LoadingCard label="Lade Runde …" />
+  const question = live.activeQuestion
+  const myPlayer = playerId ? state.round.players.find((p) => p.id === playerId) : null
+  const isMaster = !myPlayer
+  const myTeamId = myPlayer?.teamId ?? null
+  const currentStake = live.ladder[live.currentIndex] ?? 0
+  const allAnswered = state.round.teams.every(
+    (t) => live.teamAnswers[t.id] !== null && live.teamAnswers[t.id] !== undefined,
+  )
+
+  if (live.phase === 'empty' || !question) {
+    return (
+      <Card className="space-y-2 p-6 text-center">
+        <div className="text-lg text-white/80">Keine Fragen im Katalog.</div>
+        <Button
+          size="lg"
+          variant="primary"
+          onClick={() => send({ type: 'FINISH_MODE' })}
+          disabled={!canDispatch}
+          className="w-full"
+        >
+          Modus überspringen
+        </Button>
+      </Card>
+    )
+  }
+
+  const myTeamAnswer = myTeamId ? live.teamAnswers[myTeamId] : null
+
+  return (
+    <div className="space-y-3">
+      {/* Header */}
+      <Card className={cn('p-3', isMaster && 'p-4')}>
+        <div className="flex flex-wrap items-center gap-3">
+          <div>
+            <div className="text-[10px] uppercase tracking-[0.32em] text-mode-ladder">
+              Alles oder Nichts
+            </div>
+            <div className={cn('mt-0.5 font-mono text-white', isMaster ? 'text-lg' : 'text-sm')}>
+              Stufe {live.currentIndex + 1} / {live.totalQuestions} ·{' '}
+              <span className="text-mode-ladder">{currentStake} Punkte</span>
+            </div>
+          </div>
+          <div className="ml-auto flex flex-wrap gap-2">
+            {state.round.teams.map((team) => (
+              <TeamScoreChip key={team.id} team={team} score={live.scores[team.id] ?? 0} isMaster={isMaster} />
+            ))}
+          </div>
+        </div>
+      </Card>
+
+      {/* Frage */}
+      <QuestionCard
+        text={question.question}
+        isMaster={isMaster}
+        revealedTone={
+          live.phase === 'revealed'
+            ? myTeamAnswer === live.correctRenderedIndex
+              ? 'correct'
+              : 'neutral'
+            : null
+        }
+      />
+
+      {/* Optionen */}
+      <OptionsGrid
+        options={live.shuffledOptions}
+        correctIdx={live.phase === 'revealed' ? live.correctRenderedIndex : null}
+        selectedIdxByTeam={
+          live.phase === 'revealed'
+            ? Object.entries(live.teamAnswers).reduce<Record<number, string[]>>(
+                (acc, [teamId, idx]) => {
+                  if (idx === null || idx === undefined) return acc
+                  acc[idx] = acc[idx] ? [...acc[idx], teamId] : [teamId]
+                  return acc
+                },
+                {},
+              )
+            : {}
+        }
+        teams={state.round.teams}
+        onSelect={(idx) => {
+          if (!myTeamId || live.phase !== 'answering') return
+          send({ type: 'LADDER_SET_ANSWER', teamId: myTeamId, renderedIndex: idx })
+        }}
+        canClick={
+          live.phase === 'answering' && !isMaster && !!myTeamId && canDispatch
+        }
+        isMaster={isMaster}
+        highlightMyPick={myTeamAnswer ?? undefined}
+      />
+
+      {/* Team-Antworten-Panel */}
+      <TeamAnswersPanel
+        teams={state.round.teams}
+        teamAnswers={Object.fromEntries(
+          Object.entries(live.teamAnswers).map(([k, v]) => [k, v === null || v === undefined ? null : `Antwort ${String.fromCharCode(65 + (v as number))}`]),
+        )}
+        isMaster={isMaster}
+      />
+
+      {/* Footer */}
+      {live.phase === 'answering' ? (
+        <Button
+          size="lg"
+          variant={allAnswered ? 'primary' : 'secondary'}
+          onClick={() => send({ type: 'LADDER_REVEAL' })}
+          disabled={!canDispatch}
+          className={cn('w-full', isMaster && 'h-16 text-lg')}
+        >
+          {allAnswered ? 'Auflösen' : 'Auflösen (jederzeit)'}
+        </Button>
+      ) : (
+        <Button
+          size="lg"
+          variant="primary"
+          onClick={() => send({ type: 'LADDER_NEXT' })}
+          disabled={!canDispatch}
+          className={cn('w-full', isMaster && 'h-16 text-lg')}
+        >
+          {live.currentIndex + 1 >= live.totalQuestions ? 'Runde beenden' : 'Nächste Stufe'}
+        </Button>
+      )}
+    </div>
+  )
+}
+
+// ---------- Sprinter (Team-Sprint mit Timer) -------------------------------
+
+function SprinterRoomView({
+  state,
+  live,
+  playerId,
+  canDispatch,
+  send,
+}: {
+  state: GameState
+  live: SprinterLive
+  playerId: string | null
+  canDispatch: boolean
+  send: (a: GameAction) => void
+}) {
+  if (!state.round) return <LoadingCard label="Lade Runde …" />
+  const myPlayer = playerId ? state.round.players.find((p) => p.id === playerId) : null
+  const isMaster = !myPlayer
+  const activeTeam = state.round.teams.find((t) => t.id === live.activeTeamId)
+  const isMyTeam = !!myPlayer && myPlayer.teamId === live.activeTeamId
+  const canAnswer =
+    live.phase === 'answering' && (isMaster || isMyTeam) && canDispatch
+
+  // Countdown-Timer im Frontend. Master oder der aktive Player dispatcht
+  // SPRINTER_TIME_UP wenn die Zeit vorbei ist.
+  const remainingSecs = useSprintCountdown(
+    live.phase === 'answering' ? live.sprintStartedAt : null,
+    live.sprintDurationSeconds,
+    () => {
+      if (isMaster || isMyTeam) send({ type: 'SPRINTER_TIME_UP' })
+    },
+  )
+
+  if (live.phase === 'between-teams') {
+    const nextTeam =
+      live.currentTeamIndex + 1 < live.teamOrder.length
+        ? state.round.teams.find((t) => t.id === live.teamOrder[live.currentTeamIndex + 1])
+        : null
+    return (
+      <div className="space-y-3">
+        <Card className={cn('space-y-3 text-center', isMaster ? 'p-8' : 'p-5')}>
+          <div className="text-[10px] uppercase tracking-[0.32em] text-brand-orange-soft">
+            Sprinter · Zwischenstand
+          </div>
+          <div className={cn('space-y-2', isMaster ? 'text-base' : 'text-sm')}>
+            {state.round.teams.map((team) => (
+              <div key={team.id} className="flex items-center justify-center gap-3">
+                <span
+                  className="h-3 w-3 rounded-full"
+                  style={{ background: getTeamColorHex(team.color) }}
+                />
+                <span className="text-white/80">{team.name}</span>
+                <span
+                  className={cn(
+                    'font-mono font-bold text-white',
+                    isMaster ? 'text-3xl' : 'text-xl',
+                  )}
+                >
+                  {live.scores[team.id] ?? 0}
+                </span>
+              </div>
+            ))}
+          </div>
+        </Card>
+        <Button
+          size="lg"
+          variant="primary"
+          onClick={() => send({ type: 'SPRINTER_START_NEXT_TEAM' })}
+          disabled={!canDispatch}
+          className={cn('w-full', isMaster && 'h-16 text-lg')}
+        >
+          {nextTeam ? `${nextTeam.name} startet` : 'Runde beenden'}
+        </Button>
+      </div>
+    )
+  }
+
+  const question = live.activeQuestion
+  if (!question) return <LoadingCard label="Lade Frage …" />
+
+  return (
+    <div className="space-y-3">
+      {/* Header: aktives Team + Timer */}
+      <Card
+        className={cn(
+          'flex flex-wrap items-center gap-3',
+          isMaster ? 'p-5' : 'p-3',
+        )}
+      >
+        <div>
+          <div className="text-[10px] uppercase tracking-[0.32em] text-brand-orange-soft">
+            Sprinter
+          </div>
+          {activeTeam && (
+            <div className={cn('mt-0.5 flex items-center gap-2', isMaster ? 'text-lg' : 'text-sm')}>
+              <span
+                className="h-2.5 w-2.5 rounded-full"
+                style={{ background: getTeamColorHex(activeTeam.color) }}
+              />
+              <span className="font-semibold text-white">{activeTeam.name} sprintet</span>
+            </div>
+          )}
+        </div>
+        <div className="ml-auto text-right">
+          <div className="text-[10px] uppercase tracking-[0.22em] text-ink-muted">
+            Verbleibend
+          </div>
+          <div
+            className={cn(
+              'font-mono font-bold tabular-nums',
+              isMaster ? 'text-6xl' : 'text-3xl',
+              remainingSecs <= 10 ? 'text-wrong' : 'text-white',
+            )}
+          >
+            {Math.max(0, Math.floor(remainingSecs))}s
+          </div>
+        </div>
+        <div className="w-full">
+          <div className="flex flex-wrap gap-2">
+            {state.round.teams.map((team) => (
+              <TeamScoreChip
+                key={team.id}
+                team={team}
+                score={live.scores[team.id] ?? 0}
+                isMaster={isMaster}
+              />
+            ))}
+          </div>
+        </div>
+      </Card>
+
+      <QuestionCard text={question.question} isMaster={isMaster} revealedTone={null} />
+
+      <OptionsGrid
+        options={live.shuffledOptions}
+        correctIdx={null}
+        selectedIdxByTeam={{}}
+        teams={state.round.teams}
+        onSelect={(idx) => send({ type: 'SPRINTER_ANSWER', renderedIndex: idx })}
+        canClick={canAnswer}
+        isMaster={isMaster}
+      />
+
+      <div className={cn('grid gap-2', isMaster && 'md:grid-cols-2')}>
+        <Button
+          size="lg"
+          variant="secondary"
+          onClick={() => send({ type: 'SPRINTER_SKIP' })}
+          disabled={!canAnswer}
+          className={cn('w-full', isMaster && 'h-16 text-lg')}
+        >
+          Weiter / Skip
+        </Button>
+        {isMaster && (
+          <Button
+            size="lg"
+            variant="ghost"
+            onClick={() => send({ type: 'SPRINTER_TIME_UP' })}
+            disabled={!canDispatch}
+            className="w-full h-16 text-lg"
+          >
+            Timer stoppen
+          </Button>
+        )}
+      </div>
+    </div>
+  )
+}
+
+/**
+ * Kleiner Hook für Frontend-Countdown im Sprinter/Experts. Läuft nur wenn
+ * `startedAt` gesetzt ist; ruft `onExpire` genau einmal beim ersten
+ * Unterschreiten von 0.
+ */
+function useSprintCountdown(
+  startedAt: number | null,
+  duration: number,
+  onExpire: () => void,
+): number {
+  const [now, setNow] = useState(() => Date.now())
+  const fired = useRef(false)
+  useEffect(() => {
+    fired.current = false
+  }, [startedAt])
+  useEffect(() => {
+    if (startedAt === null) return
+    const id = window.setInterval(() => setNow(Date.now()), 250)
+    return () => window.clearInterval(id)
+  }, [startedAt])
+  if (startedAt === null) return duration
+  const elapsed = (now - startedAt) / 1000
+  const remaining = duration - elapsed
+  if (remaining <= 0 && !fired.current) {
+    fired.current = true
+    onExpire()
+  }
+  return remaining
+}
+
+// ---------- Elimination (Last-Player-Standing) -----------------------------
+
+function EliminationRoomView({
+  state,
+  live,
+  playerId,
+  canDispatch,
+  send,
+}: {
+  state: GameState
+  live: EliminationLive
+  playerId: string | null
+  canDispatch: boolean
+  send: (a: GameAction) => void
+}) {
+  if (!state.round) return <LoadingCard label="Lade Runde …" />
+  const myPlayer = playerId ? state.round.players.find((p) => p.id === playerId) : null
+  const isMaster = !myPlayer
+  const activePlayer = state.round.players.find((p) => p.id === live.activePlayerId)
+  const activeTeam = activePlayer ? state.round.teams.find((t) => t.id === activePlayer.teamId) : null
+  const isMyTurn = !!myPlayer && myPlayer.id === live.activePlayerId
+  const canAnswer = live.phase === 'answering' && (isMaster || isMyTurn) && canDispatch
+
+  if (live.phase === 'empty' || live.phase === 'finished') {
+    const winner = live.winnerTeamId
+      ? state.round.teams.find((t) => t.id === live.winnerTeamId)
+      : null
+    return (
+      <div className="space-y-3">
+        <Card className={cn('space-y-3 text-center', isMaster ? 'p-8' : 'p-5')}>
+          <div className="text-[10px] uppercase tracking-[0.32em] text-brand-pink-soft">
+            Elimination
+          </div>
+          <div className={cn('font-bold text-white', isMaster ? 'text-4xl' : 'text-2xl')}>
+            {winner ? `${winner.name} gewinnt!` : 'Runde beendet'}
+          </div>
+          <div className={cn('space-y-1', isMaster ? 'text-base' : 'text-sm')}>
+            {state.round.teams.map((team) => (
+              <div key={team.id} className="flex items-center justify-center gap-3">
+                <span className="h-3 w-3 rounded-full" style={{ background: getTeamColorHex(team.color) }} />
+                <span className="text-white/80">{team.name}</span>
+                <span className={cn('font-mono font-bold text-white', isMaster ? 'text-2xl' : 'text-lg')}>
+                  {live.scores[team.id] ?? 0}
+                </span>
+              </div>
+            ))}
+          </div>
+        </Card>
+        <Button
+          size="lg"
+          variant="primary"
+          onClick={() => send({ type: 'FINISH_MODE' })}
+          disabled={!canDispatch}
+          className={cn('w-full', isMaster && 'h-16 text-lg')}
+        >
+          Runde abschließen
+        </Button>
+      </div>
+    )
+  }
+
+  const question = live.activeQuestion
+  if (!question) return <LoadingCard label="Lade Frage …" />
+
+  return (
+    <div className="space-y-3">
+      {/* Header */}
+      <Card className={cn('p-3', isMaster && 'p-4')}>
+        <div className="flex flex-wrap items-center gap-3">
+          <div>
+            <div className="text-[10px] uppercase tracking-[0.32em] text-brand-pink-soft">
+              Elimination
+            </div>
+            <div className={cn('mt-0.5 font-mono text-white', isMaster ? 'text-lg' : 'text-sm')}>
+              {live.playerOrder.length - live.eliminatedIds.length} von{' '}
+              {live.playerOrder.length} noch dabei
+            </div>
+          </div>
+          <div className="ml-auto flex flex-wrap gap-2">
+            {state.round.teams.map((team) => (
+              <TeamScoreChip key={team.id} team={team} score={live.scores[team.id] ?? 0} isMaster={isMaster} />
+            ))}
+          </div>
+        </div>
+      </Card>
+
+      {/* Aktiver Player */}
+      {activePlayer && (
+        <Card
+          className={cn(
+            'flex items-center gap-3 border-brand-pink/40 bg-brand-pink/[0.06]',
+            isMaster ? 'p-5' : 'p-3',
+          )}
+        >
+          <span
+            className={cn(
+              'flex flex-shrink-0 items-center justify-center rounded-full font-bold text-white',
+              isMaster ? 'h-14 w-14 text-xl' : 'h-9 w-9 text-sm',
+            )}
+            style={{ background: activeTeam ? getTeamColorHex(activeTeam.color) : 'rgba(255,255,255,0.1)' }}
+          >
+            {(activePlayer.name || 'N').slice(0, 1).toUpperCase()}
+          </span>
+          <div>
+            <div className={cn('font-semibold text-white', isMaster ? 'text-2xl' : 'text-base')}>
+              {activePlayer.name || 'Namenlos'}
+            </div>
+            <div className={cn('text-white/70', isMaster ? 'text-base' : 'text-xs')}>
+              {activeTeam?.name}
+            </div>
+          </div>
+        </Card>
+      )}
+
+      <QuestionCard
+        text={question.question}
+        isMaster={isMaster}
+        revealedTone={
+          live.phase === 'revealed'
+            ? live.lastOutcome === 'correct'
+              ? 'correct'
+              : 'wrong'
+            : null
+        }
+      />
+
+      <OptionsGrid
+        options={live.shuffledOptions}
+        correctIdx={live.phase === 'revealed' ? live.correctRenderedIndex : null}
+        selectedIdxByTeam={{}}
+        teams={state.round.teams}
+        onSelect={(idx) => send({ type: 'ELIM_ANSWER', renderedIndex: idx })}
+        canClick={canAnswer}
+        isMaster={isMaster}
+      />
+
+      {/* Ausgeschieden-Liste */}
+      {live.eliminatedIds.length > 0 && (
+        <Card className={cn('space-y-1', isMaster ? 'p-4' : 'p-3')}>
+          <div className="text-[10px] uppercase tracking-[0.32em] text-ink-muted">
+            Ausgeschieden ({live.eliminatedIds.length})
+          </div>
+          <div className="flex flex-wrap gap-1">
+            {live.eliminatedIds.map((id) => {
+              const p = state.round?.players.find((x) => x.id === id)
+              return (
+                <Badge key={id} tone="muted">
+                  {p?.name || 'Namenlos'}
+                </Badge>
+              )
+            })}
+          </div>
+        </Card>
+      )}
+
+      {live.phase === 'revealed' && (
+        <Button
+          size="lg"
+          variant="primary"
+          onClick={() => send({ type: 'ELIM_NEXT' })}
+          disabled={!canDispatch}
+          className={cn('w-full', isMaster && 'h-16 text-lg')}
+        >
+          Nächster Spieler
+        </Button>
+      )}
+    </div>
+  )
+}
+
+// ---------- Category Board (5×4-Punktebrett) -------------------------------
+
+function BoardRoomView({
+  state,
+  live,
+  playerId,
+  canDispatch,
+  send,
+}: {
+  state: GameState
+  live: CategoryBoardLive
+  playerId: string | null
+  canDispatch: boolean
+  send: (a: GameAction) => void
+}) {
+  if (!state.round) return <LoadingCard label="Lade Runde …" />
+  const myPlayer = playerId ? state.round.players.find((p) => p.id === playerId) : null
+  const isMaster = !myPlayer
+  const cellPickerTeam = live.cellPickerTeamId
+    ? state.round.teams.find((t) => t.id === live.cellPickerTeamId)
+    : null
+  const buzzingTeam = live.buzzingTeamId
+    ? state.round.teams.find((t) => t.id === live.buzzingTeamId)
+    : null
+  const isMyPick = !!myPlayer && myPlayer.teamId === live.cellPickerTeamId
+  const isMyBuzz = !!myPlayer && myPlayer.teamId === live.buzzingTeamId
+  const isMySteal =
+    !!myPlayer && !!live.buzzingTeamId && myPlayer.teamId !== live.buzzingTeamId
+
+  return (
+    <div className="space-y-3">
+      {/* Header */}
+      <Card className={cn('p-3', isMaster && 'p-4')}>
+        <div className="flex flex-wrap items-center gap-3">
+          <div>
+            <div className="text-[10px] uppercase tracking-[0.32em] text-mode-board">
+              Punktejagd
+            </div>
+            {cellPickerTeam && live.phase === 'pick-cell' && (
+              <div className={cn('mt-0.5', isMaster ? 'text-lg' : 'text-sm')}>
+                <span className="font-semibold text-white">{cellPickerTeam.name}</span>{' '}
+                <span className="text-white/60">wählt eine Zelle</span>
+              </div>
+            )}
+          </div>
+          <div className="ml-auto flex flex-wrap gap-2">
+            {state.round.teams.map((team) => (
+              <TeamScoreChip key={team.id} team={team} score={live.scores[team.id] ?? 0} isMaster={isMaster} />
+            ))}
+          </div>
+        </div>
+      </Card>
+
+      {/* Board-Grid */}
+      <Card className={cn(isMaster ? 'p-4' : 'p-3')}>
+        <div className="grid gap-1" style={{ gridTemplateColumns: `repeat(${live.boardTopics.length}, minmax(0, 1fr))` }}>
+          {live.boardTopics.map((topic) => {
+            const topicDef = TOPICS_BY_ID[topic]
+            return (
+              <div
+                key={topic}
+                className={cn(
+                  'text-center text-[10px] uppercase tracking-wider text-white/70',
+                  isMaster && 'text-sm',
+                )}
+              >
+                <span aria-hidden className={isMaster ? 'text-2xl' : 'text-lg'}>
+                  {topicDef?.emoji}
+                </span>
+                <div className="truncate">{topicDef?.label}</div>
+              </div>
+            )
+          })}
+          {live.cellValues.map((value, rowIdx) => (
+            <BoardRow
+              key={rowIdx}
+              boardTopics={live.boardTopics}
+              rowIdx={rowIdx}
+              value={value}
+              playedCells={live.playedCells}
+              activeCell={live.activeCell}
+              canPick={live.phase === 'pick-cell' && canDispatch && (isMaster || isMyPick)}
+              onPick={(topic, valueIndex) => send({ type: 'BOARD_PICK_CELL', topic, valueIndex })}
+              isMaster={isMaster}
+            />
+          ))}
+        </div>
+      </Card>
+
+      {/* Frage + Buzzer + Answer */}
+      {live.phase !== 'pick-cell' && live.activeQuestion && (
+        <>
+          <QuestionCard
+            text={live.activeQuestion.question}
+            isMaster={isMaster}
+            revealedTone={
+              live.phase === 'revealed'
+                ? live.primaryOutcome === 'correct' || live.stealOutcome === 'correct'
+                  ? 'correct'
+                  : 'wrong'
+                : null
+            }
+          />
+
+          {live.phase === 'awaiting-buzz' && (
+            <Card className={cn('space-y-2', isMaster ? 'p-5' : 'p-4')}>
+              <div className="text-[10px] uppercase tracking-[0.32em] text-ink-muted">
+                Wer buzzert zuerst?
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                {state.round.teams.map((team) => (
+                  <button
+                    key={team.id}
+                    type="button"
+                    onClick={() => send({ type: 'BOARD_BUZZER', teamId: team.id })}
+                    disabled={!canDispatch}
+                    className={cn(
+                      'rounded-xl border py-3 text-center font-bold text-white transition-all disabled:opacity-40',
+                      isMaster ? 'h-16 text-xl' : 'h-14 text-base',
+                    )}
+                    style={{
+                      borderColor: getTeamColorHex(team.color),
+                      background: `${getTeamColorHex(team.color)}22`,
+                    }}
+                  >
+                    {team.name} buzzt
+                  </button>
+                ))}
+              </div>
+            </Card>
+          )}
+
+          {(live.phase === 'primary-answer' || live.phase === 'steal-answer') && (
+            <OptionsGrid
+              options={live.shuffledOptions}
+              correctIdx={null}
+              selectedIdxByTeam={{}}
+              teams={state.round.teams}
+              onSelect={(idx) => send({ type: 'BOARD_ANSWER', renderedIndex: idx })}
+              canClick={
+                canDispatch &&
+                (isMaster ||
+                  (live.phase === 'primary-answer' && isMyBuzz) ||
+                  (live.phase === 'steal-answer' && isMySteal))
+              }
+              isMaster={isMaster}
+            />
+          )}
+
+          {(live.phase === 'primary-answer' || live.phase === 'steal-answer') && buzzingTeam && (
+            <p className="text-center text-xs text-ink-muted">
+              {live.phase === 'primary-answer'
+                ? `${buzzingTeam.name} antwortet`
+                : `Steal — Gegenteam von ${buzzingTeam.name} antwortet`}
+            </p>
+          )}
+
+          {live.phase === 'revealed' && (
+            <>
+              <OptionsGrid
+                options={live.shuffledOptions}
+                correctIdx={live.correctRenderedIndex}
+                selectedIdxByTeam={{}}
+                teams={state.round.teams}
+                onSelect={() => {}}
+                canClick={false}
+                isMaster={isMaster}
+              />
+              <Button
+                size="lg"
+                variant="primary"
+                onClick={() => send({ type: 'BOARD_NEXT' })}
+                disabled={!canDispatch}
+                className={cn('w-full', isMaster && 'h-16 text-lg')}
+              >
+                {live.playedCells.length + 1 >= live.boardTopics.length * live.cellValues.length
+                  ? 'Runde beenden'
+                  : 'Nächste Zelle'}
+              </Button>
+            </>
+          )}
+        </>
+      )}
+    </div>
+  )
+}
+
+function BoardRow({
+  boardTopics,
+  rowIdx,
+  value,
+  playedCells,
+  activeCell,
+  canPick,
+  onPick,
+  isMaster,
+}: {
+  boardTopics: Topic[]
+  rowIdx: number
+  value: number
+  playedCells: Array<{ topic: Topic; valueIndex: number }>
+  activeCell: { topic: Topic; valueIndex: number } | null
+  canPick: boolean
+  onPick: (topic: Topic, valueIndex: number) => void
+  isMaster: boolean
+}) {
+  return (
+    <>
+      {boardTopics.map((topic) => {
+        const isPlayed = playedCells.some((c) => c.topic === topic && c.valueIndex === rowIdx)
+        const isActive = activeCell?.topic === topic && activeCell?.valueIndex === rowIdx
+        return (
+          <button
+            key={topic}
+            type="button"
+            onClick={() => onPick(topic, rowIdx)}
+            disabled={isPlayed || !canPick}
+            className={cn(
+              'rounded-md border text-center font-mono font-bold transition-all',
+              isMaster ? 'py-3 text-lg' : 'py-2 text-sm',
+              isActive
+                ? 'border-mode-board bg-mode-board/25 text-mode-board'
+                : isPlayed
+                  ? 'border-white/5 bg-white/[0.02] text-white/20'
+                  : canPick
+                    ? 'border-mode-board/40 bg-mode-board/[0.08] text-mode-board hover:border-mode-board/70 hover:bg-mode-board/15'
+                    : 'border-white/10 bg-white/[0.03] text-white/50',
+            )}
+          >
+            {isPlayed ? '×' : value}
+          </button>
+        )
+      })}
+    </>
+  )
+}
+
+// ---------- Duel 1v1 -------------------------------------------------------
+
+function DuelRoomView({
+  state,
+  live,
+  playerId,
+  canDispatch,
+  send,
+}: {
+  state: GameState
+  live: DuelLive
+  playerId: string | null
+  canDispatch: boolean
+  send: (a: GameAction) => void
+}) {
+  if (!state.round) return <LoadingCard label="Lade Runde …" />
+  const myPlayer = playerId ? state.round.players.find((p) => p.id === playerId) : null
+  const isMaster = !myPlayer
+  const buzzingTeam = live.buzzingTeamId
+    ? state.round.teams.find((t) => t.id === live.buzzingTeamId)
+    : null
+  const isDuelingTeam = !!myPlayer && live.duelingTeamIds.includes(myPlayer.teamId ?? '')
+  const isMyBuzz = !!myPlayer && myPlayer.teamId === live.buzzingTeamId
+  const isMySteal =
+    !!myPlayer && isDuelingTeam && myPlayer.teamId !== live.buzzingTeamId
+
+  return (
+    <div className="space-y-3">
+      {/* Header */}
+      <Card className={cn('p-3', isMaster && 'p-4')}>
+        <div className="flex flex-wrap items-center gap-3">
+          <div>
+            <div className="text-[10px] uppercase tracking-[0.32em] text-mode-duel">
+              Duell 1:1
+            </div>
+            <div className={cn('mt-0.5 font-mono text-white', isMaster ? 'text-lg' : 'text-sm')}>
+              Duell {live.currentIndex + 1} / {live.totalDuels}
+            </div>
+          </div>
+          <div className="ml-auto flex flex-wrap gap-2">
+            {state.round.teams.map((team) => (
+              <TeamScoreChip key={team.id} team={team} score={live.scores[team.id] ?? 0} isMaster={isMaster} />
+            ))}
+          </div>
+        </div>
+      </Card>
+
+      {/* Duelierende Teams */}
+      <Card className={cn('space-y-2', isMaster ? 'p-5' : 'p-3')}>
+        <div className="text-[10px] uppercase tracking-[0.32em] text-ink-muted">
+          Duellierende Teams
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          {live.duelingTeamIds.map((teamId) => {
+            const team = state.round?.teams.find((t) => t.id === teamId)
+            const chosen = live.duelPlayers[teamId]
+            const chosenPlayer = chosen ? state.round?.players.find((p) => p.id === chosen) : null
+            const teamPlayers = state.round?.players.filter((p) => p.teamId === teamId) ?? []
+            return (
+              <div
+                key={teamId}
+                className={cn('rounded-lg border p-2', isMaster && 'p-3')}
+                style={{
+                  borderColor: team ? `${getTeamColorHex(team.color)}66` : undefined,
+                  background: team ? `${getTeamColorHex(team.color)}0d` : undefined,
+                }}
+              >
+                <div className={cn('font-semibold text-white', isMaster ? 'text-lg' : 'text-sm')}>
+                  {team?.name}
+                </div>
+                {live.phase === 'setup-duel' ? (
+                  <div className="mt-1 space-y-1">
+                    {teamPlayers.map((p) => (
+                      <button
+                        key={p.id}
+                        type="button"
+                        onClick={() =>
+                          send({ type: 'DUEL_SET_PLAYER', teamId, playerId: p.id })
+                        }
+                        disabled={!canDispatch}
+                        className={cn(
+                          'w-full rounded px-2 py-1 text-left text-xs transition-all disabled:opacity-40',
+                          chosen === p.id
+                            ? 'bg-white/15 text-white'
+                            : 'bg-white/[0.03] text-white/70 hover:bg-white/10',
+                        )}
+                      >
+                        {chosen === p.id && '✓ '}
+                        {p.name || 'Namenlos'}
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <div className={cn('mt-1 text-white/80', isMaster ? 'text-base' : 'text-xs')}>
+                    {chosenPlayer?.name || '—'}
+                  </div>
+                )}
+              </div>
+            )
+          })}
+        </div>
+      </Card>
+
+      {live.phase === 'setup-duel' && (
+        <p className="text-center text-xs text-ink-muted">
+          Beide Teams wählen ihre Vertreter — dann startet der Buzzer.
+        </p>
+      )}
+
+      {/* Frage + Buzzer + Answer analog Board */}
+      {live.phase !== 'setup-duel' && live.activeQuestion && (
+        <>
+          <QuestionCard
+            text={live.activeQuestion.question}
+            isMaster={isMaster}
+            revealedTone={
+              live.phase === 'revealed'
+                ? live.primaryOutcome === 'correct' || live.stealOutcome === 'correct'
+                  ? 'correct'
+                  : 'wrong'
+                : null
+            }
+          />
+
+          {live.phase === 'awaiting-buzz' && (
+            <Card className={cn('space-y-2', isMaster ? 'p-5' : 'p-4')}>
+              <div className="text-[10px] uppercase tracking-[0.32em] text-ink-muted">
+                Buzzer!
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                {live.duelingTeamIds.map((teamId) => {
+                  const team = state.round?.teams.find((t) => t.id === teamId)
+                  if (!team) return null
+                  return (
+                    <button
+                      key={teamId}
+                      type="button"
+                      onClick={() => send({ type: 'DUEL_BUZZER', teamId })}
+                      disabled={!canDispatch}
+                      className={cn(
+                        'rounded-xl border py-3 text-center font-bold text-white transition-all disabled:opacity-40',
+                        isMaster ? 'h-16 text-xl' : 'h-14 text-base',
+                      )}
+                      style={{
+                        borderColor: getTeamColorHex(team.color),
+                        background: `${getTeamColorHex(team.color)}22`,
+                      }}
+                    >
+                      {team.name} buzzt
+                    </button>
+                  )
+                })}
+              </div>
+            </Card>
+          )}
+
+          {(live.phase === 'primary-answer' || live.phase === 'steal-answer') && (
+            <OptionsGrid
+              options={live.shuffledOptions}
+              correctIdx={null}
+              selectedIdxByTeam={{}}
+              teams={state.round.teams}
+              onSelect={(idx) => send({ type: 'DUEL_ANSWER', renderedIndex: idx })}
+              canClick={
+                canDispatch &&
+                (isMaster ||
+                  (live.phase === 'primary-answer' && isMyBuzz) ||
+                  (live.phase === 'steal-answer' && isMySteal))
+              }
+              isMaster={isMaster}
+            />
+          )}
+
+          {(live.phase === 'primary-answer' || live.phase === 'steal-answer') && buzzingTeam && (
+            <p className="text-center text-xs text-ink-muted">
+              {live.phase === 'primary-answer'
+                ? `${buzzingTeam.name} antwortet`
+                : `Steal — Gegenteam antwortet`}
+            </p>
+          )}
+
+          {live.phase === 'revealed' && (
+            <>
+              <OptionsGrid
+                options={live.shuffledOptions}
+                correctIdx={live.correctRenderedIndex}
+                selectedIdxByTeam={{}}
+                teams={state.round.teams}
+                onSelect={() => {}}
+                canClick={false}
+                isMaster={isMaster}
+              />
+              <Button
+                size="lg"
+                variant="primary"
+                onClick={() => send({ type: 'DUEL_NEXT' })}
+                disabled={!canDispatch}
+                className={cn('w-full', isMaster && 'h-16 text-lg')}
+              >
+                {live.currentIndex + 1 >= live.totalDuels ? 'Duelle beenden' : 'Nächstes Duell'}
+              </Button>
+            </>
+          )}
+        </>
+      )}
+    </div>
+  )
+}
+
+// ---------- Experts (Fachrunde mit Timer) ----------------------------------
+
+function ExpertsRoomView({
+  state,
+  live,
+  playerId,
+  canDispatch,
+  send,
+}: {
+  state: GameState
+  live: ExpertsLive
+  playerId: string | null
+  canDispatch: boolean
+  send: (a: GameAction) => void
+}) {
+  if (!state.round) return <LoadingCard label="Lade Runde …" />
+  const myPlayer = playerId ? state.round.players.find((p) => p.id === playerId) : null
+  const isMaster = !myPlayer
+  const activePlayer = state.round.players.find((p) => p.id === live.activePlayerId)
+  const activeTeam = activePlayer ? state.round.teams.find((t) => t.id === activePlayer.teamId) : null
+  const isMyTurn = !!myPlayer && myPlayer.id === live.activePlayerId
+  const isOpponent = !!myPlayer && !isMyTurn && myPlayer.teamId !== activePlayer?.teamId
+
+  const remainingSecs = useSprintCountdown(
+    live.phase === 'primary' ? live.soloStartedAt : null,
+    live.soloDurationSeconds,
+    () => {
+      if (isMaster || isMyTurn) send({ type: 'EXPERTS_MARK_PRIMARY', outcome: 'timeout' })
+    },
+  )
+
+  if (live.phase === 'empty') {
+    return (
+      <Card className="space-y-2 p-6 text-center">
+        <div className="text-lg text-white/80">Keine spielbaren Fachrunden.</div>
+        <Button
+          size="lg"
+          variant="primary"
+          onClick={() => send({ type: 'FINISH_MODE' })}
+          disabled={!canDispatch}
+          className="w-full"
+        >
+          Modus überspringen
+        </Button>
+      </Card>
+    )
+  }
+
+  if (live.phase === 'setup-experts') {
+    const allChosen = Object.values(live.expertise).every((v) => v !== null)
+    return (
+      <div className="space-y-3">
+        <Card className={cn('p-3', isMaster && 'p-4')}>
+          <div className="text-[10px] uppercase tracking-[0.32em] text-mode-experts">
+            Fachrunde · Setup
+          </div>
+          <div className={cn('mt-1 text-white', isMaster ? 'text-lg' : 'text-sm')}>
+            Jeder Spieler wählt ein Fachgebiet
+          </div>
+        </Card>
+        <div className="space-y-2">
+          {live.playerOrder.map((id) => {
+            const player = state.round?.players.find((p) => p.id === id)
+            if (!player) return null
+            const chosen = live.expertise[id]
+            const isMe = player.id === playerId
+            const canEdit = canDispatch && (isMaster || isMe)
+            return (
+              <Card key={id} className={cn('space-y-2', isMaster ? 'p-4' : 'p-3')}>
+                <div className="text-sm font-semibold text-white">
+                  {player.name || 'Namenlos'}
+                  {isMe && <span className="ml-2 text-[10px] text-brand-purple-soft uppercase tracking-wider">du</span>}
+                </div>
+                <div className="grid grid-cols-4 gap-1 sm:grid-cols-6">
+                  {TOPICS.map((t) => (
+                    <button
+                      key={t.id}
+                      type="button"
+                      onClick={() => send({ type: 'EXPERTS_SET_EXPERTISE', playerId: id, topic: t.id })}
+                      disabled={!canEdit}
+                      className={cn(
+                        'rounded border py-1 text-[10px] transition-all disabled:opacity-40',
+                        chosen === t.id
+                          ? 'border-mode-experts/60 bg-mode-experts/15 text-mode-experts'
+                          : 'border-white/10 bg-white/[0.03] text-white/70',
+                      )}
+                    >
+                      <span aria-hidden>{t.emoji}</span>
+                    </button>
+                  ))}
+                </div>
+              </Card>
+            )
+          })}
+        </div>
+        <Button
+          size="lg"
+          variant="primary"
+          onClick={() => send({ type: 'EXPERTS_START_ROUND' })}
+          disabled={!canDispatch || !allChosen}
+          className={cn('w-full', isMaster && 'h-16 text-lg')}
+        >
+          {allChosen ? 'Runde starten' : 'Warte auf alle Fachgebiete'}
+        </Button>
+      </div>
+    )
+  }
+
+  // primary / steal-answer / revealed
+  const question = live.activeQuestion
+  const topicId = activePlayer ? live.expertise[activePlayer.id] : null
+  const topicDef = topicId ? TOPICS_BY_ID[topicId] : null
+
+  return (
+    <div className="space-y-3">
+      <Card className={cn('p-3', isMaster && 'p-4')}>
+        <div className="flex flex-wrap items-center gap-3">
+          <div>
+            <div className="text-[10px] uppercase tracking-[0.32em] text-mode-experts">
+              Fachrunde
+            </div>
+            <div className={cn('mt-0.5 font-mono text-white', isMaster ? 'text-lg' : 'text-sm')}>
+              Zug {live.currentIndex + 1} / {live.playerOrder.length}
+            </div>
+          </div>
+          {live.phase === 'primary' && (
+            <div className="ml-auto text-right">
+              <div className="text-[10px] uppercase tracking-[0.22em] text-ink-muted">Timer</div>
+              <div
+                className={cn(
+                  'font-mono font-bold tabular-nums',
+                  isMaster ? 'text-5xl' : 'text-2xl',
+                  remainingSecs <= 5 ? 'text-wrong' : 'text-white',
+                )}
+              >
+                {Math.max(0, Math.floor(remainingSecs))}s
+              </div>
+            </div>
+          )}
+          <div className="w-full flex flex-wrap gap-2">
+            {state.round.teams.map((team) => (
+              <TeamScoreChip key={team.id} team={team} score={live.scores[team.id] ?? 0} isMaster={isMaster} />
+            ))}
+          </div>
+        </div>
+      </Card>
+
+      {activePlayer && (
+        <Card
+          className={cn(
+            'flex items-center gap-3 border-mode-experts/40 bg-mode-experts/[0.06]',
+            isMaster ? 'p-5' : 'p-3',
+          )}
+        >
+          <span
+            className={cn(
+              'flex flex-shrink-0 items-center justify-center rounded-full font-bold text-white',
+              isMaster ? 'h-14 w-14 text-xl' : 'h-9 w-9 text-sm',
+            )}
+            style={{ background: activeTeam ? getTeamColorHex(activeTeam.color) : 'rgba(255,255,255,0.1)' }}
+          >
+            {(activePlayer.name || 'N').slice(0, 1).toUpperCase()}
+          </span>
+          <div className="min-w-0 flex-1">
+            <div className={cn('font-semibold text-white', isMaster ? 'text-xl md:text-2xl' : 'text-base')}>
+              {activePlayer.name || 'Namenlos'}
+            </div>
+            <div className={cn('text-white/70', isMaster ? 'text-base' : 'text-xs')}>
+              {activeTeam?.name}
+              {topicDef && (
+                <>
+                  {' · '}
+                  <span aria-hidden>{topicDef.emoji}</span> {topicDef.label}
+                </>
+              )}
+            </div>
+          </div>
+        </Card>
+      )}
+
+      {question && (
+        <QuestionCard
+          text={question.question}
+          isMaster={isMaster}
+          revealedTone={
+            live.phase === 'revealed'
+              ? live.primaryOutcome === 'correct'
+                ? 'correct'
+                : 'wrong'
+              : null
+          }
+        />
+      )}
+
+      {live.phase === 'primary' && (
+        <Card className={cn('space-y-3', isMaster ? 'p-5' : 'p-4')}>
+          <div className="text-[10px] uppercase tracking-[0.32em] text-ink-muted">
+            Solo-Antwort (frei) · Master markiert
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => send({ type: 'EXPERTS_MARK_PRIMARY', outcome: 'correct' })}
+              disabled={!canDispatch}
+              className={cn(
+                'flex items-center justify-center rounded-xl border font-bold uppercase tracking-wider transition-all disabled:opacity-40 border-correct/60 bg-correct/15 text-correct',
+                isMaster ? 'h-20 text-2xl' : 'h-14 text-lg',
+              )}
+            >
+              Richtig
+            </button>
+            <button
+              type="button"
+              onClick={() => send({ type: 'EXPERTS_MARK_PRIMARY', outcome: 'wrong' })}
+              disabled={!canDispatch}
+              className={cn(
+                'flex items-center justify-center rounded-xl border font-bold uppercase tracking-wider transition-all disabled:opacity-40 border-wrong/60 bg-wrong/15 text-wrong',
+                isMaster ? 'h-20 text-2xl' : 'h-14 text-lg',
+              )}
+            >
+              Falsch
+            </button>
+          </div>
+        </Card>
+      )}
+
+      {live.phase === 'steal-answer' && (
+        <>
+          <Card className={cn('p-3', isMaster && 'p-4')}>
+            <div className="text-[10px] uppercase tracking-[0.32em] text-brand-orange-soft">
+              Steal — Gegenteam ist dran
+            </div>
+          </Card>
+          <OptionsGrid
+            options={live.shuffledOptions}
+            correctIdx={null}
+            selectedIdxByTeam={{}}
+            teams={state.round.teams}
+            onSelect={(idx) => send({ type: 'EXPERTS_STEAL_ANSWER', renderedIndex: idx })}
+            canClick={canDispatch && (isMaster || isOpponent)}
+            isMaster={isMaster}
+          />
+        </>
+      )}
+
+      {live.phase === 'revealed' && (
+        <>
+          <OptionsGrid
+            options={live.shuffledOptions}
+            correctIdx={live.correctRenderedIndex}
+            selectedIdxByTeam={{}}
+            teams={state.round.teams}
+            onSelect={() => {}}
+            canClick={false}
+            isMaster={isMaster}
+          />
+          <Button
+            size="lg"
+            variant="primary"
+            onClick={() => send({ type: 'EXPERTS_NEXT' })}
+            disabled={!canDispatch}
+            className={cn('w-full', isMaster && 'h-16 text-lg')}
+          >
+            {live.currentIndex + 1 >= live.playerOrder.length ? 'Runde beenden' : 'Nächster Experte'}
+          </Button>
+        </>
+      )}
+    </div>
+  )
+}
+
+// ---------- Shared Sub-Building-Blocks -------------------------------------
+
+/**
+ * Wiederverwendbare Frage-Card: einheitliches Styling für alle Modi mit MC.
+ * `revealedTone` färbt den Rand: 'correct' → grün, 'wrong' → rot, null → neutral.
+ */
+function QuestionCard({
+  text,
+  isMaster,
+  revealedTone,
+}: {
+  text: string
+  isMaster: boolean
+  revealedTone: 'correct' | 'wrong' | 'neutral' | null
+}) {
+  return (
+    <Card
+      className={cn(
+        'space-y-3',
+        isMaster ? 'p-8 md:p-12' : 'p-4',
+        revealedTone === 'correct' && 'border-correct/40 bg-correct/[0.06]',
+        revealedTone === 'wrong' && 'border-wrong/40 bg-wrong/[0.06]',
+      )}
+    >
+      <div
+        className={cn(
+          'font-semibold text-white',
+          isMaster
+            ? 'text-3xl leading-tight md:text-5xl md:leading-tight'
+            : 'text-lg md:text-xl',
+        )}
+      >
+        {text}
+      </div>
+    </Card>
+  )
+}
+
+/**
+ * Wiederverwendbare MC-Optionen-Grid. Zeigt richtige Antwort bei
+ * `correctIdx` gesetzt, und Team-Auswahlen bei `selectedIdxByTeam`.
+ */
+function OptionsGrid({
+  options,
+  correctIdx,
+  selectedIdxByTeam,
+  teams,
+  onSelect,
+  canClick,
+  isMaster,
+  highlightMyPick,
+}: {
+  options: string[]
+  correctIdx: number | null
+  selectedIdxByTeam: Record<number, string[]>
+  teams: Array<{ id: string; color: import('@quizapp/shared').TeamColor; name: string }>
+  onSelect: (idx: number) => void
+  canClick: boolean
+  isMaster: boolean
+  highlightMyPick?: number
+}) {
+  return (
+    <div className={cn('space-y-2', isMaster && 'md:grid md:grid-cols-2 md:gap-3 md:space-y-0')}>
+      {options.map((option, idx) => {
+        const isCorrect = correctIdx !== null && idx === correctIdx
+        const wrongPicks = selectedIdxByTeam[idx]?.filter(() => idx !== correctIdx) ?? []
+        const isMine = highlightMyPick === idx
+        return (
+          <button
+            key={idx}
+            type="button"
+            onClick={() => canClick && onSelect(idx)}
+            disabled={!canClick}
+            className={cn(
+              'flex w-full items-center rounded-xl border text-left transition-all disabled:cursor-default disabled:opacity-100',
+              isMaster ? 'gap-4 px-5 py-4' : 'gap-3 px-4 py-3',
+              isCorrect
+                ? 'border-correct/60 bg-correct/15 text-correct'
+                : wrongPicks.length > 0
+                  ? 'border-wrong/60 bg-wrong/15 text-wrong'
+                  : isMine
+                    ? 'border-brand-purple/60 bg-brand-purple/15 text-brand-purple-soft'
+                    : canClick
+                      ? 'border-brand-purple/40 bg-white/[0.04] text-white hover:border-brand-purple/70 hover:bg-brand-purple/10'
+                      : 'border-white/10 bg-white/[0.02] text-white/70',
+            )}
+          >
+            <span
+              className={cn(
+                'flex items-center justify-center rounded-full bg-white/10 font-mono font-bold',
+                isMaster ? 'h-11 w-11 text-lg' : 'h-8 w-8 text-sm',
+                isCorrect && 'bg-correct/25',
+                wrongPicks.length > 0 && !isCorrect && 'bg-wrong/25',
+              )}
+            >
+              {String.fromCharCode(65 + idx)}
+            </span>
+            <span className={cn('flex-1', isMaster ? 'text-lg md:text-xl' : 'text-sm md:text-base')}>
+              {option}
+            </span>
+            {selectedIdxByTeam[idx] && selectedIdxByTeam[idx].length > 0 && (
+              <span className="flex gap-1">
+                {selectedIdxByTeam[idx].map((teamId) => {
+                  const team = teams.find((t) => t.id === teamId)
+                  if (!team) return null
+                  return (
+                    <span
+                      key={teamId}
+                      className="h-2 w-2 rounded-full"
+                      style={{ background: getTeamColorHex(team.color) }}
+                    />
+                  )
+                })}
+              </span>
+            )}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
+/** Team-Score-Chip: Farbdot + Name + Punkte. */
+function TeamScoreChip({
+  team,
+  score,
+  isMaster,
+}: {
+  team: { id: string; color: import('@quizapp/shared').TeamColor; name: string }
+  score: number
+  isMaster: boolean
+}) {
+  return (
+    <div
+      className={cn(
+        'flex items-center gap-1.5 rounded-lg bg-white/[0.04]',
+        isMaster ? 'px-3 py-2' : 'px-2 py-1',
+      )}
+    >
+      <span
+        className={cn('rounded-full', isMaster ? 'h-3 w-3' : 'h-2 w-2')}
+        style={{ background: getTeamColorHex(team.color) }}
+      />
+      <span className={cn('text-white/80', isMaster ? 'text-sm' : 'text-xs')}>{team.name}</span>
+      <span
+        className={cn(
+          'font-mono font-bold text-white tabular-nums',
+          isMaster ? 'text-2xl' : 'text-sm',
+        )}
+      >
+        {score}
+      </span>
+    </div>
+  )
+}
+
+/** Team-Antworten-Übersicht (String-basiert). */
+function TeamAnswersPanel({
+  teams,
+  teamAnswers,
+  isMaster,
+}: {
+  teams: Array<{ id: string; color: import('@quizapp/shared').TeamColor; name: string }>
+  teamAnswers: Record<string, string | null>
+  isMaster: boolean
+}) {
+  return (
+    <Card className={cn('space-y-2', isMaster ? 'p-5' : 'p-3')}>
+      <div className={cn('uppercase tracking-[0.32em] text-ink-muted', isMaster ? 'text-xs' : 'text-[10px]')}>
+        Team-Antworten
+      </div>
+      <div className={cn('grid gap-1.5', isMaster ? 'sm:grid-cols-2 lg:grid-cols-4' : 'sm:grid-cols-2')}>
+        {teams.map((team) => {
+          const ans = teamAnswers[team.id]
+          return (
+            <div
+              key={team.id}
+              className={cn(
+                'flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.03]',
+                isMaster ? 'px-3 py-3 text-base' : 'px-2 py-1.5 text-sm',
+              )}
+            >
+              <span className={cn('rounded-full', isMaster ? 'h-3 w-3' : 'h-2 w-2')} style={{ background: getTeamColorHex(team.color) }} />
+              <span className="flex-1 text-white/85">{team.name}</span>
+              <span className={cn('font-mono font-bold', isMaster ? 'text-lg' : 'text-xs', ans ? 'text-white' : 'text-white/40')}>
+                {ans ?? '…'}
+              </span>
+            </div>
+          )
+        })}
+      </div>
+    </Card>
   )
 }
 
