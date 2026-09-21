@@ -2,621 +2,1488 @@
   {
     "id": "q-film-01",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "popkultur",
     "topic": "film",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Welcher Film gewann 2020 als erster nicht-englischsprachiger Beitrag den Oscar als bester Film?",
-    "options": ["Roma", "Parasite", "Amélie", "Das Leben der Anderen"],
+    "options": [
+      "Roma",
+      "Parasite",
+      "Amélie",
+      "Das Leben der Anderen"
+    ],
     "correctIndex": 1,
     "gmNote": "Bong Joon-ho gewann außerdem Oscars für Regie, Originaldrehbuch und besten internationalen Film — vier Trophäen in einer Nacht.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-film-02",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "popkultur",
     "topic": "film",
-    "difficulty": "leicht",
+    "difficulty": 2,
     "question": "Welche Regisseurin gewann 2021 als erst zweite Frau überhaupt den Oscar für die beste Regie?",
-    "options": ["Chloé Zhao", "Sofia Coppola", "Greta Gerwig", "Jane Campion"],
+    "options": [
+      "Chloé Zhao",
+      "Sofia Coppola",
+      "Greta Gerwig",
+      "Jane Campion"
+    ],
     "correctIndex": 0,
     "gmNote": "Für „Nomadland“. Kathryn Bigelow war 2010 die erste (Tödliches Kommando – The Hurt Locker).",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-film-03",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "popkultur",
     "topic": "film",
-    "difficulty": "schwer",
+    "difficulty": 4,
     "question": "Welches Studio produzierte die Animationsfilme „Spirited Away“ und „Prinzessin Mononoke“?",
-    "options": ["Pixar", "Studio Ghibli", "Laika", "Aardman Animations"],
+    "options": [
+      "Pixar",
+      "Studio Ghibli",
+      "Laika",
+      "Aardman Animations"
+    ],
     "correctIndex": 1,
     "gmNote": "Gegründet 1985 von Hayao Miyazaki, Isao Takahata und Toshio Suzuki in Tokio.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
-
   {
     "id": "q-serien-01",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "popkultur",
     "topic": "serien",
-    "difficulty": "leicht",
+    "difficulty": 2,
     "question": "In welcher US-Stadt spielt die Serie „Breaking Bad“?",
-    "options": ["Phoenix", "Albuquerque", "Las Vegas", "El Paso"],
+    "options": [
+      "Phoenix",
+      "Albuquerque",
+      "Las Vegas",
+      "El Paso"
+    ],
     "correctIndex": 1,
     "gmNote": "New Mexico. Vince Gilligan wollte ursprünglich in Riverside, Kalifornien drehen — die Steuervergünstigungen waren in NM besser.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-serien-02",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "popkultur",
     "topic": "serien",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Welche Serie hält bei HBO den Rekord für die meisten Emmys als beste Dramaserie?",
-    "options": ["Die Sopranos", "Succession", "Game of Thrones", "The Wire"],
+    "options": [
+      "Die Sopranos",
+      "Succession",
+      "Game of Thrones",
+      "The Wire"
+    ],
     "correctIndex": 2,
     "gmNote": "Vier Siege (2015, 2016, 2018, 2019). Succession folgt mit drei, Die Sopranos mit zwei.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-serien-03",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "popkultur",
     "topic": "serien",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Auf welchem Kontinent basiert die Landmasse „Westeros“ aus der Buchreihe „Das Lied von Eis und Feuer“ geografisch grob?",
-    "options": ["Nordamerika", "Großbritannien", "Skandinavien", "Australien"],
+    "options": [
+      "Nordamerika",
+      "Großbritannien",
+      "Skandinavien",
+      "Australien"
+    ],
     "correctIndex": 1,
     "gmNote": "George R. R. Martin hat den Umriss von Westeros bewusst an die britischen Inseln angelehnt — mit Norden = Schottland-Analogie.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
-
   {
     "id": "q-musik-01",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "popkultur",
     "topic": "musik",
-    "difficulty": "leicht",
+    "difficulty": 2,
     "question": "Welches Album gilt als das meistverkaufte der Welt?",
-    "options": ["The Dark Side of the Moon", "Back in Black", "Thriller", "The Bodyguard Soundtrack"],
+    "options": [
+      "The Dark Side of the Moon",
+      "Back in Black",
+      "Thriller",
+      "The Bodyguard Soundtrack"
+    ],
     "correctIndex": 2,
     "gmNote": "Rund 70 Millionen verkaufte Einheiten weltweit seit 1982.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-musik-02",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "popkultur",
     "topic": "musik",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Aus welchem Land stammt der Musikstil Bossa Nova?",
-    "options": ["Kuba", "Argentinien", "Brasilien", "Portugal"],
+    "options": [
+      "Kuba",
+      "Argentinien",
+      "Brasilien",
+      "Portugal"
+    ],
     "correctIndex": 2,
     "gmNote": "Entstanden in Rio de Janeiro Ende der 1950er, verschmelzt Samba mit Cool Jazz. Klassiker: „The Girl from Ipanema“.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-musik-03",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "popkultur",
     "topic": "musik",
-    "difficulty": "schwer",
+    "difficulty": 4,
     "question": "Welcher Komponist schrieb die Oper „Die Zauberflöte“?",
-    "options": ["Ludwig van Beethoven", "Wolfgang Amadeus Mozart", "Joseph Haydn", "Antonio Salieri"],
+    "options": [
+      "Ludwig van Beethoven",
+      "Wolfgang Amadeus Mozart",
+      "Joseph Haydn",
+      "Antonio Salieri"
+    ],
     "correctIndex": 1,
     "gmNote": "Uraufführung 1791 in Wien, wenige Wochen vor Mozarts Tod. Libretto von Emanuel Schikaneder.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
-
   {
     "id": "q-games-01",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "popkultur",
     "topic": "games",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Welches Studio entwickelte das Rollenspiel „The Witcher 3: Wild Hunt“?",
-    "options": ["CD Projekt Red", "Bethesda Game Studios", "Ubisoft Montreal", "BioWare"],
+    "options": [
+      "CD Projekt Red",
+      "Bethesda Game Studios",
+      "Ubisoft Montreal",
+      "BioWare"
+    ],
     "correctIndex": 0,
     "gmNote": "Sitz in Warschau. Die Vorlage stammt vom polnischen Autor Andrzej Sapkowski.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-games-02",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "popkultur",
     "topic": "games",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "In welchem Jahr erschien die offizielle Vollversion 1.0 von „Minecraft“?",
-    "options": ["2009", "2011", "2013", "2015"],
+    "options": [
+      "2009",
+      "2011",
+      "2013",
+      "2015"
+    ],
     "correctIndex": 1,
     "gmNote": "18. November 2011 auf der MineCon in Las Vegas. Die Alpha lief seit 2009.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-games-03",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "popkultur",
     "topic": "games",
-    "difficulty": "schwer",
+    "difficulty": 4,
     "question": "Welche Heimkonsole führte 1996 einen Analog-Stick als Standardsteuerung ein?",
-    "options": ["PlayStation", "Nintendo 64", "Sega Saturn", "Atari Jaguar"],
+    "options": [
+      "PlayStation",
+      "Nintendo 64",
+      "Sega Saturn",
+      "Atari Jaguar"
+    ],
     "correctIndex": 1,
     "gmNote": "Der Controller mit dem markanten Drei-Griff-Design war für „Super Mario 64“ mitgedacht.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
-
   {
     "id": "q-geo-01",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "geografie",
-    "difficulty": "leicht",
+    "difficulty": 2,
     "question": "Welches Land besitzt die längste Küstenlinie der Erde?",
-    "options": ["Russland", "Vereinigte Staaten", "Kanada", "Indonesien"],
+    "options": [
+      "Russland",
+      "Vereinigte Staaten",
+      "Kanada",
+      "Indonesien"
+    ],
     "correctIndex": 2,
     "gmNote": "Rund 202.000 km — bedingt durch die zerklüftete Arktis-Küste und die vielen Inseln im Norden.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-geo-02",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "geografie",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Welche der folgenden Hauptstädte liegt am weitesten nördlich?",
-    "options": ["Helsinki", "Stockholm", "Oslo", "Kopenhagen"],
+    "options": [
+      "Helsinki",
+      "Stockholm",
+      "Oslo",
+      "Kopenhagen"
+    ],
     "correctIndex": 0,
     "gmNote": "Helsinki liegt auf ~60,2° Nord. Reykjavík wäre noch nördlicher, war aber nicht in den Optionen.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-geo-03",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "geografie",
-    "difficulty": "schwer",
+    "difficulty": 4,
     "question": "Welchem Staat gehört die Insel Sokotra mit ihrer einzigartigen Flora?",
-    "options": ["Oman", "Jemen", "Somalia", "Eritrea"],
+    "options": [
+      "Oman",
+      "Jemen",
+      "Somalia",
+      "Eritrea"
+    ],
     "correctIndex": 1,
     "gmNote": "Sokotra liegt im Golf von Aden. Der Drachenblutbaum ist eines der ikonischen Wahrzeichen der Insel.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
-
   {
     "id": "q-gesch-01",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "geschichte",
-    "difficulty": "leicht",
+    "difficulty": 2,
     "question": "In welchem Jahr fiel die Berliner Mauer?",
-    "options": ["1987", "1989", "1991", "1993"],
+    "options": [
+      "1987",
+      "1989",
+      "1991",
+      "1993"
+    ],
     "correctIndex": 1,
     "gmNote": "9. November — Günter Schabowskis Pressekonferenz löste den unkontrollierten Grenzöffnungs-Ansturm aus.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-gesch-02",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "geschichte",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Welches Reich beherrschte im 13. Jahrhundert die größte zusammenhängende Landfläche der Geschichte?",
-    "options": ["Römisches Reich", "Mongolisches Reich", "Osmanisches Reich", "Britisches Weltreich"],
+    "options": [
+      "Römisches Reich",
+      "Mongolisches Reich",
+      "Osmanisches Reich",
+      "Britisches Weltreich"
+    ],
     "correctIndex": 1,
     "gmNote": "Rund 24 Millionen km² auf dem Höhepunkt unter Dschingis Khans Nachfolgern.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-gesch-03",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "geschichte",
-    "difficulty": "schwer",
+    "difficulty": 4,
     "question": "Welcher Vertrag beendete 1648 den Dreißigjährigen Krieg?",
-    "options": ["Frieden von Utrecht", "Westfälischer Friede", "Frieden von Nystad", "Frieden von Aachen"],
+    "options": [
+      "Frieden von Utrecht",
+      "Westfälischer Friede",
+      "Frieden von Nystad",
+      "Frieden von Aachen"
+    ],
     "correctIndex": 1,
     "gmNote": "Unterzeichnet in Münster und Osnabrück. Der Ausgangspunkt der modernen Staatensouveränität.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
-
   {
     "id": "q-wiss-01",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "wissenschaft",
-    "difficulty": "leicht",
+    "difficulty": 2,
     "question": "Welches Element hat die Ordnungszahl 79 im Periodensystem?",
-    "options": ["Silber", "Platin", "Kupfer", "Gold"],
+    "options": [
+      "Silber",
+      "Platin",
+      "Kupfer",
+      "Gold"
+    ],
     "correctIndex": 3,
     "gmNote": "Symbol Au (von lat. „aurum“). Rund 205.000 Tonnen wurden bis heute weltweit gefördert.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-wiss-02",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "wissenschaft",
-    "difficulty": "leicht",
+    "difficulty": 2,
     "question": "Wie viele Chromosomen enthält eine typische menschliche Körperzelle?",
-    "options": ["23", "44", "46", "48"],
+    "options": [
+      "23",
+      "44",
+      "46",
+      "48"
+    ],
     "correctIndex": 2,
     "gmNote": "23 Paare — 22 Autosomen plus ein Geschlechtschromosomen-Paar.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-wiss-03",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "wissenschaft",
-    "difficulty": "schwer",
+    "difficulty": 4,
     "question": "Welche fundamentale Kraft hält Elektronen im Atom an den Kern gebunden?",
-    "options": ["Gravitation", "elektromagnetische Kraft", "starke Kernkraft", "schwache Kernkraft"],
+    "options": [
+      "Gravitation",
+      "elektromagnetische Kraft",
+      "starke Kernkraft",
+      "schwache Kernkraft"
+    ],
     "correctIndex": 1,
     "gmNote": "Die starke Kernkraft bindet die Quarks im Kern selbst. Für die Bindung der Elektronen ist die elektromagnetische Anziehung zuständig.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
-
   {
     "id": "q-sport-01",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "alltag-lifestyle",
     "topic": "sport",
-    "difficulty": "leicht",
+    "difficulty": 2,
     "question": "Wie viele Spieler stehen im Basketball pro Team gleichzeitig auf dem Feld?",
-    "options": ["4", "5", "6", "7"],
+    "options": [
+      "4",
+      "5",
+      "6",
+      "7"
+    ],
     "correctIndex": 1,
     "gmNote": "Ein Point Guard, ein Shooting Guard, ein Small Forward, ein Power Forward und ein Center — klassisch.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-sport-02",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "alltag-lifestyle",
     "topic": "sport",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Welches Land gewann 1930 die allererste Fußball-Weltmeisterschaft?",
-    "options": ["Argentinien", "Uruguay", "Brasilien", "Italien"],
+    "options": [
+      "Argentinien",
+      "Uruguay",
+      "Brasilien",
+      "Italien"
+    ],
     "correctIndex": 1,
     "gmNote": "Ausgetragen in Montevideo. Der Gastgeber schlug im Finale den Nachbarn Argentinien mit 4:2.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-sport-03",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "alltag-lifestyle",
     "topic": "sport",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Welche Distanz umfasst ein offizieller Marathon-Lauf?",
-    "options": ["40,000 km", "41,195 km", "42,195 km", "43,000 km"],
+    "options": [
+      "40,000 km",
+      "41,195 km",
+      "42,195 km",
+      "43,000 km"
+    ],
     "correctIndex": 2,
     "gmNote": "Die 195 m stammen aus den Olympischen Spielen 1908 in London — die königliche Familie wollte den Start näher am Schloss haben.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
-
   {
     "id": "q-essen-01",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "alltag-lifestyle",
     "topic": "essen",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Als welches Pflanzenteil klassifiziert die Botanik die Kartoffel?",
-    "options": ["Wurzel", "Sprossknolle", "Stängel", "Frucht"],
+    "options": [
+      "Wurzel",
+      "Sprossknolle",
+      "Stängel",
+      "Frucht"
+    ],
     "correctIndex": 1,
     "gmNote": "Die Knolle sitzt unterirdisch am Ausläufer der Sprossachse — kein Wurzelgewebe.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-essen-02",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "alltag-lifestyle",
     "topic": "essen",
-    "difficulty": "schwer",
+    "difficulty": 4,
     "question": "Aus welcher italienischen Region stammt die Nudel Orecchiette ursprünglich?",
-    "options": ["Sizilien", "Apulien", "Toskana", "Ligurien"],
+    "options": [
+      "Sizilien",
+      "Apulien",
+      "Toskana",
+      "Ligurien"
+    ],
     "correctIndex": 1,
     "gmNote": "Bari und Umgebung — der Name bedeutet „kleine Ohren“. Klassisch mit Cime di Rapa (Stängelkohl).",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-essen-03",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "alltag-lifestyle",
     "topic": "essen",
-    "difficulty": "schwer",
+    "difficulty": 4,
     "question": "Welche Rebsorte galt in Europa lange als ausgestorben und wurde in Chile wiederentdeckt?",
-    "options": ["Malbec", "Carménère", "Merlot", "Cabernet Franc"],
+    "options": [
+      "Malbec",
+      "Carménère",
+      "Merlot",
+      "Cabernet Franc"
+    ],
     "correctIndex": 1,
     "gmNote": "Ursprünglich Bordeaux. Nach der Reblausplage fand man den Wein Ende der 1990er in chilenischen Weinbergen wieder.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
-
   {
     "id": "q-tech-01",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "alltag-lifestyle",
     "topic": "technik",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Wer veröffentlichte 1991 die erste Version des Linux-Kernels?",
-    "options": ["Richard Stallman", "Linus Torvalds", "Ken Thompson", "Dennis Ritchie"],
+    "options": [
+      "Richard Stallman",
+      "Linus Torvalds",
+      "Ken Thompson",
+      "Dennis Ritchie"
+    ],
     "correctIndex": 1,
     "gmNote": "Als Student in Helsinki. Der Name entstand aus Torvalds' Vornamen plus dem verbreiteten Unix-Suffix.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-tech-02",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "alltag-lifestyle",
     "topic": "technik",
-    "difficulty": "schwer",
+    "difficulty": 4,
     "question": "Wie viele Bit umfasst eine IPv6-Adresse?",
-    "options": ["32", "64", "128", "256"],
+    "options": [
+      "32",
+      "64",
+      "128",
+      "256"
+    ],
     "correctIndex": 2,
     "gmNote": "IPv4 hatte 32 Bit — etwa 4,3 Milliarden Adressen. IPv6 kommt auf 3,4 × 10^38 mögliche Adressen.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-tech-03",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "alltag-lifestyle",
     "topic": "technik",
-    "difficulty": "schwer",
+    "difficulty": 4,
     "question": "Welches Unternehmen entwickelte die legendäre Voodoo-Grafikkarte für 3D-Beschleunigung?",
-    "options": ["NVIDIA", "ATI Technologies", "3dfx", "Matrox"],
+    "options": [
+      "NVIDIA",
+      "ATI Technologies",
+      "3dfx",
+      "Matrox"
+    ],
     "correctIndex": 2,
     "gmNote": "Voodoo Graphics erschien 1996 und dominierte den PC-3D-Markt, bis NVIDIA das Unternehmen 2000 übernahm.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
-
   {
     "id": "q-sprache-01",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "sprache",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Aus welcher Sprache stammt der Begriff „Algorithmus“ etymologisch?",
-    "options": ["Griechisch", "Latein", "Arabisch", "Hebräisch"],
+    "options": [
+      "Griechisch",
+      "Latein",
+      "Arabisch",
+      "Hebräisch"
+    ],
     "correctIndex": 2,
     "gmNote": "Vom persischen Universalgelehrten al-Chwarizmi (9. Jh.), dessen Werke im Mittelalter ins Lateinische übersetzt wurden.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-sprache-02",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "sprache",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Welche der folgenden Sprachen gehört nicht zur romanischen Sprachfamilie?",
-    "options": ["Rumänisch", "Katalanisch", "Baskisch", "Portugiesisch"],
+    "options": [
+      "Rumänisch",
+      "Katalanisch",
+      "Baskisch",
+      "Portugiesisch"
+    ],
     "correctIndex": 2,
     "gmNote": "Baskisch ist eine isolierte Sprache ohne bekannte Verwandtschaft zu einer anderen — ein sprachliches Rätsel Europas.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-sprache-03",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "sprache",
-    "difficulty": "schwer",
+    "difficulty": 4,
     "question": "Zu welchem „Wort des Jahres“ kürte die Gesellschaft für deutsche Sprache das Jahr 2023?",
-    "options": ["Krisenmodus", "Klimakleber", "Zeitenwende", "Leitkultur"],
+    "options": [
+      "Krisenmodus",
+      "Klimakleber",
+      "Zeitenwende",
+      "Leitkultur"
+    ],
     "correctIndex": 0,
     "gmNote": "Begründung: die Vielzahl paralleler Krisen, in denen sich Politik und Gesellschaft dauerhaft eingerichtet zu haben scheinen.",
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
     "source": "https://gfds.de/wort-des-jahres-2023/",
-    "timeReference": { "isTimeSensitive": true, "referenceDate": "2023-12-08" },
-    "status": "approved"
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z",
+    "timeReference": {
+      "isTimeSensitive": true,
+      "referenceDate": "2023-12-08"
+    }
   },
-
   {
     "id": "q-kurios-01",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "kurioses",
     "topic": "kurioses",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Wie viele Herzen hat ein Krake?",
-    "options": ["1", "2", "3", "4"],
+    "options": [
+      "1",
+      "2",
+      "3",
+      "4"
+    ],
     "correctIndex": 2,
     "gmNote": "Ein Hauptherz für den Körper, zwei Kiemenherzen. Das Blut ist blau (Hämocyanin statt Hämoglobin).",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-kurios-02",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "kurioses",
     "topic": "kurioses",
-    "difficulty": "leicht",
+    "difficulty": 2,
     "question": "Aus welchem Material besteht der Großteil des menschlichen Gehirns?",
-    "options": ["Wasser", "Eiweiß", "Fett", "Zucker"],
+    "options": [
+      "Wasser",
+      "Eiweiß",
+      "Fett",
+      "Zucker"
+    ],
     "correctIndex": 2,
     "gmNote": "Rund 60 % der Trockenmasse — deshalb sind essenzielle Fettsäuren so wichtig für die Hirnentwicklung.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-kurios-03",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "kurioses",
     "topic": "kurioses",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Welches Säugetier hat die längste durchschnittliche Tragezeit?",
-    "options": ["Blauwal", "Afrikanischer Elefant", "Nashorn", "Giraffe"],
+    "options": [
+      "Blauwal",
+      "Afrikanischer Elefant",
+      "Nashorn",
+      "Giraffe"
+    ],
     "correctIndex": 1,
     "gmNote": "Rund 22 Monate. Kälber wiegen bei der Geburt schon etwa 120 kg.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
-
   {
     "id": "q-flash-01",
     "type": "true-false",
+    "status": "approved",
     "category": "kurioses",
     "topic": "kurioses",
-    "difficulty": "leicht",
+    "difficulty": 2,
     "question": "Die Chinesische Mauer ist mit bloßem Auge aus dem Weltall sichtbar.",
     "correctAnswer": false,
     "explanation": "Ein hartnäckiger Mythos. Astronaut:innen bestätigen: die Mauer ist zu schmal, um aus dem Orbit ohne Hilfsmittel erkannt zu werden.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "flash"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-flash-02",
     "type": "true-false",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "wissenschaft",
-    "difficulty": "leicht",
+    "difficulty": 2,
     "question": "Menschen nutzen nur etwa zehn Prozent ihres Gehirns.",
     "correctAnswer": false,
     "explanation": "Auch im Alltag sind fast alle Hirnregionen aktiv. Der 10-%-Mythos ist popkulturell hartnäckig, wissenschaftlich aber widerlegt.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "flash"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-flash-03",
     "type": "true-false",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "sprache",
-    "difficulty": "leicht",
+    "difficulty": 2,
     "question": "Die Amtssprache Brasiliens ist Portugiesisch.",
     "correctAnswer": true,
     "explanation": "Als einzige Amtssprache — Erbe der portugiesischen Kolonialzeit. Alle Nachbarländer sind spanischsprachig.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "flash"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-flash-04",
     "type": "true-false",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "wissenschaft",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Ein Tag auf der Venus dauert länger als ein Jahr auf der Venus.",
     "correctAnswer": true,
     "explanation": "Venus rotiert extrem langsam (243 Erdtage pro Umdrehung), umläuft die Sonne aber in nur 225 Erdtagen.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "flash"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-flash-05",
     "type": "true-false",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "geschichte",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Napoleon Bonaparte war für seine Zeit ungewöhnlich klein.",
     "correctAnswer": false,
     "explanation": "Er war rund 1,68 m — Durchschnittsgröße im Frankreich seiner Zeit. Der Mythos entstand durch Verwechslung französischer und englischer Zolleinheiten sowie britische Karikaturen.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "flash"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-flash-06",
     "type": "true-false",
+    "status": "approved",
     "category": "alltag-lifestyle",
     "topic": "essen",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Die Cashew-Nuss wächst außerhalb der eigentlichen Frucht.",
     "correctAnswer": true,
     "explanation": "Sie hängt außen am Cashew-Apfel und ist botanisch der Kern einer Steinfrucht — nicht die Frucht selbst.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "flash"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-flash-07",
     "type": "true-false",
+    "status": "approved",
     "category": "kurioses",
     "topic": "kurioses",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Der Große Panda gehört biologisch zur Familie der Bären.",
     "correctAnswer": true,
     "explanation": "Lange umstritten, seit DNA-Analysen in den 1980ern klar: Ursidae. Der Kleine Panda hingegen bekam sogar eine eigene Familie.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "flash"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-flash-08",
     "type": "true-false",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "geografie",
-    "difficulty": "leicht",
+    "difficulty": 2,
     "question": "Der Eiffelturm ist bis heute der höchste Turm der Welt.",
     "correctAnswer": false,
     "explanation": "Mit 330 m längst überholt. Der Burj Khalifa (828 m) und der Tokyo Skytree (634 m) sind deutlich höher, dazu diverse Fernsehtürme.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "flash"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-flash-09",
     "type": "true-false",
+    "status": "approved",
     "category": "popkultur",
     "topic": "film",
-    "difficulty": "schwer",
+    "difficulty": 4,
     "question": "Der Name „James Bond“ stammt von einem Ornithologen.",
     "correctAnswer": true,
     "explanation": "Ian Fleming nahm den Namen aus dem Vogelbuch „Birds of the West Indies“ des US-Ornithologen James Bond — bewusst unauffällig gewählt.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "flash"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-flash-10",
     "type": "true-false",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "wissenschaft",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Fledermäuse sind blind und orientieren sich ausschließlich per Echoortung.",
     "correctAnswer": false,
     "explanation": "Sie sehen sogar recht gut, viele Arten farbig. Echoortung ergänzt die Sicht in der Nacht, ersetzt sie aber nicht.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "flash"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-flash-11",
     "type": "true-false",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "geografie",
-    "difficulty": "leicht",
+    "difficulty": 2,
     "question": "Die Transsibirische Eisenbahn ist die längste durchgehende Bahnstrecke der Welt.",
     "correctAnswer": true,
     "explanation": "Moskau – Wladiwostok, rund 9.288 Kilometer, sieben Zeitzonen. Reine Fahrzeit ohne Aufenthalte: etwa sechs Tage.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "flash"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-flash-12",
     "type": "true-false",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "sprache",
-    "difficulty": "schwer",
+    "difficulty": 4,
     "question": "Auf das englische Wort „orange“ gibt es kein einziges perfekt reimendes Wort in der Alltagssprache.",
     "correctAnswer": true,
     "explanation": "Berühmte Reim-Falle. Einzige technische Ausnahme: „sporange“ (Sporenbehälter), praktisch aber ungebräuchlich.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "flash"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-flash-13",
     "type": "true-false",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "wissenschaft",
-    "difficulty": "leicht",
+    "difficulty": 2,
     "question": "Ein Blitz schlägt nie zweimal an derselben Stelle ein.",
     "correctAnswer": false,
     "explanation": "Doch, sogar häufig. Hohe Gebäude wie das Empire State Building werden pro Jahr zweistellig oft getroffen.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "flash"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-flash-14",
     "type": "true-false",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "geografie",
-    "difficulty": "schwer",
+    "difficulty": 4,
     "question": "Australien ist an seiner breitesten Stelle breiter als der Durchmesser des Mondes.",
     "correctAnswer": true,
     "explanation": "Australien misst rund 4.000 km, der Mond hat etwa 3.474 km Durchmesser. Sitzt bei der ersten Nennung selten.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "flash"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-flash-15",
     "type": "true-false",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "geschichte",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Isaac Newton wurde tatsächlich von einem herabfallenden Apfel am Kopf getroffen.",
     "correctAnswer": false,
     "explanation": "Er sah nur einen Apfel fallen — laut eigener Erzählung im Garten seiner Mutter. Die Kopftreffer-Version ist eine spätere Verzierung.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "flash"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
-
   {
     "id": "q-klick-01",
     "type": "warmup-riddle",
+    "status": "approved",
     "category": "kurioses",
     "topic": "kurioses",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Warum haben Golfbälle keine glatte Oberfläche, sondern kleine Dellen?",
     "hints": [
       "Ein völlig glatter Ball fliegt deutlich schlechter.",
@@ -624,14 +1491,22 @@
       "Winzige Wirbel dicht an der Oberfläche verringern den Widerstand."
     ],
     "solution": "Die Dellen erzeugen kontrollierte Turbulenzen um den Ball. Das verkleinert das Windschatten-Gebiet hinter dem Ball und reduziert den Luftwiderstand — ein glatter Ball würde nur die halbe Distanz erreichen. Entdeckt Ende des 19. Jahrhunderts, als alte, zerbeulte Bälle sich besser schlagen ließen als neue.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "around-corner"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-klick-02",
     "type": "warmup-riddle",
+    "status": "approved",
     "category": "kurioses",
     "topic": "kurioses",
-    "difficulty": "leicht",
+    "difficulty": 2,
     "question": "Warum hat der Deckel eines Marmeladenglases oben in der Mitte eine leichte Delle, die beim ersten Öffnen laut „klickt“?",
     "hints": [
       "Die Delle zeigt euch etwas Wichtiges.",
@@ -639,14 +1514,22 @@
       "Solange die Delle drin ist, ist das Glas noch ungeöffnet."
     ],
     "solution": "Die Delle ist ein Vakuum-Indikator. Nach dem heißen Abfüllen und Verschließen entsteht durch die Abkühlung Unterdruck im Glas — der zieht den Deckel leicht nach innen. Beim ersten Öffnen strömt Luft ein, die Delle springt hoch und macht das typische „Klick“. Ist die Delle schon draußen, wurde das Glas eventuell schon geöffnet.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "around-corner"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-klick-03",
     "type": "warmup-riddle",
+    "status": "approved",
     "category": "kurioses",
     "topic": "kurioses",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Warum meint man das Meer zu hören, wenn man eine große Muschel ans Ohr hält?",
     "hints": [
       "Es ist nicht wirklich Meer, das man hört.",
@@ -654,14 +1537,22 @@
       "Umgebungsgeräusche werden durch die Muschel gefiltert."
     ],
     "solution": "Die Hohlkammer der Muschel wirkt wie ein akustischer Resonator und verstärkt selektiv Umgebungsgeräusche in bestimmten Frequenzen. Das dumpfe Rauschen, das wir als „Meer“ interpretieren, ist eine gefilterte Mischung aus Umgebungslärm, dem Blutfluss im Ohr und der Muschel-Resonanz. Denselben Effekt bekommt man mit einer hohlen Tasse.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "around-corner"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-klick-04",
     "type": "warmup-riddle",
+    "status": "approved",
     "category": "kurioses",
     "topic": "kurioses",
-    "difficulty": "leicht",
+    "difficulty": 2,
     "question": "Warum sind Feuerlöscher überall auf der Welt knallrot?",
     "hints": [
       "Es geht um sofortige Erkennbarkeit — nicht um Ästhetik.",
@@ -669,14 +1560,22 @@
       "Die Farbe ist international genormt."
     ],
     "solution": "Rot ist die international per DIN/ISO genormte Farbe für Brandschutzausrüstung. Sie signalisiert Gefahr, hebt sich vor fast jedem Hintergrund ab und stellt sicher, dass Feuerlöscher weltweit auf einen Blick erkannt werden — auch unter Stress. In besonderen Umgebungen (Rot-Grün-Kliniken, Schiffe) gibt es dokumentierte Ausnahmen mit Neongelb.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "around-corner"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-klick-05",
     "type": "warmup-riddle",
+    "status": "approved",
     "category": "kurioses",
     "topic": "kurioses",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Warum haben Bananen aus dem Supermarkt keine Kerne, obwohl sie botanisch Früchte sind?",
     "hints": [
       "Wildbananen haben sehr wohl Kerne — und zwar große, harte.",
@@ -684,14 +1583,22 @@
       "Sie sind alle genetisch identisch."
     ],
     "solution": "Alle handelsüblichen Bananen sind sterile Klone einer einzigen Sorte — in Europa fast ausschließlich die Cavendish. Sie werden vegetativ vermehrt, jede Pflanze ist genetisch identisch zur Mutterpflanze. Wildbananen wären kaum essbar. Nachteil der Monokultur: ein einziger Pilz (etwa TR4) kann die weltweite Ernte gefährden.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "around-corner"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-klick-06",
     "type": "warmup-riddle",
+    "status": "approved",
     "category": "kurioses",
     "topic": "kurioses",
-    "difficulty": "leicht",
+    "difficulty": 2,
     "question": "Warum knallen Champagnerkorken so laut, wenn man die Flasche öffnet?",
     "hints": [
       "Es liegt am Innendruck in der Flasche.",
@@ -699,616 +1606,1486 @@
       "Beim Öffnen expandiert das eingeschlossene Gas schlagartig."
     ],
     "solution": "In einer Champagnerflasche stehen etwa 5 bis 6 Bar Druck an — drei- bis viermal so viel wie in einem Autoreifen. Springt der Korken, entweicht das eingeschlossene CO₂ blitzartig, expandiert und erzeugt eine kleine Schockwelle: den „Knall“. Das Geräusch entsteht also durch die schlagartige Druckentspannung, nicht durch den Korken selbst.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "around-corner"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
-
   {
     "id": "q-film-04",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "popkultur",
     "topic": "film",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Welcher deutsche Regisseur gewann 2007 den Oscar für den besten fremdsprachigen Film mit „Das Leben der Anderen“?",
-    "options": ["Wim Wenders", "Florian Henckel von Donnersmarck", "Tom Tykwer", "Werner Herzog"],
+    "options": [
+      "Wim Wenders",
+      "Florian Henckel von Donnersmarck",
+      "Tom Tykwer",
+      "Werner Herzog"
+    ],
     "correctIndex": 1,
     "explanation": "Es war Donnersmarcks Regie-Debüt. Der Film über einen Stasi-Offizier in der DDR-Kulturüberwachung galt lange als Außenseiter im Rennen.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-film-05",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "popkultur",
     "topic": "film",
-    "difficulty": "schwer",
+    "difficulty": 4,
     "question": "Welcher US-Regisseur ist für seinen markanten symmetrischen Bildstil bekannt und drehte unter anderem „The Grand Budapest Hotel“?",
-    "options": ["Paul Thomas Anderson", "Wes Anderson", "Sofia Coppola", "Spike Jonze"],
+    "options": [
+      "Paul Thomas Anderson",
+      "Wes Anderson",
+      "Sofia Coppola",
+      "Spike Jonze"
+    ],
     "correctIndex": 1,
     "explanation": "Wes Anderson — nicht verwandt mit Paul Thomas Anderson — inszeniert seit „Bottle Rocket“ (1996) mit derselben zentrischen Handschrift.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-film-06",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "popkultur",
     "topic": "film",
-    "difficulty": "experten",
+    "difficulty": 5,
     "question": "Welcher Cinematographer arbeitete an „Blade Runner 2049“, „Sicario“ und „1917“ und gilt als Meister des Naturlichts?",
-    "options": ["Roger Deakins", "Emmanuel Lubezki", "Hoyte van Hoytema", "Bradford Young"],
+    "options": [
+      "Roger Deakins",
+      "Emmanuel Lubezki",
+      "Hoyte van Hoytema",
+      "Bradford Young"
+    ],
     "correctIndex": 0,
     "explanation": "Roger Deakins gewann 2018 für „Blade Runner 2049“ seinen ersten Oscar — nach 13 Nominierungen. „1917“ brachte ihm 2020 den zweiten.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
-
   {
     "id": "q-serien-04",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "popkultur",
     "topic": "serien",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "In welcher US-Stadt spielt die HBO-Serie „The Wire“, die als eine der besten Fernsehserien aller Zeiten gilt?",
-    "options": ["Detroit", "Baltimore", "Philadelphia", "Cleveland"],
+    "options": [
+      "Detroit",
+      "Baltimore",
+      "Philadelphia",
+      "Cleveland"
+    ],
     "correctIndex": 1,
     "explanation": "Serienschöpfer David Simon war zuvor Polizeireporter der Baltimore Sun — die Stadt und ihre Institutionen bilden das Gerüst aller fünf Staffeln.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-serien-05",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "popkultur",
     "topic": "serien",
-    "difficulty": "schwer",
+    "difficulty": 4,
     "question": "Wer schuf und produzierte die Netflix-Zeichentrickserie „BoJack Horseman“?",
-    "options": ["Raphael Bob-Waksberg", "Justin Roiland", "Loren Bouchard", "Adam Reed"],
+    "options": [
+      "Raphael Bob-Waksberg",
+      "Justin Roiland",
+      "Loren Bouchard",
+      "Adam Reed"
+    ],
     "correctIndex": 0,
     "explanation": "Bob-Waksberg entwickelte die Show mit Illustratorin Lisa Hanawalt. Sechs Staffeln von 2014 bis 2020, gefeiert für Umgang mit Depression, Sucht und Selbstwert.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-serien-06",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "popkultur",
     "topic": "serien",
-    "difficulty": "experten",
+    "difficulty": 5,
     "question": "Welcher Regisseur schuf zusammen mit Mark Frost die Mystery-Serie „Twin Peaks“, deren dritte Staffel 2017 in „The Return“ mündete?",
-    "options": ["Stanley Kubrick", "David Lynch", "David Cronenberg", "Terry Gilliam"],
+    "options": [
+      "Stanley Kubrick",
+      "David Lynch",
+      "David Cronenberg",
+      "Terry Gilliam"
+    ],
     "correctIndex": 1,
     "explanation": "David Lynch — Regisseur von „Blue Velvet“ und „Mulholland Drive“ — schuf mit „Twin Peaks“ 1990 einen Meilenstein des Serienfernsehens. Die Rückkehr 2017 gilt als eigenständiges Kunstwerk.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
-
   {
     "id": "q-musik-04",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "popkultur",
     "topic": "musik",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Auf welchem Beatles-Album erschien der Song „Yesterday“ ursprünglich im Jahr 1965?",
-    "options": ["Rubber Soul", "Help!", "Revolver", "Abbey Road"],
+    "options": [
+      "Rubber Soul",
+      "Help!",
+      "Revolver",
+      "Abbey Road"
+    ],
     "correctIndex": 1,
     "explanation": "Paul McCartney träumte die Melodie und hielt sie erst für ein Plagiat — er suchte monatelang nach dem Original, das nie existiert hatte.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-musik-05",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "popkultur",
     "topic": "musik",
-    "difficulty": "schwer",
+    "difficulty": 4,
     "question": "In welcher deutschen Stadt wurde die Elektronik-Band Kraftwerk 1970 gegründet?",
-    "options": ["Berlin", "Düsseldorf", "Köln", "Hamburg"],
+    "options": [
+      "Berlin",
+      "Düsseldorf",
+      "Köln",
+      "Hamburg"
+    ],
     "correctIndex": 1,
     "explanation": "Ralf Hütter und Florian Schneider gründeten Kraftwerk in Düsseldorf. Das Kling-Klang-Studio wurde zum Zentrum des deutschen Elektronik-Sounds.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-musik-06",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "popkultur",
     "topic": "musik",
-    "difficulty": "experten",
+    "difficulty": 5,
     "question": "Welcher österreichische Komponist gilt als Pionier der Zwölftontechnik in der modernen Kompositionslehre?",
-    "options": ["Igor Strawinsky", "Arnold Schönberg", "Béla Bartók", "Anton Webern"],
+    "options": [
+      "Igor Strawinsky",
+      "Arnold Schönberg",
+      "Béla Bartók",
+      "Anton Webern"
+    ],
     "correctIndex": 1,
     "explanation": "Schönberg entwickelte die Zwölftontechnik ab etwa 1921. Sie wurde zur Grundlage der Zweiten Wiener Schule — auch Webern und Alban Berg gehörten dazu.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
-
   {
     "id": "q-games-04",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "popkultur",
     "topic": "games",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Welcher Publisher steht seit den 1980ern hinter der Videospielserie „The Legend of Zelda“?",
-    "options": ["Sony", "Nintendo", "Sega", "Konami"],
+    "options": [
+      "Sony",
+      "Nintendo",
+      "Sega",
+      "Konami"
+    ],
     "correctIndex": 1,
     "explanation": "Shigeru Miyamoto erschuf die Reihe 1986. Alle Hauptteile erschienen auf Nintendo-Konsolen; „Breath of the Wild“ und „Tears of the Kingdom“ definierten das Open-World-Genre neu.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-games-05",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "popkultur",
     "topic": "games",
-    "difficulty": "schwer",
+    "difficulty": 4,
     "question": "Welches unabhängige Studio veröffentlichte 2020 den vielfach ausgezeichneten Rogue-Like-Titel „Hades“?",
-    "options": ["Devolver Digital", "Supergiant Games", "Motion Twin", "Team Cherry"],
+    "options": [
+      "Devolver Digital",
+      "Supergiant Games",
+      "Motion Twin",
+      "Team Cherry"
+    ],
     "correctIndex": 1,
     "explanation": "Supergiant aus San Francisco — bekannt für „Bastion“ und „Transistor“. „Hades“ gewann als erstes Spiel den Hugo Award und den BAFTA für Best Game im selben Jahr.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-games-06",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "popkultur",
     "topic": "games",
-    "difficulty": "experten",
+    "difficulty": 5,
     "question": "In welchem Jahr veröffentlichte Atari das Arcade-Spiel „Pong“ — einen der Meilensteine der Videospielgeschichte?",
-    "options": ["1969", "1972", "1975", "1978"],
+    "options": [
+      "1969",
+      "1972",
+      "1975",
+      "1978"
+    ],
     "correctIndex": 1,
     "explanation": "Allan Alcorn programmierte den Prototyp; die erste Automatenversion stand im November 1972 in einer Bar in Sunnyvale, Kalifornien. Sie brach über Nacht kaputt — von zu vielen Münzen.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
-
   {
     "id": "q-geografie-04",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "geografie",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Welches ist das flächenmäßig größte Land Afrikas?",
-    "options": ["Sudan", "Demokratische Republik Kongo", "Algerien", "Libyen"],
+    "options": [
+      "Sudan",
+      "Demokratische Republik Kongo",
+      "Algerien",
+      "Libyen"
+    ],
     "correctIndex": 2,
     "explanation": "Algerien mit rund 2,38 Mio. km² — seit der Teilung des Sudan 2011. Davor war der (Gesamt-)Sudan größer.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-geografie-05",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "geografie",
-    "difficulty": "schwer",
+    "difficulty": 4,
     "question": "Welche Bezeichnung trägt die charakteristische Trichtermündung der Elbe in die Nordsee?",
-    "options": ["Delta", "Ästuar", "Fjord", "Ria"],
+    "options": [
+      "Delta",
+      "Ästuar",
+      "Fjord",
+      "Ria"
+    ],
     "correctIndex": 1,
     "explanation": "Ästuare entstehen, wenn Gezeiten regelmäßig ins Flussbett zurückschwingen. Auch Themse, Amazonas und Weser haben Ästuar-Mündungen — im Gegensatz zum Nildelta.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-geografie-06",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "geografie",
-    "difficulty": "experten",
+    "difficulty": 5,
     "question": "Wie hoch ist der Kilimandscharo, der höchste Berg Afrikas, auf hundert Meter gerundet?",
-    "options": ["4900 m", "5300 m", "5900 m", "6500 m"],
+    "options": [
+      "4900 m",
+      "5300 m",
+      "5900 m",
+      "6500 m"
+    ],
     "correctIndex": 2,
     "explanation": "Der Uhuru-Peak am Kibo-Krater misst 5895 m. Der Berg ist ein freistehender Vulkan — nicht Teil einer Kette — und damit einer der prominentesten Gipfel der Erde.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
-
   {
     "id": "q-geschichte-04",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "geschichte",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "In welchem Jahr fiel die Berliner Mauer?",
-    "options": ["1987", "1988", "1989", "1990"],
+    "options": [
+      "1987",
+      "1988",
+      "1989",
+      "1990"
+    ],
     "correctIndex": 2,
     "explanation": "Am Abend des 9. November 1989 öffneten sich die Grenzübergänge nach einer missverständlichen Pressekonferenz von Günter Schabowski. Die Wiedervereinigung folgte am 3. Oktober 1990.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-geschichte-05",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "geschichte",
-    "difficulty": "schwer",
+    "difficulty": 4,
     "question": "Unter welchem Sultan erreichte das Osmanische Reich im 16. Jahrhundert seinen territorialen Höhepunkt?",
-    "options": ["Selim I.", "Süleyman der Prächtige", "Mehmed II.", "Bayezid I."],
+    "options": [
+      "Selim I.",
+      "Süleyman der Prächtige",
+      "Mehmed II.",
+      "Bayezid I."
+    ],
     "correctIndex": 1,
     "explanation": "Süleyman I. (1520–1566) dehnte das Reich bis vor Wien aus. Sein Namenszusatz „der Prächtige“ stammt aus westlichen Chroniken; osmanisch wurde er „Kanuni“, der Gesetzgeber, genannt.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-geschichte-06",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "geschichte",
-    "difficulty": "experten",
+    "difficulty": 5,
     "question": "Wer war der erste Reichspräsident der Weimarer Republik von 1919 bis 1925?",
-    "options": ["Friedrich Ebert", "Gustav Stresemann", "Philipp Scheidemann", "Otto Braun"],
+    "options": [
+      "Friedrich Ebert",
+      "Gustav Stresemann",
+      "Philipp Scheidemann",
+      "Otto Braun"
+    ],
     "correctIndex": 0,
     "explanation": "Der Sozialdemokrat Ebert wurde von der Nationalversammlung gewählt. Nach seinem frühen Tod 1925 folgte Paul von Hindenburg als erster direkt gewählter Reichspräsident.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
-
   {
     "id": "q-wissenschaft-04",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "wissenschaft",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Welches chemische Element trägt im Periodensystem das Symbol „Na“?",
-    "options": ["Neon", "Nickel", "Natrium", "Nitrogenium"],
+    "options": [
+      "Neon",
+      "Nickel",
+      "Natrium",
+      "Nitrogenium"
+    ],
     "correctIndex": 2,
     "explanation": "Vom lateinischen „natrium“. Natrium reagiert heftig mit Wasser, bildet mit Chlor aber ausgerechnet unser Speisesalz — NaCl.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-wissenschaft-05",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "wissenschaft",
-    "difficulty": "schwer",
+    "difficulty": 4,
     "question": "In welchen zwei Naturwissenschaften erhielt Marie Curie ihre Nobelpreise — bis heute einzigartig für eine Person?",
-    "options": ["Physik und Medizin", "Physik und Chemie", "Chemie und Medizin", "Physik und Biologie"],
+    "options": [
+      "Physik und Medizin",
+      "Physik und Chemie",
+      "Chemie und Medizin",
+      "Physik und Biologie"
+    ],
     "correctIndex": 1,
     "explanation": "Physik 1903 (gemeinsam mit Pierre Curie und Henri Becquerel), Chemie 1911. Ihre Tochter Irène Joliot-Curie gewann später einen weiteren Chemie-Nobelpreis.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-wissenschaft-06",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "wissenschaft",
-    "difficulty": "experten",
+    "difficulty": 5,
     "question": "Welche fundamentale physikalische Konstante beschreibt die Stärke der elektromagnetischen Wechselwirkung und liegt bei etwa 1/137?",
-    "options": ["Planck-Konstante", "Feinstrukturkonstante", "Boltzmann-Konstante", "Avogadro-Konstante"],
+    "options": [
+      "Planck-Konstante",
+      "Feinstrukturkonstante",
+      "Boltzmann-Konstante",
+      "Avogadro-Konstante"
+    ],
     "correctIndex": 1,
     "explanation": "Die Feinstrukturkonstante α ≈ 1/137,036 ist dimensionslos — jeder Zivilisation würde sie denselben Zahlenwert liefern. Warum sie ausgerechnet diesen Wert hat, ist eines der offenen Rätsel der Physik.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
-
   {
     "id": "q-sport-04",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "alltag-lifestyle",
     "topic": "sport",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Welches Land wurde 1974 Fußball-Weltmeister im eigenen Land?",
-    "options": ["Deutschland", "Niederlande", "Brasilien", "Argentinien"],
+    "options": [
+      "Deutschland",
+      "Niederlande",
+      "Brasilien",
+      "Argentinien"
+    ],
     "correctIndex": 0,
     "explanation": "Die BRD schlug im Finale von München die Niederlande um Johan Cruyff 2:1. Kapitän Franz Beckenbauer stemmte den ersten WM-Pokal für Deutschland als Kaiser der Abwehr.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-sport-05",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "alltag-lifestyle",
     "topic": "sport",
-    "difficulty": "schwer",
+    "difficulty": 4,
     "question": "Welcher NBA-Spieler hält den Rekord für die meisten regulären Saison-MVP-Auszeichnungen mit sechs Titeln?",
-    "options": ["Michael Jordan", "LeBron James", "Kareem Abdul-Jabbar", "Bill Russell"],
+    "options": [
+      "Michael Jordan",
+      "LeBron James",
+      "Kareem Abdul-Jabbar",
+      "Bill Russell"
+    ],
     "correctIndex": 2,
     "explanation": "Kareem gewann sechs MVPs zwischen 1971 und 1980. Michael Jordan folgt mit fünf, LeBron James und Bill Russell mit je vier.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-sport-06",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "alltag-lifestyle",
     "topic": "sport",
-    "difficulty": "experten",
+    "difficulty": 5,
     "question": "Wie viele Formel-1-Weltmeistertitel halten Michael Schumacher und Lewis Hamilton (Stand 2024) — jeweils?",
-    "options": ["je 5", "je 6", "je 7", "Schumacher 7, Hamilton 6"],
+    "options": [
+      "je 5",
+      "je 6",
+      "je 7",
+      "Schumacher 7, Hamilton 6"
+    ],
     "correctIndex": 2,
     "explanation": "Beide gewannen sieben Fahrer-Weltmeistertitel. Hamilton zog 2020 mit Schumachers Rekord gleich; danach setzte kein Fahrer neu drauf.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
-
   {
     "id": "q-essen-04",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "alltag-lifestyle",
     "topic": "essen",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Aus welcher deutschen Region stammt das klassische Rezept für den Sauerbraten mit dunkler Marinade und Rosinen?",
-    "options": ["Bayern", "Rheinland", "Sachsen", "Franken"],
+    "options": [
+      "Bayern",
+      "Rheinland",
+      "Sachsen",
+      "Franken"
+    ],
     "correctIndex": 1,
     "explanation": "Der rheinische Sauerbraten wird tagelang in Rotwein-Essig-Sud eingelegt und mit Rosinen und Printenbröseln serviert. Fränkische und schwäbische Varianten kommen ohne Rosinen aus.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-essen-05",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "alltag-lifestyle",
     "topic": "essen",
-    "difficulty": "schwer",
+    "difficulty": 4,
     "question": "Welche rote Rebsorte dominiert die klassischen Weine der spanischen Rioja-Region?",
-    "options": ["Grenache", "Tempranillo", "Merlot", "Syrah"],
+    "options": [
+      "Grenache",
+      "Tempranillo",
+      "Merlot",
+      "Syrah"
+    ],
     "correctIndex": 1,
     "explanation": "Tempranillo — auf Portugiesisch „Tinta Roriz“ — reift früh (daher der Name) und bildet in Rioja das Rückgrat. Ergänzt wird oft mit Garnacha (Grenache) und Graciano.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-essen-06",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "alltag-lifestyle",
     "topic": "essen",
-    "difficulty": "experten",
+    "difficulty": 5,
     "question": "Aus welcher italienischen Region stammt der klassische Aceto Balsamico Tradizionale mit DOP-Siegel?",
-    "options": ["Toskana", "Emilia-Romagna", "Piemont", "Ligurien"],
+    "options": [
+      "Toskana",
+      "Emilia-Romagna",
+      "Piemont",
+      "Ligurien"
+    ],
     "correctIndex": 1,
     "explanation": "Nur Aceto Balsamico aus Modena oder Reggio Emilia darf die DOP-Bezeichnung tragen. Mindestens zwölf Jahre Reifung in wechselnden Holzfässern sind Pflicht; der „Extra Vecchio“ reift 25+.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
-
   {
     "id": "q-technik-04",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "alltag-lifestyle",
     "topic": "technik",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "In welchem Jahr stellte Apple das erste iPhone vor?",
-    "options": ["2005", "2007", "2009", "2010"],
+    "options": [
+      "2005",
+      "2007",
+      "2009",
+      "2010"
+    ],
     "correctIndex": 1,
     "explanation": "Steve Jobs präsentierte das iPhone am 9. Januar 2007 auf der Macworld — der Verkaufsstart folgte im Juni. Blackberry und Nokia dominierten damals noch den Smartphone-Markt.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-technik-05",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "alltag-lifestyle",
     "topic": "technik",
-    "difficulty": "schwer",
+    "difficulty": 4,
     "question": "Welche Programmiersprache belegt seit Jahren regelmäßig Spitzenplätze im TIOBE-Index und wurde 1991 von Guido van Rossum veröffentlicht?",
-    "options": ["Java", "JavaScript", "Python", "Ruby"],
+    "options": [
+      "Java",
+      "JavaScript",
+      "Python",
+      "Ruby"
+    ],
     "correctIndex": 2,
     "explanation": "Python ist nach dem britischen Comedy-Ensemble Monty Python benannt — nicht nach der Schlange. Der Aufstieg durch Data Science, KI und Bildung ließ die Sprache in den 2020ern zur Nummer eins werden.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-technik-06",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "alltag-lifestyle",
     "topic": "technik",
-    "difficulty": "experten",
+    "difficulty": 5,
     "question": "In welchem Jahr stellte Intel den 4004 vor, den ersten kommerziell erhältlichen Mikroprozessor der Welt?",
-    "options": ["1969", "1971", "1974", "1977"],
+    "options": [
+      "1969",
+      "1971",
+      "1974",
+      "1977"
+    ],
     "correctIndex": 1,
     "explanation": "Der 4-Bit-Prozessor mit 2300 Transistoren wurde im November 1971 vorgestellt. Chefdesigner war Federico Faggin; sein Signatur-F ist bis heute im Chip-Layout eingebettet.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
-
   {
     "id": "q-sprache-04",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "sprache",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Welches deutsche Wort für „Ebenbild einer Person“ ist auch im englischen Alltagswortschatz nahezu unverändert übernommen worden?",
-    "options": ["Zeitgeist", "Doppelgänger", "Weltschmerz", "Schadenfreude"],
+    "options": [
+      "Zeitgeist",
+      "Doppelgänger",
+      "Weltschmerz",
+      "Schadenfreude"
+    ],
     "correctIndex": 1,
     "explanation": "„Doppelganger“ (meist ohne Umlaut) taucht in Zeitungen, Filmen und Songtiteln auf. Der Begriff geht auf Jean Paul zurück (1796) und war ursprünglich literarisch gemeint.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-sprache-05",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "sprache",
-    "difficulty": "schwer",
+    "difficulty": 4,
     "question": "Aus welcher Sprache stammt das deutsche Wort „Kaffee“ etymologisch?",
-    "options": ["Türkisch", "Arabisch", "Italienisch", "Französisch"],
+    "options": [
+      "Türkisch",
+      "Arabisch",
+      "Italienisch",
+      "Französisch"
+    ],
     "correctIndex": 1,
     "explanation": "Vom arabischen „qahwa“ über das osmanische Türkisch („kahve“) und schließlich das Italienische („caffè“). Ursprünglich bezeichnete „qahwa“ Wein — die Bedeutungsübertragung auf Kaffee kam mit der Sufi-Kultur.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-sprache-06",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "sprache",
-    "difficulty": "experten",
+    "difficulty": 5,
     "question": "Zu welcher Sprachfamilie zählen Finnisch, Estnisch und Ungarisch?",
-    "options": ["Indogermanisch", "Uralisch", "Altaisch", "Baltisch"],
+    "options": [
+      "Indogermanisch",
+      "Uralisch",
+      "Altaisch",
+      "Baltisch"
+    ],
     "correctIndex": 1,
     "explanation": "Die drei sind die einzigen größeren uralischen Sprachen mit staatlichem Status in Europa. Untereinander verwandt, aber weit entfernt — Ungarisch trennte sich vor rund 3000 Jahren.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
-
   {
     "id": "q-kurioses-04",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "kurioses",
     "topic": "kurioses",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Welcher Berg ist mit rund 22 Kilometern Höhe der größte bekannte Vulkan im Sonnensystem?",
-    "options": ["Mount Everest", "Mauna Kea", "Olympus Mons", "Vulkan Etna"],
+    "options": [
+      "Mount Everest",
+      "Mauna Kea",
+      "Olympus Mons",
+      "Vulkan Etna"
+    ],
     "correctIndex": 2,
     "explanation": "Olympus Mons steht auf dem Mars und ist etwa dreimal so hoch wie der Mount Everest. Sein Gipfel liegt so hoch, dass er die Marsatmosphäre teilweise durchbricht.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-kurioses-05",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "kurioses",
     "topic": "kurioses",
-    "difficulty": "schwer",
+    "difficulty": 4,
     "question": "Wie viele Chromosomenpaare hat eine normale menschliche Körperzelle?",
-    "options": ["22", "23", "24", "46"],
+    "options": [
+      "22",
+      "23",
+      "24",
+      "46"
+    ],
     "correctIndex": 1,
     "explanation": "23 Paare, also 46 Chromosomen insgesamt — 22 Autosomen-Paare plus die Geschlechtschromosomen (XX oder XY). Keimzellen (Ei- und Samenzellen) tragen dagegen nur den einfachen Chromosomensatz.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-kurioses-06",
     "type": "multiple-choice",
+    "status": "approved",
     "category": "kurioses",
     "topic": "kurioses",
-    "difficulty": "experten",
+    "difficulty": 5,
     "question": "Wie viele Erdenjahre braucht der Planet Uranus für einen kompletten Umlauf um die Sonne (auf volle Jahre gerundet)?",
-    "options": ["45", "68", "84", "165"],
+    "options": [
+      "45",
+      "68",
+      "84",
+      "165"
+    ],
     "correctIndex": 2,
     "explanation": "Etwa 84 Erdenjahre — Uranus wurde erst 1781 entdeckt und hat seither also gerade einmal drei komplette Umläufe geschafft.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
-
   {
     "id": "q-flash-16",
     "type": "true-false",
+    "status": "approved",
     "category": "popkultur",
     "topic": "film",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Der Film „Titanic“ (1997) gewann elf Oscars.",
     "correctAnswer": true,
     "explanation": "Damit gleichauf mit „Ben Hur“ (1959) und „Die Rückkehr des Königs“ (2003) — die drei mit den meisten Oscars in einer Nacht.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "flash"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-flash-17",
     "type": "true-false",
+    "status": "approved",
     "category": "popkultur",
     "topic": "serien",
-    "difficulty": "leicht",
+    "difficulty": 2,
     "question": "Die HBO-Serie „Game of Thrones“ basiert auf einer Romanreihe von J. R. R. Tolkien.",
     "correctAnswer": false,
     "explanation": "George R. R. Martin, nicht Tolkien. „Das Lied von Eis und Feuer“ erschien ab 1996 — Tolkien war da schon 23 Jahre tot.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "flash"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-flash-18",
     "type": "true-false",
+    "status": "approved",
     "category": "popkultur",
     "topic": "musik",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Ludwig van Beethoven war zum Zeitpunkt der Uraufführung seiner 9. Sinfonie 1824 nahezu vollständig taub.",
     "correctAnswer": true,
     "explanation": "Bei der Wiener Uraufführung stand er auf der Bühne, hörte aber weder das Orchester noch den Applaus — eine Sängerin drehte ihn zum Publikum, damit er die Ovationen sah.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "flash"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-flash-19",
     "type": "true-false",
+    "status": "approved",
     "category": "popkultur",
     "topic": "games",
-    "difficulty": "leicht",
+    "difficulty": 2,
     "question": "Mario, das Maskottchen von Nintendo, war in seinem allerersten Auftritt bereits als Klempner konzipiert.",
     "correctAnswer": false,
     "explanation": "In „Donkey Kong“ (1981) war er Zimmermann. Zum Klempner wurde er erst mit „Mario Bros.“ 1983 — passend zum Röhren-Setting.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "flash"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-flash-20",
     "type": "true-false",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "geografie",
-    "difficulty": "leicht",
+    "difficulty": 2,
     "question": "Australien ist gleichzeitig ein Land und ein eigenständiger Kontinent.",
     "correctAnswer": true,
     "explanation": "Als einziger Kontinent nur aus einem Staat bestehend. Das umgebende Ozeanien schließt auch Neuseeland, Papua-Neuguinea und die Pazifik-Inselstaaten ein — geografisch trennbar.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "flash"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-flash-21",
     "type": "true-false",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "geschichte",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Napoleon Bonaparte wurde in Frankreich geboren.",
     "correctAnswer": false,
     "explanation": "Er wurde am 15. August 1769 auf Korsika geboren — die Insel gehörte gerade seit einem Jahr zu Frankreich. Als Kind sprach er Korsisch, nicht Französisch.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "flash"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-flash-22",
     "type": "true-false",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "wissenschaft",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Licht bewegt sich in einem Medium wie Wasser oder Glas langsamer als im Vakuum.",
     "correctAnswer": true,
     "explanation": "In Wasser bei etwa 75 % der Vakuumgeschwindigkeit, in Diamant sogar nur bei 40 %. Deshalb bricht sich das Licht beim Übergang zwischen Medien — der Effekt heißt Refraktion.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "flash"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-flash-23",
     "type": "true-false",
+    "status": "approved",
     "category": "alltag-lifestyle",
     "topic": "sport",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Bei den ersten Olympischen Spielen der Neuzeit 1896 in Athen nahmen ausschließlich männliche Athleten teil.",
     "correctAnswer": true,
     "explanation": "Frauen wurden erstmals 1900 in Paris zugelassen — und zunächst nur in Golf und Tennis. Das Olympia-Team der Frauen ist bis heute jüngeres Gebilde als das der Männer.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "flash"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-flash-24",
     "type": "true-false",
+    "status": "approved",
     "category": "alltag-lifestyle",
     "topic": "essen",
-    "difficulty": "schwer",
+    "difficulty": 4,
     "question": "Weißer Balsamico trägt dieselbe DOP-Herkunftsbezeichnung wie klassischer Aceto Balsamico Tradizionale.",
     "correctAnswer": false,
     "explanation": "Weißer Balsamico wird zwar in Modena hergestellt, gehört aber zur Kategorie „Condimento“ ohne DOP-Schutz. Der echte Tradizionale ist immer dunkel und mindestens zwölf Jahre alt.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "flash"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-flash-25",
     "type": "true-false",
+    "status": "approved",
     "category": "alltag-lifestyle",
     "topic": "technik",
-    "difficulty": "leicht",
+    "difficulty": 2,
     "question": "Das World Wide Web wurde am Kernforschungszentrum CERN in Genf entwickelt.",
     "correctAnswer": true,
     "explanation": "Tim Berners-Lee schrieb 1989 den Vorschlag, 1991 stand der erste Web-Server. Ursprünglicher Zweck: physikalische Forschungsdaten teilen.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "flash"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-flash-26",
     "type": "true-false",
+    "status": "approved",
     "category": "allgemeinbildung",
     "topic": "sprache",
-    "difficulty": "leicht",
+    "difficulty": 2,
     "question": "„Mama“ und „Papa“ klingen in erstaunlich vielen Sprachen weltweit sehr ähnlich.",
     "correctAnswer": true,
     "explanation": "Kleinkinder produzieren früh Silben wie „ma“ und „pa“ — Eltern deuteten sie als Anrede. Roman Jakobson beschrieb den Effekt 1959; er gilt sprachfamilienübergreifend.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "flash"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-flash-27",
     "type": "true-false",
+    "status": "approved",
     "category": "kurioses",
     "topic": "kurioses",
-    "difficulty": "mittel",
+    "difficulty": 3,
     "question": "Der Fußabdruck von Neil Armstrong auf dem Mond bleibt praktisch für alle Zeiten erhalten.",
     "correctAnswer": true,
     "explanation": "Keine Atmosphäre, kein Wind, kein Wasser — die Abdrücke der Apollo-11-Astronauten könnten Jahrmillionen halten. Nur Mikrometeoriten und kosmischer Staub tragen langsam ab.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "flash"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-flash-28",
     "type": "true-false",
+    "status": "approved",
     "category": "popkultur",
     "topic": "film",
-    "difficulty": "schwer",
+    "difficulty": 4,
     "question": "Der Film „Casablanca“ gewann bei der Oscar-Verleihung 1944 den Preis für den besten Film.",
     "correctAnswer": true,
     "explanation": "Zusätzlich gab es Oscars für die Regie (Michael Curtiz) und das Drehbuch. „Casablanca“ wurde eher als Routinearbeit produziert — der Kultstatus wuchs erst später.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "flash"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-flash-29",
     "type": "true-false",
+    "status": "approved",
     "category": "alltag-lifestyle",
     "topic": "sport",
-    "difficulty": "schwer",
+    "difficulty": 4,
     "question": "Cricket zählt gemessen an aktiven Fans weltweit zu den populärsten Sportarten nach Fußball.",
     "correctAnswer": true,
     "explanation": "Mit rund 2,5 Milliarden Fans — vor allem in Indien, Pakistan, Australien und England — steht Cricket in globalen Rankings meist auf Platz 2 hinter Fußball, vor Feldhockey und Tennis.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "flash"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   },
   {
     "id": "q-flash-30",
     "type": "true-false",
+    "status": "approved",
     "category": "kurioses",
     "topic": "kurioses",
-    "difficulty": "schwer",
+    "difficulty": 4,
     "question": "Der Nordpol liegt auf einer schwimmenden Eisdecke — nicht auf Landmasse.",
     "correctAnswer": true,
     "explanation": "Anders als die Antarktis (Kontinent unter dem Eis) ist der Arktische Ozean bedeckt von Meereis, das sich saisonal ausdehnt und zurückzieht. Deswegen kann man dort keine Fahne dauerhaft aufstellen.",
-    "status": "approved"
+    "tags": [],
+    "compatibleModes": [
+      "flash"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": false,
+    "createdAt": "2026-09-21T20:06:33Z",
+    "updatedAt": "2026-09-21T20:06:33Z"
   }
 ]

@@ -58,13 +58,22 @@ export interface Team {
 }
 
 /**
- * Selbsteinschätzung pro Interesse (siehe konzept-v2.md, Kapitel 2c „bisschen / gut / Nerd").
+ * Selbsteinschätzung pro Interesse (Session X: numerisches Format 1-5).
  *
- * Beeinflusst später die Fragen-Schwierigkeit für dieses Topic. In Session E dient sie
- * primär als Signal im UI und in `computeInterestProfile`; der Difficulty-Match folgt
- * in einer Folgestufe.
+ * Skala orientiert sich an `Difficulty` (siehe `@/types/question`). Die UI nutzt
+ * aktuell 3 Werte (bisschen=2, gut=3, nerd=5), das interne Modell erlaubt aber
+ * schon 1-5, damit spätere Ergänzungen (z. B. „profi=4") nichts brechen.
+ *
+ *   1 · fast keine Ahnung       (selten in UI angezeigt)
+ *   2 · bisschen                 (default „Einstieg")
+ *   3 · gut                      (default „solide")
+ *   4 · sehr gut                (Reserve)
+ *   5 · nerd / expert            (Spezialwissen)
+ *
+ * Ein niedriger SkillLevel spielt tendenziell einfachere Fragen aus dem
+ * gleichen Topic, ein hoher SkillLevel schwerere (siehe DIFFICULTY_WEIGHTS).
  */
-export type SkillLevel = 'bisschen' | 'gut' | 'nerd'
+export type SkillLevel = 1 | 2 | 3 | 4 | 5
 
 /** Ein einzelnes Spieler-Interesse mit Selbsteinschätzung. */
 export interface PlayerInterest {

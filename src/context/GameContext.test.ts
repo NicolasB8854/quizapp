@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { INITIAL_STATE, reducer, type GameState } from './GameContext'
 import { getMultipleChoiceByTopic, getTrueFalsePool } from '@/lib/questions'
+import type { SkillLevel } from '@/types/round'
 
 /**
  * Reducer-Tests. Der Reducer ist die zentrale Wahrheitsquelle für Spielzustand;
@@ -358,7 +359,7 @@ describe('reducer — Utility-Actions', () => {
 })
 
 // Helper: kompakter Interest-Eintrag mit Level 'gut' (Session E default).
-const gut = (topic: string) => ({ topic: topic as never, level: 'gut' as const })
+const gut = (topic: string) => ({ topic: topic as never, level: 3 as SkillLevel })
 
 describe('reducer — Player-Ebene (Session D + E)', () => {
   it('GO_TO_LOBBY legt Default-Player im Pool an (Session S: teamId=null bis Assign)', () => {
@@ -397,13 +398,13 @@ describe('reducer — Player-Ebene (Session D + E)', () => {
       type: 'SET_PLAYER_INTERESTS',
       playerId: firstPlayer.id,
       interests: [
-        { topic: 'film' as never, level: 'bisschen' },
-        { topic: 'film' as never, level: 'nerd' },
+        { topic: 'film' as never, level: 2 },
+        { topic: 'film' as never, level: 5 },
         gut('musik'),
       ],
     })
     expect(s.round?.players[0].interests).toEqual([
-      { topic: 'film', level: 'nerd' },
+      { topic: 'film', level: 5 },
       gut('musik'),
     ])
   })
@@ -1554,19 +1555,19 @@ describe('reducer — Difficulty-Match (Session H)', () => {
     base = reducer(base, {
       type: 'SET_PLAYER_INTERESTS',
       playerId: p1.id,
-      interests: [{ topic: 'film' as never, level: 'nerd' }],
+      interests: [{ topic: 'film' as never, level: 5 }],
     })
     base = reducer(base, { type: 'START_PLAYING' })
 
-    const counts: Record<string, number> = { leicht: 0, mittel: 0, schwer: 0 }
+    const counts: Record<number, number> = { 2: 0, 3: 0, 4: 0, 5: 0 }
     // film hat je genau 1 Frage pro Difficulty im Bestand → gute Verteilungs-Basis.
     for (let i = 0; i < 200; i++) {
       const s = reducer(base, { type: 'CD_PICK_TOPIC', topic: 'film' })
       if (s.live?.kind !== 'category-duel') continue
       const q = s.live.activeQuestion
-      if (q) counts[q.difficulty] = (counts[q.difficulty] ?? 0) + 1
+      if (q) if (q.difficulty !== undefined) counts[q.difficulty] = (counts[q.difficulty] ?? 0) + 1
     }
-    expect(counts.schwer).toBeGreaterThan(counts.leicht)
+    expect(counts[4]).toBeGreaterThan(counts[2])
   })
 
   it('Spotlight bevorzugt schwere Fragen für nerd-Spieler', () => {
@@ -1581,17 +1582,17 @@ describe('reducer — Difficulty-Match (Session H)', () => {
     base = reducer(base, {
       type: 'SET_PLAYER_INTERESTS',
       playerId: p.id,
-      interests: [{ topic: 'film' as never, level: 'nerd' }],
+      interests: [{ topic: 'film' as never, level: 5 }],
     })
 
-    const counts: Record<string, number> = { leicht: 0, mittel: 0, schwer: 0 }
+    const counts: Record<number, number> = { 2: 0, 3: 0, 4: 0, 5: 0 }
     for (let i = 0; i < 200; i++) {
       const s = reducer(base, { type: 'START_PLAYING' })
       if (s.live?.kind !== 'player-spotlight') continue
       const q = s.live.activeQuestion
-      if (q) counts[q.difficulty] = (counts[q.difficulty] ?? 0) + 1
+      if (q) if (q.difficulty !== undefined) counts[q.difficulty] = (counts[q.difficulty] ?? 0) + 1
     }
-    expect(counts.schwer).toBeGreaterThan(counts.leicht)
+    expect(counts[4]).toBeGreaterThan(counts[2])
   })
 
   it('Spotlight bevorzugt leichte Fragen für bisschen-Spieler', () => {
@@ -1606,17 +1607,17 @@ describe('reducer — Difficulty-Match (Session H)', () => {
     base = reducer(base, {
       type: 'SET_PLAYER_INTERESTS',
       playerId: p.id,
-      interests: [{ topic: 'film' as never, level: 'bisschen' }],
+      interests: [{ topic: 'film' as never, level: 2 }],
     })
 
-    const counts: Record<string, number> = { leicht: 0, mittel: 0, schwer: 0 }
+    const counts: Record<number, number> = { 2: 0, 3: 0, 4: 0, 5: 0 }
     for (let i = 0; i < 200; i++) {
       const s = reducer(base, { type: 'START_PLAYING' })
       if (s.live?.kind !== 'player-spotlight') continue
       const q = s.live.activeQuestion
-      if (q) counts[q.difficulty] = (counts[q.difficulty] ?? 0) + 1
+      if (q) if (q.difficulty !== undefined) counts[q.difficulty] = (counts[q.difficulty] ?? 0) + 1
     }
-    expect(counts.leicht).toBeGreaterThan(counts.schwer)
+    expect(counts[2]).toBeGreaterThan(counts[4])
   })
 })
 
@@ -1808,9 +1809,9 @@ describe('reducer — Heimspiel / Player Spotlight (Session G)', () => {
       type: 'SET_PLAYER_INTERESTS',
       playerId: p.id,
       interests: [
-        { topic: 'film' as never, level: 'bisschen' },
-        { topic: 'wissenschaft' as never, level: 'nerd' },
-        { topic: 'musik' as never, level: 'gut' },
+        { topic: 'film' as never, level: 2 },
+        { topic: 'wissenschaft' as never, level: 5 },
+        { topic: 'musik' as never, level: 3 },
       ],
     })
     s = reducer(s, { type: 'START_PLAYING' })
@@ -2209,7 +2210,7 @@ describe('reducer — SHUFFLE_PLAYERS (Session S)', () => {
     s = reducer(s, {
       type: 'SET_PLAYER_INTERESTS',
       playerId: s.round!.players[0].id,
-      interests: [{ topic: 'film' as never, level: 'gut' }],
+      interests: [{ topic: 'film' as never, level: 3 }],
     })
     s = reducer(s, { type: 'SHUFFLE_PLAYERS' })
     expect(s.round!.interests).toContain('film')

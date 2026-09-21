@@ -11,7 +11,8 @@ import {
   pickTrueFalse,
   pickWarmupRiddle,
 } from './questions'
-import type { Topic } from '@/types/question'
+import type { Difficulty, Topic } from '@/types/question'
+import type { SkillLevel } from '@/types/round'
 
 describe('questions', () => {
   beforeEach(() => {
@@ -93,12 +94,12 @@ describe('questions', () => {
 
     it('mit preferredLevel=nerd bevorzugt schwere Fragen (Verteilungscheck)', () => {
       vi.restoreAllMocks()
-      const counts: Record<string, number> = { leicht: 0, mittel: 0, schwer: 0 }
+      const counts: Record<number, number> = { 2: 0, 3: 0, 4: 0, 5: 0 }
       for (let i = 0; i < 400; i++) {
-        const picked = pickAnyMultipleChoice(new Set(), 'nerd')
-        if (picked) counts[picked.difficulty] = (counts[picked.difficulty] ?? 0) + 1
+        const picked = pickAnyMultipleChoice(new Set(), 5)
+        if (picked) counts[picked.difficulty!] = (counts[picked.difficulty!] ?? 0) + 1
       }
-      expect(counts.schwer).toBeGreaterThan(counts.leicht)
+      expect(counts[4]).toBeGreaterThan(counts[2])
     })
   })
 
@@ -150,19 +151,19 @@ describe('questions', () => {
   describe('pickByDifficulty (Session H)', () => {
     interface Fake {
       id: string
-      difficulty: 'leicht' | 'mittel' | 'schwer' | 'experten'
+      difficulty: Difficulty
     }
     const items: Fake[] = [
-      { id: 'l1', difficulty: 'leicht' },
-      { id: 'l2', difficulty: 'leicht' },
-      { id: 'm1', difficulty: 'mittel' },
-      { id: 'm2', difficulty: 'mittel' },
-      { id: 's1', difficulty: 'schwer' },
-      { id: 's2', difficulty: 'schwer' },
+      { id: 'l1', difficulty: 2 },
+      { id: 'l2', difficulty: 2 },
+      { id: 'm1', difficulty: 3 },
+      { id: 'm2', difficulty: 3 },
+      { id: 's1', difficulty: 4 },
+      { id: 's2', difficulty: 4 },
     ]
 
     it('leerer Input liefert null', () => {
-      const picked = pickByDifficulty([] as Fake[], () => 'gut')
+      const picked = pickByDifficulty([] as Fake[], () => 3 as SkillLevel)
       expect(picked).toBeNull()
     })
 
@@ -174,33 +175,33 @@ describe('questions', () => {
 
     it("preferredLevel 'bisschen': leicht-Fragen dominieren deutlich über N=800", () => {
       vi.restoreAllMocks()
-      const counts = { leicht: 0, mittel: 0, schwer: 0 }
+      const counts: Record<number, number> = { 2: 0, 3: 0, 4: 0, 5: 0 }
       for (let i = 0; i < 800; i++) {
-        const picked = pickByDifficulty(items, () => 'bisschen')
-        if (picked) counts[picked.difficulty as keyof typeof counts]++
+        const picked = pickByDifficulty(items, () => 2 as SkillLevel)
+        if (picked) counts[picked.difficulty!] = (counts[picked.difficulty!] ?? 0) + 1
       }
-      expect(counts.leicht).toBeGreaterThan(counts.mittel)
-      expect(counts.mittel).toBeGreaterThan(counts.schwer)
+      expect(counts[2]).toBeGreaterThan(counts[3])
+      expect(counts[3]).toBeGreaterThan(counts[4])
     })
 
     it("preferredLevel 'nerd': schwer-Fragen dominieren deutlich über N=800", () => {
       vi.restoreAllMocks()
-      const counts = { leicht: 0, mittel: 0, schwer: 0 }
+      const counts: Record<number, number> = { 2: 0, 3: 0, 4: 0, 5: 0 }
       for (let i = 0; i < 800; i++) {
-        const picked = pickByDifficulty(items, () => 'nerd')
-        if (picked) counts[picked.difficulty as keyof typeof counts]++
+        const picked = pickByDifficulty(items, () => 5 as SkillLevel)
+        if (picked) counts[picked.difficulty!] = (counts[picked.difficulty!] ?? 0) + 1
       }
-      expect(counts.schwer).toBeGreaterThan(counts.mittel)
-      expect(counts.mittel).toBeGreaterThan(counts.leicht)
+      expect(counts[4]).toBeGreaterThan(counts[3])
+      expect(counts[3]).toBeGreaterThan(counts[2])
     })
 
     it('nur experten-verlangende Fragen bei bisschen-Level: uniforme Fallback-Wahl', () => {
       // 'bisschen' hat für 'experten' Gewicht 0 → total = 0 → uniform fallback.
       const expertOnly: Fake[] = [
-        { id: 'e1', difficulty: 'experten' },
-        { id: 'e2', difficulty: 'experten' },
+        { id: 'e1', difficulty: 5 },
+        { id: 'e2', difficulty: 5 },
       ]
-      const picked = pickByDifficulty(expertOnly, () => 'bisschen')
+      const picked = pickByDifficulty(expertOnly, () => 2 as SkillLevel)
       // Math.random=0 → nimmt den ersten Kandidaten im uniformen Fallback.
       expect(picked?.id).toBe('e1')
     })
@@ -215,15 +216,15 @@ describe('questions', () => {
 
     it("preferredLevel 'bisschen': bevorzugt leichte und mittlere Fragen gegenüber schweren", () => {
       vi.restoreAllMocks()
-      const counts = { leicht: 0, mittel: 0, schwer: 0, experten: 0 }
+      const counts: Record<number, number> = { 2: 0, 3: 0, 4: 0, 5: 0 }
       for (let i = 0; i < 800; i++) {
-        const picked = pickQuestion('film', new Set(), 'bisschen')
-        if (picked) counts[picked.difficulty as keyof typeof counts]++
+        const picked = pickQuestion('film', new Set(), 2)
+        if (picked) counts[picked.difficulty!] = (counts[picked.difficulty!] ?? 0) + 1
       }
       // Bei level=bisschen: leicht 60, mittel 30, schwer 10, experten 0.
       // Kombiniert (leicht + mittel) sollte klar dominieren, schwer/experten selten.
-      const easyish = counts.leicht + counts.mittel
-      const hardish = counts.schwer + counts.experten
+      const easyish = counts[2] + counts[3]
+      const hardish = counts[4] + counts[5]
       expect(easyish).toBeGreaterThan(hardish * 3)
     })
   })
@@ -319,9 +320,9 @@ describe('questions', () => {
       const profile = {
         shared: new Set<Topic>(['sprache']),
         individual: new Set<Topic>(),
-        levelPerTopic: new Map<Topic, 'nerd'>([['sprache', 'nerd']]),
+        levelPerTopic: new Map<Topic, SkillLevel>([['sprache', 5]]),
       }
-      const counts = { leicht: 0, schwer: 0 }
+      const counts: Record<number, number> = { 2: 0, 3: 0, 4: 0, 5: 0 }
       // Wir zählen nur sprache-Treffer, damit die 60/30/10-Bucket-Wahl uns nicht
       // verzerrt (der wildcard-Anteil verdünnt sonst die Level-Signale).
       let sprachHits = 0
@@ -329,11 +330,11 @@ describe('questions', () => {
         const p = pickTrueFalse(new Set(), profile)
         if (p?.topic === 'sprache') {
           sprachHits++
-          counts[p.difficulty as 'leicht' | 'schwer']++
+          counts[p.difficulty!] = (counts[p.difficulty!] ?? 0) + 1
         }
       }
       // Bei level=nerd: schwer 45 vs. leicht 5 → schwer sollte dominieren.
-      expect(counts.schwer).toBeGreaterThan(counts.leicht * 3)
+      expect(counts[4]).toBeGreaterThan(counts[2] * 3)
     })
 
     it('Level bisschen auf sprache: bevorzugt leicht über schwer', () => {
@@ -341,19 +342,19 @@ describe('questions', () => {
       const profile = {
         shared: new Set<Topic>(['sprache']),
         individual: new Set<Topic>(),
-        levelPerTopic: new Map<Topic, 'bisschen'>([['sprache', 'bisschen']]),
+        levelPerTopic: new Map<Topic, SkillLevel>([['sprache', 2]]),
       }
-      const counts = { leicht: 0, schwer: 0 }
+      const counts: Record<number, number> = { 2: 0, 3: 0, 4: 0, 5: 0 }
       let sprachHits = 0
       for (let i = 0; i < 1500 && sprachHits < 400; i++) {
         const p = pickTrueFalse(new Set(), profile)
         if (p?.topic === 'sprache') {
           sprachHits++
-          counts[p.difficulty as 'leicht' | 'schwer']++
+          counts[p.difficulty!] = (counts[p.difficulty!] ?? 0) + 1
         }
       }
       // Bei level=bisschen: leicht 60 vs. schwer 10 → leicht dominiert.
-      expect(counts.leicht).toBeGreaterThan(counts.schwer * 3)
+      expect(counts[2]).toBeGreaterThan(counts[4] * 3)
     })
   })
 })

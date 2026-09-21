@@ -1078,26 +1078,42 @@ function TeamSummaryRow({ round }: TeamSummaryRowProps) {
 
 // ---------- Interest-Chip mit Level-Cycle ------------------------------------
 
+/**
+ * SkillLevel ist intern numerisch (1-5, siehe Session X). Die UI nutzt aktuell
+ * drei Werte:
+ *   2 = „bisschen"  (Einstieg)
+ *   3 = „gut"       (solide)
+ *   5 = „nerd"      (Spezialwissen)
+ *
+ * Der Cycle geht: aus → 2 → 3 → 5 → aus (wieder).
+ * Der interne Store erlaubt auch 1 und 4, das UI wählt aber bewusst nur die drei
+ * Stufen aus, um die Auswahl schnell zu halten.
+ */
+const UI_LEVELS: readonly SkillLevel[] = [2, 3, 5]
+
 const LEVEL_LABEL: Record<SkillLevel, string> = {
-  bisschen: 'bisschen',
-  gut: 'gut',
-  nerd: 'nerd',
+  1: 'keine Ahnung',
+  2: 'bisschen',
+  3: 'gut',
+  4: 'sehr gut',
+  5: 'nerd',
 }
 
 const LEVEL_STYLE: Record<SkillLevel, string> = {
-  bisschen: 'bg-brand-purple/10 border-brand-purple/40 text-brand-purple-soft',
-  gut: 'bg-brand-purple/25 border-brand-purple/70 text-brand-purple-soft',
-  nerd:
-    'bg-brand-purple/40 border-brand-purple/90 text-white shadow-[0_0_18px_-4px_rgba(124,92,255,0.9)]',
+  1: 'bg-brand-purple/5 border-brand-purple/25 text-brand-purple-soft',
+  2: 'bg-brand-purple/10 border-brand-purple/40 text-brand-purple-soft',
+  3: 'bg-brand-purple/25 border-brand-purple/70 text-brand-purple-soft',
+  4: 'bg-brand-purple/35 border-brand-purple/80 text-brand-purple-soft',
+  5: 'bg-brand-purple/40 border-brand-purple/90 text-white shadow-[0_0_18px_-4px_rgba(124,92,255,0.9)]',
 }
 
-const LEVEL_DOTS: Record<SkillLevel, number> = { bisschen: 1, gut: 2, nerd: 3 }
+/** Wieviele Punkte sichtbar sind (visueller Fortschritt in der Chip-Pille). */
+const LEVEL_DOTS: Record<SkillLevel, number> = { 1: 1, 2: 1, 3: 2, 4: 3, 5: 3 }
 
 function nextLevel(current: SkillLevel | undefined): SkillLevel | null {
-  if (!current) return 'bisschen'
-  if (current === 'bisschen') return 'gut'
-  if (current === 'gut') return 'nerd'
-  return null
+  const idx = current ? UI_LEVELS.indexOf(current) : -1
+  if (idx < 0) return UI_LEVELS[0] ?? null
+  return UI_LEVELS[idx + 1] ?? null
 }
 
 interface InterestChipProps {

@@ -62,18 +62,26 @@ export function pickAnyMultipleChoice(
   return pickByDifficulty(candidates, () => preferredLevel)
 }
 
-// ---------- Difficulty-Präferenz (Session H) ---------------------------------
+// ---------- Difficulty-Präferenz (Session H, numerisch in Session X) ---------
 
 /**
- * Gewichtung der Difficulty-Stufen je Selbsteinschätzung.
+ * Gewichtung der Difficulty-Stufen (1-5) je Selbsteinschätzung (SkillLevel 1-5).
  *
- * Bewusst asymmetrisch, aber nicht dogmatisch — Nerd bekommt auch mal was Leichtes,
- * Anfänger bekommt hin und wieder eine mittlere. Startwerte, für Kalibrierung bereit.
+ * Diagonale = Peak: SkillLevel N bevorzugt Difficulty N. Aber flach genug, dass
+ * Fragen +/- 1 Stufe auch regelmäßig fallen — kein hartes Cut-off. Werte sind
+ * Prozente pro SkillLevel-Zeile (Summe 100).
+ *
+ * Bestehende Semantik bleibt erhalten:
+ *   SkillLevel 2 („bisschen") bevorzugt Difficulty 2 (die alten „leicht"-Fragen)
+ *   SkillLevel 3 („gut")      bevorzugt Difficulty 3 („mittel")
+ *   SkillLevel 5 („nerd")     bevorzugt Difficulty 4-5 („schwer" + „experten")
  */
 export const DIFFICULTY_WEIGHTS: Record<SkillLevel, Record<Difficulty, number>> = {
-  bisschen: { leicht: 60, mittel: 30, schwer: 10, experten: 0 },
-  gut:      { leicht: 20, mittel: 50, schwer: 25, experten: 5 },
-  nerd:     { leicht: 5,  mittel: 20, schwer: 45, experten: 30 },
+  1: { 1: 70, 2: 25, 3:  5, 4:  0, 5:  0 },
+  2: { 1: 20, 2: 60, 3: 15, 4:  5, 5:  0 },
+  3: { 1:  5, 2: 20, 3: 50, 4: 20, 5:  5 },
+  4: { 1:  0, 2:  5, 3: 20, 4: 50, 5: 25 },
+  5: { 1:  0, 2:  5, 3: 10, 4: 45, 5: 40 },
 }
 
 /**
@@ -81,17 +89,17 @@ export const DIFFICULTY_WEIGHTS: Record<SkillLevel, Record<Difficulty, number>> 
  * (optional pro Frage variierendes) Skill-Level.
  *
  * `getLevel` liefert das Level pro Item; wenn `undefined`, wird die Frage neutral mit
- * Gewicht 1 behandelt. Ist die Summe aller Gewichte 0 (etwa: alle Fragen `schwer`, aber
- * Level `bisschen`), gibt es uniformen Fallback über die Items.
+ * Gewicht 1 behandelt. Fragen ohne `difficulty` (z. B. Warmup-Rätsel) bekommen ebenfalls
+ * Gewicht 1. Ist die Summe aller Gewichte 0, gibt es uniformen Fallback über die Items.
  */
-export function pickByDifficulty<Q extends { difficulty: Difficulty }>(
+export function pickByDifficulty<Q extends { difficulty?: Difficulty }>(
   items: readonly Q[],
   getLevel: (item: Q) => SkillLevel | undefined,
 ): Q | null {
   if (items.length === 0) return null
   const weights = items.map((q) => {
     const level = getLevel(q)
-    if (!level) return 1
+    if (!level || !q.difficulty) return 1
     return DIFFICULTY_WEIGHTS[level][q.difficulty] ?? 0
   })
   const total = weights.reduce((s, w) => s + w, 0)

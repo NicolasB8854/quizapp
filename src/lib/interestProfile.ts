@@ -17,11 +17,12 @@
 import type { Topic } from '@/types/question'
 import type { Player, SkillLevel } from '@/types/round'
 
-/** Ordnung der Selbsteinschätzung. Für Max-Aggregation. */
-const LEVEL_ORDER: SkillLevel[] = ['bisschen', 'gut', 'nerd']
-
+/**
+ * Höheren SkillLevel gewinnen lassen. Session X: SkillLevel ist numerisch 1-5,
+ * `Math.max` reicht — der bisherige LEVEL_ORDER-Trick entfällt.
+ */
 function maxLevel(a: SkillLevel, b: SkillLevel): SkillLevel {
-  return LEVEL_ORDER.indexOf(a) >= LEVEL_ORDER.indexOf(b) ? a : b
+  return (Math.max(a, b) as SkillLevel)
 }
 
 export interface InterestProfile {

@@ -1,24 +1,40 @@
 /**
  * Fragen-Schema für alle Modi.
  *
- * Design-Prinzipien (siehe konzept-v2.md, Kapitel 6 & 7):
- * - Multiple-Choice-Optionen als Array, damit bei Bedarf 2/3/4 Optionen unterstützt werden.
- * - `correctIndex` referenziert die richtige Option (0-basiert). App shufflet die Optionen
- *   beim Rendern, damit ABCD-Balance keine Rolle spielt (Learning aus Runde 6).
+ * Ausrichtung an Fragenpool-&-Contentlogik-Konzept v1 (Session X):
+ * - `difficulty` ist **numerisch 1-5** (statt String-Skala). 1 = kinderleicht /
+ *   Allgemeinwissen, 5 = Experten-Level. Der Wert ist konzept-konform und lässt
+ *   sich später mit `difficulty_empirical` (Nutzungs-basiert) ergänzen.
+ * - Multiple-Choice-Optionen als Array; `correctIndex` referenziert die
+ *   richtige Option (0-basiert). Beim Rendern wird gemischt, damit ABCD-
+ *   Balance keine Rolle spielt.
  * - `hints[]` für Warm-up-Rätsel (stufenweises Aufdecken).
- * - `gmNote` = **interne** Vorbereitungshinweise für den Quizmaster (nicht öffentlich).
+ * - `gmNote` = **interne** Vorbereitungshinweise für den Quizmaster.
  * - `explanation` = **öffentliche** Auflösung, wird nach Antwort im UI gezeigt.
- *   Erfüllt Prinzip „Erklärung statt nur Lösung". Wenn nicht gesetzt, kann das UI auf
- *   `gmNote` zurückfallen (Bestand aus v1).
- * - `personalizationFit` steuert, wie der Quiz Director die Frage einordnet
- *   (Allgemeinwissen / Common Ground / Expertenmoment / Wildcard).
- * - `timeReference` deckt Zeitbezug ab: `isTimeSensitive` + `referenceDate` bleiben aus v1,
- *   neu sind `verifiedAt` (Faktencheck-Datum) und `validUntil` (Verfallsdatum für Popkultur).
- * - `source` = URL oder Referenz, damit Fakten prüfbar sind.
- * - `usedInRounds[]` für Duplicate-Check gegen Vorrunden.
+ * - `tags[]` = flexible Detail-Filter (Konzept: „NBA", „Finals", „2021"). Leer
+ *   bei Migration; wird bei neuen Fragen gepflegt.
+ * - `compatibleModes[]` = Liste der Spielmodi, in denen die Frage genutzt
+ *   werden darf. Aus dem `type` abgeleitet, aber überschreibbar.
+ * - `timeScope` = `timeless | dated | expiring`. Zeitloses Wissen vs. datierte
+ *   Fakten (Rekorde, Charts).
+ * - `aiGenerated` = Transparenz-Flag für den Review-Prozess.
+ * - `createdAt/updatedAt` = Audit-Trail (ISO-Datum).
+ * - `personalizationFit` steuert, wie der Quiz Director die Frage einordnet.
+ * - `source` = URL/Referenz, damit Fakten prüfbar sind.
  */
 
-export type Difficulty = 'leicht' | 'mittel' | 'schwer' | 'experten'
+import type { GameModeId } from './round'
+
+/**
+ * Redaktionelle Schwierigkeit auf 5-Stufen-Skala.
+ *
+ *   1 · kinderleicht / Allgemeinwissen — jeder löst
+ *   2 · eher leicht — Bekannt, kurze Erinnerungsarbeit
+ *   3 · mittel — Solides Wissen oder Ableitung nötig
+ *   4 · schwer — Fachwissen, weniger bekannte Fakten
+ *   5 · Experte — Spezialwissen
+ */
+export type Difficulty = 1 | 2 | 3 | 4 | 5
 
 export type QuestionType = 'multiple-choice' | 'open' | 'true-false' | 'warmup-riddle'
 
@@ -58,13 +74,23 @@ export type Topic =
   | 'sprache'
   | 'kurioses'
 
+/**
+ * Zeitbezug einer Frage.
+ *
+ *  - `timeless`  — zeitloses Wissen (Historie, Wissenschaft, Klassiker).
+ *  - `dated`     — datierte Fakten mit `referenceDate` (z. B. „Stand 2025").
+ *  - `expiring`  — Fakten mit Verfallsdatum (`validUntil`), z. B. aktuelle Rekorde.
+ */
+export type TimeScope = 'timeless' | 'dated' | 'expiring'
+
 export interface BaseQuestion {
   id: string
   type: QuestionType
   category: Category
   topic: Topic
   subCategory?: string
-  difficulty: Difficulty
+  /** Redaktionelle Schwierigkeit 1-5 (nicht gesetzt bei warmup-riddle). */
+  difficulty?: Difficulty
   question: string
   /** Interne Vorbereitungsnotiz für den Quizmaster (nicht öffentlich). */
   gmNote?: string
@@ -76,16 +102,30 @@ export interface BaseQuestion {
   /** Wie die Frage vom Quiz Director eingeordnet wird. */
   personalizationFit?: PersonalizationFit
   source?: string
-  timeReference?: {
-    isTimeSensitive: boolean
-    /** Referenzdatum in der Formulierung (z. B. „Stand 2025"). */
-    referenceDate?: string
-    /** Datum des letzten Faktenchecks (ISO-Datum, z. B. „2025-09-15"). */
-    verifiedAt?: string
-    /** Ablaufdatum für zeitgebundene Popkultur (ISO-Datum). */
-    validUntil?: string
-  }
+  /**
+   * Flexible Detail-Tags (z. B. „NBA", „2021", „Ghibli"). Für Feinfilter und
+   * Suche. Bewusst kein festes Vokabular — kann wachsen.
+   */
   tags?: string[]
+  /**
+   * Zu welchen Spielmodi ist die Frage kompatibel? Bei nicht gesetzt: aus
+   * `type` abgeleitet (siehe `defaultCompatibleModesFor` in `@/lib/questions`).
+   */
+  compatibleModes?: GameModeId[]
+  /** Zeitbezug — Default `timeless`. */
+  timeScope?: TimeScope
+  /** Referenzdatum bei `timeScope: 'dated'`. */
+  referenceDate?: string
+  /** Verfallsdatum bei `timeScope: 'expiring'`. */
+  expiresAt?: string
+  /** Faktencheck-Datum (letzter Review). */
+  verifiedAt?: string
+  /** Wurde die Frage per KI-Assistent generiert? */
+  aiGenerated?: boolean
+  /** ISO-Datum der Erstellung. */
+  createdAt?: string
+  /** ISO-Datum der letzten Änderung. */
+  updatedAt?: string
   usedInRounds?: string[]
   author?: string
   status?: 'draft' | 'reviewed' | 'approved' | 'retired'

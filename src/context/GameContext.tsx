@@ -519,8 +519,10 @@ function initFlash(teams: Team[], players: readonly Player[]): FlashLive | null 
   }
 }
 
-/** Ordnung der Skill-Level für Aggregation und Präferenz-Sortierung. */
-const SPOTLIGHT_LEVEL_ORDER = ['bisschen', 'gut', 'nerd'] as const
+/**
+ * Ordnung der Skill-Level für Aggregation und Präferenz-Sortierung.
+ * Session X: numerisch — Höherer Wert = höheres Skill. `Math.max` reicht.
+ */
 
 /**
  * Wählt das Topic für die Spotlight-Frage: höchstes Skill-Level, bei Gleichstand die
@@ -531,10 +533,7 @@ function pickTopicForPlayer(player: Player): Topic | null {
   let best = player.interests[0]
   for (let i = 1; i < player.interests.length; i++) {
     const candidate = player.interests[i]
-    if (
-      SPOTLIGHT_LEVEL_ORDER.indexOf(candidate.level) >
-      SPOTLIGHT_LEVEL_ORDER.indexOf(best.level)
-    ) {
+    if (candidate.level > best.level) {
       best = candidate
     }
   }
@@ -848,7 +847,8 @@ function initDuel(teams: Team[]): DuelLive {
  */
 const BOARD_COLUMNS = 5
 const BOARD_VALUES = [100, 200, 300, 400] as const
-const BOARD_LEVELS: PlayerInterest['level'][] = ['bisschen', 'gut', 'gut', 'nerd']
+/** Level je Board-Reihe: Reihe 0 = leicht (bisschen=2), Reihe 3 = experten (nerd=5). */
+const BOARD_LEVELS: PlayerInterest['level'][] = [2, 3, 3, 5]
 
 /** Wählt die Topics für das Board — bevorzugt Interessen, füllt sonst nach Katalog auf. */
 function pickBoardTopics(profile: ReturnType<typeof computeInterestProfile>): Topic[] {
@@ -904,19 +904,14 @@ const LADDER_VALUES = [200, 500, 1000, 2500, 5000] as const
  * Difficulty-Präferenz pro Ladder-Stufe. Frühe Fragen leicht, spätere schwer.
  * Nutzt DIFFICULTY_WEIGHTS aus Session H über `pickAnyMultipleChoice(_, level)`.
  */
-const LADDER_LEVELS: PlayerInterest['level'][] = [
-  'bisschen',
-  'gut',
-  'gut',
-  'nerd',
-  'nerd',
-]
+/** Level pro Ladder-Stufe (Session X: numerisch, 2=bisschen, 3=gut, 5=nerd). */
+const LADDER_LEVELS: PlayerInterest['level'][] = [2, 3, 3, 5, 5]
 
 function pickLadderQuestion(
   usedIds: Set<string>,
   index: number,
 ): MultipleChoiceQuestion | null {
-  const level = LADDER_LEVELS[index] ?? 'gut'
+  const level = LADDER_LEVELS[index] ?? 3
   return pickAnyMultipleChoice(usedIds, level)
 }
 
@@ -2232,7 +2227,7 @@ export function reducer(state: GameState, action: GameAction): GameState {
 
       const excluded = new Set(live.usedQuestionIds)
       for (const id of readAskedQuestionIds()) excluded.add(id)
-      const preferredLevel = BOARD_LEVELS[action.valueIndex] ?? 'gut'
+      const preferredLevel = BOARD_LEVELS[action.valueIndex] ?? 3
       const question = pickQuestion(action.topic, excluded, preferredLevel)
       if (!question) return state
 

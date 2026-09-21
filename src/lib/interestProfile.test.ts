@@ -3,9 +3,9 @@ import {
   aggregatePlayerInterests,
   computeInterestProfile,
 } from './interestProfile'
-import type { Player } from '@/types/round'
+import type { Player, SkillLevel } from '@/types/round'
 
-function player(id: string, teamId: string, interests: Array<[string, 'bisschen' | 'gut' | 'nerd']>): Player {
+function player(id: string, teamId: string, interests: Array<[string, SkillLevel]>): Player {
   return {
     id,
     name: '',
@@ -25,8 +25,8 @@ describe('aggregatePlayerInterests', () => {
 
   it('sammelt Topics dedupliziert und in Reihenfolge der ersten Nennung', () => {
     const players = [
-      player('p1', 'a', [['film', 'gut'], ['musik', 'bisschen']]),
-      player('p2', 'b', [['musik', 'nerd'], ['sport', 'gut']]),
+      player('p1', 'a', [['film', 3], ['musik', 2]]),
+      player('p2', 'b', [['musik', 5], ['sport', 3]]),
     ]
     expect(aggregatePlayerInterests(players)).toEqual(['film', 'musik', 'sport'])
   })
@@ -42,9 +42,9 @@ describe('computeInterestProfile', () => {
 
   it('trennt shared (>=2) von individual (=1)', () => {
     const players = [
-      player('p1', 'a', [['film', 'gut'], ['musik', 'bisschen']]),
-      player('p2', 'b', [['musik', 'gut']]),
-      player('p3', 'a', [['sport', 'nerd']]),
+      player('p1', 'a', [['film', 3], ['musik', 2]]),
+      player('p2', 'b', [['musik', 3]]),
+      player('p3', 'a', [['sport', 5]]),
     ]
     const profile = computeInterestProfile(players)
     expect(profile.shared.has('musik')).toBe(true)
@@ -55,24 +55,24 @@ describe('computeInterestProfile', () => {
 
   it('levelPerTopic nimmt das höchste Level (Max-Aggregation)', () => {
     const players = [
-      player('p1', 'a', [['musik', 'bisschen']]),
-      player('p2', 'b', [['musik', 'nerd']]),
-      player('p3', 'a', [['musik', 'gut']]),
+      player('p1', 'a', [['musik', 2]]),
+      player('p2', 'b', [['musik', 5]]),
+      player('p3', 'a', [['musik', 3]]),
     ]
     const profile = computeInterestProfile(players)
-    expect(profile.levelPerTopic.get('musik')).toBe('nerd')
+    expect(profile.levelPerTopic.get('musik')).toBe(5)
   })
 
   it('individuelles Topic behält sein einzelnes Level', () => {
-    const players = [player('p1', 'a', [['film', 'bisschen']])]
+    const players = [player('p1', 'a', [['film', 2]])]
     const profile = computeInterestProfile(players)
-    expect(profile.levelPerTopic.get('film')).toBe('bisschen')
+    expect(profile.levelPerTopic.get('film')).toBe(2)
   })
 
   it('kein Topic doppelt in shared und individual', () => {
     const players = [
-      player('p1', 'a', [['film', 'gut'], ['musik', 'gut']]),
-      player('p2', 'b', [['musik', 'gut']]),
+      player('p1', 'a', [['film', 3], ['musik', 3]]),
+      player('p2', 'b', [['musik', 3]]),
     ]
     const profile = computeInterestProfile(players)
     // musik ist shared, film ist individual, keine Überschneidung.
