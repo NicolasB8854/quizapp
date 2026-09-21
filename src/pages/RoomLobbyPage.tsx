@@ -151,6 +151,7 @@ export default function RoomLobbyPage() {
           <PhaseView
             state={room.state}
             role={role}
+            playerId={room.playerId}
             canDispatch={canDispatch}
             send={send}
           />
@@ -203,11 +204,13 @@ function LoadingCard({ label }: { label: string }) {
 function PhaseView({
   state,
   role,
+  playerId,
   canDispatch,
   send,
 }: {
   state: GameState
   role: 'player' | 'master'
+  playerId: string | null
   canDispatch: boolean
   send: (a: GameAction) => void
 }) {
@@ -221,7 +224,15 @@ function PhaseView({
         />
       )
     case 'lobby':
-      return <LobbyPhaseView state={state} role={role} canDispatch={canDispatch} send={send} />
+      return (
+        <LobbyPhaseView
+          state={state}
+          role={role}
+          playerId={playerId}
+          canDispatch={canDispatch}
+          send={send}
+        />
+      )
     case 'playing':
       return <PlayingPhaseView state={state} canDispatch={canDispatch} send={send} />
     case 'scoreboard':
@@ -333,11 +344,13 @@ function SetupPhaseView({
 function LobbyPhaseView({
   state,
   role,
+  playerId,
   canDispatch,
   send,
 }: {
   state: GameState
   role: 'player' | 'master'
+  playerId: string | null
   canDispatch: boolean
   send: (a: GameAction) => void
 }) {
@@ -345,6 +358,12 @@ function LobbyPhaseView({
   const readyToStart =
     state.round.players.length > 0 &&
     state.round.players.every((p) => p.teamId !== null)
+
+  // Eigener Player im State (falls Player-Rolle).
+  const myPlayer =
+    role === 'player' && playerId
+      ? state.round.players.find((p) => p.id === playerId) ?? null
+      : null
 
   return (
     <div className="space-y-3">
@@ -356,10 +375,22 @@ function LobbyPhaseView({
           {state.round.name}
         </div>
         <div className="mt-1 text-xs text-ink-muted">
-          Best-of-{state.round.bestOf} · Schritt: {state.lobbyStep}
+          Best-of-{state.round.bestOf} · {state.round.players.length}{' '}
+          {state.round.players.length === 1 ? 'Spieler' : 'Spieler'} im Raum
         </div>
       </Card>
 
+      {/* Eigene Player-Karte: nur wenn Player + im State registriert. */}
+      {myPlayer && (
+        <PlayerSelfCard
+          state={state}
+          me={myPlayer}
+          canDispatch={canDispatch}
+          send={send}
+        />
+      )}
+
+      {/* Team-Roster für alle sichtbar. */}
       <Card className="space-y-2 p-4">
         <div className="text-xs uppercase tracking-[0.22em] text-ink-muted">
           Teams
@@ -383,7 +414,10 @@ function LobbyPhaseView({
               {members.length > 0 && (
                 <div className="mt-1 flex flex-wrap gap-1 pl-5 text-xs text-white/80">
                   {members.map((p) => (
-                    <Badge key={p.id} tone="muted">
+                    <Badge
+                      key={p.id}
+                      tone={p.id === playerId ? 'purple' : 'muted'}
+                    >
                       {p.name || 'Namenlos'}
                     </Badge>
                   ))}
@@ -392,17 +426,25 @@ function LobbyPhaseView({
             </div>
           )
         })}
+        {(() => {
+          const pool = state.round!.players.filter((p) => p.teamId === null)
+          if (pool.length === 0) return null
+          return (
+            <div className="mt-2 rounded-lg border border-dashed border-white/10 p-2">
+              <div className="text-[11px] uppercase tracking-[0.22em] text-ink-muted">
+                Noch ohne Team ({pool.length})
+              </div>
+              <div className="mt-1 flex flex-wrap gap-1 text-xs text-white/70">
+                {pool.map((p) => (
+                  <Badge key={p.id} tone={p.id === playerId ? 'purple' : 'muted'}>
+                    {p.name || 'Namenlos'}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          )
+        })()}
       </Card>
-
-      {role === 'player' && (
-        <Card className="space-y-2 p-4 text-xs text-ink-muted">
-          <p>
-            Roster & Team-Zuordnung nutzen aktuell noch die Offline-App —
-            bis Multi-Device-Lobby fertig ist, kann der Master die Teams am
-            großen Bildschirm einteilen.
-          </p>
-        </Card>
-      )}
 
       <Button
         size="lg"
@@ -411,9 +453,100 @@ function LobbyPhaseView({
         disabled={!canDispatch || !readyToStart}
         className="w-full"
       >
-        Runde starten
+        {readyToStart ? 'Runde starten' : 'Wartet auf Team-Auswahl'}
       </Button>
+
+      {role === 'master' && (
+        <p className="text-center text-xs text-ink-muted">
+          Master schaut zu — Player wählen ihr Team selbst.
+        </p>
+      )}
     </div>
+  )
+}
+
+/**
+ * Karte für den eigenen Player: Name-Input + Team-Auswahl. Wird dispatched
+ * gegen den Server über SET_PLAYER_NAME / MOVE_PLAYER_TO_TEAM.
+ */
+function PlayerSelfCard({
+  state,
+  me,
+  canDispatch,
+  send,
+}: {
+  state: GameState
+  me: import('@quizapp/shared').Player
+  canDispatch: boolean
+  send: (a: GameAction) => void
+}) {
+  if (!state.round) return null
+
+  return (
+    <Card className="space-y-3 border-brand-purple/40 bg-brand-purple/[0.06] p-4">
+      <div className="flex items-center justify-between">
+        <div className="text-[10px] uppercase tracking-[0.32em] text-brand-purple-soft">
+          Das bist du
+        </div>
+        {me.teamId ? (
+          <Badge tone="purple">
+            {state.round.teams.find((t) => t.id === me.teamId)?.name}
+          </Badge>
+        ) : (
+          <Badge tone="muted">kein Team</Badge>
+        )}
+      </div>
+
+      {/* Name */}
+      <label className="block">
+        <span className="text-xs text-white/70">Anzeige-Name</span>
+        <input
+          value={me.name}
+          onChange={(e) =>
+            send({ type: 'SET_PLAYER_NAME', playerId: me.id, name: e.target.value })
+          }
+          disabled={!canDispatch}
+          className="mt-1 w-full rounded bg-white/10 px-3 py-2 text-lg font-semibold text-white placeholder-white/30 disabled:opacity-50"
+          placeholder="z. B. Sara"
+          maxLength={40}
+        />
+      </label>
+
+      {/* Team-Auswahl */}
+      <div>
+        <span className="text-xs text-white/70">Team wählen</span>
+        <div className="mt-1 grid grid-cols-2 gap-2 sm:grid-cols-3">
+          {state.round.teams.map((team) => {
+            const active = me.teamId === team.id
+            return (
+              <button
+                key={team.id}
+                onClick={() =>
+                  send({
+                    type: 'MOVE_PLAYER_TO_TEAM',
+                    playerId: me.id,
+                    teamId: team.id,
+                  })
+                }
+                disabled={!canDispatch}
+                className={cn(
+                  'flex items-center gap-2 rounded-lg border px-3 py-2 text-left transition-all disabled:opacity-40',
+                  active
+                    ? 'border-brand-purple/70 bg-brand-purple/15'
+                    : 'border-white/10 bg-white/[0.03] hover:border-white/25',
+                )}
+              >
+                <span
+                  className="h-2.5 w-2.5 rounded-full"
+                  style={{ background: getTeamColorHex(team.color) }}
+                />
+                <span className="text-sm text-white">{team.name}</span>
+              </button>
+            )
+          })}
+        </div>
+      </div>
+    </Card>
   )
 }
 

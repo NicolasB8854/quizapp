@@ -404,7 +404,8 @@ export type GameAction =
   | { type: 'EXPERTS_MARK_PRIMARY'; outcome: 'correct' | 'wrong' | 'timeout' }
   | { type: 'EXPERTS_STEAL_ANSWER'; renderedIndex: number }
   | { type: 'EXPERTS_NEXT' }
-  | { type: 'ADD_PLAYER'; teamId: string | null }
+  | { type: 'ADD_PLAYER'; teamId: string | null; playerId?: string; playerName?: string }
+  | { type: 'INIT_MULTIPLAYER_ROUND' }
   | { type: 'REMOVE_PLAYER'; playerId: string }
   | { type: 'SET_PLAYER_NAME'; playerId: string; name: string }
   | { type: 'SET_PLAYER_INTERESTS'; playerId: string; interests: PlayerInterest[] }
@@ -1280,9 +1281,14 @@ export function createReducer(deps: ReducerDeps) {
       ) {
         return state
       }
+      // Idempotent: wenn bereits ein Player mit dieser ID existiert (typisch
+      // beim Reconnect eines Multi-Device-Handys), keinen zweiten anlegen.
+      if (action.playerId && state.round.players.some((p) => p.id === action.playerId)) {
+        return state
+      }
       const newPlayer: Player = {
-        id: newPlayerId(),
-        name: '',
+        id: action.playerId ?? newPlayerId(),
+        name: action.playerName ?? '',
         teamId: action.teamId,
         interests: [],
         avatar: getDefaultAvatar(state.round.players.length),
@@ -1295,6 +1301,43 @@ export function createReducer(deps: ReducerDeps) {
           players,
           interests: aggregatePlayerInterests(players),
         },
+      }
+    }
+
+    case 'INIT_MULTIPLAYER_ROUND': {
+      // Multi-Device-Einstieg: Server ruft das beim ersten Player-Join auf,
+      // wenn der Room noch in `setup` steht und keine Runde existiert.
+      // Unterschied zu GO_TO_LOBBY: legt eine LEERE Spielerliste an, damit
+      // die Player-Handys sich selbst per ADD_PLAYER hinzufügen. Offline-
+      // Setups mit vorgefüllten Slot-Playern nutzen weiter GO_TO_LOBBY.
+      if (state.phase !== 'setup') return state
+      if (state.draft.selectedModes.length === 0) return state
+      if (state.draft.teams.length < MIN_TEAMS) return state
+      const teams: Team[] = state.draft.teams.map((t, i) => ({
+        id: t.id,
+        name: t.name.trim() || makeDefaultTeam(i).name,
+        color: t.color,
+      }))
+      const round: RoundConfig = {
+        id: `round-${Date.now()}`,
+        name: `Game Night vom ${new Date().toLocaleDateString('de-DE')}`,
+        createdAt: new Date().toISOString(),
+        roomCode: generateRoomCode(4),
+        teams,
+        bestOf: Math.max(1, state.draft.selectedModes.length),
+        gameModes: [...state.draft.selectedModes],
+        players: [],
+        interests: [],
+      }
+      return {
+        ...state,
+        phase: 'lobby',
+        lobbyStep: 'roster',
+        round,
+        results: [],
+        matchPoints: Object.fromEntries(teams.map((t) => [t.id, 0])),
+        currentModeIndex: 0,
+        live: null,
       }
     }
 

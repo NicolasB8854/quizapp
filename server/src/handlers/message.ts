@@ -93,6 +93,51 @@ async function handleJoinRoom(
 
   const playerId = msg.playerId ?? newPlayerId()
 
+  // Für Player: Roster-Registrierung im State — jeder Player joint automatisch
+  // im state.round.players, damit alle Handys ein gemeinsames Roster sehen.
+  //   1. Ist noch keine Runde aktiv (`phase='setup'`): erst eine leere Multi-
+  //      Player-Runde initialisieren (INIT_MULTIPLAYER_ROUND).
+  //   2. In Lobby-Phase: ADD_PLAYER mit der Session-Player-ID. Der Reducer
+  //      ist idempotent — beim Reconnect kein Duplikat.
+  // Master-Rolle registriert keinen Player-Eintrag (nur passiver Zuschauer).
+  let currentState = room.state
+  let stateChanged = false
+
+  if (msg.role === 'player') {
+    const reducer = createReducer({
+      getAskedQuestionIds: () => new Set(room.askedQuestionIds),
+    })
+
+    if (currentState.phase === 'setup' && currentState.round === null) {
+      const initialised = reducer(currentState, { type: 'INIT_MULTIPLAYER_ROUND' })
+      if (initialised !== currentState) {
+        currentState = initialised
+        stateChanged = true
+      }
+    }
+
+    if (currentState.phase === 'lobby' && currentState.round) {
+      const withPlayer = reducer(currentState, {
+        type: 'ADD_PLAYER',
+        teamId: null,
+        playerId,
+        playerName: msg.playerName,
+      })
+      if (withPlayer !== currentState) {
+        currentState = withPlayer
+        stateChanged = true
+      }
+    }
+  }
+
+  if (stateChanged) {
+    await putRoom({
+      roomCode,
+      state: currentState,
+      askedQuestionIds: room.askedQuestionIds,
+    })
+  }
+
   await saveSession({
     connectionId,
     roomCode,
@@ -101,13 +146,25 @@ async function handleJoinRoom(
     playerName: msg.playerName,
   })
 
+  // JOINED an den joinenden Client mit dem finalen State.
   await sendToConnection(event, connectionId, {
     type: 'JOINED',
     roomCode,
     playerId,
     role: msg.role,
-    state: room.state,
+    state: currentState,
   })
+
+  // STATE-Broadcast an alle anderen Sessions im Raum, damit Master und
+  // vorhandene Player den neuen Player sofort sehen.
+  if (stateChanged) {
+    await broadcastToRoom(
+      event,
+      roomCode,
+      { type: 'STATE', state: currentState },
+      connectionId,
+    )
+  }
 
   console.log(
     JSON.stringify({
@@ -117,6 +174,8 @@ async function handleJoinRoom(
       roomCode,
       playerId,
       role: msg.role,
+      phase: currentState.phase,
+      players: currentState.round?.players.length ?? 0,
     }),
   )
 }
