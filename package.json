@@ -11,7 +11,15 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest --run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "server:install": "npm --prefix server install",
+    "server:build": "npm --prefix server run build",
+    "server:typecheck": "npm --prefix server run typecheck",
+    "infra:init": "terraform -chdir=infra init",
+    "infra:validate": "terraform -chdir=infra validate",
+    "infra:plan": "terraform -chdir=infra plan",
+    "infra:apply": "terraform -chdir=infra apply",
+    "infra:destroy": "terraform -chdir=infra destroy"
   },
   "dependencies": {
     "lucide-react": "^1.47.0",

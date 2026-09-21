@@ -46,3 +46,18 @@ node_modules/
 
 # TypeScript
 *.tsbuildinfo
+
+# Server (Lambda-Bundle)
+server/dist/
+
+# Terraform
+infra/.terraform/
+infra/.terraform.lock.hcl.backup
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+crash.log
+crash.*.log
+.terraformrc
+terraform.rc
