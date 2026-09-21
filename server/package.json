@@ -8,8 +8,13 @@
     "build": "node build.mjs",
     "typecheck": "tsc --noEmit"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@quizapp/shared": "*"
+  },
   "devDependencies": {
+    "@aws-sdk/client-apigatewaymanagementapi": "^3.679.0",
+    "@aws-sdk/client-dynamodb": "^3.679.0",
+    "@aws-sdk/lib-dynamodb": "^3.679.0",
     "@types/aws-lambda": "^8.10.146",
     "@types/node": "^22.10.5",
     "esbuild": "^0.24.2",

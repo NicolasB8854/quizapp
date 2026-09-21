@@ -20,6 +20,9 @@ export type * from './types/playerProfile'
 // State (Reducer + Actions + State-Shape)
 export * from './state/reducer'
 
+// WebSocket-Messages (Multiplayer-Transport)
+export * from './messages'
+
 // Pure logic
 export * from './lib/questions'
 export * from './lib/interestProfile'
