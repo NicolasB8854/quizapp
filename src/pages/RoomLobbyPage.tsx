@@ -25,11 +25,18 @@ import {
   WifiOff,
 } from 'lucide-react'
 import type { GameAction, GameState } from '@quizapp/shared'
-import { MODES, MODES_BY_ID, getTeamColorHex } from '@quizapp/shared'
+import type { Player, SkillLevel } from '@quizapp/shared'
+import {
+  MODES,
+  MODES_BY_ID,
+  TOPICS_BY_ID,
+  getTeamColorHex,
+} from '@quizapp/shared'
 import { ScreenLayout } from '@/components/ScreenLayout'
 import { Card } from '@/components/Card'
 import { Button } from '@/components/Button'
 import { Badge } from '@/components/Badge'
+import { PlayerInterestsPanel } from '@/components/PlayerInterestsPanel'
 import { useRoomSync } from '@/hooks/useRoomSync'
 import { readRoomIdentity, saveRoomIdentity } from '@/lib/roomIdentity'
 import { cn } from '@/lib/classnames'
@@ -412,14 +419,13 @@ function LobbyPhaseView({
                 </span>
               </div>
               {members.length > 0 && (
-                <div className="mt-1 flex flex-wrap gap-1 pl-5 text-xs text-white/80">
+                <div className="mt-2 space-y-1.5">
                   {members.map((p) => (
-                    <Badge
+                    <RosterPlayerRow
                       key={p.id}
-                      tone={p.id === playerId ? 'purple' : 'muted'}
-                    >
-                      {p.name || 'Namenlos'}
-                    </Badge>
+                      player={p}
+                      isMe={p.id === playerId}
+                    />
                   ))}
                 </div>
               )}
@@ -434,11 +440,13 @@ function LobbyPhaseView({
               <div className="text-[11px] uppercase tracking-[0.22em] text-ink-muted">
                 Noch ohne Team ({pool.length})
               </div>
-              <div className="mt-1 flex flex-wrap gap-1 text-xs text-white/70">
+              <div className="mt-2 space-y-1.5">
                 {pool.map((p) => (
-                  <Badge key={p.id} tone={p.id === playerId ? 'purple' : 'muted'}>
-                    {p.name || 'Namenlos'}
-                  </Badge>
+                  <RosterPlayerRow
+                    key={p.id}
+                    player={p}
+                    isMe={p.id === playerId}
+                  />
                 ))}
               </div>
             </div>
@@ -466,8 +474,84 @@ function LobbyPhaseView({
 }
 
 /**
- * Karte für den eigenen Player: Name-Input + Team-Auswahl. Wird dispatched
- * gegen den Server über SET_PLAYER_NAME / MOVE_PLAYER_TO_TEAM.
+ * Kompakte Zeile pro Player im Team-Roster: Name + kleine Interest-Emojis
+ * mit Level-Farbe. Für alle Sessions sichtbar, damit man live sieht wer
+ * schon welche Interessen gepflegt hat.
+ */
+function RosterPlayerRow({ player, isMe }: { player: Player; isMe: boolean }) {
+  return (
+    <div
+      className={cn(
+        'flex flex-wrap items-center gap-2 rounded-md px-2 py-1',
+        isMe ? 'bg-brand-purple/10 ring-1 ring-brand-purple/30' : 'bg-white/[0.02]',
+      )}
+    >
+      <span
+        className={cn(
+          'text-sm',
+          isMe ? 'font-semibold text-white' : 'text-white/85',
+        )}
+      >
+        {player.name || 'Namenlos'}
+      </span>
+      {isMe && (
+        <span className="text-[9px] uppercase tracking-[0.22em] text-brand-purple-soft">
+          Du
+        </span>
+      )}
+      <div className="ml-auto flex flex-wrap items-center gap-1">
+        {player.interests.map((interest) => {
+          const topicDef = TOPICS_BY_ID[interest.topic]
+          if (!topicDef) return null
+          return (
+            <InterestPill
+              key={interest.topic}
+              emoji={topicDef.emoji}
+              level={interest.level}
+              subCount={interest.tags?.length ?? 0}
+            />
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+function InterestPill({
+  emoji,
+  level,
+  subCount,
+}: {
+  emoji: string
+  level: SkillLevel
+  subCount: number
+}) {
+  const tone =
+    level === 5
+      ? 'bg-mode-ladder/15 text-mode-ladder border-mode-ladder/40'
+      : level === 3
+        ? 'bg-brand-purple/15 text-brand-purple-soft border-brand-purple/40'
+        : 'bg-brand-cyan/15 text-brand-cyan-soft border-brand-cyan/40'
+  return (
+    <span
+      className={cn(
+        'inline-flex items-center gap-0.5 rounded-full border px-1.5 py-0.5 text-[10px]',
+        tone,
+      )}
+      title={`Level ${level}${subCount > 0 ? ` · ${subCount} Sub-Tags` : ''}`}
+    >
+      <span>{emoji}</span>
+      {subCount > 0 && (
+        <span className="text-[8px] font-bold">{subCount}</span>
+      )}
+    </span>
+  )
+}
+
+/**
+ * Karte für den eigenen Player: Name-Input + Team-Auswahl + Interessen.
+ * Alle Änderungen werden über SET_PLAYER_NAME / MOVE_PLAYER_TO_TEAM /
+ * SET_PLAYER_INTERESTS / SET_PLAYER_INTEREST_TAGS an den Server dispatched.
  */
 function PlayerSelfCard({
   state,
@@ -476,7 +560,7 @@ function PlayerSelfCard({
   send,
 }: {
   state: GameState
-  me: import('@quizapp/shared').Player
+  me: Player
   canDispatch: boolean
   send: (a: GameAction) => void
 }) {
@@ -545,6 +629,11 @@ function PlayerSelfCard({
             )
           })}
         </div>
+      </div>
+
+      {/* Interessen-Panel: eigene Auswahl mit Level-Zyklus + Sub-Tags */}
+      <div className="border-t border-white/10 pt-3">
+        <PlayerInterestsPanel me={me} send={send} disabled={!canDispatch} />
       </div>
     </Card>
   )
