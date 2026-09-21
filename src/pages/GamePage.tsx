@@ -1486,16 +1486,32 @@ function CategoryBoardStage() {
     return (
       <div className="animate-titleIn">
         <div className="text-center mb-6 md:mb-8">
-          <div className="eyebrow" style={{ color: '#F0B23A' }}>
+          <div
+            className="eyebrow font-bold"
+            style={{
+              color: '#FFD871',
+              textShadow: '0 0 10px rgba(240,178,58,0.7)',
+            }}
+          >
             Punktejagd · {board.playedCells.length}/{totalCells} Felder
           </div>
-          <h1 className="mt-2 font-display font-bold uppercase text-3xl md:text-5xl tracking-tight">
+          <h1
+            className="mt-2 font-display font-extrabold uppercase text-3xl md:text-5xl tracking-tight text-white"
+            style={{
+              textShadow: picker
+                ? `0 0 10px ${pickerHex}CC, 0 0 30px ${pickerHex}88, 0 0 60px ${pickerHex}44`
+                : '0 0 20px rgba(240,178,58,0.6)',
+            }}
+          >
             {picker ? `${picker.name} wählt` : 'Ein Feld wählen'}
           </h1>
           {picker && (
-            <p className="mt-2 text-sm text-ink-muted">
+            <p className="mt-2 text-sm text-ink">
               Klick auf ein offenes Feld —{' '}
-              <span style={{ color: pickerHex }} className="font-semibold">
+              <span
+                style={{ color: pickerHex, textShadow: `0 0 8px ${pickerHex}` }}
+                className="font-bold"
+              >
                 {picker.name}
               </span>{' '}
               spielt auf diese Frage. Wer zuerst summt, antwortet.
@@ -1504,22 +1520,40 @@ function CategoryBoardStage() {
         </div>
 
         <div className="grid grid-cols-5 gap-2 md:gap-3">
-          {/* Kolonnen-Header */}
+          {/* Kolonnen-Header — Session V: kräftigere gold-Neon-Umrandung. */}
           {board.boardTopics.map((topic) => {
             const t = TOPICS_BY_ID[topic]
             return (
               <div
                 key={`h-${topic}`}
-                className="rounded-lg border border-mode-board/30 bg-mode-board/10 p-2 md:p-3 text-center"
+                className="rounded-lg border-2 p-2 md:p-3 text-center"
+                style={{
+                  borderColor: 'rgba(240,178,58,0.8)',
+                  background: 'rgba(11,16,32,0.9)',
+                  boxShadow:
+                    '0 0 0 1px rgba(240,178,58,0.4), 0 0 18px rgba(240,178,58,0.35)',
+                }}
               >
-                <div className="text-lg md:text-2xl" aria-hidden>{t.emoji}</div>
-                <div className="mt-0.5 text-[10px] md:text-xs font-display font-semibold uppercase tracking-wider text-mode-board leading-tight">
+                <div
+                  className="text-lg md:text-2xl"
+                  aria-hidden
+                  style={{ filter: 'drop-shadow(0 0 6px rgba(240,178,58,0.7))' }}
+                >
+                  {t.emoji}
+                </div>
+                <div
+                  className="mt-0.5 text-[10px] md:text-xs font-display font-bold uppercase tracking-wider leading-tight"
+                  style={{
+                    color: '#FFE4A6',
+                    textShadow: '0 0 8px rgba(240,178,58,0.8)',
+                  }}
+                >
                   {t.label}
                 </div>
               </div>
             )
           })}
-          {/* Zellen */}
+          {/* Zellen — Session V: kräftige gold-Neon-Kachel, leuchtende Werte. */}
           {board.cellValues.map((val, rowIdx) =>
             board.boardTopics.map((topic) => {
               const key = `${topic}:${rowIdx}`
@@ -1537,13 +1571,26 @@ function CategoryBoardStage() {
                     })
                   }
                   className={cn(
-                    'aspect-[4/3] rounded-lg border flex items-center justify-center',
+                    'aspect-[4/3] rounded-lg border-2 flex items-center justify-center',
                     'font-display font-extrabold tabular-nums',
                     'text-2xl md:text-4xl transition-all',
                     isPlayed
-                      ? 'border-white/[0.06] bg-navy-800/30 text-ink-faint cursor-not-allowed'
-                      : 'border-mode-board/40 bg-mode-board/10 text-mode-board hover:bg-mode-board/25 hover:border-mode-board/70 hover:-translate-y-0.5 shadow-[0_0_18px_-6px_rgba(240,178,58,0.5)]',
+                      ? 'border-white/10 bg-navy-800/40 text-ink-faint cursor-not-allowed'
+                      : 'hover:-translate-y-0.5',
                   )}
+                  style={
+                    isPlayed
+                      ? undefined
+                      : {
+                          borderColor: 'rgba(240,178,58,0.75)',
+                          background: 'rgba(11,16,32,0.85)',
+                          color: '#FFD871',
+                          textShadow:
+                            '0 0 8px rgba(240,178,58,0.9), 0 0 22px rgba(240,178,58,0.5)',
+                          boxShadow:
+                            '0 0 0 1px rgba(240,178,58,0.35), 0 0 24px rgba(240,178,58,0.4)',
+                        }
+                  }
                 >
                   {isPlayed ? '—' : val}
                 </button>
@@ -2674,28 +2721,38 @@ function TeamSidebarCard({ team, score, matchPoint, isLeader, isCurrent }: TeamC
   const hex = tokens.hex
   return (
     <div
-      className="relative rounded-card border p-4 md:p-5"
+      className="relative rounded-card border-2 p-4 md:p-5"
       style={{
-        borderColor: isCurrent ? `${hex}80` : `${hex}30`,
-        background: 'rgba(11,16,32,0.75)',
+        // Session V: deutlich kräftiger. Border ist immer 2 px in Team-Farbe,
+        // Hintergrund fast opak (rgba .92) damit das Foto nicht durchscheint.
+        borderColor: isCurrent ? hex : `${hex}80`,
+        background: 'rgba(11,16,32,0.92)',
         boxShadow: isCurrent
-          ? `0 0 0 1px ${hex}55, 0 0 28px -4px ${hex}80`
-          : `inset 0 0 0 1px ${hex}22`,
+          ? `0 0 0 1px ${hex}, 0 0 24px ${hex}CC, 0 0 60px ${hex}66`
+          : `0 0 18px ${hex}55, inset 0 0 0 1px ${hex}30`,
       }}
     >
-      {/* Header-Zeile: Team-Icon links, Team-Label rechts, Krone bei Führung.
-          Session U: Users-Icon vor dem Team-Namen wie im Mockup. */}
+      {/* Header-Zeile: Team-Icon links, Team-Label rechts, Krone bei Führung. */}
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 min-w-0">
-          <Users
-            className="h-4 w-4 shrink-0"
-            style={{ color: hex, filter: `drop-shadow(0 0 6px ${hex}80)` }}
-            aria-hidden
-          />
+          <div
+            className="shrink-0 h-9 w-9 rounded-full flex items-center justify-center"
+            style={{
+              background: `${hex}22`,
+              border: `2px solid ${hex}`,
+              boxShadow: `0 0 12px ${hex}80, inset 0 0 8px ${hex}44`,
+            }}
+          >
+            <Users
+              className="h-4 w-4"
+              style={{ color: '#fff', filter: `drop-shadow(0 0 4px ${hex})` }}
+              aria-hidden
+            />
+          </div>
           <div className="min-w-0">
             <div
               className="font-display font-bold uppercase tracking-[0.22em] text-[11px] leading-none"
-              style={{ color: hex }}
+              style={{ color: hex, textShadow: `0 0 6px ${hex}80` }}
             >
               Team <span className="text-white">{tokens.label}</span>
             </div>
@@ -2706,7 +2763,7 @@ function TeamSidebarCard({ team, score, matchPoint, isLeader, isCurrent }: TeamC
         </div>
         {isLeader && (
           <Crown
-            className="shrink-0 h-5 w-5 text-mode-ladder drop-shadow-[0_0_8px_rgba(233,196,106,0.7)]"
+            className="shrink-0 h-6 w-6 text-mode-ladder drop-shadow-[0_0_10px_rgba(233,196,106,0.9)]"
             aria-label="Führt aktuell"
           />
         )}
@@ -2714,7 +2771,10 @@ function TeamSidebarCard({ team, score, matchPoint, isLeader, isCurrent }: TeamC
 
       <div
         className="mt-3 font-display font-extrabold tabular-nums text-4xl md:text-5xl leading-none"
-        style={{ color: hex, textShadow: `0 0 20px ${hex}55` }}
+        style={{
+          color: '#fff',
+          textShadow: `0 0 6px ${hex}, 0 0 18px ${hex}CC, 0 0 40px ${hex}66`,
+        }}
       >
         {score.toLocaleString('de-DE')}
       </div>
@@ -2725,8 +2785,8 @@ function TeamSidebarCard({ team, score, matchPoint, isLeader, isCurrent }: TeamC
       )}
       {isCurrent && (
         <div
-          className="mt-2 text-[10px] font-semibold uppercase tracking-[0.22em]"
-          style={{ color: hex }}
+          className="mt-2 text-[10px] font-bold uppercase tracking-[0.22em]"
+          style={{ color: hex, textShadow: `0 0 8px ${hex}` }}
         >
           Am Zug
         </div>

@@ -40,12 +40,14 @@ export function CategoryChip({
           'border-2',
         )}
         style={{
-          borderColor: `${accentHex}A0`,
-          background: 'rgba(11,16,32,0.75)',
+          // Session V: deutlich kräftiger — voll-opaker Rahmen und mehrschichtiger Glow.
+          borderColor: accentHex,
+          background: 'rgba(11,16,32,0.92)',
           boxShadow:
-            `0 0 0 1px ${accentHex}55, ` +
-            `0 0 22px ${accentHex}80, ` +
-            `0 0 60px -8px ${accentHex}66`,
+            `0 0 0 1px ${accentHex}, ` +
+            `0 0 24px ${accentHex}CC, ` +
+            `0 0 60px ${accentHex}88, ` +
+            `inset 0 0 20px ${accentHex}22`,
         }}
       >
         {/* Text-Block */}

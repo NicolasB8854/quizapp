@@ -83,8 +83,9 @@ function PhotoBackdrop({ variant }: { variant: LayoutVariant }) {
   const src = variant === 'stage' ? '/img/stage-bg.jpg' : '/img/home-bg.jpg'
   const overlay =
     variant === 'stage'
-      ? // Bühne: dezenter Bogen oben (Header) + unten leichter Boden
-        'linear-gradient(180deg, rgba(4,6,15,0.65) 0%, rgba(4,6,15,0.1) 20%, rgba(4,6,15,0.05) 55%, rgba(4,6,15,0.75) 100%)'
+      ? // Bühne (Session V): sehr leichtes Overlay, damit das Foto durchleuchtet.
+        // Nur ganz dezenter dunkler Bogen oben (Header) + unten (Silhouetten-Bereich).
+        'linear-gradient(180deg, rgba(4,6,15,0.35) 0%, rgba(4,6,15,0) 15%, rgba(4,6,15,0) 60%, rgba(4,6,15,0.6) 100%)'
       : // Home: linker Bereich stark verdunkelt (Text), rechter Bereich transparent (Ambient bleibt)
         'linear-gradient(90deg, rgba(4,6,15,0.85) 0%, rgba(4,6,15,0.55) 35%, rgba(4,6,15,0.15) 60%, rgba(4,6,15,0.4) 100%),' +
         'linear-gradient(180deg, rgba(4,6,15,0.55) 0%, rgba(4,6,15,0) 25%, rgba(4,6,15,0) 65%, rgba(4,6,15,0.5) 100%)'
@@ -94,7 +95,13 @@ function PhotoBackdrop({ variant }: { variant: LayoutVariant }) {
         src={src}
         alt=""
         className="h-full w-full object-cover"
-        style={{ filter: 'saturate(1.05) contrast(1.05)' }}
+        // Stage-Foto: mehr Sättigung damit die Bühnen-Neons zünden.
+        style={{
+          filter:
+            variant === 'stage'
+              ? 'saturate(1.25) contrast(1.1) brightness(1.05)'
+              : 'saturate(1.05) contrast(1.05)',
+        }}
       />
       <div className="absolute inset-0" style={{ background: overlay }} />
       {/* Subtiles Grain oben drüber, damit UI und Foto zusammen wirken */}

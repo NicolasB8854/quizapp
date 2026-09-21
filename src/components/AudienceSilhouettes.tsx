@@ -22,24 +22,29 @@ export function AudienceSilhouettes({ mode = 'fixed' }: Props) {
       aria-hidden
       className={`${positioning} pointer-events-none z-[5] h-[26vh] md:h-[30vh] overflow-hidden`}
     >
-      {/* 1) TV-Reflex am Boden — projiziert kaltes Licht nach vorne, mischt sich mit warmer Lampe rechts */}
+      {/* 1) TV-Reflex am Boden — kräftiger Purple/Cyan-Glow, damit Silhouetten
+             sich klar vom dunklen Grund abheben. Session V: Opazität erhöht. */}
       <div
         className="absolute inset-x-0 bottom-0 h-full"
         style={{
           background:
-            'radial-gradient(60% 90% at 50% 100%, rgba(124,92,255,0.35) 0%, rgba(124,92,255,0) 55%),' +
-            'radial-gradient(45% 75% at 25% 100%, rgba(39,216,255,0.22) 0%, rgba(39,216,255,0) 60%),' +
-            'radial-gradient(45% 70% at 85% 100%, rgba(255,138,58,0.20) 0%, rgba(255,138,58,0) 60%),' +
+            'radial-gradient(60% 90% at 50% 100%, rgba(124,92,255,0.55) 0%, rgba(124,92,255,0) 55%),' +
+            'radial-gradient(45% 75% at 25% 100%, rgba(39,216,255,0.4) 0%, rgba(39,216,255,0) 60%),' +
+            'radial-gradient(45% 70% at 85% 100%, rgba(255,138,58,0.35) 0%, rgba(255,138,58,0) 60%),' +
             'linear-gradient(180deg, rgba(4,6,15,0) 0%, rgba(4,6,15,0.35) 60%, #04060F 100%)',
         }}
       />
 
-      {/* 3) Rim-Light: dünner Neon-Purple-Umriss entlang der Silhouetten-Oberkante */}
+      {/* 3) Rim-Light: deutlicherer Neon-Purple-Umriss entlang der Silhouetten-
+             Oberkante. Session V: strokeWidth + Opazität erhöht, doppelter Glow. */}
       <svg
         viewBox="0 0 1440 300"
         preserveAspectRatio="xMidYMax slice"
         className="absolute inset-x-0 bottom-0 h-full w-full"
-        style={{ filter: 'drop-shadow(0 0 12px rgba(124,92,255,0.55))' }}
+        style={{
+          filter:
+            'drop-shadow(0 0 8px rgba(180,155,255,0.9)) drop-shadow(0 0 22px rgba(124,92,255,0.7))',
+        }}
       >
         <path
           d="M0 220
@@ -60,8 +65,8 @@ export function AudienceSilhouettes({ mode = 'fixed' }: Props) {
              C 1315 155, 1340 171, 1365 193
              C 1394 217, 1422 231, 1440 235"
           fill="none"
-          stroke="rgba(180,155,255,0.55)"
-          strokeWidth="1.5"
+          stroke="rgba(210,190,255,0.9)"
+          strokeWidth="2.5"
           strokeLinecap="round"
         />
       </svg>

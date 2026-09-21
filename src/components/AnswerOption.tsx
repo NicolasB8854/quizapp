@@ -24,16 +24,18 @@ interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const wrapperByStatus: Record<AnswerStatus, string> = {
+  // Session V: kräftigerer opaker Hintergrund, damit die Antworten sich klar
+  // vom Bühnen-Foto abheben. Border 2 px in Purple/Cyan mit sichtbarem Glow.
   idle:
-    'bg-navy-800/70 border-white/10 hover:border-brand-purple/50 hover:bg-navy-700/80',
+    'bg-navy-900/85 border-brand-purple/40 hover:border-brand-purple/80 hover:bg-navy-800/90 shadow-[0_0_20px_-6px_rgba(124,92,255,0.5)]',
   selected:
-    'bg-navy-700 border-brand-cyan/60 shadow-neon-cyan',
+    'bg-navy-800/95 border-brand-cyan shadow-neon-cyan',
   correct:
-    'bg-navy-700 border-correct/60 shadow-glow-correct animate-flashOk',
+    'bg-navy-800/95 border-correct shadow-glow-correct animate-flashOk',
   wrong:
-    'bg-navy-700 border-wrong/60 shadow-glow-wrong animate-pulseWrong',
+    'bg-navy-800/95 border-wrong shadow-glow-wrong animate-pulseWrong',
   dimmed:
-    'bg-navy-800/50 border-white/5 opacity-55',
+    'bg-navy-900/60 border-white/10 opacity-55',
 }
 
 const circleByStatus: Record<AnswerStatus, string> = {
@@ -61,7 +63,7 @@ export function AnswerOption({ letter, status = 'idle', className, children, ...
       className={cn(
         // Session U: rundere Pill-Form, angelehnt an das Studio-Mockup.
         // Padding größer, damit der Antworttext atmet.
-        'group w-full text-left rounded-full border transition-all duration-200',
+        'group w-full text-left rounded-full border-2 transition-all duration-200',
         'flex items-center gap-4 md:gap-5 pl-3 md:pl-4 pr-6 md:pr-8 py-2.5 md:py-3',
         'disabled:cursor-default',
         wrapperByStatus[status],
