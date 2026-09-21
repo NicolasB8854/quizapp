@@ -1,20 +1,16 @@
 /**
- * Avatar-Palette: kompaktes Emoji- + Farb-Set für die Spielerkarten.
+ * Avatar-Palette: Farb-Set für die Spielerkarten (Session T).
  *
- * Bewusst kein Gesicht — die App bleibt neutral gegen Geschlecht/Alter/Ethnie.
- * Emojis sind universelle Symbole (Tiere, Objekte, Natur), Farben harmonieren
- * mit dem Design-System (Tailwind `mode.*` und `brand.*`).
+ * Ab Session T sind Avatare fotobasiert — jeder Spieler lädt ein Portrait
+ * aus dem Filesystem. Ohne Foto (Default oder bewusste Entscheidung) zeigt
+ * die UI einen farbigen Kreis mit Namens-Initiale.
  *
- * `getDefaultAvatar(seed)` liefert einen deterministischen Default für einen
- * neuen Spieler-Slot, damit die App nie „leer" wirkt.
+ * Die Palette harmoniert mit dem Design-System (Tailwind `mode.*` und
+ * `brand.*`). `getDefaultAvatar(seed)` liefert einen deterministischen
+ * Farb-Default für einen neuen Spieler-Slot.
  */
 
 import type { Avatar } from '@/types/round'
-
-export const AVATAR_EMOJIS: readonly string[] = [
-  '🦊', '🐼', '🦁', '🐺', '🦉', '🐢',
-  '🐙', '🦖', '🦩', '🦄', '🐝', '⚡',
-] as const
 
 export const AVATAR_COLORS: readonly string[] = [
   '#7C5CFF', // brand.purple
@@ -28,18 +24,17 @@ export const AVATAR_COLORS: readonly string[] = [
 ] as const
 
 /**
- * Deterministischer Default-Avatar für einen Slot. Nutzt `seed` als Index-
- * Basis, damit derselbe Slot bei erneuter Berechnung dasselbe Symbol bekommt.
+ * Deterministischer Default-Avatar für einen Slot. Rotiert die Farb-Palette
+ * über `seed % AVATAR_COLORS.length` — derselbe Slot bekommt bei erneuter
+ * Berechnung dieselbe Farbe.
  */
 export function getDefaultAvatar(seed: number): Avatar {
-  const emoji = AVATAR_EMOJIS[seed % AVATAR_EMOJIS.length]
   const colorHex = AVATAR_COLORS[seed % AVATAR_COLORS.length]
-  return { emoji, colorHex }
+  return { colorHex, photoDataUrl: null }
 }
 
-/** Zufälliger Avatar aus der Palette — für ganz neue Slots ohne Historie. */
+/** Zufällige Farbe aus der Palette — für ganz neue Slots ohne Historie. */
 export function makeRandomAvatar(): Avatar {
-  const emoji = AVATAR_EMOJIS[Math.floor(Math.random() * AVATAR_EMOJIS.length)]
   const colorHex = AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)]
-  return { emoji, colorHex }
+  return { colorHex, photoDataUrl: null }
 }

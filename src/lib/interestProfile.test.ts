@@ -14,7 +14,7 @@ function player(id: string, teamId: string, interests: Array<[string, 'bisschen'
       topic: topic as Player['interests'][number]['topic'],
       level,
     })),
-    avatar: { emoji: '🦊', colorHex: '#7C5CFF' },
+    avatar: { colorHex: '#7C5CFF', photoDataUrl: null },
   }
 }
 

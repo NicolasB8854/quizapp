@@ -121,5 +121,9 @@ function isPlayerProfile(x: unknown): x is PlayerProfile {
 function isAvatar(x: unknown): x is Avatar {
   if (typeof x !== 'object' || x === null) return false
   const rec = x as Record<string, unknown>
-  return typeof rec.emoji === 'string' && typeof rec.colorHex === 'string'
+  return (
+    typeof rec.colorHex === 'string' &&
+    // photoDataUrl darf explizit null sein oder ein String (DataURL).
+    (rec.photoDataUrl === null || typeof rec.photoDataUrl === 'string')
+  )
 }

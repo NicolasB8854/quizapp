@@ -19,7 +19,7 @@ import { useNavigate } from 'react-router-dom'
 import {
   ArrowLeft, ArrowRight, Play, Check, Gamepad2, Clock, Trophy,
   Sparkles, Plus, UserMinus, Users, Pencil, BookOpen, Shuffle,
-  X as XIcon,
+  Camera, X as XIcon,
 } from 'lucide-react'
 import { ScreenLayout } from '@/components/ScreenLayout'
 import { Button } from '@/components/Button'
@@ -27,7 +27,8 @@ import { AvatarBadge } from '@/components/AvatarBadge'
 import { useGame, type GameAction } from '@/context/GameContext'
 import { MODES_BY_ID } from '@/data/modes'
 import { TOPICS, TOPICS_BY_ID } from '@/data/topics'
-import { AVATAR_COLORS, AVATAR_EMOJIS } from '@/data/avatars'
+import { AVATAR_COLORS } from '@/data/avatars'
+import { downscaleImageToDataUrl } from '@/lib/image'
 import { getTeamColorTokens } from '@/data/teams'
 import type { Topic } from '@/types/question'
 import type { Avatar, Player, RoundConfig, SkillLevel, Team } from '@/types/round'
@@ -66,21 +67,27 @@ export default function LobbyPage() {
 
   const round = state.round
   const step = state.lobbyStep
-  const totalTeams = round.teams.length
   const poolCount = round.players.filter((p) => p.teamId === null).length
   const allAssigned = poolCount === 0
   const canAdvance = step === 'roster' || (step === 'assign' && allAssigned)
 
-  const allReady = round.teams.every((t) => readyIds.has(t.id))
-  const readyCount = round.teams.filter((t) => readyIds.has(t.id)).length
+  // Ready-Check pro Spieler (Session T, gemäß Mockup) statt pro Team.
+  // `readyIds` speichert Player-IDs; leere Menge = niemand bestätigt.
+  const allReady = round.players.length > 0 &&
+    round.players.every((p) => readyIds.has(p.id))
+  const readyCount = round.players.filter((p) => readyIds.has(p.id)).length
+  const totalPlayers = round.players.length
 
-  const toggleReady = (teamId: string) => {
+  const togglePlayerReady = (playerId: string) => {
     setReadyIds((prev) => {
       const next = new Set(prev)
-      if (next.has(teamId)) next.delete(teamId)
-      else next.add(teamId)
+      if (next.has(playerId)) next.delete(playerId)
+      else next.add(playerId)
       return next
     })
+  }
+  const setAllReady = () => {
+    setReadyIds(new Set(round.players.map((p) => p.id)))
   }
 
   return (
@@ -131,7 +138,8 @@ export default function LobbyPage() {
           <ReadySection
             round={round}
             readyIds={readyIds}
-            toggleReady={toggleReady}
+            togglePlayerReady={togglePlayerReady}
+            setAllReady={setAllReady}
             totalMinutes={totalMinutes}
             onEditRound={() => dispatch({ type: 'BACK_TO_SETUP' })}
           />
@@ -142,7 +150,7 @@ export default function LobbyPage() {
           {step === 'ready' ? (
             <ReadyFooter
               readyCount={readyCount}
-              totalTeams={totalTeams}
+              totalPlayers={totalPlayers}
               allReady={allReady}
               onStart={() => {
                 dispatch({ type: 'START_PLAYING' })
@@ -333,12 +341,12 @@ function StepFooter({ step, canAdvance, poolCount, onAdvance, onBack }: StepFoot
 
 interface ReadyFooterProps {
   readyCount: number
-  totalTeams: number
+  totalPlayers: number
   allReady: boolean
   onStart: () => void
 }
 
-function ReadyFooter({ readyCount, totalTeams, allReady, onStart }: ReadyFooterProps) {
+function ReadyFooter({ readyCount, totalPlayers, allReady, onStart }: ReadyFooterProps) {
   return (
     <>
       <div className="mb-6 md:mb-8">
@@ -348,17 +356,17 @@ function ReadyFooter({ readyCount, totalTeams, allReady, onStart }: ReadyFooterP
           </span>
           <span className="text-ink-faint">/</span>
           <span className="font-display font-bold text-ink text-lg tabular-nums">
-            {totalTeams}
+            {totalPlayers}
           </span>
           <span className="text-ink-muted uppercase tracking-[0.22em] text-xs">
-            Teams bereit
+            Spieler bereit
           </span>
         </div>
         <div className="mx-auto max-w-md h-1.5 rounded-full bg-white/5 overflow-hidden">
           <div
             className="h-full rounded-full transition-all duration-500"
             style={{
-              width: `${(readyCount / Math.max(1, totalTeams)) * 100}%`,
+              width: `${(readyCount / Math.max(1, totalPlayers)) * 100}%`,
               background: 'linear-gradient(90deg, #7C5CFF 0%, #27D8FF 100%)',
               boxShadow: '0 0 20px rgba(124,92,255,0.65)',
             }}
@@ -470,7 +478,7 @@ function RosterPlayerRow({ player, placeholderIndex, dispatch }: RosterPlayerRow
           aria-label="Avatar bearbeiten"
           className="shrink-0 relative"
         >
-          <AvatarBadge avatar={player.avatar} size="md" />
+          <AvatarBadge avatar={player.avatar} size="md" name={player.name} />
           <span
             aria-hidden
             className="absolute -bottom-0.5 -right-0.5 inline-flex h-4 w-4 items-center justify-center rounded-full bg-navy-800 border border-white/20"
@@ -839,7 +847,7 @@ function DraggablePlayerCard({
       }
       title="Ziehen zum Verschieben, Doppelklick zum Umschieben"
     >
-      <AvatarBadge avatar={player.avatar} size="sm" teamHex={teamHex} />
+      <AvatarBadge avatar={player.avatar} size="sm" teamHex={teamHex} name={player.name} />
       <span className="truncate max-w-[10rem]">{displayName}</span>
       {player.interests.length > 0 && (
         <span className="text-[10px] text-ink-faint tabular-nums">
@@ -855,7 +863,8 @@ function DraggablePlayerCard({
 interface ReadySectionProps {
   round: RoundConfig
   readyIds: Set<string>
-  toggleReady: (teamId: string) => void
+  togglePlayerReady: (playerId: string) => void
+  setAllReady: () => void
   totalMinutes: number
   onEditRound: () => void
 }
@@ -863,112 +872,61 @@ interface ReadySectionProps {
 function ReadySection({
   round,
   readyIds,
-  toggleReady,
+  togglePlayerReady,
+  setAllReady,
   totalMinutes,
   onEditRound,
 }: ReadySectionProps) {
-  const totalTeams = round.teams.length
   return (
     <div className="mt-8 md:mt-10">
       <div className="text-center">
         <div className="eyebrow">Game Night</div>
         <h1 className="mt-3 font-display font-bold uppercase text-white leading-[0.9] tracking-tight text-4xl md:text-6xl">
-          Alle bereit? <span className="text-neon-purple">Los.</span>
+          Raum <span className="text-neon-purple">Beitreten</span>
         </h1>
         <p className="mt-3 text-ink-muted max-w-lg mx-auto text-sm md:text-base">
-          Jedes Team kurz bestätigen, dann startet der Abend.
+          Alle einmal auf „bereit" — dann geht der Abend los.
         </p>
       </div>
 
-      {/* Team-Ready-Karten */}
-      <div
-        className={cn(
-          'mt-8 md:mt-10 grid gap-3 md:gap-5',
-          totalTeams === 2 && 'grid-cols-2',
-          totalTeams === 3 && 'grid-cols-1 md:grid-cols-3',
-          totalTeams === 4 && 'grid-cols-2 md:grid-cols-4',
-        )}
-      >
-        {round.teams.map((team) => {
-          const isReady = readyIds.has(team.id)
-          const tokens = getTeamColorTokens(team.color)
-          const ringHex = tokens.hex
-          const teamPlayers = round.players.filter((p) => p.teamId === team.id)
-          return (
-            <button
-              key={team.id}
-              type="button"
-              onClick={() => toggleReady(team.id)}
-              className={cn(
-                'group relative rounded-card border p-4 md:p-5 text-left transition-all',
-                'bg-navy-800/70 border-white/10',
-                'hover:border-white/25 hover:bg-navy-700',
-              )}
-              style={
-                isReady
-                  ? {
-                      borderColor: `${ringHex}66`,
-                      boxShadow: `0 0 0 2px ${ringHex}55, 0 0 28px -4px ${ringHex}80`,
-                    }
-                  : undefined
-              }
-            >
-              <div className="flex items-center gap-3">
-                <div
-                  className={cn(
-                    'shrink-0 h-12 w-12 md:h-14 md:w-14 rounded-full flex items-center justify-center font-display font-bold text-lg border-2',
-                    tokens.chipStrong,
-                  )}
-                  style={{
-                    boxShadow: `0 0 0 1px ${ringHex}40, 0 0 18px -6px ${ringHex}80`,
-                  }}
-                >
-                  {team.name.slice(0, 2).toUpperCase()}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="eyebrow">Team · {tokens.label}</div>
-                  <div className="mt-0.5 font-display font-bold text-lg md:text-xl truncate">
-                    {team.name}
-                  </div>
-                  <div className="mt-0.5 text-[11px] text-ink-muted">
-                    {teamPlayers.length}{' '}
-                    {teamPlayers.length === 1 ? 'Spieler' : 'Spieler'}
-                  </div>
-                </div>
-              </div>
-              {/* Avatare der Team-Mitglieder */}
-              <div className="mt-3 flex flex-wrap gap-1">
-                {teamPlayers.map((p) => (
-                  <AvatarBadge
-                    key={p.id}
-                    avatar={p.avatar}
-                    size="sm"
-                    teamHex={ringHex}
-                  />
-                ))}
-              </div>
-              <div className="mt-3 flex items-center gap-2 text-xs">
-                {isReady ? (
-                  <>
-                    <span
-                      className="inline-flex h-4 w-4 items-center justify-center rounded-full"
-                      style={{ background: '#3FD98B' }}
-                    >
-                      <Check className="h-3 w-3 text-navy-900" />
-                    </span>
-                    <span className="text-correct font-medium">Bereit</span>
-                  </>
-                ) : (
-                  <>
-                    <span className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-ink-muted" />
-                    <span className="text-ink-muted">Tippen für „bereit"</span>
-                  </>
-                )}
-              </div>
-            </button>
-          )
-        })}
+      {/* Spieler-Ready-Karten — Portrait-Style ähnlich dem Mockup.
+          Layout: horizontales Grid mit einem „bereit / nicht bereit"-Badge pro Karte. */}
+      <div className="mt-8 md:mt-10 flex flex-wrap justify-center gap-3 md:gap-4">
+        {round.players.map((player) => (
+          <PlayerReadyCard
+            key={player.id}
+            player={player}
+            teamColorHex={
+              player.teamId
+                ? getTeamColorTokens(
+                    round.teams.find((t) => t.id === player.teamId)!.color,
+                  ).hex
+                : '#5A6485'
+            }
+            isReady={readyIds.has(player.id)}
+            onToggle={() => togglePlayerReady(player.id)}
+          />
+        ))}
       </div>
+
+      {/* Team-Zusammenfassung — dezente Zeile darunter, damit die Teams sichtbar bleiben. */}
+      <div className="mt-6 md:mt-8">
+        <TeamSummaryRow round={round} />
+      </div>
+
+      {/* „Alle bereit"-Shortcut, wenn noch nicht alle bestätigt haben. */}
+      {round.players.length > 0 && round.players.some((p) => !readyIds.has(p.id)) && (
+        <div className="mt-4 flex justify-center">
+          <button
+            type="button"
+            onClick={setAllReady}
+            className="inline-flex items-center gap-2 h-9 rounded-full px-4 border border-white/10 bg-navy-800/70 text-xs uppercase tracking-[0.22em] text-ink-muted hover:text-ink hover:border-white/25 transition-colors"
+          >
+            <Check className="h-3 w-3" />
+            Alle sind bereit
+          </button>
+        </div>
+      )}
 
       {/* Euer Mix — Interessen-Preview */}
       <InterestsPreviewPanel round={round} />
@@ -1001,6 +959,119 @@ function ReadySection({
           </button>
         </div>
       </div>
+    </div>
+  )
+}
+
+// ---------- Player-Ready-Card (Portrait-Style) ------------------------------
+
+interface PlayerReadyCardProps {
+  player: Player
+  teamColorHex: string
+  isReady: boolean
+  onToggle: () => void
+}
+
+function PlayerReadyCard({
+  player,
+  teamColorHex,
+  isReady,
+  onToggle,
+}: PlayerReadyCardProps) {
+  const displayName = player.name.trim() || 'Spieler'
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      className={cn(
+        'group relative rounded-card border w-32 md:w-36 p-3 md:p-4 text-center transition-all',
+        'bg-navy-800/70 border-white/10',
+        'hover:border-white/25 hover:bg-navy-700',
+      )}
+      style={
+        isReady
+          ? {
+              borderColor: `${teamColorHex}66`,
+              boxShadow: `0 0 0 2px ${teamColorHex}55, 0 0 28px -4px ${teamColorHex}80`,
+            }
+          : undefined
+      }
+      aria-pressed={isReady}
+    >
+      <div className="flex justify-center">
+        <AvatarBadge
+          avatar={player.avatar}
+          size="xl"
+          teamHex={teamColorHex}
+          name={displayName}
+        />
+      </div>
+      <div className="mt-3 font-display font-bold text-ink text-base md:text-lg truncate">
+        {displayName}
+      </div>
+      <div className="mt-1.5 flex items-center justify-center gap-1.5 text-xs">
+        {isReady ? (
+          <>
+            <span
+              className="inline-flex h-4 w-4 items-center justify-center rounded-full"
+              style={{ background: '#3FD98B' }}
+            >
+              <Check className="h-3 w-3 text-navy-900" />
+            </span>
+            <span className="text-correct font-medium">Bereit</span>
+          </>
+        ) : (
+          <>
+            <span
+              className="inline-flex h-3 w-3 rounded-full"
+              style={{ background: `${teamColorHex}80` }}
+            />
+            <span className="text-ink-muted">Nicht bereit</span>
+          </>
+        )}
+      </div>
+    </button>
+  )
+}
+
+// ---------- Team-Zusammenfassung im Ready-Screen -----------------------------
+
+interface TeamSummaryRowProps {
+  round: RoundConfig
+}
+
+function TeamSummaryRow({ round }: TeamSummaryRowProps) {
+  return (
+    <div className="flex flex-wrap items-center justify-center gap-3 md:gap-4">
+      {round.teams.map((team) => {
+        const tokens = getTeamColorTokens(team.color)
+        const teamPlayers = round.players.filter((p) => p.teamId === team.id)
+        return (
+          <div
+            key={team.id}
+            className="inline-flex items-center gap-2 h-9 rounded-full pl-1.5 pr-4 border"
+            style={{
+              borderColor: `${tokens.hex}44`,
+              background: `${tokens.hex}14`,
+            }}
+          >
+            <span
+              className="inline-block h-6 w-6 rounded-full"
+              style={{
+                background: tokens.hex,
+                boxShadow: `0 0 8px ${tokens.hex}80`,
+              }}
+              aria-hidden
+            />
+            <span className="font-display font-semibold text-sm text-ink">
+              {team.name}
+            </span>
+            <span className="text-[11px] text-ink-muted tabular-nums">
+              {teamPlayers.length}
+            </span>
+          </div>
+        )
+      })}
     </div>
   )
 }
@@ -1201,13 +1272,31 @@ interface AvatarEditorProps {
 }
 
 function AvatarEditor({ avatar, onChange, onClose }: AvatarEditorProps) {
+  const [uploading, setUploading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const handleFile = async (file: File | undefined) => {
+    if (!file) return
+    setError(null)
+    setUploading(true)
+    try {
+      const dataUrl = await downscaleImageToDataUrl(file)
+      onChange({ ...avatar, photoDataUrl: dataUrl })
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Unbekannter Fehler'
+      setError(msg)
+    } finally {
+      setUploading(false)
+    }
+  }
+
   return (
     <div
       className="absolute top-full left-0 mt-2 z-20 w-72 rounded-card border border-white/10 bg-navy-800 p-3 shadow-neon-purple"
       role="dialog"
-      aria-label="Avatar wählen"
+      aria-label="Avatar bearbeiten"
     >
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex items-center justify-between mb-3">
         <div className="eyebrow">Avatar</div>
         <button
           type="button"
@@ -1218,32 +1307,56 @@ function AvatarEditor({ avatar, onChange, onClose }: AvatarEditorProps) {
           <XIcon className="h-3.5 w-3.5" />
         </button>
       </div>
-      <div className="mb-2 text-[10px] uppercase tracking-[0.22em] text-ink-faint">
-        Symbol
-      </div>
-      <div className="grid grid-cols-6 gap-1.5 mb-3">
-        {AVATAR_EMOJIS.map((emoji) => {
-          const isOn = emoji === avatar.emoji
-          return (
+
+      {/* Preview + Foto-Aktionen */}
+      <div className="flex items-center gap-3 mb-3">
+        <AvatarBadge avatar={avatar} size="lg" />
+        <div className="flex-1 flex flex-col gap-1.5">
+          <label
+            className={cn(
+              'inline-flex items-center justify-center gap-1.5 h-8 rounded-lg px-3 cursor-pointer',
+              'border border-brand-purple/40 bg-brand-purple/15 text-brand-purple-soft',
+              'text-[11px] uppercase tracking-[0.16em] font-semibold',
+              'hover:bg-brand-purple/25 transition-colors',
+              uploading && 'opacity-60 cursor-wait',
+            )}
+          >
+            <Camera className="h-3 w-3" />
+            <span>{uploading ? 'Wird geladen…' : avatar.photoDataUrl ? 'Anderes Foto' : 'Foto wählen'}</span>
+            <input
+              type="file"
+              accept="image/*"
+              className="sr-only"
+              disabled={uploading}
+              onChange={(e) => {
+                const file = e.target.files?.[0]
+                void handleFile(file)
+                // Reset, damit dasselbe File erneut wählbar ist.
+                e.target.value = ''
+              }}
+            />
+          </label>
+          {avatar.photoDataUrl && (
             <button
-              key={emoji}
               type="button"
-              onClick={() => onChange({ ...avatar, emoji })}
-              className={cn(
-                'h-9 w-9 rounded-lg border flex items-center justify-center text-lg leading-none',
-                'transition-colors',
-                isOn
-                  ? 'border-brand-purple/80 bg-brand-purple/25'
-                  : 'border-white/10 bg-navy-900/60 hover:border-white/25',
-              )}
+              onClick={() => onChange({ ...avatar, photoDataUrl: null })}
+              className="inline-flex items-center gap-1 h-7 rounded-lg px-2 text-[11px] uppercase tracking-[0.16em] text-ink-muted hover:text-wrong transition-colors"
             >
-              <span aria-hidden>{emoji}</span>
+              <XIcon className="h-3 w-3" />
+              Foto entfernen
             </button>
-          )
-        })}
+          )}
+        </div>
       </div>
+
+      {error && (
+        <div className="mb-3 text-[11px] text-wrong bg-wrong/10 border border-wrong/30 rounded-md px-2 py-1.5">
+          {error}
+        </div>
+      )}
+
       <div className="mb-2 text-[10px] uppercase tracking-[0.22em] text-ink-faint">
-        Farbe
+        Farb-Ring
       </div>
       <div className="grid grid-cols-8 gap-1.5">
         {AVATAR_COLORS.map((colorHex) => {
@@ -1346,7 +1459,7 @@ function LibraryChip({ profile, onAdd, onForget }: LibraryChipProps) {
           'hover:border-white/25 transition-colors',
         )}
       >
-        <AvatarBadge avatar={profile.avatar} size="sm" />
+        <AvatarBadge avatar={profile.avatar} size="sm" name={profile.name} />
         <span className="text-ink font-medium truncate max-w-[8rem]">
           {profile.name}
         </span>

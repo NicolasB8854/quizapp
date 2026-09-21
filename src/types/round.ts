@@ -73,13 +73,19 @@ export interface PlayerInterest {
 }
 
 /**
- * Visuelle Spieler-Identität: ein Emoji-Symbol (universell, kein Gesicht)
- * plus eine Farbe aus einer festen Palette. Bewusst simpel — kein SVG-Avatar-
- * Editor, sondern kombinierbare Grundbausteine.
+ * Visuelle Spieler-Identität (Session T).
+ *
+ * Wir favorisieren echte Portrait-Fotos: der Master lädt pro Spieler ein Bild
+ * aus dem Filesystem, wir speichern es downscaled als DataURL. Ohne Foto zeigt
+ * der Avatar einen farbigen Kreis mit Namens-Initiale (die Farbe kommt aus einer
+ * festen Palette, siehe `AVATAR_COLORS`).
+ *
+ * `photoDataUrl` = `null` → Initial-Fallback. Der Farb-Kreis wird auch als
+ * Rahmen unter dem Foto genutzt (Team-Identifikation + Personalfarbe).
  */
 export interface Avatar {
-  emoji: string
   colorHex: string
+  photoDataUrl: string | null
 }
 
 /**

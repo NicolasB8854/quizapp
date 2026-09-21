@@ -485,9 +485,9 @@ describe('reducer — Player-Ebene (Session D + E)', () => {
     s = reducer(s, {
       type: 'SET_PLAYER_AVATAR',
       playerId: p1.id,
-      avatar: { emoji: '🐺', colorHex: '#FF3D8B' },
+      avatar: { colorHex: '#FF3D8B', photoDataUrl: null },
     })
-    expect(s.round?.players[0].avatar).toEqual({ emoji: '🐺', colorHex: '#FF3D8B' })
+    expect(s.round?.players[0].avatar).toEqual({ colorHex: '#FF3D8B', photoDataUrl: null })
     expect(s.round?.players[1].avatar).toEqual(originalAvatarP2)
   })
 
@@ -500,7 +500,7 @@ describe('reducer — Player-Ebene (Session D + E)', () => {
         id: 'library-1',
         name: 'Alice',
         interests: [gut('film')],
-        avatar: { emoji: '🐼', colorHex: '#27D8FF' },
+        avatar: { colorHex: '#27D8FF', photoDataUrl: null },
         lastUsedAt: '2024-01-01T10:00:00Z',
       },
     })
@@ -508,7 +508,7 @@ describe('reducer — Player-Ebene (Session D + E)', () => {
     expect(added).toBeDefined()
     expect(added?.name).toBe('Alice')
     expect(added?.teamId).toBe('team-a')
-    expect(added?.avatar.emoji).toBe('🐼')
+    expect(added?.avatar.colorHex).toBe('#27D8FF')
     expect(added?.interests).toEqual([gut('film')])
     // Aggregation zieht das Interesse in round.interests.
     expect(s.round?.interests).toContain('film')
@@ -520,7 +520,7 @@ describe('reducer — Player-Ebene (Session D + E)', () => {
       id: 'library-1',
       name: 'Alice',
       interests: [],
-      avatar: { emoji: '🦊', colorHex: '#7C5CFF' },
+      avatar: { colorHex: '#7C5CFF', photoDataUrl: null },
       lastUsedAt: '2024-01-01T10:00:00Z',
     }
     s = reducer(s, { type: 'ADD_PLAYER_FROM_LIBRARY', teamId: 'team-a', profile })
@@ -540,7 +540,7 @@ describe('reducer — Player-Ebene (Session D + E)', () => {
         id: 'library-alice',
         name: 'Alice',
         interests: [gut('musik')],
-        avatar: { emoji: '🐼', colorHex: '#27D8FF' },
+        avatar: { colorHex: '#27D8FF', photoDataUrl: null },
         lastUsedAt: '2024-01-01T10:00:00Z',
       },
     })
@@ -2352,7 +2352,7 @@ describe('reducer — Roster-Player-Ops (Session S)', () => {
         id: 'library-bob',
         name: 'Bob',
         interests: [],
-        avatar: { emoji: '🐼', colorHex: '#27D8FF' },
+        avatar: { colorHex: '#27D8FF', photoDataUrl: null },
         lastUsedAt: '2024-01-01T10:00:00Z',
       },
     })

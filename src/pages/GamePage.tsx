@@ -1857,7 +1857,7 @@ function DuelStage() {
                             : 'bg-navy-800/70 border-white/10 text-ink hover:border-white/25',
                         )}
                       >
-                        <AvatarBadge avatar={p.avatar} size="sm" teamHex={teamHex} />
+                        <AvatarBadge avatar={p.avatar} size="sm" teamHex={teamHex} name={p.name} />
                         <span className="flex-1 truncate">
                           {p.name.trim() || `Spieler ${idx + 1}`}
                         </span>
@@ -2098,7 +2098,7 @@ function EliminationStage() {
               boxShadow: `0 0 0 1px ${teamHex}55, 0 0 24px -4px ${teamHex}AA`,
             }}
           >
-            <AvatarBadge avatar={activePlayer.avatar} size="md" teamHex={teamHex} />
+            <AvatarBadge avatar={activePlayer.avatar} size="md" teamHex={teamHex} name={activePlayer.name} />
             <div className="text-left">
               <div className="eyebrow" style={{ color: teamHex }}>
                 {activeTeam.name}
@@ -2375,7 +2375,7 @@ function ExpertsStage() {
                 className="rounded-card border border-white/[0.08] bg-navy-800/60 p-4 md:p-5"
               >
                 <div className="flex items-center gap-3 mb-3">
-                  <AvatarBadge avatar={p.avatar} size="sm" teamHex={teamHex} />
+                  <AvatarBadge avatar={p.avatar} size="sm" teamHex={teamHex} name={p.name} />
                   <div className="min-w-0 flex-1">
                     <div className="eyebrow" style={{ color: teamHex }}>
                       {team.name}
@@ -2471,7 +2471,7 @@ function ExpertsStage() {
             boxShadow: `0 0 24px -6px ${teamHex}AA`,
           }}
         >
-          <AvatarBadge avatar={activePlayer.avatar} size="md" teamHex={teamHex} />
+          <AvatarBadge avatar={activePlayer.avatar} size="md" teamHex={teamHex} name={activePlayer.name} />
           <div className="text-left">
             <div className="eyebrow" style={{ color: teamHex }}>
               {activeTeam.name}

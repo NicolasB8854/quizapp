@@ -13,7 +13,7 @@ function player(id: string, name: string, extras: Partial<Player> = {}): Player 
     name,
     teamId: 'team-a',
     interests: [],
-    avatar: { emoji: '🦊', colorHex: '#7C5CFF' },
+    avatar: { colorHex: '#7C5CFF', photoDataUrl: null },
     ...extras,
   }
 }
@@ -44,12 +44,14 @@ describe('playerLibrary', () => {
   it('überschreibt bestehende Profile mit gleicher ID (Update)', () => {
     saveToPlayerLibrary([player('p1', 'Alice')])
     saveToPlayerLibrary([
-      player('p1', 'Alicia', { avatar: { emoji: '🐼', colorHex: '#27D8FF' } }),
+      player('p1', 'Alicia', {
+        avatar: { colorHex: '#27D8FF', photoDataUrl: null },
+      }),
     ])
     const library = readPlayerLibrary()
     expect(library).toHaveLength(1)
     expect(library[0].name).toBe('Alicia')
-    expect(library[0].avatar.emoji).toBe('🐼')
+    expect(library[0].avatar.colorHex).toBe('#27D8FF')
   })
 
   it('sortiert bei Read nach Recency — jüngste zuerst', () => {
@@ -100,7 +102,7 @@ describe('playerLibrary', () => {
           id: 'p1',
           name: 'Alice',
           interests: [],
-          avatar: { emoji: '🦊', colorHex: '#7C5CFF' },
+          avatar: { colorHex: '#7C5CFF', photoDataUrl: null },
           lastUsedAt: '2024-01-01T10:00:00Z',
         },
         { id: 'p2' /* fehlende Felder */ },
