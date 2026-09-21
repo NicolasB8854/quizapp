@@ -14,20 +14,12 @@
  * deaktiviertem localStorage arbeitet die App weiter, aber ohne Bibliothek.
  */
 
-import type { Avatar, Player, PlayerInterest } from '@quizapp/shared'
+import type { Avatar, Player, PlayerProfile } from '@quizapp/shared'
+export type { PlayerProfile } from '@quizapp/shared'
 
 const STORAGE_KEY = 'quizapp:playerLibrary'
 /** Obergrenze, damit die Bibliothek nicht unkontrolliert wächst. */
 const MAX_PROFILES = 40
-
-export interface PlayerProfile {
-  id: string
-  name: string
-  interests: PlayerInterest[]
-  avatar: Avatar
-  /** ISO-Datum der letzten Verwendung. */
-  lastUsedAt: string
-}
 
 /**
  * Liest alle bekannten Profile aus dem Storage, sortiert nach Recency

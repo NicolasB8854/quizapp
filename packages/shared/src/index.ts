@@ -15,6 +15,10 @@
 // Types
 export type * from './types/question'
 export type * from './types/round'
+export type * from './types/playerProfile'
+
+// State (Reducer + Actions + State-Shape)
+export * from './state/reducer'
 
 // Pure logic
 export * from './lib/questions'
