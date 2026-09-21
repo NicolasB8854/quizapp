@@ -52,6 +52,7 @@ import { Card } from '@/components/Card'
 import { Button } from '@/components/Button'
 import { Badge } from '@/components/Badge'
 import { PlayerInterestsPanel } from '@/components/PlayerInterestsPanel'
+import { ConfettiBurst } from '@/components/ConfettiBurst'
 import { useRoomSync } from '@/hooks/useRoomSync'
 import { readRoomIdentity, saveRoomIdentity } from '@/lib/roomIdentity'
 import { cn } from '@/lib/classnames'
@@ -122,6 +123,62 @@ export default function RoomLobbyPage() {
     : null
   const myTeamColor = myTeam ? getTeamColorHex(myTeam.color) : null
 
+  // ---- Confetti-Feedback -----------------------------------------------
+  // Kleiner Burst bei jedem Score-Anstieg im Playing (Team-Farbe der Punkte-
+  // Gewinner), großer Burst beim Übergang in die Scoreboard-Phase (Winner-
+  // Team-Farbe). Token-Timestamp erzwingt neuen Burst pro Trigger.
+  const [burst, setBurst] = useState<{
+    colors: string[]
+    intensity: 'small' | 'large'
+    token: number
+  } | null>(null)
+  const prevScoresRef = useRef<Record<string, number> | null>(null)
+  const prevPhaseRef = useRef<string | null>(null)
+
+  const liveScores =
+    room.state?.live && 'scores' in room.state.live ? room.state.live.scores : null
+  const teamsForBurst = room.state?.round?.teams ?? null
+  const currentPhase = room.state?.phase ?? null
+
+  useEffect(() => {
+    // Score-Diff nur während Playing tracken; das Reset-Vermeidungs-Setzen
+    // von prevScoresRef läuft aber immer, damit wir beim Wechsel in
+    // playing keine Diffs auf 0-Referenzen bekommen.
+    if (!liveScores || !teamsForBurst) {
+      prevScoresRef.current = liveScores
+      return
+    }
+    const previous = prevScoresRef.current
+    prevScoresRef.current = { ...liveScores }
+    if (!previous || currentPhase !== 'playing') return
+    const winners = teamsForBurst.filter(
+      (t) => (liveScores[t.id] ?? 0) > (previous[t.id] ?? 0),
+    )
+    if (winners.length === 0) return
+    setBurst({
+      colors: winners.map((t) => getTeamColorHex(t.color)),
+      intensity: 'small',
+      token: performance.now(),
+    })
+  }, [liveScores, teamsForBurst, currentPhase])
+
+  useEffect(() => {
+    const previousPhase = prevPhaseRef.current
+    prevPhaseRef.current = currentPhase
+    if (currentPhase !== 'scoreboard' || previousPhase === 'scoreboard') return
+    const round = room.state?.round
+    const matchPoints = room.state?.matchPoints ?? {}
+    if (!round || round.teams.length === 0) return
+    const maxPoints = Math.max(...round.teams.map((t) => matchPoints[t.id] ?? 0))
+    if (maxPoints <= 0) return // Ohne Punkte: kein Winner-Burst.
+    const winners = round.teams.filter((t) => (matchPoints[t.id] ?? 0) === maxPoints)
+    setBurst({
+      colors: winners.map((t) => getTeamColorHex(t.color)),
+      intensity: 'large',
+      token: performance.now(),
+    })
+  }, [currentPhase, room.state?.round, room.state?.matchPoints])
+
   return (
     <ScreenLayout variant="dim">
       {myTeamColor && (
@@ -132,6 +189,14 @@ export default function RoomLobbyPage() {
             background: myTeamColor,
             boxShadow: `0 0 12px ${myTeamColor}, 0 0 24px ${myTeamColor}80`,
           }}
+        />
+      )}
+      {burst && (
+        <ConfettiBurst
+          colors={burst.colors}
+          intensity={burst.intensity}
+          token={burst.token}
+          onDone={() => setBurst(null)}
         />
       )}
       <div
