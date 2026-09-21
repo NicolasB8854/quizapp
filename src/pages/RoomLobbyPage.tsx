@@ -24,11 +24,17 @@ import {
   RefreshCw,
   WifiOff,
 } from 'lucide-react'
-import type { FlashLive, GameAction, GameState } from '@quizapp/shared'
-import type { Player, SkillLevel } from '@quizapp/shared'
+import type {
+  CategoryDuelLive,
+  FlashLive,
+  GameAction,
+  GameState,
+} from '@quizapp/shared'
+import type { Player, SkillLevel, Topic } from '@quizapp/shared'
 import {
   MODES,
   MODES_BY_ID,
+  TOPICS,
   TOPICS_BY_ID,
   getTeamColorHex,
 } from '@quizapp/shared'
@@ -248,6 +254,17 @@ function PhaseView({
       if (live?.kind === 'flash') {
         return (
           <FlashRoomView
+            state={state}
+            live={live}
+            playerId={playerId}
+            canDispatch={canDispatch}
+            send={send}
+          />
+        )
+      }
+      if (live?.kind === 'category-duel') {
+        return (
+          <CategoryDuelRoomView
             state={state}
             live={live}
             playerId={playerId}
@@ -653,6 +670,365 @@ function PlayerSelfCard({
         <PlayerInterestsPanel me={me} send={send} disabled={!canDispatch} />
       </div>
     </Card>
+  )
+}
+
+/**
+ * Themen-Battle: 12-Kategorien-Grid × Multiple Choice.
+ *
+ * Ablauf pro Zug:
+ *   1. Team-am-Zug wählt eine noch nicht gespielte Kategorie aus dem 12er-Grid
+ *   2. Frage erscheint auf allen Screens (Options gemischt)
+ *   3. Team-am-Zug klickt eine Option → State geht zu 'revealed'
+ *   4. Alle sehen richtige + gewählte Antwort. Master (oder jeder) klickt „Weiter"
+ *   5. Nächstes Team ist dran. Nach 12 Kategorien: FINISH_MODE
+ *
+ * Player-am-Zug = Player, deren `teamId === teams[currentTeamIndex].id`.
+ * Master + andere Team-Spieler sehen den Status, dürfen aber nicht dispatchen
+ * (server-seitig kein Block, aber UI-mäßig gesperrt).
+ */
+function CategoryDuelRoomView({
+  state,
+  live,
+  playerId,
+  canDispatch,
+  send,
+}: {
+  state: GameState
+  live: CategoryDuelLive
+  playerId: string | null
+  canDispatch: boolean
+  send: (a: GameAction) => void
+}) {
+  if (!state.round) return <LoadingCard label="Lade Runde …" />
+
+  const teams = state.round.teams
+  const currentTeam = teams[live.currentTeamIndex] ?? null
+  const myPlayer = playerId
+    ? state.round.players.find((p) => p.id === playerId)
+    : null
+  // Zug-Berechtigung: eigener Player im Team-am-Zug (Player-Rolle) ODER Master.
+  const isMyTurn = !!myPlayer && myPlayer.teamId === currentTeam?.id
+  const isMaster = !myPlayer // Master ist nicht als Player im State
+  const canPlayThisTurn = canDispatch && (isMyTurn || isMaster)
+
+  return (
+    <div className="space-y-3">
+      {/* Header: Team-am-Zug + Scores */}
+      <Card className="p-3">
+        <div className="flex flex-wrap items-center gap-3">
+          <div>
+            <div className="text-[10px] uppercase tracking-[0.32em] text-brand-purple-soft">
+              Themen-Battle
+            </div>
+            <div className="mt-0.5 flex items-center gap-2">
+              {currentTeam && (
+                <span
+                  className="h-2.5 w-2.5 rounded-full"
+                  style={{ background: getTeamColorHex(currentTeam.color) }}
+                />
+              )}
+              <span className="text-sm font-semibold text-white">
+                {currentTeam?.name} am Zug
+              </span>
+              <span className="font-mono text-xs text-ink-muted">
+                · {live.usedTopics.length} / 12
+              </span>
+            </div>
+          </div>
+          <div className="ml-auto flex flex-wrap gap-2">
+            {teams.map((team) => (
+              <div
+                key={team.id}
+                className="flex items-center gap-1.5 rounded-lg bg-white/[0.04] px-2 py-1"
+              >
+                <span
+                  className="h-2 w-2 rounded-full"
+                  style={{ background: getTeamColorHex(team.color) }}
+                />
+                <span className="text-xs text-white/80">{team.name}</span>
+                <span className="font-mono text-sm font-bold text-white">
+                  {live.scores[team.id] ?? 0}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Card>
+
+      {/* Phase-abhängige Sub-View */}
+      {live.phase === 'pick-topic' && (
+        <CDPickTopicView
+          live={live}
+          canPlay={canPlayThisTurn}
+          isMyTurn={isMyTurn}
+          isMaster={isMaster}
+          currentTeamName={currentTeam?.name ?? ''}
+          send={send}
+        />
+      )}
+      {live.phase === 'answering' && (
+        <CDAnsweringView
+          live={live}
+          canPlay={canPlayThisTurn}
+          isMyTurn={isMyTurn}
+          isMaster={isMaster}
+          currentTeamName={currentTeam?.name ?? ''}
+          send={send}
+        />
+      )}
+      {live.phase === 'revealed' && (
+        <CDRevealedView
+          live={live}
+          canDispatch={canDispatch}
+          send={send}
+        />
+      )}
+    </div>
+  )
+}
+
+function CDPickTopicView({
+  live,
+  canPlay,
+  isMyTurn,
+  isMaster,
+  currentTeamName,
+  send,
+}: {
+  live: CategoryDuelLive
+  canPlay: boolean
+  isMyTurn: boolean
+  isMaster: boolean
+  currentTeamName: string
+  send: (a: GameAction) => void
+}) {
+  const used = new Set<Topic>(live.usedTopics)
+  return (
+    <div className="space-y-3">
+      <Card className="p-4">
+        <div className="text-center text-sm text-white/80">
+          {isMyTurn ? (
+            <>Wähle eine Kategorie für dein Team.</>
+          ) : isMaster ? (
+            <>
+              {currentTeamName} ist am Zug — Kategorie wählen oder Master
+              wählt für sie.
+            </>
+          ) : (
+            <>{currentTeamName} wählt eine Kategorie …</>
+          )}
+        </div>
+      </Card>
+      <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+        {TOPICS.map((topic) => {
+          const isUsed = used.has(topic.id)
+          const disabled = isUsed || !canPlay
+          return (
+            <button
+              key={topic.id}
+              type="button"
+              onClick={() => send({ type: 'CD_PICK_TOPIC', topic: topic.id })}
+              disabled={disabled}
+              className={cn(
+                'flex flex-col items-center gap-1 rounded-lg border px-2 py-3 text-center transition-all',
+                isUsed
+                  ? 'border-white/5 bg-white/[0.02] opacity-30'
+                  : canPlay
+                    ? 'border-brand-purple/40 bg-brand-purple/[0.08] text-white hover:border-brand-purple/70 hover:bg-brand-purple/15'
+                    : 'border-white/10 bg-white/[0.03] text-white/60',
+              )}
+            >
+              <span className="text-2xl" aria-hidden>
+                {topic.emoji}
+              </span>
+              <span className="text-[11px] font-medium">{topic.label}</span>
+              {isUsed && (
+                <span className="text-[9px] uppercase tracking-wider text-white/40">
+                  gespielt
+                </span>
+              )}
+            </button>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+function CDAnsweringView({
+  live,
+  canPlay,
+  isMyTurn,
+  isMaster,
+  currentTeamName,
+  send,
+}: {
+  live: CategoryDuelLive
+  canPlay: boolean
+  isMyTurn: boolean
+  isMaster: boolean
+  currentTeamName: string
+  send: (a: GameAction) => void
+}) {
+  const question = live.activeQuestion
+  const topicDef = live.activeTopic ? TOPICS_BY_ID[live.activeTopic] : null
+  if (!question) return <LoadingCard label="Lade Frage …" />
+
+  return (
+    <>
+      <Card className="space-y-3 p-4">
+        {topicDef && (
+          <div className="flex items-center gap-2 text-xs uppercase tracking-[0.22em] text-brand-cyan-soft">
+            <span aria-hidden>{topicDef.emoji}</span>
+            {topicDef.label}
+          </div>
+        )}
+        <div className="text-lg font-semibold text-white md:text-xl">
+          {question.question}
+        </div>
+      </Card>
+
+      <div className="space-y-2">
+        {live.shuffledOptions.map((option, idx) => (
+          <button
+            key={idx}
+            type="button"
+            onClick={() =>
+              send({ type: 'CD_SELECT_ANSWER', renderedIndex: idx })
+            }
+            disabled={!canPlay}
+            className={cn(
+              'flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left transition-all disabled:opacity-40',
+              canPlay
+                ? 'border-brand-purple/40 bg-white/[0.04] text-white hover:border-brand-purple/70 hover:bg-brand-purple/10'
+                : 'border-white/10 bg-white/[0.03] text-white/70',
+            )}
+          >
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 font-mono text-sm font-bold">
+              {String.fromCharCode(65 + idx)}
+            </span>
+            <span className="flex-1 text-sm md:text-base">{option}</span>
+          </button>
+        ))}
+      </div>
+
+      {!canPlay && (
+        <p className="text-center text-xs text-ink-muted">
+          {isMyTurn ? (
+            <>Verbindung nicht bereit …</>
+          ) : isMaster ? (
+            <>{currentTeamName} beantwortet die Frage.</>
+          ) : (
+            <>{currentTeamName} beantwortet die Frage. Warten …</>
+          )}
+        </p>
+      )}
+    </>
+  )
+}
+
+function CDRevealedView({
+  live,
+  canDispatch,
+  send,
+}: {
+  live: CategoryDuelLive
+  canDispatch: boolean
+  send: (a: GameAction) => void
+}) {
+  const question = live.activeQuestion
+  const topicDef = live.activeTopic ? TOPICS_BY_ID[live.activeTopic] : null
+  if (!question) return <LoadingCard label="Reveal …" />
+
+  const selectedIdx = live.selectedRenderedIndex
+  const correctIdx = live.correctRenderedIndex
+  const wasCorrect = selectedIdx === correctIdx
+
+  return (
+    <>
+      <Card
+        className={cn(
+          'space-y-3 p-4',
+          wasCorrect
+            ? 'border-correct/40 bg-correct/[0.06]'
+            : 'border-wrong/40 bg-wrong/[0.06]',
+        )}
+      >
+        {topicDef && (
+          <div className="flex items-center gap-2 text-xs uppercase tracking-[0.22em] text-white/70">
+            <span aria-hidden>{topicDef.emoji}</span>
+            {topicDef.label}
+          </div>
+        )}
+        <div className="text-lg font-semibold text-white md:text-xl">
+          {question.question}
+        </div>
+      </Card>
+
+      <div className="space-y-2">
+        {live.shuffledOptions.map((option, idx) => {
+          const isCorrect = idx === correctIdx
+          const isSelected = idx === selectedIdx
+          return (
+            <div
+              key={idx}
+              className={cn(
+                'flex items-center gap-3 rounded-xl border px-4 py-3',
+                isCorrect
+                  ? 'border-correct/60 bg-correct/15 text-correct'
+                  : isSelected
+                    ? 'border-wrong/60 bg-wrong/15 text-wrong'
+                    : 'border-white/10 bg-white/[0.02] text-white/60',
+              )}
+            >
+              <span
+                className={cn(
+                  'flex h-8 w-8 items-center justify-center rounded-full font-mono text-sm font-bold',
+                  isCorrect
+                    ? 'bg-correct/25'
+                    : isSelected
+                      ? 'bg-wrong/25'
+                      : 'bg-white/10',
+                )}
+              >
+                {String.fromCharCode(65 + idx)}
+              </span>
+              <span className="flex-1 text-sm md:text-base">{option}</span>
+              {isCorrect && (
+                <span className="text-[10px] uppercase tracking-wider">
+                  richtig
+                </span>
+              )}
+              {isSelected && !isCorrect && (
+                <span className="text-[10px] uppercase tracking-wider">
+                  gewählt
+                </span>
+              )}
+            </div>
+          )
+        })}
+      </div>
+
+      {question.explanation && (
+        <Card className="p-3 text-sm text-white/80">
+          <div className="mb-1 text-[10px] uppercase tracking-[0.22em] text-ink-muted">
+            Erklärung
+          </div>
+          {question.explanation}
+        </Card>
+      )}
+
+      <Button
+        size="lg"
+        variant="primary"
+        onClick={() => send({ type: 'CD_NEXT_TURN' })}
+        disabled={!canDispatch}
+        className="w-full"
+      >
+        {live.usedTopics.length >= 12 ? 'Runde beenden' : 'Nächste Runde'}
+      </Button>
+    </>
   )
 }
 
