@@ -11,7 +11,7 @@
  */
 
 import { Link } from 'react-router-dom'
-import { Play, LogIn, Users, Wifi, Sparkles, Info, Settings } from 'lucide-react'
+import { Play, LogIn, Users, Wifi, Sparkles, Info, Settings, Radio } from 'lucide-react'
 import { ScreenLayout } from '@/components/ScreenLayout'
 import { ModeCard } from '@/components/ModeCard'
 import { MODES } from '@quizapp/shared'
@@ -112,6 +112,15 @@ export default function HomePage() {
                   <LogIn className="h-3.5 w-3.5" />
                 </span>
                 Freie Runde
+              </Link>
+              <Link
+                to="/room"
+                className="group inline-flex items-center gap-3 h-12 pl-2 pr-5 rounded-full border border-brand-cyan/40 bg-brand-cyan/10 backdrop-blur font-display font-bold tracking-[0.22em] uppercase text-sm text-brand-cyan-soft hover:border-brand-cyan/60 hover:bg-brand-cyan/15 transition-all"
+              >
+                <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-brand-cyan/25 text-brand-cyan-soft">
+                  <Radio className="h-3.5 w-3.5" />
+                </span>
+                Multi-Device
               </Link>
             </div>
 
