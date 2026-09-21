@@ -8,13 +8,8 @@
     "correctAnswer": "Sprossknolle",
     "gmNote": "Die Knolle sitzt unterirdisch am Ausläufer der Sprossachse — kein Wurzelgewebe.",
     "tagsSuggested": [
-      "Sprossknolle",
-      "Pflanzenteil",
       "Botanik",
-      "Kartoffel",
-      "Ausläufer",
-      "Sprossachse",
-      "Wurzelgewebe"
+      "Kartoffel"
     ],
     "tags": []
   },
@@ -27,14 +22,8 @@
     "correctAnswer": "Apulien",
     "gmNote": "Bari und Umgebung — der Name bedeutet „kleine Ohren“. Klassisch mit Cime di Rapa (Stängelkohl).",
     "tagsSuggested": [
-      "Apulien",
-      "Nudel Orecchiette",
-      "Bari",
-      "Umgebung",
-      "Name",
-      "Ohren",
-      "Klassisch",
-      "Cime"
+      "Nudeln",
+      "Italien"
     ],
     "tags": []
   },
@@ -47,13 +36,9 @@
     "correctAnswer": "Carménère",
     "gmNote": "Ursprünglich Bordeaux. Nach der Reblausplage fand man den Wein Ende der 1990er in chilenischen Weinbergen wieder.",
     "tagsSuggested": [
-      "Carménère",
+      "Wein",
       "Europa",
-      "Chile",
-      "Ursprünglich Bordeaux",
-      "Reblausplage",
-      "Wein Ende",
-      "Weinbergen"
+      "Chile"
     ],
     "tags": []
   },
@@ -67,12 +52,7 @@
     "tagsSuggested": [
       "Rheinland",
       "Rezept",
-      "Sauerbraten",
-      "Marinade",
-      "Rosinen",
-      "Rotwein-Essig-Sud",
-      "Printenbröseln",
-      "Fränkische"
+      "Sauerbraten"
     ],
     "tags": []
   },
@@ -85,13 +65,8 @@
     "correctAnswer": "Tempranillo",
     "tagsSuggested": [
       "Tempranillo",
-      "Rebsorte",
-      "Weine",
-      "Rioja-Region",
-      "Portugiesisch",
-      "Tinta Roriz",
-      "Name",
-      "Rioja"
+      "Wein",
+      "Spanien"
     ],
     "tags": []
   },
@@ -103,10 +78,8 @@
     "question": "Die Cashew-Nuss wächst außerhalb der eigentlichen Frucht.",
     "correctAnswer": true,
     "tagsSuggested": [
-      "Frucht",
-      "Cashew-Apfel",
-      "Kern",
-      "Steinfrucht"
+      "Nuss",
+      "Cashew"
     ],
     "tags": []
   },
@@ -118,14 +91,8 @@
     "question": "Aus welcher italienischen Region stammt der klassische Aceto Balsamico Tradizionale mit DOP-Siegel?",
     "correctAnswer": "Emilia-Romagna",
     "tagsSuggested": [
-      "Emilia-Romagna",
-      "Aceto Balsamico Tradizionale",
-      "Siegel",
-      "Modena",
-      "Reggio Emilia",
-      "Bezeichnung",
-      "Mindestens",
-      "Holzfässern"
+      "Balsamico",
+      "Italien"
     ],
     "tags": []
   },
@@ -138,11 +105,8 @@
     "correctAnswer": "Gelb-Orange",
     "gmNote": "Das Farbpigment Curcumin ist auch der Grund, warum Curry seine typische gelb-orange Farbe hat.",
     "tagsSuggested": [
-      "Gelb-Orange",
-      "Kurkuma-Pulver",
-      "Grund",
-      "Curry",
-      "Farbe"
+      "Kurkuma",
+      "Gewürz"
     ],
     "tags": []
   },
@@ -156,12 +120,7 @@
     "gmNote": "Die heutige Form entstand in Edo-zeitigen Tokio als schnelle Straßenspeise („Nigiri\").",
     "tagsSuggested": [
       "Japan",
-      "Nationalgericht Sushi",
-      "Form",
-      "Edo",
-      "Tokio",
-      "Straßenspeise",
-      "Nigiri"
+      "Sushi"
     ],
     "tags": []
   },
@@ -175,12 +134,8 @@
     "gmNote": "Für ein Kilo Safran werden rund 150.000 Blüten benötigt — alles in Handarbeit.",
     "tagsSuggested": [
       "Safran",
-      "Blütennarben",
       "Krokus",
-      "Welt",
-      "Kilo Safran",
-      "Blüten",
-      "Handarbeit"
+      "Gewürz"
     ],
     "tags": []
   },
@@ -193,14 +148,8 @@
     "correctAnswer": "Öl und Knoblauch",
     "gmNote": "Traditionell nur Olivenöl und Knoblauch, mit Mörser emulgiert. Moderne Rezepte fügen Eigelb hinzu.",
     "tagsSuggested": [
-      "Öl und Knoblauch",
-      "Hauptzutaten",
       "Aioli",
-      "Traditionell",
-      "Olivenöl",
-      "Knoblauch",
-      "Mörser",
-      "Moderne Rezepte"
+      "Sauce"
     ],
     "tags": []
   },
@@ -213,14 +162,8 @@
     "correctAnswer": "Keiner — Whiskey stammt aus Getreide",
     "gmNote": "Whiskey stammt aus Getreide (Gerste, Roggen, Weizen, Mais). Kartoffelbrand ist Wodka bzw. Aquavit.",
     "tagsSuggested": [
-      "Keiner — Whiskey stammt aus Getreide",
-      "Kartoffelart",
       "Whiskey",
-      "Getreide",
-      "Gerste",
-      "Roggen",
-      "Weizen",
-      "Mais"
+      "Getränke"
     ],
     "tags": []
   },
@@ -235,9 +178,7 @@
     "tagsSuggested": [
       "Mascarpone",
       "Tiramisu",
-      "Rahm-Käse",
-      "Lombardei",
-      "Fettanteil"
+      "Käse"
     ],
     "tags": []
   },
@@ -251,8 +192,9 @@
     "gmNote": "Chipotle sind geräucherte, getrocknete reife Jalapeños — sie sind mild-rauchig, nicht extrem scharf.",
     "tagsSuggested": [
       "Jalapeño",
-      "Chilisorte",
-      "Chipotle"
+      "Mexiko",
+      "Chipotle",
+      "Chili"
     ],
     "tags": []
   },
@@ -266,12 +208,7 @@
     "gmNote": "Weichkäse aus der französischen Bourgogne mit Marc-de-Bourgogne-gewaschener Rinde. Napoleon soll ihn geliebt haben.",
     "tagsSuggested": [
       "Frankreich",
-      "Käse",
-      "Bourgogne",
-      "Rinde",
-      "Weichkäse",
-      "Marc",
-      "Napoleon"
+      "Käse"
     ],
     "tags": []
   },
@@ -284,13 +221,9 @@
     "correctAnswer": true,
     "gmNote": "Ihre nächste Verwandtschaft sind Bohnen und Erbsen — nicht Baumnüsse.",
     "tagsSuggested": [
-      "Erdnüsse",
-      "Nüsse",
-      "Hülsenfrüchte",
-      "Verwandtschaft",
-      "Bohnen",
-      "Erbsen",
-      "Baumnüsse"
+      "Erdnuss",
+      "Botanik",
+      "Hülsenfrucht"
     ],
     "tags": []
   },
@@ -302,14 +235,9 @@
     "question": "Weißer Balsamico trägt dieselbe DOP-Herkunftsbezeichnung wie klassischer Aceto Balsamico Tradizionale.",
     "correctAnswer": false,
     "tagsSuggested": [
-      "Weißer Balsamico",
-      "Herkunftsbezeichnung",
-      "Aceto Balsamico Tradizionale",
-      "Modena",
-      "Kategorie",
-      "Condimento",
-      "Schutz",
-      "Tradizionale"
+      "Balsamico",
+      "Italien",
+      "Herkunftsschutz"
     ],
     "tags": []
   },
@@ -323,13 +251,8 @@
     "gmNote": "Bong Joon-ho gewann außerdem Oscars für Regie, Originaldrehbuch und besten internationalen Film — vier Trophäen in einer Nacht.",
     "tagsSuggested": [
       "Parasite",
-      "2020",
       "Oscar",
-      "Bong Joon",
-      "Oscars",
-      "Originaldrehbuch",
-      "Trophäen",
-      "Nacht"
+      "Südkorea"
     ],
     "tags": []
   },
@@ -342,14 +265,10 @@
     "correctAnswer": "Chloé Zhao",
     "gmNote": "Für „Nomadland“. Kathryn Bigelow war 2010 die erste (Tödliches Kommando – The Hurt Locker).",
     "tagsSuggested": [
-      "Chloé Zhao",
-      "2021",
       "Oscar",
-      "2010",
-      "Nomadland",
-      "Kathryn Bigelow",
-      "Tödliches Kommando",
-      "The Hurt Locker"
+      "Regie",
+      "Chloé Zhao",
+      "Nomadland"
     ],
     "tags": []
   },
@@ -363,13 +282,8 @@
     "gmNote": "Gegründet 1985 von Hayao Miyazaki, Isao Takahata und Toshio Suzuki in Tokio.",
     "tagsSuggested": [
       "Studio Ghibli",
-      "Animationsfilme",
-      "Spirited Away",
-      "Prinzessin Mononoke",
-      "1985",
-      "Gegründet",
-      "Hayao Miyazaki",
-      "Isao Takahata"
+      "Anime",
+      "Japan"
     ],
     "tags": []
   },
@@ -381,14 +295,9 @@
     "question": "Welcher deutsche Regisseur gewann 2007 den Oscar für den besten fremdsprachigen Film mit „Das Leben der Anderen“?",
     "correctAnswer": "Florian Henckel von Donnersmarck",
     "tagsSuggested": [
-      "Florian Henckel von Donnersmarck",
-      "2007",
       "Oscar",
-      "Anderen",
-      "Donnersmarcks Regie-Debüt",
-      "Stasi-Offizier",
-      "Kulturüberwachung",
-      "Außenseiter"
+      "Deutschland",
+      "Das Leben der Anderen"
     ],
     "tags": []
   },
@@ -401,12 +310,8 @@
     "correctAnswer": "Wes Anderson",
     "tagsSuggested": [
       "Wes Anderson",
-      "Bildstil",
-      "The Grand Budapest Hotel",
-      "1996",
-      "Paul Thomas Anderson",
-      "Bottle Rocket",
-      "Handschrift"
+      "Regie",
+      "USA"
     ],
     "tags": []
   },
@@ -419,13 +324,8 @@
     "correctAnswer": "Roger Deakins",
     "tagsSuggested": [
       "Roger Deakins",
-      "2049",
-      "1917",
-      "Blade Runner",
-      "Sicario",
-      "Naturlichts",
-      "2018",
-      "2020"
+      "Kamera",
+      "Blade Runner"
     ],
     "tags": []
   },
@@ -438,11 +338,9 @@
     "correctAnswer": "Leonardo DiCaprio",
     "gmNote": "Der Film brachte DiCaprio den internationalen Durchbruch.",
     "tagsSuggested": [
-      "Leonardo DiCaprio",
-      "1997",
-      "Jack Dawson",
       "Titanic",
-      "Durchbruch"
+      "DiCaprio",
+      "Hollywood"
     ],
     "tags": []
   },
@@ -455,14 +353,9 @@
     "correctAnswer": "George Lucas",
     "gmNote": "Lucas schrieb auch das Drehbuch und finanzierte den Film teilweise selbst.",
     "tagsSuggested": [
-      "George Lucas",
-      "1977",
-      "Original",
       "Star Wars",
-      "Trilogie Regie",
-      "Krieg",
-      "Sterne",
-      "Lucas"
+      "George Lucas",
+      "Regie"
     ],
     "tags": []
   },
@@ -475,13 +368,8 @@
     "correctAnswer": true,
     "tagsSuggested": [
       "James Bond",
-      "Ornithologen",
-      "Ian Fleming",
-      "Namen",
-      "Vogelbuch",
-      "Birds",
-      "West Indies",
-      "Ornithologen James Bond"
+      "Namensherkunft",
+      "Ornithologie"
     ],
     "tags": []
   },
@@ -495,12 +383,8 @@
     "gmNote": "„Die Verurteilten\" (Shawshank Redemption) verlor damals; „Forrest Gump\" gewann.",
     "tagsSuggested": [
       "Forrest Gump",
-      "1994",
       "Oscar",
-      "Häftling",
-      "Bankier",
-      "Shawshank",
-      "Shawshank Redemption"
+      "Hollywood"
     ],
     "tags": []
   },
@@ -513,14 +397,9 @@
     "correctAnswer": "keiner Stadt konkret zuzuordnen",
     "gmNote": "Die Traumebenen sind bewusst abstrakt; Realität-Szenen springen zwischen Paris, Tokio und LA.",
     "tagsSuggested": [
-      "keiner Stadt konkret zuzuordnen",
-      "Großteil",
-      "Handlung",
-      "Christopher Nolans",
       "Inception",
-      "Realität-Szenen",
-      "Paris",
-      "Tokio"
+      "Nolan",
+      "Traumsequenz"
     ],
     "tags": []
   },
@@ -533,13 +412,9 @@
     "correctAnswer": "New Line Cinema",
     "gmNote": "New Line Cinema war damals ein Time-Warner-Tochterunternehmen und ging mit dem Projekt große Risiken ein.",
     "tagsSuggested": [
+      "Herr der Ringe",
       "New Line Cinema",
-      "Ringe",
-      "Trilogie",
-      "Peter Jackson",
-      "Time-Warner-Tochterunternehmen",
-      "Projekt",
-      "Risiken"
+      "Fantasy"
     ],
     "tags": []
   },
@@ -553,10 +428,8 @@
     "gmNote": "Volker Schlöndorffs Verfilmung des Grass-Romans.",
     "tagsSuggested": [
       "Die Blechtrommel",
-      "1979",
       "Oscar",
-      "Volker Schlöndorffs Verfilmung",
-      "Grass-Romans"
+      "Deutschland"
     ],
     "tags": []
   },
@@ -571,12 +444,7 @@
     "tagsSuggested": [
       "Nino Rota",
       "Filmmusik",
-      "Chinatown",
-      "Cinema Paradiso",
-      "Rota",
-      "Hauptthema",
-      "Jerry Goldsmith",
-      "Frage"
+      "Der Pate"
     ],
     "tags": []
   },
@@ -590,13 +458,8 @@
     "gmNote": "Malick nahm zwischen „Badlands\" (1973) und „Der schmale Grat\" (1998) eine 20-Jahre-Pause.",
     "tagsSuggested": [
       "Terrence Malick",
-      "2011",
-      "The Tree",
-      "Life",
-      "1973",
-      "1998",
-      "Malick",
-      "Badlands"
+      "Regie",
+      "USA"
     ],
     "tags": []
   },
@@ -609,12 +472,9 @@
     "correctAnswer": true,
     "gmNote": "Coppola gewann den Oscar für die Regie beim zweiten Teil (1974).",
     "tagsSuggested": [
-      "1972",
-      "Francis Ford Coppola",
-      "1974",
+      "Der Pate",
       "Coppola",
-      "Oscar",
-      "Teil"
+      "Regie"
     ],
     "tags": []
   },
@@ -626,14 +486,9 @@
     "question": "Der Film „Titanic“ (1997) gewann elf Oscars.",
     "correctAnswer": true,
     "tagsSuggested": [
-      "1997",
       "Titanic",
-      "Oscars",
-      "1959",
-      "2003",
-      "Damit",
-      "Ben Hur",
-      "Königs"
+      "Oscar",
+      "Rekord"
     ],
     "tags": []
   },
@@ -646,14 +501,9 @@
     "correctAnswer": true,
     "gmNote": "Hitchcock hatte in fast allen seinen Filmen einen kleinen Auftritt — Markenzeichen.",
     "tagsSuggested": [
-      "1958",
-      "Alfred Hitchcock",
-      "Vertigo",
-      "Cameo-Auftritt",
       "Hitchcock",
-      "Filmen",
-      "Auftritt",
-      "Markenzeichen"
+      "Vertigo",
+      "Cameo"
     ],
     "tags": []
   },
@@ -665,14 +515,9 @@
     "question": "Der Film „Casablanca“ gewann bei der Oscar-Verleihung 1944 den Preis für den besten Film.",
     "correctAnswer": true,
     "tagsSuggested": [
-      "1944",
       "Casablanca",
-      "Oscar-Verleihung",
-      "Preis",
-      "Zusätzlich",
-      "Oscars",
-      "Michael Curtiz",
-      "Drehbuch"
+      "Oscar",
+      "Hollywood"
     ],
     "tags": []
   },
@@ -685,12 +530,9 @@
     "correctAnswer": "CD Projekt Red",
     "gmNote": "Sitz in Warschau. Die Vorlage stammt vom polnischen Autor Andrzej Sapkowski.",
     "tagsSuggested": [
+      "The Witcher 3",
       "CD Projekt Red",
-      "Rollenspiel",
-      "The Witcher",
-      "Wild Hunt",
-      "Sitz",
-      "Warschau"
+      "RPG"
     ],
     "tags": []
   },
@@ -703,12 +545,9 @@
     "correctAnswer": "2011",
     "gmNote": "18. November 2011 auf der MineCon in Las Vegas. Die Alpha lief seit 2009.",
     "tagsSuggested": [
-      "2011",
-      "Vollversion",
       "Minecraft",
-      "2009",
-      "November",
-      "Las Vegas"
+      "Release",
+      "Sandbox"
     ],
     "tags": []
   },
@@ -722,11 +561,8 @@
     "gmNote": "Der Controller mit dem markanten Drei-Griff-Design war für „Super Mario 64“ mitgedacht.",
     "tagsSuggested": [
       "Nintendo 64",
-      "1996",
-      "Analog-Stick",
-      "Standardsteuerung",
-      "Drei-Griff-Design",
-      "Super Mario"
+      "Konsole",
+      "Analog-Stick"
     ],
     "tags": []
   },
@@ -738,14 +574,9 @@
     "question": "Welcher Publisher steht seit den 1980ern hinter der Videospielserie „The Legend of Zelda“?",
     "correctAnswer": "Nintendo",
     "tagsSuggested": [
-      "Nintendo",
-      "Videospielserie",
-      "The Legend",
       "Zelda",
-      "1986",
-      "Shigeru Miyamoto",
-      "Reihe",
-      "Alle Hauptteile"
+      "Nintendo",
+      "Franchise"
     ],
     "tags": []
   },
@@ -757,14 +588,9 @@
     "question": "Welches unabhängige Studio veröffentlichte 2020 den vielfach ausgezeichneten Rogue-Like-Titel „Hades“?",
     "correctAnswer": "Supergiant Games",
     "tagsSuggested": [
-      "Supergiant Games",
-      "2020",
-      "Studio",
-      "Rogue-Like-Titel",
       "Hades",
-      "Supergiant",
-      "San Francisco",
-      "Bastion"
+      "Supergiant Games",
+      "Roguelike"
     ],
     "tags": []
   },
@@ -776,14 +602,9 @@
     "question": "In welchem Jahr veröffentlichte Atari das Arcade-Spiel „Pong“ — einen der Meilensteine der Videospielgeschichte?",
     "correctAnswer": "1972",
     "tagsSuggested": [
-      "1972",
-      "Atari",
-      "Arcade-Spiel",
       "Pong",
-      "Meilensteine",
-      "Videospielgeschichte",
-      "Allan Alcorn",
-      "Prototyp"
+      "Atari",
+      "Arcade"
     ],
     "tags": []
   },
@@ -796,13 +617,9 @@
     "correctAnswer": "Sonic the Hedgehog",
     "gmNote": "Sonic wurde 1991 auf dem Sega Mega Drive als Gegenentwurf zu Mario eingeführt.",
     "tagsSuggested": [
-      "Sonic the Hedgehog",
-      "Maskottchen",
-      "1991",
       "Sonic",
-      "Sega Mega Drive",
-      "Gegenentwurf",
-      "Mario"
+      "SEGA",
+      "Maskottchen"
     ],
     "tags": []
   },
@@ -816,11 +633,8 @@
     "gmNote": "Valve entwickelte auch die Vertriebs-Plattform Steam, die 2003 startete.",
     "tagsSuggested": [
       "Valve",
-      "Studio",
       "Portal",
-      "Half-Life",
-      "2003",
-      "Vertriebs-Plattform Steam"
+      "Half-Life"
     ],
     "tags": []
   },
@@ -833,13 +647,9 @@
     "correctAnswer": "The Elder Scrolls V: Skyrim",
     "gmNote": "Fünfter Teil der Elder-Scrolls-Reihe; wird bis heute regelmäßig auf neue Plattformen portiert.",
     "tagsSuggested": [
-      "The Elder Scrolls V: Skyrim",
-      "2011",
-      "Provinz Skyrim",
+      "Skyrim",
       "Bethesda",
-      "Fünfter Teil",
-      "Elder-Scrolls-Reihe",
-      "Plattformen"
+      "RPG"
     ],
     "tags": []
   },
@@ -853,13 +663,8 @@
     "gmNote": "Regisseur Hidetaka Miyazaki prägte den Sub-Genre-Begriff „Soulslike\".",
     "tagsSuggested": [
       "FromSoftware",
-      "2022",
-      "Studio",
       "Souls",
-      "Reihe",
-      "Elden Ring",
-      "Sub-Genre-Begriff",
-      "Soulslike"
+      "Elden Ring"
     ],
     "tags": []
   },
@@ -872,13 +677,9 @@
     "correctAnswer": "PUBG: Battlegrounds",
     "gmNote": "PlayerUnknown's Battlegrounds prägte das Genre; Fortnite folgte kurz darauf mit einem eigenen Modus.",
     "tagsSuggested": [
-      "PUBG: Battlegrounds",
-      "2017",
-      "Studio",
-      "Battlegrounds",
-      "Genre",
-      "Fortnite",
-      "Modus"
+      "PUBG",
+      "Battle Royale",
+      "Südkorea"
     ],
     "tags": []
   },
@@ -892,13 +693,8 @@
     "gmNote": "Minecraft hat über 300 Millionen verkaufte Exemplare (Stand 2023). Tetris folgt mit ~200 Millionen (alle Versionen zusammen).",
     "tagsSuggested": [
       "Minecraft",
-      "Spiel",
-      "Videospiel",
-      "Zeiten",
-      "2023",
-      "Millionen",
-      "Exemplare",
-      "Stand"
+      "Rekord",
+      "Verkauf"
     ],
     "tags": []
   },
@@ -911,14 +707,9 @@
     "correctAnswer": "Grand Theft Auto III",
     "gmNote": "GTA III führte offene Welten mit voller 3D-Steuerung in den Mainstream.",
     "tagsSuggested": [
-      "Grand Theft Auto III",
-      "2001",
-      "Spiel",
-      "Beispiel",
-      "Actionspiel",
-      "Welten",
-      "Steuerung",
-      "Mainstream"
+      "GTA III",
+      "Rockstar",
+      "Open World"
     ],
     "tags": []
   },
@@ -931,14 +722,9 @@
     "correctAnswer": "Alexey Pajitnov",
     "gmNote": "Pajitnov erhielt jahrzehntelang keine Lizenzgelder für sein Spiel wegen sowjetischer Rechteregelung.",
     "tagsSuggested": [
-      "Alexey Pajitnov",
-      "1984",
       "Tetris",
-      "Rechenzentrum",
-      "Sowjetischen Akademie",
-      "Wissenschaften",
       "Pajitnov",
-      "Lizenzgelder"
+      "Sowjetunion"
     ],
     "tags": []
   },
@@ -951,14 +737,9 @@
     "correctAnswer": true,
     "gmNote": "Ein 8-Bit-Integer-Overflow lässt die Hälfte des Bildschirms zerbrechen — ein legendärer Programmierfehler.",
     "tagsSuggested": [
-      "1980",
       "Pac-Man",
-      "Kill Screen",
-      "Level",
-      "Bit-Integer-Overflow",
-      "Hälfte",
-      "Bildschirms",
-      "Programmierfehler"
+      "Arcade",
+      "Kill Screen"
     ],
     "tags": []
   },
@@ -971,12 +752,7 @@
     "correctAnswer": false,
     "tagsSuggested": [
       "Mario",
-      "Maskottchen",
       "Nintendo",
-      "Auftritt",
-      "Klempner",
-      "1981",
-      "1983",
       "Donkey Kong"
     ],
     "tags": []
@@ -991,12 +767,8 @@
     "gmNote": "Rund 202.000 km — bedingt durch die zerklüftete Arktis-Küste und die vielen Inseln im Norden.",
     "tagsSuggested": [
       "Kanada",
-      "Küstenlinie",
-      "Erde",
-      "Rund",
-      "Arktis-Küste",
-      "Inseln",
-      "Norden"
+      "Küste",
+      "Rekord"
     ],
     "tags": []
   },
@@ -1010,9 +782,8 @@
     "gmNote": "Helsinki liegt auf ~60,2° Nord. Reykjavík wäre noch nördlicher, war aber nicht in den Optionen.",
     "tagsSuggested": [
       "Helsinki",
-      "Hauptstädte",
-      "Nord",
-      "Optionen"
+      "Finnland",
+      "Hauptstadt"
     ],
     "tags": []
   },
@@ -1025,13 +796,8 @@
     "correctAnswer": "Jemen",
     "gmNote": "Sokotra liegt im Golf von Aden. Der Drachenblutbaum ist eines der ikonischen Wahrzeichen der Insel.",
     "tagsSuggested": [
-      "Jemen",
-      "Insel Sokotra",
-      "Flora",
       "Sokotra",
-      "Golf",
-      "Aden",
-      "Wahrzeichen",
+      "Jemen",
       "Insel"
     ],
     "tags": []
@@ -1045,12 +811,8 @@
     "correctAnswer": "Algerien",
     "tagsSuggested": [
       "Algerien",
-      "2011",
-      "Mio",
-      "Teilung",
-      "Sudan",
-      "Davor",
-      "Gesamt"
+      "Afrika",
+      "Fläche"
     ],
     "tags": []
   },
@@ -1062,14 +824,9 @@
     "question": "Welche Bezeichnung trägt die charakteristische Trichtermündung der Elbe in die Nordsee?",
     "correctAnswer": "Ästuar",
     "tagsSuggested": [
-      "Ästuar",
-      "Trichtermündung",
       "Elbe",
-      "Nordsee",
-      "Ästuare",
-      "Gezeiten",
-      "Flussbett",
-      "Auch Themse"
+      "Ästuar",
+      "Nordsee"
     ],
     "tags": []
   },
@@ -1081,14 +838,9 @@
     "question": "Wie hoch ist der Kilimandscharo, der höchste Berg Afrikas, auf hundert Meter gerundet?",
     "correctAnswer": "5900 m",
     "tagsSuggested": [
-      "5900 m",
       "Kilimandscharo",
-      "Berg Afrikas",
-      "Meter",
-      "Kibo-Krater",
-      "Vulkan",
-      "Teil",
-      "Kette"
+      "Afrika",
+      "Berg"
     ],
     "tags": []
   },
@@ -1103,11 +855,7 @@
     "tagsSuggested": [
       "Nil",
       "Fluss",
-      "Welt",
-      "Quellen",
-      "Konventionell",
-      "Neuere Messungen",
-      "Amazonas"
+      "Afrika"
     ],
     "tags": []
   },
@@ -1119,10 +867,9 @@
     "question": "Der Eiffelturm ist bis heute der höchste Turm der Welt.",
     "correctAnswer": false,
     "tagsSuggested": [
-      "Turm",
-      "Welt",
-      "Tokyo Skytree",
-      "Fernsehtürme"
+      "Eiffelturm",
+      "Paris",
+      "Bauwerk"
     ],
     "tags": []
   },
@@ -1136,10 +883,8 @@
     "gmNote": "Die Sahara ist mit ~9,2 Mio. km² die größte Trockenwüste der Erde.",
     "tagsSuggested": [
       "Sahara",
-      "Großteil Nordafrikas",
-      "Mio",
-      "Trockenwüste",
-      "Erde"
+      "Wüste",
+      "Nordafrika"
     ],
     "tags": []
   },
@@ -1153,10 +898,8 @@
     "gmNote": "An der schmalsten Stelle nur rund 14 Kilometer breit.",
     "tagsSuggested": [
       "Straße von Gibraltar",
-      "Europa",
-      "Afrika",
-      "Stelle",
-      "Kilometer"
+      "Meerenge",
+      "Europa"
     ],
     "tags": []
   },
@@ -1170,11 +913,8 @@
     "gmNote": "Indonesien erstreckt sich über etwa 5.000 km Ost-West und hat rund 270 Millionen Einwohner.",
     "tagsSuggested": [
       "Indonesien",
-      "Inseln",
       "Inselstaat",
-      "Welt",
-      "Ost-West",
-      "Millionen Einwohner"
+      "Asien"
     ],
     "tags": []
   },
@@ -1186,14 +926,9 @@
     "question": "Die Transsibirische Eisenbahn ist die längste durchgehende Bahnstrecke der Welt.",
     "correctAnswer": true,
     "tagsSuggested": [
-      "Bahnstrecke",
-      "Welt",
-      "Moskau",
-      "Wladiwostok",
-      "Kilometer",
-      "Zeitzonen",
-      "Reine Fahrzeit",
-      "Aufenthalte"
+      "Transsibirische Eisenbahn",
+      "Russland",
+      "Rekord"
     ],
     "tags": []
   },
@@ -1207,9 +942,8 @@
     "gmNote": "Der Baikalsee in Sibirien reicht 1.642 m tief und enthält rund 20 % des flüssigen Süßwassers der Erde.",
     "tagsSuggested": [
       "Baikalsee",
-      "Erde",
-      "Sibirien",
-      "Süßwassers"
+      "Russland",
+      "See"
     ],
     "tags": []
   },
@@ -1224,10 +958,7 @@
     "tagsSuggested": [
       "Frankreich",
       "Zeitzonen",
-      "Überseegebiete",
-      "Russland",
-      "China",
-      "Ausdehnung"
+      "Überseegebiete"
     ],
     "tags": []
   },
@@ -1240,14 +971,9 @@
     "correctAnswer": "Pazifik und Karibik/Atlantik",
     "gmNote": "Die Kanaldurchfahrt verbindet den Atlantik (über Karibik) mit dem Pazifik — Schiffe sparen die Umfahrung von Südamerika.",
     "tagsSuggested": [
-      "Pazifik und Karibik/Atlantik",
-      "Ozeanen",
       "Panamakanal",
-      "Atlantik",
-      "Karibik",
       "Pazifik",
-      "Schiffe",
-      "Umfahrung"
+      "Atlantik"
     ],
     "tags": []
   },
@@ -1260,12 +986,8 @@
     "correctAnswer": true,
     "tagsSuggested": [
       "Australien",
-      "Stelle",
-      "Durchmesser",
-      "Mondes",
       "Mond",
-      "Sitzt",
-      "Nennung"
+      "Vergleich"
     ],
     "tags": []
   },
@@ -1279,12 +1001,8 @@
     "gmNote": "La Paz ist Regierungssitz Boliviens; die offizielle Hauptstadt ist Sucre, aber La Paz ist Sitz von Regierung und Parlament.",
     "tagsSuggested": [
       "La Paz",
-      "Regierungssitz Boliviens",
-      "Hauptstadt",
-      "Sucre",
-      "Sitz",
-      "Regierung",
-      "Parlament"
+      "Bolivien",
+      "Hauptstadt"
     ],
     "tags": []
   },
@@ -1297,12 +1015,9 @@
     "correctAnswer": true,
     "gmNote": "Trotz Eis: der Niederschlag ist so gering (< 200 mm/Jahr), dass Teile als Wüste gelten.",
     "tagsSuggested": [
-      "Kontinent",
-      "Erde",
-      "Trotz Eis",
-      "Niederschlag",
-      "Teile",
-      "Wüste"
+      "Antarktis",
+      "Wüste",
+      "Klima"
     ],
     "tags": []
   },
@@ -1315,12 +1030,9 @@
     "correctAnswer": true,
     "gmNote": "8.849 m NN. Vom Fuß auf Ozeanboden gemessen ist der Mauna Kea auf Hawaii höher.",
     "tagsSuggested": [
-      "Berg",
-      "Meeresspiegel",
-      "Vom Fuß",
-      "Ozeanboden",
-      "Mauna Kea",
-      "Hawaii"
+      "Mount Everest",
+      "Himalaya",
+      "Berg"
     ],
     "tags": []
   },
@@ -1333,12 +1045,9 @@
     "correctAnswer": false,
     "gmNote": "Sie hat mehrere Zickzacks, u.a. um Kiribati und die Aleuten herum, damit ganze Länder in derselben Zeitzone bleiben.",
     "tagsSuggested": [
-      "Linie",
-      "Längengrads",
-      "Zickzacks",
-      "Kiribati",
-      "Aleuten",
-      "Zeitzone"
+      "Datumsgrenze",
+      "Zeitzonen",
+      "Pazifik"
     ],
     "tags": []
   },
@@ -1352,11 +1061,7 @@
     "tagsSuggested": [
       "Australien",
       "Kontinent",
-      "Staat",
-      "Ozeanien",
-      "Neuseeland",
-      "Papua-Neuguinea",
-      "Pazifik-Inselstaaten"
+      "Land"
     ],
     "tags": []
   },
@@ -1369,11 +1074,9 @@
     "correctAnswer": "1989",
     "gmNote": "9. November — Günter Schabowskis Pressekonferenz löste den unkontrollierten Grenzöffnungs-Ansturm aus.",
     "tagsSuggested": [
-      "1989",
       "Berliner Mauer",
-      "November",
-      "Günter Schabowskis Pressekonferenz",
-      "Grenzöffnungs-Ansturm"
+      "Deutschland",
+      "1989"
     ],
     "tags": []
   },
@@ -1387,12 +1090,8 @@
     "gmNote": "Rund 24 Millionen km² auf dem Höhepunkt unter Dschingis Khans Nachfolgern.",
     "tagsSuggested": [
       "Mongolisches Reich",
-      "Landfläche",
-      "Geschichte",
-      "Rund",
-      "Millionen",
-      "Höhepunkt",
-      "Dschingis Khans Nachfolgern"
+      "Mittelalter",
+      "Dschingis Khan"
     ],
     "tags": []
   },
@@ -1406,11 +1105,8 @@
     "gmNote": "Unterzeichnet in Münster und Osnabrück. Der Ausgangspunkt der modernen Staatensouveränität.",
     "tagsSuggested": [
       "Westfälischer Friede",
-      "Dreißigjährigen Krieg",
-      "Unterzeichnet",
-      "Münster",
-      "Osnabrück",
-      "Staatensouveränität"
+      "Dreißigjähriger Krieg",
+      "1648"
     ],
     "tags": []
   },
@@ -1422,14 +1118,9 @@
     "question": "In welchem Jahr fiel die Berliner Mauer?",
     "correctAnswer": "1989",
     "tagsSuggested": [
-      "1989",
       "Berliner Mauer",
-      "1990",
-      "Am Abend",
-      "November",
-      "Grenzübergänge",
-      "Pressekonferenz",
-      "Günter Schabowski"
+      "Deutschland",
+      "1989"
     ],
     "tags": []
   },
@@ -1441,13 +1132,9 @@
     "question": "Napoleon Bonaparte war für seine Zeit ungewöhnlich klein.",
     "correctAnswer": false,
     "tagsSuggested": [
-      "Napoleon Bonaparte",
-      "Zeit",
-      "Durchschnittsgröße",
+      "Napoleon",
       "Frankreich",
-      "Verwechslung",
-      "Zolleinheiten",
-      "Karikaturen"
+      "Mythos"
     ],
     "tags": []
   },
@@ -1459,14 +1146,9 @@
     "question": "Unter welchem Sultan erreichte das Osmanische Reich im 16. Jahrhundert seinen territorialen Höhepunkt?",
     "correctAnswer": "Süleyman der Prächtige",
     "tagsSuggested": [
-      "Süleyman der Prächtige",
-      "Sultan",
-      "Osmanische Reich",
-      "Höhepunkt",
+      "Osmanisches Reich",
       "Süleyman",
-      "Reich",
-      "Wien",
-      "Prächtige"
+      "Sultan"
     ],
     "tags": []
   },
@@ -1478,14 +1160,9 @@
     "question": "Wer war der erste Reichspräsident der Weimarer Republik von 1919 bis 1925?",
     "correctAnswer": "Friedrich Ebert",
     "tagsSuggested": [
-      "Friedrich Ebert",
-      "1919",
-      "1925",
-      "Reichspräsident",
       "Weimarer Republik",
-      "Nationalversammlung",
-      "Tod",
-      "Paul"
+      "Ebert",
+      "Reichspräsident"
     ],
     "tags": []
   },
@@ -1498,14 +1175,9 @@
     "correctAnswer": "1945",
     "gmNote": "8. Mai 1945 (in Russland als 9. Mai gefeiert wegen Zeitverschiebung der Unterzeichnung).",
     "tagsSuggested": [
-      "1945",
-      "Zweite Weltkrieg",
-      "Europa",
-      "Kapitulation Deutschlands",
-      "Mai",
-      "Russland",
-      "Zeitverschiebung",
-      "Unterzeichnung"
+      "Zweiter Weltkrieg",
+      "Kapitulation",
+      "1945"
     ],
     "tags": []
   },
@@ -1518,12 +1190,9 @@
     "correctAnswer": "Ägypter",
     "gmNote": "Die Cheops-Pyramide entstand ca. 2560 v. Chr. und war fast 4.000 Jahre das höchste Bauwerk der Welt.",
     "tagsSuggested": [
-      "Ägypter",
+      "Ägypten",
       "Pyramiden",
-      "Gizeh",
-      "Chr",
-      "Bauwerk",
-      "Welt"
+      "Antike"
     ],
     "tags": []
   },
@@ -1537,12 +1206,8 @@
     "gmNote": "Elisabeth I. — das Elisabethanische Zeitalter brachte u.a. William Shakespeare hervor.",
     "tagsSuggested": [
       "Elisabeth I.",
-      "Königin",
-      "Namensgeberin",
-      "Blütezeit",
-      "Elisabeth",
-      "Elisabethanische Zeitalter",
-      "William Shakespeare"
+      "England",
+      "Tudor"
     ],
     "tags": []
   },
@@ -1555,13 +1220,9 @@
     "correctAnswer": "Konrad Adenauer",
     "gmNote": "Adenauer amtierte 1949-1963 und prägte die Westintegration Westdeutschlands.",
     "tagsSuggested": [
-      "Konrad Adenauer",
-      "Bundeskanzler",
-      "Bundesrepublik Deutschland",
-      "1949",
-      "1963",
       "Adenauer",
-      "Westintegration Westdeutschlands"
+      "Bundeskanzler",
+      "Bundesrepublik"
     ],
     "tags": []
   },
@@ -1575,12 +1236,8 @@
     "gmNote": "14. Juli 1789 — der Sturm auf das Pariser Staatsgefängnis wurde zum Symbol des Volksaufstandes.",
     "tagsSuggested": [
       "Französische Revolution",
-      "Sturm",
       "Bastille",
-      "Juli",
-      "Pariser Staatsgefängnis",
-      "Symbol",
-      "Volksaufstandes"
+      "1789"
     ],
     "tags": []
   },
@@ -1594,13 +1251,8 @@
     "gmNote": "Nikolaus II. und seine Familie wurden 1918 in Jekaterinburg von Bolschewiki ermordet.",
     "tagsSuggested": [
       "Nikolaus II.",
-      "1917",
-      "Zar Russlands",
-      "Abdankung",
-      "1918",
-      "Nikolaus",
-      "Familie",
-      "Jekaterinburg"
+      "Russland",
+      "Zar"
     ],
     "tags": []
   },
@@ -1614,13 +1266,8 @@
     "gmNote": "Nach 13 Tagen zog Chruschtschow die sowjetischen Raketen aus Kuba ab — im Gegenzug entfernten die USA Raketen aus der Türkei.",
     "tagsSuggested": [
       "Kubakrise",
-      "1962",
-      "Welt",
-      "Rand",
-      "Atomkriegs",
-      "Sowjetunion",
-      "Tagen",
-      "Chruschtschow"
+      "Kalter Krieg",
+      "1962"
     ],
     "tags": []
   },
@@ -1633,14 +1280,10 @@
     "correctAnswer": "Vertrag von Tordesillas und Saragossa",
     "gmNote": "Tordesillas (1494) teilte die Neue Welt entlang eines Meridians; Saragossa (1529) verlängerte die Grenze durch Asien.",
     "tagsSuggested": [
-      "Vertrag von Tordesillas und Saragossa",
-      "Vertragswerke",
-      "Welt",
+      "Vertrag von Tordesillas",
+      "Kolonialismus",
       "Spanien",
-      "Portugal",
-      "Tordesillas",
-      "Neue Welt",
-      "Meridians"
+      "Portugal"
     ],
     "tags": []
   },
@@ -1652,13 +1295,9 @@
     "question": "Isaac Newton wurde tatsächlich von einem herabfallenden Apfel am Kopf getroffen.",
     "correctAnswer": false,
     "tagsSuggested": [
-      "Isaac Newton",
-      "Apfel",
-      "Kopf",
-      "Erzählung",
-      "Garten",
-      "Mutter",
-      "Verzierung"
+      "Newton",
+      "Physik",
+      "Mythos"
     ],
     "tags": []
   },
@@ -1671,8 +1310,9 @@
     "correctAnswer": true,
     "gmNote": "1961 bis 1989 — 28 Jahre.",
     "tagsSuggested": [
-      "1961",
-      "1989"
+      "Berliner Mauer",
+      "Deutschland",
+      "Kalter Krieg"
     ],
     "tags": []
   },
@@ -1686,13 +1326,8 @@
     "gmNote": "Pyramide: ~2560 v. Chr., Cleopatra: 69-30 v. Chr., iPhone: 2007. Die Zeitdistanz Pyramide → Cleopatra ist rund 2500 Jahre, Cleopatra → iPhone rund 2000 Jahre.",
     "tagsSuggested": [
       "Cleopatra",
-      "Erfindung",
-      "Bau",
-      "Cheops-Pyramide",
-      "2007",
-      "2000",
-      "Pyramide",
-      "Chr"
+      "Antike",
+      "Zeitvergleich"
     ],
     "tags": []
   },
@@ -1704,13 +1339,9 @@
     "question": "Napoleon Bonaparte wurde in Frankreich geboren.",
     "correctAnswer": false,
     "tagsSuggested": [
-      "Napoleon Bonaparte",
-      "Frankreich",
-      "August",
+      "Napoleon",
       "Korsika",
-      "Insel",
-      "Korsisch",
-      "Französisch"
+      "Herkunft"
     ],
     "tags": []
   },
@@ -1723,13 +1354,9 @@
     "correctAnswer": "3",
     "gmNote": "Ein Hauptherz für den Körper, zwei Kiemenherzen. Das Blut ist blau (Hämocyanin statt Hämoglobin).",
     "tagsSuggested": [
-      "3",
-      "Herzen",
       "Krake",
-      "Körper",
-      "Kiemenherzen",
-      "Hämocyanin",
-      "Hämoglobin"
+      "Anatomie",
+      "Herz"
     ],
     "tags": []
   },
@@ -1741,13 +1368,9 @@
     "question": "Die Chinesische Mauer ist mit bloßem Auge aus dem Weltall sichtbar.",
     "correctAnswer": false,
     "tagsSuggested": [
-      "Auge",
-      "Weltall",
+      "Chinesische Mauer",
       "Mythos",
-      "Astronaut",
-      "Mauer",
-      "Orbit",
-      "Hilfsmittel"
+      "Weltall"
     ],
     "tags": []
   },
@@ -1759,9 +1382,9 @@
     "question": "Warum haben Golfbälle keine glatte Oberfläche, sondern kleine Dellen?",
     "solution": "Die Dellen erzeugen kontrollierte Turbulenzen um den Ball. Das verkleinert das Windschatten-Gebiet hinter dem Ball und reduziert den Luftwiderstand — ein glatter Ball würde nur die halbe Distanz erreichen. Entdeckt Ende des 19. Jahrhunderts, als alte, zerbeulte Bälle sich besser schlagen ließen als neue.",
     "tagsSuggested": [
-      "Golfbälle",
-      "Oberfläche",
-      "Dellen"
+      "Golfball",
+      "Aerodynamik",
+      "Physik"
     ],
     "tags": []
   },
@@ -1774,14 +1397,9 @@
     "correctAnswer": "Fett",
     "gmNote": "Rund 60 % der Trockenmasse — deshalb sind essenzielle Fettsäuren so wichtig für die Hirnentwicklung.",
     "tagsSuggested": [
-      "Fett",
-      "Material",
-      "Großteil",
-      "Gehirns",
-      "Rund",
-      "Trockenmasse",
-      "Fettsäuren",
-      "Hirnentwicklung"
+      "Gehirn",
+      "Anatomie",
+      "Fett"
     ],
     "tags": []
   },
@@ -1793,11 +1411,9 @@
     "question": "Warum hat der Deckel eines Marmeladenglases oben in der Mitte eine leichte Delle, die beim ersten Öffnen laut „klickt“?",
     "solution": "Die Delle ist ein Vakuum-Indikator. Nach dem heißen Abfüllen und Verschließen entsteht durch die Abkühlung Unterdruck im Glas — der zieht den Deckel leicht nach innen. Beim ersten Öffnen strömt Luft ein, die Delle springt hoch und macht das typische „Klick“. Ist die Delle schon draußen, wurde das Glas eventuell schon geöffnet.",
     "tagsSuggested": [
-      "Deckel",
-      "Marmeladenglases",
-      "Mitte",
-      "Delle",
-      "Öffnen"
+      "Marmeladenglas",
+      "Vakuum",
+      "Konservierung"
     ],
     "tags": []
   },
@@ -1810,12 +1426,9 @@
     "correctAnswer": "Afrikanischer Elefant",
     "gmNote": "Rund 22 Monate. Kälber wiegen bei der Geburt schon etwa 120 kg.",
     "tagsSuggested": [
-      "Afrikanischer Elefant",
+      "Elefant",
       "Tragezeit",
-      "Rund",
-      "Monate",
-      "Kälber",
-      "Geburt"
+      "Säugetier"
     ],
     "tags": []
   },
@@ -1827,9 +1440,9 @@
     "question": "Warum meint man das Meer zu hören, wenn man eine große Muschel ans Ohr hält?",
     "solution": "Die Hohlkammer der Muschel wirkt wie ein akustischer Resonator und verstärkt selektiv Umgebungsgeräusche in bestimmten Frequenzen. Das dumpfe Rauschen, das wir als „Meer“ interpretieren, ist eine gefilterte Mischung aus Umgebungslärm, dem Blutfluss im Ohr und der Muschel-Resonanz. Denselben Effekt bekommt man mit einer hohlen Tasse.",
     "tagsSuggested": [
-      "Meer",
       "Muschel",
-      "Ohr"
+      "Akustik",
+      "Physik"
     ],
     "tags": []
   },
@@ -1842,7 +1455,8 @@
     "solution": "Rot ist die international per DIN/ISO genormte Farbe für Brandschutzausrüstung. Sie signalisiert Gefahr, hebt sich vor fast jedem Hintergrund ab und stellt sicher, dass Feuerlöscher weltweit auf einen Blick erkannt werden — auch unter Stress. In besonderen Umgebungen (Rot-Grün-Kliniken, Schiffe) gibt es dokumentierte Ausnahmen mit Neongelb.",
     "tagsSuggested": [
       "Feuerlöscher",
-      "Welt"
+      "Warnfarbe",
+      "Symbolik"
     ],
     "tags": []
   },
@@ -1855,12 +1469,8 @@
     "correctAnswer": "Olympus Mons",
     "tagsSuggested": [
       "Olympus Mons",
-      "Kilometern Höhe",
-      "Vulkan",
-      "Sonnensystem",
       "Mars",
-      "Mount Everest",
-      "Marsatmosphäre"
+      "Vulkan"
     ],
     "tags": []
   },
@@ -1872,10 +1482,9 @@
     "question": "Warum haben Bananen aus dem Supermarkt keine Kerne, obwohl sie botanisch Früchte sind?",
     "solution": "Alle handelsüblichen Bananen sind sterile Klone einer einzigen Sorte — in Europa fast ausschließlich die Cavendish. Sie werden vegetativ vermehrt, jede Pflanze ist genetisch identisch zur Mutterpflanze. Wildbananen wären kaum essbar. Nachteil der Monokultur: ein einziger Pilz (etwa TR4) kann die weltweite Ernte gefährden.",
     "tagsSuggested": [
-      "Bananen",
-      "Supermarkt",
-      "Kerne",
-      "Früchte"
+      "Banane",
+      "Botanik",
+      "Zucht"
     ],
     "tags": []
   },
@@ -1887,14 +1496,9 @@
     "question": "Wie viele Chromosomenpaare hat eine normale menschliche Körperzelle?",
     "correctAnswer": "23",
     "tagsSuggested": [
-      "23",
-      "Chromosomenpaare",
-      "Körperzelle",
-      "Paare",
-      "Chromosomen",
-      "Autosomen-Paare",
-      "Geschlechtschromosomen",
-      "Keimzellen"
+      "Chromosom",
+      "Genetik",
+      "Mensch"
     ],
     "tags": []
   },
@@ -1906,8 +1510,9 @@
     "question": "Warum knallen Champagnerkorken so laut, wenn man die Flasche öffnet?",
     "solution": "In einer Champagnerflasche stehen etwa 5 bis 6 Bar Druck an — drei- bis viermal so viel wie in einem Autoreifen. Springt der Korken, entweicht das eingeschlossene CO₂ blitzartig, expandiert und erzeugt eine kleine Schockwelle: den „Knall“. Das Geräusch entsteht also durch die schlagartige Druckentspannung, nicht durch den Korken selbst.",
     "tagsSuggested": [
-      "Champagnerkorken",
-      "Flasche"
+      "Champagner",
+      "Druck",
+      "Physik"
     ],
     "tags": []
   },
@@ -1919,14 +1524,9 @@
     "question": "Wie viele Erdenjahre braucht der Planet Uranus für einen kompletten Umlauf um die Sonne (auf volle Jahre gerundet)?",
     "correctAnswer": "84",
     "tagsSuggested": [
-      "84",
-      "Erdenjahre",
-      "Planet Uranus",
-      "Umlauf",
-      "Sonne",
-      "Etwa",
       "Uranus",
-      "Umläufe"
+      "Planet",
+      "Umlaufzeit"
     ],
     "tags": []
   },
@@ -1938,11 +1538,9 @@
     "question": "Der Große Panda gehört biologisch zur Familie der Bären.",
     "correctAnswer": true,
     "tagsSuggested": [
-      "Familie",
-      "Bären",
-      "Lange",
-      "Analysen",
-      "Ursidae"
+      "Panda",
+      "Bär",
+      "Biologie"
     ],
     "tags": []
   },
@@ -1955,13 +1553,9 @@
     "correctAnswer": "7",
     "gmNote": "Newton fügte „Indigo\" hinzu, um auf sieben Farben zu kommen — analog zur diatonischen Tonleiter.",
     "tagsSuggested": [
-      "7",
-      "Farben",
       "Regenbogen",
-      "Aufzählung",
       "Newton",
-      "Indigo",
-      "Tonleiter"
+      "Farben"
     ],
     "tags": []
   },
@@ -1975,12 +1569,8 @@
     "gmNote": "Karpfen haben etwa 100 Chromosomenpaare. Farne (kein Wirbeltier) haben teils >600 — die Frage ist trickreich formuliert.",
     "tagsSuggested": [
       "Karpfen",
-      "Chromosomen",
-      "Wirbeltieren",
-      "Chromosomenpaare",
-      "Farne",
-      "Wirbeltier",
-      "Frage"
+      "Chromosom",
+      "Fisch"
     ],
     "tags": []
   },
@@ -1993,13 +1583,9 @@
     "correctAnswer": "150-200-mal",
     "gmNote": "Rund 150- bis 200-fache Körperlänge — hätte ein Mensch dieselbe Sprungkraft, käme er etwa 300 m hoch.",
     "tagsSuggested": [
-      "150-200-mal",
       "Floh",
-      "Vergleich",
-      "Körperlänge",
-      "Rund",
-      "Mensch",
-      "Sprungkraft"
+      "Insekt",
+      "Sprung"
     ],
     "tags": []
   },
@@ -2012,14 +1598,9 @@
     "correctAnswer": "Schutz vor Blutsaugerinsekten",
     "gmNote": "Studien seit ca. 2014 zeigen: Streifenmuster reduziert Landeversuche von Tsetsefliegen deutlich.",
     "tagsSuggested": [
-      "Schutz vor Blutsaugerinsekten",
-      "Zebras Streifen",
-      "Haupterklärung",
-      "2014",
-      "Studien",
-      "Streifenmuster",
-      "Landeversuche",
-      "Tsetsefliegen"
+      "Zebra",
+      "Streifen",
+      "Insekten"
     ],
     "tags": []
   },
@@ -2034,11 +1615,7 @@
     "tagsSuggested": [
       "Krake",
       "Blut",
-      "Kraken",
-      "Cephalopoden",
-      "Hämocyanin",
-      "Hämoglobin",
-      "Farbe"
+      "Biologie"
     ],
     "tags": []
   },
@@ -2052,12 +1629,8 @@
     "gmNote": "2021 wuchsen die ersten Chilis auf der ISS als Teil des „Plant Habitat-04\"-Experiments.",
     "tagsSuggested": [
       "Chili",
-      "Weltall",
-      "2021",
-      "Chilis",
-      "Teil",
-      "Plant Habitat",
-      "Experiments"
+      "ISS",
+      "Weltraum"
     ],
     "tags": []
   },
@@ -2070,12 +1643,9 @@
     "correctAnswer": "100-150 ms",
     "gmNote": "100-150 Millisekunden — der englische Idiom „in the blink of an eye\" ist wörtlich rund eine Zehntelsekunde.",
     "tagsSuggested": [
-      "100-150 ms",
       "Wimpernschlag",
-      "Durchschnitt",
-      "Millisekunden",
-      "Idiom",
-      "Zehntelsekunde"
+      "Auge",
+      "Physiologie"
     ],
     "tags": []
   },
@@ -2089,10 +1659,8 @@
     "gmNote": "Ultraviolett liegt außerhalb des sichtbaren Spektrums (unter 380 nm). Manche Insekten wie Bienen können UV sehen.",
     "tagsSuggested": [
       "Ultraviolett",
-      "Auge",
-      "Spektrums",
-      "Manche Insekten",
-      "Bienen"
+      "Licht",
+      "Auge"
     ],
     "tags": []
   },
@@ -2105,7 +1673,8 @@
     "solution": "Rayleigh-Streuung: Blaues Licht wird stärker gestreut als rotes. Tagsüber ist es überall blau, weil Blau von allen Seiten kommt. Beim Sonnenuntergang muss das Licht durch mehr Atmosphäre — das meiste Blau ist längst weggestreut, nur Rot und Orange kommen direkt bei uns an.",
     "tagsSuggested": [
       "Himmel",
-      "Sonnenuntergänge"
+      "Streuung",
+      "Optik"
     ],
     "tags": []
   },
@@ -2117,8 +1686,9 @@
     "question": "Warum knallt es, wenn ein Überschallflieger die Schallmauer durchbricht?",
     "solution": "Beim Überschallflug schiebt der Flieger die Luftmoleküle so schnell zusammen, dass sich eine kegelförmige Stoßwelle bildet. Wenn diese Druckfront einen Beobachter erreicht, hört er einen kurzen, lauten Knall — den „Sonic Boom\". Das passiert kontinuierlich, nicht nur beim Durchbrechen.",
     "tagsSuggested": [
-      "Überschallflieger",
-      "Schallmauer"
+      "Überschallknall",
+      "Schall",
+      "Physik"
     ],
     "tags": []
   },
@@ -2130,7 +1700,9 @@
     "question": "Warum kann man in kaltem Wasser länger schwimmen als in bathwannenwarmem?",
     "solution": "Der menschliche Körper produziert beim Schwimmen viel Wärme. In warmem Wasser kann er diese nicht loswerden und überhitzt schnell. Kaltes Wasser (18-22 °C) leitet die produzierte Wärme ab — genug, aber nicht zu viel. Deshalb sind Wettkampf-Schwimmbecken kühl, nicht warm.",
     "tagsSuggested": [
-      "Wasser"
+      "Schwimmen",
+      "Kälte",
+      "Wärmeregulation"
     ],
     "tags": []
   },
@@ -2142,11 +1714,9 @@
     "question": "Warum machen Möwen an heißen Tagen mit ihren Füßen so einen Tanz auf dem Sand?",
     "solution": "Möwen (und einige andere Vögel) trippeln rhythmisch auf dem nassen Sand, um Vibrationen wie fallende Regentropfen zu erzeugen. Würmer und andere Bodenlebewesen kommen bei Regen an die Oberfläche, um nicht zu ertrinken — dieses „Regentanz-Verhalten\" nutzt diesen Reflex aus. Die Möwe hat dann leichte Beute.",
     "tagsSuggested": [
-      "Möwen",
-      "Tagen",
-      "Füßen",
-      "Tanz",
-      "Sand"
+      "Möwe",
+      "Regenwurm",
+      "Verhalten"
     ],
     "tags": []
   },
@@ -2158,8 +1728,9 @@
     "question": "Warum hat eine Kompassnadel überhaupt eine Richtung — was zieht sie an?",
     "solution": "Der Erdkern besteht überwiegend aus flüssigem Eisen und Nickel, die ständig in Bewegung sind. Diese Konvektionsströme erzeugen ein globales Magnetfeld — die Erde wirkt wie ein riesiger Stabmagnet. Die Kompassnadel richtet sich entlang dieses Feldes aus, nordwärts. Der magnetische Nordpol wandert übrigens langsam, aktuell etwa 40 km pro Jahr Richtung Sibirien.",
     "tagsSuggested": [
-      "Kompassnadel",
-      "Richtung"
+      "Kompass",
+      "Erdmagnetfeld",
+      "Physik"
     ],
     "tags": []
   },
@@ -2171,7 +1742,9 @@
     "question": "Warum wird ein geschnittener Apfel braun, wenn man ihn liegen lässt?",
     "solution": "Beim Schneiden werden Zellen im Apfel aufgeschnitten. Das freigelegte Enzym Polyphenoloxidase (PPO) reagiert mit Sauerstoff aus der Luft und färbt Phenol-Verbindungen im Apfel braun — ähnlich wie beim Rosten von Eisen. Zitronensaft (Vitamin C) verhindert die Reaktion, weil er das Enzym hemmt.",
     "tagsSuggested": [
-      "Apfel"
+      "Apfel",
+      "Oxidation",
+      "Chemie"
     ],
     "tags": []
   },
@@ -2183,14 +1756,9 @@
     "question": "Der Fußabdruck von Neil Armstrong auf dem Mond bleibt praktisch für alle Zeiten erhalten.",
     "correctAnswer": true,
     "tagsSuggested": [
-      "Neil Armstrong",
       "Mond",
-      "Zeiten",
-      "Keine Atmosphäre",
-      "Wind",
-      "Wasser",
-      "Abdrücke",
-      "Apollo"
+      "Apollo",
+      "Fußabdruck"
     ],
     "tags": []
   },
@@ -2202,14 +1770,9 @@
     "question": "Der Nordpol liegt auf einer schwimmenden Eisdecke — nicht auf Landmasse.",
     "correctAnswer": true,
     "tagsSuggested": [
-      "Eisdecke",
-      "Landmasse",
-      "Anders",
-      "Antarktis",
-      "Kontinent",
-      "Eis",
-      "Arktische Ozean",
-      "Meereis"
+      "Nordpol",
+      "Arktis",
+      "Eis"
     ],
     "tags": []
   },
@@ -2223,11 +1786,8 @@
     "gmNote": "Rund 70 Millionen verkaufte Einheiten weltweit seit 1982.",
     "tagsSuggested": [
       "Thriller",
-      "Welt",
-      "1982",
-      "Rund",
-      "Millionen",
-      "Einheiten"
+      "Michael Jackson",
+      "Album"
     ],
     "tags": []
   },
@@ -2240,14 +1800,9 @@
     "correctAnswer": "Brasilien",
     "gmNote": "Entstanden in Rio de Janeiro Ende der 1950er, verschmelzt Samba mit Cool Jazz. Klassiker: „The Girl from Ipanema“.",
     "tagsSuggested": [
+      "Bossa Nova",
       "Brasilien",
-      "Musikstil Bossa Nova",
-      "Entstanden",
-      "Rio",
-      "Janeiro Ende",
-      "Samba",
-      "Cool Jazz",
-      "Klassiker"
+      "Genre"
     ],
     "tags": []
   },
@@ -2260,14 +1815,9 @@
     "correctAnswer": "Wolfgang Amadeus Mozart",
     "gmNote": "Uraufführung 1791 in Wien, wenige Wochen vor Mozarts Tod. Libretto von Emanuel Schikaneder.",
     "tagsSuggested": [
-      "Wolfgang Amadeus Mozart",
+      "Mozart",
       "Oper",
-      "Uraufführung",
-      "Wien",
-      "Wochen",
-      "Mozarts Tod",
-      "Libretto",
-      "Emanuel Schikaneder"
+      "Klassik"
     ],
     "tags": []
   },
@@ -2279,14 +1829,9 @@
     "question": "Auf welchem Beatles-Album erschien der Song „Yesterday“ ursprünglich im Jahr 1965?",
     "correctAnswer": "Help!",
     "tagsSuggested": [
-      "Help!",
-      "1965",
-      "Beatles-Album",
+      "Beatles",
       "Yesterday",
-      "Paul",
-      "Melodie",
-      "Plagiat",
-      "Original"
+      "Album"
     ],
     "tags": []
   },
@@ -2298,14 +1843,9 @@
     "question": "In welcher deutschen Stadt wurde die Elektronik-Band Kraftwerk 1970 gegründet?",
     "correctAnswer": "Düsseldorf",
     "tagsSuggested": [
-      "Düsseldorf",
-      "1970",
-      "Elektronik-Band Kraftwerk",
-      "Ralf Hütter",
-      "Florian Schneider",
       "Kraftwerk",
-      "Zentrum",
-      "Elektronik-Sounds"
+      "Düsseldorf",
+      "Elektro"
     ],
     "tags": []
   },
@@ -2317,14 +1857,9 @@
     "question": "Welcher österreichische Komponist gilt als Pionier der Zwölftontechnik in der modernen Kompositionslehre?",
     "correctAnswer": "Arnold Schönberg",
     "tagsSuggested": [
-      "Arnold Schönberg",
-      "Komponist",
-      "Pionier",
-      "Zwölftontechnik",
-      "Kompositionslehre",
-      "1921",
       "Schönberg",
-      "Grundlage"
+      "Zwölftontechnik",
+      "Österreich"
     ],
     "tags": []
   },
@@ -2338,10 +1873,8 @@
     "gmNote": "Beyoncé überraschte mit einem visuellen Album ohne Vorankündigung.",
     "tagsSuggested": [
       "Beyoncé",
-      "2016",
       "Lemonade",
-      "Formation",
-      "Vorankündigung"
+      "Album"
     ],
     "tags": []
   },
@@ -2356,10 +1889,7 @@
     "tagsSuggested": [
       "Queen",
       "Bohemian Rhapsody",
-      "Freddie Mercury",
-      "Stück",
-      "Album-Version",
-      "Minuten"
+      "Rock"
     ],
     "tags": []
   },
@@ -2373,13 +1903,8 @@
     "gmNote": "Spector produzierte u.a. „You've Lost That Lovin' Feelin'\" und später „Let It Be\" für die Beatles.",
     "tagsSuggested": [
       "Phil Spector",
-      "Erfinder",
-      "Wall",
-      "Sound",
-      "Aufnahmetechnik",
-      "Spector",
-      "You",
-      "Lost That Lovin"
+      "Wall of Sound",
+      "Produktion"
     ],
     "tags": []
   },
@@ -2392,14 +1917,9 @@
     "correctAnswer": "Hannover",
     "gmNote": "Gegründet 1965 von Rudolf Schenker; „Wind of Change\" wurde zum inoffiziellen Hymne der Wende.",
     "tagsSuggested": [
+      "Scorpions",
       "Hannover",
-      "1965",
-      "Gegründet",
-      "Rudolf Schenker",
-      "Wind",
-      "Change",
-      "Hymne",
-      "Wende"
+      "Rock"
     ],
     "tags": []
   },
@@ -2412,13 +1932,9 @@
     "correctAnswer": "Saxophon",
     "gmNote": "Sopran- und Tenorsaxophon. Sein Album „A Love Supreme\" gilt als Meilenstein des spirituellen Jazz.",
     "tagsSuggested": [
-      "Saxophon",
-      "Jazzmusiker John Coltrane",
-      "Sopran",
-      "Tenorsaxophon",
-      "Love Supreme",
-      "Meilenstein",
-      "Jazz"
+      "Coltrane",
+      "Jazz",
+      "Saxophon"
     ],
     "tags": []
   },
@@ -2431,14 +1947,10 @@
     "correctAnswer": "Lorenzo Da Ponte",
     "gmNote": "Da Ponte wanderte später nach New York aus und wurde erster Italienisch-Professor an der Columbia University.",
     "tagsSuggested": [
-      "Lorenzo Da Ponte",
-      "Libretto",
-      "Mozarts Opern",
-      "Le",
-      "Figaro",
-      "Don Giovanni",
+      "Mozart",
       "Da Ponte",
-      "New York"
+      "Libretto",
+      "Oper"
     ],
     "tags": []
   },
@@ -2452,13 +1964,8 @@
     "gmNote": "Frontmann Ian Curtis nahm sich 1980 das Leben; die verbleibenden Mitglieder gründeten New Order.",
     "tagsSuggested": [
       "Joy Division",
-      "1979",
-      "Post-Punk-Band",
       "Manchester",
-      "Unknown Pleasures",
-      "1980",
-      "Frontmann Ian Curtis",
-      "Leben"
+      "Post-Punk"
     ],
     "tags": []
   },
@@ -2471,12 +1978,9 @@
     "correctAnswer": "Clara Wieck",
     "gmNote": "Clara Wieck war zu Lebzeiten eine der berühmtesten Konzertpianistinnen Europas.",
     "tagsSuggested": [
-      "Clara Wieck",
-      "Komponistin",
-      "Kammermusik",
-      "Robert Schumann",
-      "Lebzeiten",
-      "Konzertpianistinnen Europas"
+      "Clara Schumann",
+      "Klassik",
+      "Komponistin"
     ],
     "tags": []
   },
@@ -2489,10 +1993,9 @@
     "correctAnswer": true,
     "gmNote": "16. August 1977, mit 42 Jahren.",
     "tagsSuggested": [
-      "1977",
-      "Elvis Presley",
-      "Anwesen Graceland",
-      "August"
+      "Elvis",
+      "Graceland",
+      "Rock’n’Roll"
     ],
     "tags": []
   },
@@ -2505,14 +2008,9 @@
     "correctAnswer": true,
     "gmNote": "Ein US-Gericht erklärte 2016 die Urheberrechte für nichtig — vorher zahlte Warner/Chappell Millionen an Lizenzgebühren.",
     "tagsSuggested": [
-      "2016",
       "Happy Birthday",
-      "You",
-      "Gericht",
-      "Urheberrechte",
-      "Warner",
-      "Chappell Millionen",
-      "Lizenzgebühren"
+      "Urheberrecht",
+      "Gemeinfreiheit"
     ],
     "tags": []
   },
@@ -2524,14 +2022,9 @@
     "question": "Ludwig van Beethoven war zum Zeitpunkt der Uraufführung seiner 9. Sinfonie 1824 nahezu vollständig taub.",
     "correctAnswer": true,
     "tagsSuggested": [
-      "1824",
-      "Ludwig",
       "Beethoven",
-      "Zeitpunkt",
-      "Uraufführung",
       "Sinfonie",
-      "Wiener Uraufführung",
-      "Bühne"
+      "Taubheit"
     ],
     "tags": []
   },
@@ -2544,13 +2037,9 @@
     "correctAnswer": "Albuquerque",
     "gmNote": "New Mexico. Vince Gilligan wollte ursprünglich in Riverside, Kalifornien drehen — die Steuervergünstigungen waren in NM besser.",
     "tagsSuggested": [
-      "Albuquerque",
       "Breaking Bad",
-      "New Mexico",
-      "Vince Gilligan",
-      "Riverside",
-      "Kalifornien",
-      "Steuervergünstigungen"
+      "Albuquerque",
+      "USA"
     ],
     "tags": []
   },
@@ -2564,13 +2053,8 @@
     "gmNote": "Vier Siege (2015, 2016, 2018, 2019). Succession folgt mit drei, Die Sopranos mit zwei.",
     "tagsSuggested": [
       "Game of Thrones",
-      "Rekord",
-      "Emmys",
-      "Dramaserie",
-      "2015",
-      "2016",
-      "2018",
-      "2019"
+      "HBO",
+      "Emmy"
     ],
     "tags": []
   },
@@ -2583,14 +2067,9 @@
     "correctAnswer": "Großbritannien",
     "gmNote": "George R. R. Martin hat den Umriss von Westeros bewusst an die britischen Inseln angelehnt — mit Norden = Schottland-Analogie.",
     "tagsSuggested": [
-      "Großbritannien",
-      "Kontinent",
-      "Landmasse",
+      "Game of Thrones",
       "Westeros",
-      "Buchreihe",
-      "Eis",
-      "Feuer",
-      "George"
+      "Fantasy"
     ],
     "tags": []
   },
@@ -2602,14 +2081,9 @@
     "question": "In welcher US-Stadt spielt die HBO-Serie „The Wire“, die als eine der besten Fernsehserien aller Zeiten gilt?",
     "correctAnswer": "Baltimore",
     "tagsSuggested": [
-      "Baltimore",
       "The Wire",
-      "Fernsehserien",
-      "Zeiten",
-      "Serienschöpfer David Simon",
-      "Polizeireporter",
-      "Baltimore Sun",
-      "Institutionen"
+      "HBO",
+      "Baltimore"
     ],
     "tags": []
   },
@@ -2621,14 +2095,9 @@
     "question": "Wer schuf und produzierte die Netflix-Zeichentrickserie „BoJack Horseman“?",
     "correctAnswer": "Raphael Bob-Waksberg",
     "tagsSuggested": [
-      "Raphael Bob-Waksberg",
-      "Netflix-Zeichentrickserie",
-      "Horseman",
-      "2014",
-      "2020",
-      "Bob-Waksberg",
-      "Show",
-      "Illustratorin Lisa Hanawalt"
+      "BoJack Horseman",
+      "Netflix",
+      "Animation"
     ],
     "tags": []
   },
@@ -2640,14 +2109,9 @@
     "question": "Welcher Regisseur schuf zusammen mit Mark Frost die Mystery-Serie „Twin Peaks“, deren dritte Staffel 2017 in „The Return“ mündete?",
     "correctAnswer": "David Lynch",
     "tagsSuggested": [
-      "David Lynch",
-      "2017",
-      "Mark Frost",
-      "Mystery-Serie",
       "Twin Peaks",
-      "Staffel",
-      "The Return",
-      "1990"
+      "David Lynch",
+      "Mystery"
     ],
     "tags": []
   },
@@ -2661,11 +2125,8 @@
     "gmNote": "Vince Gilligans „Breaking Bad\" lief 2008-2013 auf AMC.",
     "tagsSuggested": [
       "Breaking Bad",
-      "Chemielehrer Walter White",
-      "Meth-Koch",
-      "2008",
-      "2013",
-      "Vince Gilligans"
+      "Krimi",
+      "AMC"
     ],
     "tags": []
   },
@@ -2678,13 +2139,9 @@
     "correctAnswer": "Hawkins",
     "gmNote": "Hawkins ist an das Duffer-Brüder-inspirierte Amblin-Kino der 80er angelehnt.",
     "tagsSuggested": [
-      "Hawkins",
-      "Kleinstadt",
-      "Indiana",
-      "Netflix-Serie",
       "Stranger Things",
-      "Duffer-Brüder",
-      "Amblin-Kino"
+      "Netflix",
+      "Hawkins"
     ],
     "tags": []
   },
@@ -2698,13 +2155,9 @@
     "gmNote": "Zehn Staffeln, 236 Folgen — bis heute massiv in Streaming präsent.",
     "tagsSuggested": [
       "Friends",
-      "1994",
-      "2004",
-      "Freunde",
+      "Sitcom",
       "New York",
-      "Zehn Staffeln",
-      "Folgen",
-      "Streaming"
+      "NBC"
     ],
     "tags": []
   },
@@ -2718,13 +2171,8 @@
     "gmNote": "Jesse Armstrongs „Succession\" (2018-2023) gewann drei Emmys als beste Dramaserie.",
     "tagsSuggested": [
       "Succession",
-      "Machtkämpfe",
-      "Roy-Familien-Medienimperium",
-      "2018",
-      "2023",
-      "Jesse Armstrongs",
-      "Emmys",
-      "Dramaserie"
+      "HBO",
+      "Familiendrama"
     ],
     "tags": []
   },
@@ -2737,14 +2185,9 @@
     "correctAnswer": "Pearson Hardman",
     "gmNote": "Später umbenannt in Pearson Specter, Pearson Specter Litt etc. — der Firmenname wechselt fast in jeder Staffel.",
     "tagsSuggested": [
-      "Pearson Hardman",
-      "Anwaltskanzlei",
-      "Harvey Specter",
       "Suits",
-      "Später",
-      "Pearson Specter",
-      "Pearson Specter Litt",
-      "Firmenname"
+      "Anwaltsserie",
+      "Pearson Hardman"
     ],
     "tags": []
   },
@@ -2759,11 +2202,7 @@
     "tagsSuggested": [
       "Mad Men",
       "Matthew Weiner",
-      "The Sopranos",
-      "2007",
-      "2015",
-      "Referenz",
-      "Retro-Design"
+      "AMC"
     ],
     "tags": []
   },
@@ -2777,12 +2216,8 @@
     "gmNote": "Squid Game von Hwang Dong-hyuk brach nahezu jeden Netflix-Rekord.",
     "tagsSuggested": [
       "Squid Game",
-      "2021",
-      "Netflix-Serie",
-      "Plattform",
-      "Startwoche",
-      "Hwang Dong",
-      "Netflix-Rekord"
+      "Netflix",
+      "Südkorea"
     ],
     "tags": []
   },
@@ -2796,12 +2231,8 @@
     "gmNote": "„L'amica geniale\" (2018-2024) verfilmt alle vier Bücher der „Neapolitanischen Saga\".",
     "tagsSuggested": [
       "Meine geniale Freundin",
-      "Freundinnen",
-      "Neapel",
-      "Elena Ferrantes Romantetralogie",
-      "2018",
-      "2024",
-      "Neapolitanischen Saga"
+      "Italien",
+      "Neapel"
     ],
     "tags": []
   },
@@ -2814,11 +2245,9 @@
     "correctAnswer": false,
     "gmNote": "Die Serie endet 2007 mit einem abrupten Schwarzbild bei laufendem Musikstück — bewusst mehrdeutig.",
     "tagsSuggested": [
-      "The Sopranos",
-      "Finale",
-      "2007",
-      "Schwarzbild",
-      "Musikstück"
+      "Sopranos",
+      "HBO",
+      "Finale"
     ],
     "tags": []
   },
@@ -2831,11 +2260,9 @@
     "correctAnswer": true,
     "gmNote": "Seit 1989 laufend, mit über 35 Staffeln der längste laufende Sitcom-Klassiker.",
     "tagsSuggested": [
-      "Staffeln",
-      "Prime-Time-Serie",
-      "1989",
-      "Seit",
-      "Sitcom-Klassiker"
+      "Simpsons",
+      "Rekord",
+      "FOX"
     ],
     "tags": []
   },
@@ -2847,14 +2274,9 @@
     "question": "Die HBO-Serie „Game of Thrones“ basiert auf einer Romanreihe von J. R. R. Tolkien.",
     "correctAnswer": false,
     "tagsSuggested": [
-      "Game",
-      "Thrones",
-      "Romanreihe",
-      "Tolkien",
-      "1996",
-      "George",
-      "Martin",
-      "Eis"
+      "Game of Thrones",
+      "George R. R. Martin",
+      "Buchvorlage"
     ],
     "tags": []
   },
@@ -2867,13 +2289,9 @@
     "correctAnswer": "5",
     "gmNote": "Ein Point Guard, ein Shooting Guard, ein Small Forward, ein Power Forward und ein Center — klassisch.",
     "tagsSuggested": [
-      "5",
       "Basketball",
-      "Feld",
-      "Shooting Guard",
-      "Small Forward",
-      "Power Forward",
-      "Center"
+      "Regel",
+      "Team"
     ],
     "tags": []
   },
@@ -2886,13 +2304,9 @@
     "correctAnswer": "Uruguay",
     "gmNote": "Ausgetragen in Montevideo. Der Gastgeber schlug im Finale den Nachbarn Argentinien mit 4:2.",
     "tagsSuggested": [
-      "Uruguay",
-      "1930",
-      "Fußball-Weltmeisterschaft",
-      "Ausgetragen",
-      "Montevideo",
-      "Finale",
-      "Nachbarn Argentinien"
+      "Fußball",
+      "Weltmeisterschaft",
+      "Uruguay"
     ],
     "tags": []
   },
@@ -2905,14 +2319,9 @@
     "correctAnswer": "42,195 km",
     "gmNote": "Die 195 m stammen aus den Olympischen Spielen 1908 in London — die königliche Familie wollte den Start näher am Schloss haben.",
     "tagsSuggested": [
-      "42,195 km",
-      "Marathon-Lauf",
-      "1908",
-      "Olympischen Spielen",
-      "London",
-      "Familie",
-      "Start",
-      "Schloss"
+      "Marathon",
+      "Leichtathletik",
+      "Distanz"
     ],
     "tags": []
   },
@@ -2924,14 +2333,9 @@
     "question": "Welches Land wurde 1974 Fußball-Weltmeister im eigenen Land?",
     "correctAnswer": "Deutschland",
     "tagsSuggested": [
-      "Deutschland",
-      "1974",
-      "Fußball-Weltmeister",
-      "Finale",
-      "München",
-      "Niederlande",
-      "Johan Cruyff",
-      "Kapitän Franz Beckenbauer"
+      "Fußball",
+      "Weltmeisterschaft",
+      "Deutschland"
     ],
     "tags": []
   },
@@ -2943,14 +2347,9 @@
     "question": "Welcher NBA-Spieler hält den Rekord für die meisten regulären Saison-MVP-Auszeichnungen mit sechs Titeln?",
     "correctAnswer": "Kareem Abdul-Jabbar",
     "tagsSuggested": [
-      "Kareem Abdul-Jabbar",
-      "Rekord",
-      "Saison",
-      "Auszeichnungen",
-      "Titeln",
-      "1971",
-      "1980",
-      "Kareem"
+      "NBA",
+      "Basketball",
+      "Kareem Abdul-Jabbar"
     ],
     "tags": []
   },
@@ -2962,14 +2361,9 @@
     "question": "Wie viele Formel-1-Weltmeistertitel halten Michael Schumacher und Lewis Hamilton (Stand 2024) — jeweils?",
     "correctAnswer": "je 7",
     "tagsSuggested": [
-      "je 7",
-      "2024",
-      "Formel",
-      "Weltmeistertitel",
-      "Michael Schumacher",
-      "Lewis Hamilton",
-      "Stand",
-      "2020"
+      "Formel 1",
+      "Schumacher",
+      "Hamilton"
     ],
     "tags": []
   },
@@ -2982,14 +2376,9 @@
     "correctAnswer": "5",
     "gmNote": "Fünf Ringe symbolisieren die fünf Kontinente. Farben: Blau, Gelb, Schwarz, Grün, Rot.",
     "tagsSuggested": [
-      "5",
-      "Ringe",
-      "Olympia-Emblem",
-      "Fünf Ringe",
-      "Kontinente",
-      "Farben",
-      "Blau",
-      "Gelb"
+      "Olympia",
+      "Symbol",
+      "Ringe"
     ],
     "tags": []
   },
@@ -3004,12 +2393,7 @@
     "tagsSuggested": [
       "Tennis",
       "Grand Slam",
-      "Turnieren Australian Open",
-      "French Open",
-      "Wimbledon",
-      "Open",
-      "Grand Slams",
-      "Career Grand Slam"
+      "Turnier"
     ],
     "tags": []
   },
@@ -3022,14 +2406,9 @@
     "correctAnswer": "Großbritannien",
     "gmNote": "Das erste Rennen fand am 13. Mai 1950 in Silverstone statt; Giuseppe Farina gewann.",
     "tagsSuggested": [
+      "Formel 1",
       "Großbritannien",
-      "1950",
-      "Formel",
-      "Weltmeisterschaft",
-      "Rennen",
-      "Mai",
-      "Silverstone",
-      "Giuseppe Farina"
+      "Motorsport"
     ],
     "tags": []
   },
@@ -3042,14 +2421,9 @@
     "correctAnswer": "6",
     "gmNote": "Sechs Punkte. Danach folgt entweder ein 1-Punkt-Extrapunkt (PAT) oder ein 2-Punkt-Conversion-Versuch.",
     "tagsSuggested": [
-      "6",
-      "Punkte",
-      "Touchdown",
       "American Football",
-      "Extra-Punkt-Versuch",
-      "Sechs Punkte",
-      "Danach",
-      "Punkt-Extrapunkt"
+      "NFL",
+      "Touchdown"
     ],
     "tags": []
   },
@@ -3062,14 +2436,9 @@
     "correctAnswer": "Gelb",
     "gmNote": "Das Maillot Jaune (Gelbes Trikot) — die Farbe erinnert an das Papier der Sportzeitung „L'Auto\".",
     "tagsSuggested": [
-      "Gelb",
-      "Führende",
-      "Gesamtwertung",
-      "Tour",
-      "France",
-      "Gelbes Trikot",
-      "Farbe",
-      "Papier"
+      "Tour de France",
+      "Radsport",
+      "Gelbes Trikot"
     ],
     "tags": []
   },
@@ -3084,12 +2453,7 @@
     "tagsSuggested": [
       "Baseball",
       "Perfect Game",
-      "Werfer",
-      "Batter",
-      "Spiel",
-      "Base",
-      "Geschichte",
-      "Perfect Games"
+      "MLB"
     ],
     "tags": []
   },
@@ -3102,14 +2466,9 @@
     "correctAnswer": "Marcel Hirscher",
     "gmNote": "Trickfrage: Hirscher ist Österreicher, nicht Deutscher. Trotzdem passendste Antwort.",
     "tagsSuggested": [
-      "Marcel Hirscher",
-      "2015",
-      "2018",
-      "2022",
-      "Skirennfahrer",
-      "Gesamtweltcup-Titel",
-      "Folge",
-      "Olympia-Gold"
+      "Ski Alpin",
+      "Hirscher",
+      "Weltcup"
     ],
     "tags": []
   },
@@ -3122,14 +2481,9 @@
     "correctAnswer": "Novak Djokovic",
     "gmNote": "Djokovic mit 24 Titeln (Stand Ende 2023). Nadal 22, Federer 20.",
     "tagsSuggested": [
-      "Novak Djokovic",
-      "2024",
-      "Rekord",
-      "Grand-Slam-Einzeltitel",
-      "Herren-Tennis",
-      "Stand",
-      "2023",
-      "Djokovic"
+      "Tennis",
+      "Djokovic",
+      "Grand Slam"
     ],
     "tags": []
   },
@@ -3142,10 +2496,9 @@
     "correctAnswer": true,
     "gmNote": "Zehn Feldspieler + ein Torwart.",
     "tagsSuggested": [
-      "Beim Standard-Fußball",
-      "Feld",
-      "Zehn Feldspieler",
-      "Torwart"
+      "Fußball",
+      "Regel",
+      "Team"
     ],
     "tags": []
   },
@@ -3158,14 +2511,9 @@
     "correctAnswer": false,
     "gmNote": "Boxen wurde erst 1904 in St. Louis olympisch.",
     "tagsSuggested": [
-      "1896",
+      "Olympia",
       "Boxen",
-      "Olympischen Spielen",
-      "Teil",
-      "Programms",
-      "1904",
-      "St",
-      "Louis"
+      "Sportgeschichte"
     ],
     "tags": []
   },
@@ -3177,14 +2525,9 @@
     "question": "Bei den ersten Olympischen Spielen der Neuzeit 1896 in Athen nahmen ausschließlich männliche Athleten teil.",
     "correctAnswer": true,
     "tagsSuggested": [
-      "1896",
-      "Olympischen Spielen",
-      "Neuzeit",
+      "Olympia",
       "Athen",
-      "Athleten",
-      "1900",
-      "Frauen",
-      "Paris"
+      "1896"
     ],
     "tags": []
   },
@@ -3197,13 +2540,8 @@
     "correctAnswer": true,
     "tagsSuggested": [
       "Cricket",
-      "Fans",
-      "Sportarten",
-      "Fußball",
-      "Milliarden Fans",
-      "Indien",
-      "Pakistan",
-      "Australien"
+      "Weltsport",
+      "Fußball"
     ],
     "tags": []
   },
@@ -3216,14 +2554,9 @@
     "correctAnswer": "Arabisch",
     "gmNote": "Vom persischen Universalgelehrten al-Chwarizmi (9. Jh.), dessen Werke im Mittelalter ins Lateinische übersetzt wurden.",
     "tagsSuggested": [
-      "Arabisch",
-      "Sprache",
-      "Begriff",
       "Algorithmus",
-      "Vom",
-      "Universalgelehrten",
-      "Chwarizmi",
-      "Jh"
+      "Etymologie",
+      "Arabisch"
     ],
     "tags": []
   },
@@ -3237,11 +2570,8 @@
     "gmNote": "Baskisch ist eine isolierte Sprache ohne bekannte Verwandtschaft zu einer anderen — ein sprachliches Rätsel Europas.",
     "tagsSuggested": [
       "Baskisch",
-      "Sprachen",
       "Sprachfamilie",
-      "Sprache",
-      "Verwandtschaft",
-      "Rätsel Europas"
+      "Europa"
     ],
     "tags": []
   },
@@ -3254,14 +2584,9 @@
     "correctAnswer": "Krisenmodus",
     "gmNote": "Begründung: die Vielzahl paralleler Krisen, in denen sich Politik und Gesellschaft dauerhaft eingerichtet zu haben scheinen.",
     "tagsSuggested": [
-      "Krisenmodus",
-      "2023",
-      "Wort",
-      "Jahres",
-      "Gesellschaft",
-      "Sprache",
-      "Begründung",
-      "Vielzahl"
+      "Wort des Jahres",
+      "Deutsch",
+      "Krisenmodus"
     ],
     "tags": []
   },
@@ -3273,11 +2598,9 @@
     "question": "Die Amtssprache Brasiliens ist Portugiesisch.",
     "correctAnswer": true,
     "tagsSuggested": [
+      "Brasilien",
       "Portugiesisch",
-      "Amtssprache",
-      "Erbe",
-      "Kolonialzeit",
-      "Alle Nachbarländer"
+      "Amtssprache"
     ],
     "tags": []
   },
@@ -3290,13 +2613,8 @@
     "correctAnswer": "Doppelgänger",
     "tagsSuggested": [
       "Doppelgänger",
-      "Wort",
-      "Ebenbild",
-      "Person",
-      "Alltagswortschatz",
-      "Doppelganger",
-      "Umlaut",
-      "Zeitungen"
+      "Lehnwort",
+      "Englisch"
     ],
     "tags": []
   },
@@ -3308,14 +2626,9 @@
     "question": "Aus welcher Sprache stammt das deutsche Wort „Kaffee“ etymologisch?",
     "correctAnswer": "Arabisch",
     "tagsSuggested": [
-      "Arabisch",
-      "Sprache",
-      "Wort",
       "Kaffee",
-      "Vom",
-      "Türkisch",
-      "Italienische",
-      "Ursprünglich"
+      "Etymologie",
+      "Arabisch"
     ],
     "tags": []
   },
@@ -3329,12 +2642,7 @@
     "tagsSuggested": [
       "Uralisch",
       "Sprachfamilie",
-      "Finnisch",
-      "Estnisch",
-      "Ungarisch",
-      "Sprachen",
-      "Status",
-      "Europa"
+      "Finnisch"
     ],
     "tags": []
   },
@@ -3348,11 +2656,8 @@
     "gmNote": "Mandarin-Chinesisch mit rund 900 Millionen. Englisch hat mehr Zweitsprachler, aber weniger Muttersprachler.",
     "tagsSuggested": [
       "Mandarin",
-      "Muttersprachler",
-      "Mandarin-Chinesisch",
-      "Millionen",
-      "Englisch",
-      "Zweitsprachler"
+      "China",
+      "Muttersprache"
     ],
     "tags": []
   },
@@ -3365,13 +2670,9 @@
     "correctAnswer": "Englisch",
     "gmNote": "Englisch übernahm das deutsche „Kindergarten\" praktisch unverändert (auch in der Schreibweise).",
     "tagsSuggested": [
-      "Englisch",
-      "Sprache",
-      "Wort",
       "Kindergarten",
-      "Deutschen",
       "Lehnwort",
-      "Schreibweise"
+      "Englisch"
     ],
     "tags": []
   },
@@ -3384,14 +2685,9 @@
     "correctAnswer": "Arabisch (in Umschrift)",
     "gmNote": "Arabisch: Vokale werden in der klassischen Schriftform meist nicht mitgeschrieben, sondern nur bei Bedarf durch diakritische Zeichen ergänzt.",
     "tagsSuggested": [
-      "Arabisch (in Umschrift)",
-      "Sprachen",
-      "Schrift",
-      "Vokale",
-      "Konsonanten",
       "Arabisch",
-      "Schriftform",
-      "Bedarf"
+      "Schrift",
+      "Konsonanten"
     ],
     "tags": []
   },
@@ -3404,11 +2700,9 @@
     "correctAnswer": "Vorsicht vor dem Hund",
     "gmNote": "Berühmte Warntafel-Inschrift auf Fußbodenmosaiken in Pompeji.",
     "tagsSuggested": [
-      "Vorsicht vor dem Hund",
-      "Cave",
-      "Berühmte Warntafel-Inschrift",
-      "Fußbodenmosaiken",
-      "Pompeji"
+      "Latein",
+      "Redewendung",
+      "Cave canem"
     ],
     "tags": []
   },
@@ -3421,12 +2715,9 @@
     "correctAnswer": "Türkisch",
     "gmNote": "Türkisch „köşk\" = Gartenhäuschen, ursprünglich aus dem Persischen „kušk\".",
     "tagsSuggested": [
-      "Türkisch",
-      "Sprache",
-      "Wort",
       "Kiosk",
-      "Gartenhäuschen",
-      "Persischen"
+      "Etymologie",
+      "Türkisch"
     ],
     "tags": []
   },
@@ -3438,12 +2729,9 @@
     "question": "Auf das englische Wort „orange“ gibt es kein einziges perfekt reimendes Wort in der Alltagssprache.",
     "correctAnswer": true,
     "tagsSuggested": [
-      "Wort",
-      "Alltagssprache",
-      "Berühmte Reim-Falle",
-      "Einzige",
-      "Ausnahme",
-      "Sporenbehälter"
+      "Englisch",
+      "Orange",
+      "Reim"
     ],
     "tags": []
   },
@@ -3457,10 +2745,8 @@
     "gmNote": "Ungarisch gehört zur uralischen Sprachfamilie (mit Finnisch und Estnisch).",
     "tagsSuggested": [
       "Ungarisch",
-      "Sprache",
       "Sprachfamilie",
-      "Finnisch",
-      "Estnisch"
+      "Uralisch"
     ],
     "tags": []
   },
@@ -3473,14 +2759,9 @@
     "correctAnswer": "6",
     "gmNote": "Sechs: Nominativ, Genitiv, Dativ, Akkusativ, Ablativ, Vokativ. Deutsch hat vier, Finnisch etwa 15.",
     "tagsSuggested": [
-      "6",
-      "Fälle",
       "Latein",
-      "Sechs",
-      "Nominativ",
-      "Genitiv",
-      "Dativ",
-      "Akkusativ"
+      "Grammatik",
+      "Kasus"
     ],
     "tags": []
   },
@@ -3494,13 +2775,8 @@
     "gmNote": "Kyrillisch — benannt nach Kyrill von Saloniki, der im 9. Jahrhundert das Vorgänger-Alphabet Glagolitisch entwickelte.",
     "tagsSuggested": [
       "Kyrillisch",
-      "Buchstaben",
-      "Russisch",
-      "Bulgarisch",
-      "Serbisch",
-      "Kyrill",
-      "Saloniki",
-      "Vorgänger-Alphabet Glagolitisch"
+      "Alphabet",
+      "Russisch"
     ],
     "tags": []
   },
@@ -3513,11 +2789,9 @@
     "correctAnswer": false,
     "gmNote": "Diese Anekdote ist eine populäre Legende, aber historisch nicht belegt. Etymologisch unklar.",
     "tagsSuggested": [
-      "Wort",
-      "Wette",
-      "Sprache",
-      "Legende",
-      "Etymologisch"
+      "Quiz",
+      "Etymologie",
+      "Mythos"
     ],
     "tags": []
   },
@@ -3529,14 +2803,9 @@
     "question": "„Mama“ und „Papa“ klingen in erstaunlich vielen Sprachen weltweit sehr ähnlich.",
     "correctAnswer": true,
     "tagsSuggested": [
-      "Mama",
-      "Papa",
-      "Sprachen",
-      "1959",
-      "Kleinkinder",
-      "Silben",
-      "Eltern",
-      "Anrede"
+      "Kindersprache",
+      "Universalismus",
+      "Mama"
     ],
     "tags": []
   },
@@ -3549,14 +2818,9 @@
     "correctAnswer": "Linus Torvalds",
     "gmNote": "Als Student in Helsinki. Der Name entstand aus Torvalds' Vornamen plus dem verbreiteten Unix-Suffix.",
     "tagsSuggested": [
-      "Linus Torvalds",
-      "1991",
-      "Version",
-      "Linux-Kernels",
-      "Helsinki",
+      "Linux",
       "Torvalds",
-      "Vornamen",
-      "Unix-Suffix"
+      "Open Source"
     ],
     "tags": []
   },
@@ -3569,11 +2833,9 @@
     "correctAnswer": "128",
     "gmNote": "IPv4 hatte 32 Bit — etwa 4,3 Milliarden Adressen. IPv6 kommt auf 3,4 × 10^38 mögliche Adressen.",
     "tagsSuggested": [
-      "128",
-      "Bit",
-      "Adresse",
-      "Milliarden Adressen",
-      "Adressen"
+      "IPv6",
+      "Netzwerk",
+      "Internet"
     ],
     "tags": []
   },
@@ -3587,13 +2849,8 @@
     "gmNote": "Voodoo Graphics erschien 1996 und dominierte den PC-3D-Markt, bis NVIDIA das Unternehmen 2000 übernahm.",
     "tagsSuggested": [
       "3dfx",
-      "Voodoo-Grafikkarte",
-      "Beschleunigung",
-      "1996",
-      "2000",
-      "Voodoo Graphics",
-      "Markt",
-      "Unternehmen"
+      "Voodoo",
+      "Grafikkarte"
     ],
     "tags": []
   },
@@ -3605,14 +2862,9 @@
     "question": "In welchem Jahr stellte Apple das erste iPhone vor?",
     "correctAnswer": "2007",
     "tagsSuggested": [
-      "2007",
+      "iPhone",
       "Apple",
-      "Steve Jobs",
-      "Januar",
-      "Macworld",
-      "Verkaufsstart",
-      "Juni",
-      "Blackberry"
+      "Smartphone"
     ],
     "tags": []
   },
@@ -3625,13 +2877,8 @@
     "correctAnswer": "Python",
     "tagsSuggested": [
       "Python",
-      "1991",
-      "Spitzenplätze",
-      "Index",
-      "Guido",
-      "Rossum",
-      "Comedy-Ensemble Monty Python",
-      "Schlange"
+      "Programmiersprache",
+      "TIOBE"
     ],
     "tags": []
   },
@@ -3643,14 +2890,9 @@
     "question": "In welchem Jahr stellte Intel den 4004 vor, den ersten kommerziell erhältlichen Mikroprozessor der Welt?",
     "correctAnswer": "1971",
     "tagsSuggested": [
-      "1971",
-      "Intel",
+      "Intel 4004",
       "Mikroprozessor",
-      "Welt",
-      "Bit-Prozessor",
-      "Transistoren",
-      "November",
-      "Chefdesigner"
+      "1971"
     ],
     "tags": []
   },
@@ -3663,13 +2905,9 @@
     "correctAnswer": "HyperText Transfer Protocol",
     "gmNote": "„HyperText Transfer Protocol\" — 1989-1991 von Tim Berners-Lee am CERN definiert.",
     "tagsSuggested": [
-      "HyperText Transfer Protocol",
-      "Abkürzung",
-      "Webadressen",
-      "1989",
-      "1991",
-      "Transfer Protocol",
-      "Tim Berners-Lee"
+      "HTTP",
+      "Internet",
+      "Protokoll"
     ],
     "tags": []
   },
@@ -3682,12 +2920,9 @@
     "correctAnswer": "Google",
     "gmNote": "Ursprünglich vom Start-up Android Inc. entwickelt, 2005 von Google übernommen.",
     "tagsSuggested": [
+      "Android",
       "Google",
-      "Betriebssystem Android",
-      "2005",
-      "Ursprünglich",
-      "Start",
-      "Android Inc"
+      "Betriebssystem"
     ],
     "tags": []
   },
@@ -3700,11 +2935,9 @@
     "correctAnswer": "8",
     "gmNote": "Acht Bit — ein Byte kann 256 verschiedene Werte darstellen (2^8).",
     "tagsSuggested": [
-      "8",
-      "Bit",
       "Byte",
-      "Acht Bit",
-      "Werte"
+      "Bit",
+      "Informatik"
     ],
     "tags": []
   },
@@ -3718,13 +2951,8 @@
     "gmNote": "Ursprünglich für Set-Top-Boxen gedacht, wurde Java durch das Web-Browser-Plugin und später Android massiv verbreitet.",
     "tagsSuggested": [
       "Java",
-      "1995",
-      "James Gosling",
-      "Sun Microsystems",
-      "Ursprünglich",
-      "Set-Top-Boxen",
-      "Web-Browser-Plugin",
-      "Android"
+      "Gosling",
+      "Programmiersprache"
     ],
     "tags": []
   },
@@ -3738,11 +2966,8 @@
     "gmNote": "Die 8-Zoll-Diskette, gefolgt von 5¼- und 3½-Zoll-Varianten.",
     "tagsSuggested": [
       "Diskette",
-      "1971",
-      "Standard",
-      "Datentransfer",
-      "Zoll-Diskette",
-      "Zoll-Varianten"
+      "IBM",
+      "Speicher"
     ],
     "tags": []
   },
@@ -3755,14 +2980,9 @@
     "correctAnswer": "MPEG-1 Audio Layer III",
     "gmNote": "Der offizielle Name ist MPEG-1 Audio Layer 3. Karlheinz Brandenburg leitete die Entwicklung am Fraunhofer IIS.",
     "tagsSuggested": [
-      "MPEG-1 Audio Layer III",
-      "1993",
-      "Fraunhofer-Institut",
-      "Name",
-      "Audio Layer",
-      "Karlheinz Brandenburg",
-      "Entwicklung",
-      "Fraunhofer"
+      "MP3",
+      "Audio",
+      "Kompression"
     ],
     "tags": []
   },
@@ -3775,14 +2995,9 @@
     "correctAnswer": "Nein, keine feste Grenze",
     "gmNote": "HTTP-Header haben keine feste Empfänger-Grenze; Server können aber Header-Länge und -Anzahl selbst limitieren.",
     "tagsSuggested": [
-      "Nein, keine feste Grenze",
-      "Personen",
-      "Header-Feld",
-      "Protokoll",
+      "HTTP",
       "Header",
-      "Empfänger-Grenze",
-      "Server",
-      "Header-Länge"
+      "Protokoll"
     ],
     "tags": []
   },
@@ -3795,11 +3010,9 @@
     "correctAnswer": "1983",
     "gmNote": "1. Januar 1983 — der „Flag Day\", an dem das gesamte ARPANET von NCP auf TCP/IP umgestellt wurde.",
     "tagsSuggested": [
-      "1983",
-      "Protokoll",
-      "Standard",
-      "Januar",
-      "Flag Day"
+      "TCP/IP",
+      "ARPANET",
+      "Internet"
     ],
     "tags": []
   },
@@ -3813,10 +3026,8 @@
     "gmNote": "„Creeper\" von 1971 im ARPANET zeigte die Nachricht „I'm the creeper, catch me if you can!\".",
     "tagsSuggested": [
       "Computervirus",
-      "Sinne",
-      "1971",
-      "Creeper",
-      "Nachricht"
+      "Sicherheit",
+      "Informatikgeschichte"
     ],
     "tags": []
   },
@@ -3828,14 +3039,9 @@
     "question": "Das World Wide Web wurde am Kernforschungszentrum CERN in Genf entwickelt.",
     "correctAnswer": true,
     "tagsSuggested": [
-      "Kernforschungszentrum",
-      "Genf",
-      "1989",
-      "1991",
-      "Tim Berners-Lee",
-      "Vorschlag",
-      "Web-Server",
-      "Ursprünglicher Zweck"
+      "WWW",
+      "CERN",
+      "Internet"
     ],
     "tags": []
   },
@@ -3849,11 +3055,8 @@
     "gmNote": "Symbol Au (von lat. „aurum“). Rund 205.000 Tonnen wurden bis heute weltweit gefördert.",
     "tagsSuggested": [
       "Gold",
-      "Ordnungszahl",
-      "Periodensystem",
-      "Symbol Au",
-      "Rund",
-      "Tonnen"
+      "Element",
+      "Periodensystem"
     ],
     "tags": []
   },
@@ -3866,12 +3069,9 @@
     "correctAnswer": "46",
     "gmNote": "23 Paare — 22 Autosomen plus ein Geschlechtschromosomen-Paar.",
     "tagsSuggested": [
-      "46",
-      "Chromosomen",
-      "Körperzelle",
-      "Paare",
-      "Autosomen",
-      "Geschlechtschromosomen-Paar"
+      "Chromosom",
+      "Genetik",
+      "Mensch"
     ],
     "tags": []
   },
@@ -3883,13 +3083,9 @@
     "question": "Menschen nutzen nur etwa zehn Prozent ihres Gehirns.",
     "correctAnswer": false,
     "tagsSuggested": [
-      "Menschen",
-      "Prozent",
-      "Gehirns",
-      "Auch",
-      "Alltag",
-      "Hirnregionen",
-      "Mythos"
+      "Gehirn",
+      "Mythos",
+      "Neurologie"
     ],
     "tags": []
   },
@@ -3902,14 +3098,9 @@
     "correctAnswer": "elektromagnetische Kraft",
     "gmNote": "Die starke Kernkraft bindet die Quarks im Kern selbst. Für die Bindung der Elektronen ist die elektromagnetische Anziehung zuständig.",
     "tagsSuggested": [
-      "elektromagnetische Kraft",
-      "Kraft",
-      "Elektronen",
-      "Atom",
-      "Kern",
-      "Kernkraft",
-      "Quarks",
-      "Bindung"
+      "Elektromagnetismus",
+      "Physik",
+      "Atom"
     ],
     "tags": []
   },
@@ -3922,10 +3113,8 @@
     "correctAnswer": true,
     "tagsSuggested": [
       "Venus",
-      "Erdtage",
-      "Umdrehung",
-      "Sonne",
-      "Erdtagen"
+      "Planet",
+      "Astronomie"
     ],
     "tags": []
   },
@@ -3939,12 +3128,7 @@
     "tagsSuggested": [
       "Natrium",
       "Element",
-      "Periodensystem",
-      "Symbol",
-      "Na",
-      "Vom",
-      "Wasser",
-      "Chlor"
+      "Chemie"
     ],
     "tags": []
   },
@@ -3956,14 +3140,10 @@
     "question": "In welchen zwei Naturwissenschaften erhielt Marie Curie ihre Nobelpreise — bis heute einzigartig für eine Person?",
     "correctAnswer": "Physik und Chemie",
     "tagsSuggested": [
-      "Physik und Chemie",
-      "Naturwissenschaften",
       "Marie Curie",
-      "Nobelpreise",
-      "Person",
-      "1903",
-      "1911",
-      "Physik"
+      "Nobelpreis",
+      "Physik",
+      "Chemie"
     ],
     "tags": []
   },
@@ -3976,13 +3156,8 @@
     "correctAnswer": "Feinstrukturkonstante",
     "tagsSuggested": [
       "Feinstrukturkonstante",
-      "Konstante",
-      "Stärke",
-      "Wechselwirkung",
-      "Zivilisation",
-      "Zahlenwert",
-      "Wert",
-      "Rätsel"
+      "Physik",
+      "Elektromagnetismus"
     ],
     "tags": []
   },
@@ -3996,11 +3171,8 @@
     "gmNote": "Proxima Centauri, rund 4,24 Lichtjahre entfernt. Teil des Alpha-Centauri-Systems.",
     "tagsSuggested": [
       "Proxima Centauri",
-      "Stern",
-      "Sonne",
-      "Lichtjahre",
-      "Teil",
-      "Alpha-Centauri-Systems"
+      "Astronomie",
+      "Stern"
     ],
     "tags": []
   },
@@ -4015,9 +3187,7 @@
     "tagsSuggested": [
       "Wasserstoff",
       "Element",
-      "Universum",
-      "Masse",
-      "Helium"
+      "Kosmologie"
     ],
     "tags": []
   },
@@ -4031,10 +3201,8 @@
     "gmNote": "Verursacher der drei großen historischen Pest-Pandemien, u.a. des „Schwarzen Todes\" im 14. Jahrhundert.",
     "tagsSuggested": [
       "Pest",
-      "Bakterium Yersinia",
-      "Verursacher",
-      "Pest-Pandemien",
-      "Schwarzen Todes"
+      "Bakterium",
+      "Krankheit"
     ],
     "tags": []
   },
@@ -4046,11 +3214,9 @@
     "question": "Fledermäuse sind blind und orientieren sich ausschließlich per Echoortung.",
     "correctAnswer": false,
     "tagsSuggested": [
-      "Fledermäuse",
-      "Echoortung",
-      "Arten",
-      "Sicht",
-      "Nacht"
+      "Fledermaus",
+      "Echolokation",
+      "Mythos"
     ],
     "tags": []
   },
@@ -4063,14 +3229,9 @@
     "correctAnswer": "Alexander Fleming",
     "gmNote": "Fleming bemerkte, dass Schimmelpilzsporen (Penicillium) in einer Petrischale Bakterien abtöteten.",
     "tagsSuggested": [
-      "Alexander Fleming",
-      "1928",
-      "Antibiotika-Wirkung",
-      "Penicillins",
-      "Zufall",
+      "Penicillin",
       "Fleming",
-      "Schimmelpilzsporen",
-      "Penicillium"
+      "Antibiotikum"
     ],
     "tags": []
   },
@@ -4085,11 +3246,7 @@
     "tagsSuggested": [
       "Volt",
       "Spannung",
-      "1800",
-      "Benannt",
-      "Alessandro Volta",
-      "Erfinder",
-      "Batterie"
+      "Elektrizität"
     ],
     "tags": []
   },
@@ -4102,13 +3259,9 @@
     "correctAnswer": "Atomkerne",
     "gmNote": "Das Experiment 1911 zeigte, dass Atome einen kleinen, dichten positiv geladenen Kern haben.",
     "tagsSuggested": [
-      "Atomkerne",
-      "Ernest Rutherford",
-      "Streuexperiment",
-      "Goldfolie",
-      "1911",
-      "Atome",
-      "Kern"
+      "Rutherford",
+      "Atomkern",
+      "Streuexperiment"
     ],
     "tags": []
   },
@@ -4120,9 +3273,9 @@
     "question": "Ein Blitz schlägt nie zweimal an derselben Stelle ein.",
     "correctAnswer": false,
     "tagsSuggested": [
-      "Stelle",
-      "Hohe Gebäude",
-      "Empire State Building"
+      "Blitz",
+      "Wetter",
+      "Mythos"
     ],
     "tags": []
   },
@@ -4135,12 +3288,9 @@
     "correctAnswer": "Zweiter Hauptsatz der Thermodynamik",
     "gmNote": "Der zweite Hauptsatz erklärt, warum Wärme immer vom heißeren zum kälteren Körper fließt.",
     "tagsSuggested": [
-      "Zweiter Hauptsatz der Thermodynamik",
-      "System",
+      "Thermodynamik",
       "Entropie",
-      "Hauptsatz",
-      "Wärme",
-      "Körper"
+      "Physik"
     ],
     "tags": []
   },
@@ -4153,14 +3303,9 @@
     "correctAnswer": "Wasserstoff-1 und Deuterium",
     "gmNote": "99,98 % ist ¹H (Protium), ca. 0,02 % Deuterium (²H). Tritium ist radioaktiv und nur in Spuren vorhanden.",
     "tagsSuggested": [
-      "Wasserstoff-1 und Deuterium",
-      "Isotope",
-      "Löwenanteil",
-      "Wasserstoffs",
-      "Protium",
-      "Deuterium",
-      "Tritium",
-      "Spuren"
+      "Wasserstoff",
+      "Isotop",
+      "Deuterium"
     ],
     "tags": []
   },
@@ -4174,9 +3319,8 @@
     "gmNote": "H₂O — die Molekülform ist gewinkelt (~104,5°), nicht linear.",
     "tagsSuggested": [
       "Wasser",
-      "Wasserstoff",
-      "Sauerstoffatom",
-      "Molekülform"
+      "Chemie",
+      "Molekül"
     ],
     "tags": []
   },
@@ -4189,10 +3333,9 @@
     "correctAnswer": true,
     "gmNote": "Blitz kann kurzfristig ~30.000 °C erreichen, Sonnenoberfläche ~5.500 °C.",
     "tagsSuggested": [
-      "Oberfläche",
-      "Sonne",
       "Blitz",
-      "Sonnenoberfläche"
+      "Physik",
+      "Temperatur"
     ],
     "tags": []
   },
@@ -4205,11 +3348,9 @@
     "correctAnswer": true,
     "gmNote": "Die meisten sind 1-3 Milliarden Jahre alt und entstanden tief im Erdmantel.",
     "tagsSuggested": [
-      "Alle Diamanten",
-      "Erde",
-      "Milliarde Jahre",
-      "Milliarden Jahre",
-      "Erdmantel"
+      "Diamant",
+      "Geologie",
+      "Alter"
     ],
     "tags": []
   },
@@ -4222,9 +3363,8 @@
     "solution": "Bei Vollmond stehen Sonne, Erde und Mond fast in einer Linie. Wenn sie perfekt zusammenkommen, gibt es eine Mondfinsternis — die Erde wirft ihren Schatten auf den Mond. Normalerweise ist die Mondbahn aber leicht geneigt (5°) und der Mond fliegt am Erdschatten vorbei. Deswegen sind Mondfinsternisse nicht jeden Monat.",
     "tagsSuggested": [
       "Vollmond",
-      "Schatten",
-      "Erde",
-      "Mond"
+      "Mond",
+      "Astronomie"
     ],
     "tags": []
   },
@@ -4236,8 +3376,9 @@
     "question": "Warum ist ein trockener Baumstamm besser als Feuerholz als ein frisch geschlagener?",
     "solution": "Frisches Holz enthält 30-60 % Wasser. Beim Anzünden muss diese Feuchtigkeit zuerst verdampfen — das verbraucht enorm viel Energie und kühlt das Feuer ab. Deswegen brennen nasse Scheite schlecht, qualmen viel und geben wenig Wärme ab. Trockenes Holz (unter ~20 % Feuchte) brennt heißer, sauberer und effizienter.",
     "tagsSuggested": [
-      "Baumstamm",
-      "Feuerholz"
+      "Feuer",
+      "Holz",
+      "Verbrennung"
     ],
     "tags": []
   },
@@ -4250,13 +3391,8 @@
     "correctAnswer": true,
     "tagsSuggested": [
       "Licht",
-      "Medium",
-      "Wasser",
-      "Glas",
-      "Vakuum",
-      "Vakuumgeschwindigkeit",
-      "Diamant",
-      "Deshalb"
+      "Optik",
+      "Physik"
     ],
     "tags": []
   }
