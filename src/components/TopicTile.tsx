@@ -9,7 +9,7 @@
  * Die Emoji-Ankertypografie ist bewusst dezent gehalten (Guardrail: „keine Clipart").
  */
 
-import type { TopicDef } from '@/data/topics'
+import type { TopicDef } from '@quizapp/shared'
 import { cn } from '@/lib/classnames'
 
 interface Props {

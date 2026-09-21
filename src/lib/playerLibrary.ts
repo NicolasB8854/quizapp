@@ -14,7 +14,7 @@
  * deaktiviertem localStorage arbeitet die App weiter, aber ohne Bibliothek.
  */
 
-import type { Avatar, Player, PlayerInterest } from '@/types/round'
+import type { Avatar, Player, PlayerInterest } from '@quizapp/shared'
 
 const STORAGE_KEY = 'quizapp:playerLibrary'
 /** Obergrenze, damit die Bibliothek nicht unkontrolliert wächst. */

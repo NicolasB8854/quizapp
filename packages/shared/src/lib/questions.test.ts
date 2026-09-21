@@ -11,8 +11,8 @@ import {
   pickTrueFalse,
   pickWarmupRiddle,
 } from './questions'
-import type { Difficulty, Topic } from '@/types/question'
-import type { SkillLevel } from '@/types/round'
+import type { Difficulty, Topic } from '../types/question'
+import type { SkillLevel } from '../types/round'
 
 describe('questions', () => {
   beforeEach(() => {

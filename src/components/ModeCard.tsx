@@ -10,10 +10,10 @@
  * präsent, aber nicht anklickbar und bekommt einen „Bald verfügbar"-Chip.
  */
 
-import type { GameMode, ModeAccent } from '@/types/round'
+import type { GameMode, ModeAccent } from '@quizapp/shared'
 import { ArrowRight, Check, Sparkles } from 'lucide-react'
 import { cn } from '@/lib/classnames'
-import { ACCENT_HEX } from '@/data/modes'
+import { ACCENT_HEX } from '@quizapp/shared'
 
 interface Props {
   mode: GameMode

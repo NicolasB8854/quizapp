@@ -3,7 +3,7 @@ import {
   aggregatePlayerInterests,
   computeInterestProfile,
 } from './interestProfile'
-import type { Player, SkillLevel } from '@/types/round'
+import type { Player, SkillLevel } from '../types/round'
 
 function player(id: string, teamId: string, interests: Array<[string, SkillLevel]>): Player {
   return {

@@ -4,6 +4,10 @@
   "version": "0.1.0",
   "type": "module",
   "description": "Modularer Quizabend-Baukasten – Show-Runner-App für Freundes-Runden",
+  "workspaces": [
+    "packages/shared",
+    "server"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

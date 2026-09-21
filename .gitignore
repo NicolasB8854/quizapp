@@ -53,6 +53,7 @@ server/dist/
 # Terraform
 infra/.terraform/
 infra/.terraform.lock.hcl.backup
+infra/.build/
 *.tfstate
 *.tfstate.*
 *.tfvars

@@ -18,13 +18,13 @@ import { Button } from '@/components/Button'
 import { Card } from '@/components/Card'
 import { Badge } from '@/components/Badge'
 import { ModeCard } from '@/components/ModeCard'
-import { MODES } from '@/data/modes'
+import { MODES } from '@quizapp/shared'
 import {
   MAX_TEAMS,
   MIN_TEAMS,
   getTeamColorTokens,
-} from '@/data/teams'
-import type { TeamColor } from '@/types/round'
+} from '@quizapp/shared'
+import type { TeamColor } from '@quizapp/shared'
 import { useGame } from '@/context/GameContext'
 import { cn } from '@/lib/classnames'
 

@@ -10,7 +10,7 @@
  * Farb-Default für einen neuen Spieler-Slot.
  */
 
-import type { Avatar } from '@/types/round'
+import type { Avatar } from '../types/round'
 
 export const AVATAR_COLORS: readonly string[] = [
   '#7C5CFF', // brand.purple

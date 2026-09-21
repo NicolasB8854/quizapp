@@ -31,12 +31,12 @@ import {
   useElimination,
   useExperts,
 } from '@/context/GameContext'
-import { TOPICS, TOPICS_BY_ID } from '@/data/topics'
-import { MODES_BY_ID } from '@/data/modes'
-import { getNextTeamId, getTeamColorHex, getTeamColorTokens } from '@/data/teams'
-import type { Player, Team } from '@/types/round'
+import { TOPICS, TOPICS_BY_ID } from '@quizapp/shared'
+import { MODES_BY_ID } from '@quizapp/shared'
+import { getNextTeamId, getTeamColorHex, getTeamColorTokens } from '@quizapp/shared'
+import type { Player, Team } from '@quizapp/shared'
 import { AvatarBadge } from '@/components/AvatarBadge'
-import type { TrueFalseQuestion } from '@/types/question'
+import type { TrueFalseQuestion } from '@quizapp/shared'
 import { cn } from '@/lib/classnames'
 
 const LETTERS = ['A', 'B', 'C', 'D']
@@ -762,7 +762,7 @@ function SpotlightStage() {
 }
 
 interface SpotlightRevealProps {
-  question: import('@/types/question').MultipleChoiceQuestion
+  question: import('@quizapp/shared').MultipleChoiceQuestion
   correctOption: string
   primaryOutcome: 'correct' | 'wrong' | null
   stealOutcome: 'correct' | 'wrong' | null
@@ -1382,7 +1382,7 @@ function LadderTeamPanel({
 }
 
 interface LadderRevealProps {
-  question: import('@/types/question').MultipleChoiceQuestion
+  question: import('@quizapp/shared').MultipleChoiceQuestion
   correctOption: string
   teams: Team[]
   teamAnswers: Record<string, number | null>
@@ -1723,7 +1723,7 @@ function CategoryBoardStage() {
 }
 
 interface BoardRevealProps {
-  question: import('@/types/question').MultipleChoiceQuestion
+  question: import('@quizapp/shared').MultipleChoiceQuestion
   correctOption: string
   primaryOutcome: 'correct' | 'wrong' | null
   stealOutcome: 'correct' | 'wrong' | null
@@ -2247,7 +2247,7 @@ function EliminationRing({
 }
 
 interface EliminationRevealProps {
-  question: import('@/types/question').MultipleChoiceQuestion
+  question: import('@quizapp/shared').MultipleChoiceQuestion
   correctOption: string
   outcome: 'correct' | 'wrong' | null
   activeName: string

@@ -11,7 +11,7 @@ import {
   getTeamColorTokens,
   makeDefaultTeam,
 } from './teams'
-import type { Team, TeamColor } from '@/types/round'
+import type { Team, TeamColor } from '../types/round'
 
 /**
  * Unit-Tests für die Team-Palette und Rotations-Helpers (Session R).

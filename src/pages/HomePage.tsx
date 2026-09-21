@@ -14,7 +14,7 @@ import { Link } from 'react-router-dom'
 import { Play, LogIn, Users, Wifi, Sparkles, Info, Settings } from 'lucide-react'
 import { ScreenLayout } from '@/components/ScreenLayout'
 import { ModeCard } from '@/components/ModeCard'
-import { MODES } from '@/data/modes'
+import { MODES } from '@quizapp/shared'
 import { cn } from '@/lib/classnames'
 
 export default function HomePage() {

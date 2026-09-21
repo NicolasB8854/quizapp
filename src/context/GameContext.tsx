@@ -32,34 +32,34 @@ import type {
   RoundConfig,
   Team,
   TeamColor,
-} from '@/types/round'
+} from '@quizapp/shared'
 import type {
   MultipleChoiceQuestion,
   Topic,
   TrueFalseQuestion,
   WarmupRiddleQuestion,
-} from '@/types/question'
-import { MODES_BY_ID } from '@/data/modes'
+} from '@quizapp/shared'
+import { MODES_BY_ID } from '@quizapp/shared'
 import {
   pickAnyMultipleChoice,
   pickQuestion,
   pickTrueFalse,
   pickWarmupRiddle,
-} from '@/lib/questions'
+} from '@quizapp/shared'
 import { markQuestionsAsked, readAskedQuestionIds } from '@/lib/questionHistory'
 import {
   aggregatePlayerInterests,
   computeInterestProfile,
-} from '@/lib/interestProfile'
-import { generateRoomCode } from '@/lib/roomCode'
-import { shuffleWithMapping } from '@/lib/shuffle'
-import { getDefaultAvatar } from '@/data/avatars'
+} from '@quizapp/shared'
+import { generateRoomCode } from '@quizapp/shared'
+import { shuffleWithMapping } from '@quizapp/shared'
+import { getDefaultAvatar } from '@quizapp/shared'
 import {
   MAX_TEAMS,
   MIN_TEAMS,
   getNextTeamId,
   makeDefaultTeam,
-} from '@/data/teams'
+} from '@quizapp/shared'
 import {
   saveToPlayerLibrary,
   type PlayerProfile,

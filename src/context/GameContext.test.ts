@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { INITIAL_STATE, reducer, type GameState } from './GameContext'
-import { getMultipleChoiceByTopic, getTrueFalsePool } from '@/lib/questions'
-import type { SkillLevel } from '@/types/round'
+import { getMultipleChoiceByTopic, getTrueFalsePool } from '@quizapp/shared'
+import type { SkillLevel } from '@quizapp/shared'
 
 /**
  * Reducer-Tests. Der Reducer ist die zentrale Wahrheitsquelle für Spielzustand;

@@ -14,8 +14,8 @@
  * ist die reichere Sicht.
  */
 
-import type { Topic } from '@/types/question'
-import type { Player, SkillLevel } from '@/types/round'
+import type { Topic } from '../types/question'
+import type { Player, SkillLevel } from '../types/round'
 
 /**
  * Höheren SkillLevel gewinnen lassen. Session X: SkillLevel ist numerisch 1-5,

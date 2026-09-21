@@ -5,7 +5,7 @@
  * Wiedererkennungs-Anker in den Grid-Kacheln (dezent eingesetzt, keine Clipart-Optik).
  */
 
-import type { Topic } from '@/types/question'
+import type { Topic } from '../types/question'
 
 export interface TopicDef {
   id: Topic

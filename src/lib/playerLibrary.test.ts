@@ -5,7 +5,7 @@ import {
   removeFromPlayerLibrary,
   saveToPlayerLibrary,
 } from './playerLibrary'
-import type { Player } from '@/types/round'
+import type { Player } from '@quizapp/shared'
 
 function player(id: string, name: string, extras: Partial<Player> = {}): Player {
   return {

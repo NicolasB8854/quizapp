@@ -10,7 +10,7 @@
  * Präferenz per Skill-Level: `nerd` bekommt schwerere Fragen, `bisschen` leichtere.
  */
 
-import rawQuestions from '@/data/questions.json'
+import rawQuestions from '../data/questions.json'
 import type {
   Difficulty,
   MultipleChoiceQuestion,
@@ -18,8 +18,8 @@ import type {
   Topic,
   TrueFalseQuestion,
   WarmupRiddleQuestion,
-} from '@/types/question'
-import type { SkillLevel } from '@/types/round'
+} from '../types/question'
+import type { SkillLevel } from '../types/round'
 import { normalizeTag, type InterestProfile } from './interestProfile'
 
 // JSON-Import ist untypisiert — hier einmal narrowen.

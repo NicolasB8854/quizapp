@@ -17,8 +17,8 @@ import { Button } from '@/components/Button'
 import { Card } from '@/components/Card'
 import { Badge } from '@/components/Badge'
 import { useGame } from '@/context/GameContext'
-import { MODES_BY_ID } from '@/data/modes'
-import { getTeamColorTokens } from '@/data/teams'
+import { MODES_BY_ID } from '@quizapp/shared'
+import { getTeamColorTokens } from '@quizapp/shared'
 import { cn } from '@/lib/classnames'
 
 export default function ScoreboardPage() {

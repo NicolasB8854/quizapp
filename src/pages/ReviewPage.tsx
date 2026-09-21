@@ -20,9 +20,9 @@ import { ScreenLayout } from '@/components/ScreenLayout'
 import { Button } from '@/components/Button'
 import { Card } from '@/components/Card'
 import { Badge } from '@/components/Badge'
-import { getAllQuestions } from '@/lib/questions'
-import { TOPICS_BY_ID } from '@/data/topics'
-import type { Difficulty, Question, QuestionType, Topic } from '@/types/question'
+import { getAllQuestions } from '@quizapp/shared'
+import { TOPICS_BY_ID } from '@quizapp/shared'
+import type { Difficulty, Question, QuestionType, Topic } from '@quizapp/shared'
 import { cn } from '@/lib/classnames'
 
 // UI-Helper: alle möglichen Difficulty-Stufen (1-5) und Frage-Typen

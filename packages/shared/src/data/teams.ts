@@ -9,7 +9,7 @@
  * inline `color === 'purple' ? '#7C5CFF' : '#27D8FF'`-Checks im UI-Code.
  */
 
-import type { Team, TeamColor } from '@/types/round'
+import type { Team, TeamColor } from '../types/round'
 
 export const MIN_TEAMS = 2
 export const MAX_TEAMS = 4

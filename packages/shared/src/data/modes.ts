@@ -9,7 +9,7 @@
  * Modus-Auswahl visuell bereits komplett ist.
  */
 
-import type { GameMode } from '@/types/round'
+import type { GameMode } from '../types/round'
 
 export const MODES: GameMode[] = [
   {

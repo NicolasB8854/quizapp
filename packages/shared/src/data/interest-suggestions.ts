@@ -15,7 +15,7 @@
  * Reihenfolge = grobe Relevanz für Deutschsprachige (Fußball vor Cricket etc.).
  */
 
-import type { Topic } from '@/types/question'
+import type { Topic } from '../types/question'
 
 export const INTEREST_SUGGESTIONS: Record<Topic, readonly string[]> = {
   film: [

@@ -7,8 +7,8 @@
  */
 
 import { useEffect, useRef, useState } from 'react'
-import type { Team } from '@/types/round'
-import { getTeamColorTokens } from '@/data/teams'
+import type { Team } from '@quizapp/shared'
+import { getTeamColorTokens } from '@quizapp/shared'
 import { cn } from '@/lib/classnames'
 
 interface Props {

@@ -13,7 +13,7 @@
  */
 
 import { User } from 'lucide-react'
-import type { Avatar } from '@/types/round'
+import type { Avatar } from '@quizapp/shared'
 import { cn } from '@/lib/classnames'
 
 type Size = 'sm' | 'md' | 'lg' | 'xl'

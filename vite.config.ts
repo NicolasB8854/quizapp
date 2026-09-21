@@ -16,7 +16,11 @@ export default defineConfig({
   },
   test: {
     environment: 'jsdom',
-    include: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
+    include: [
+      'src/**/*.test.ts',
+      'src/**/*.test.tsx',
+      'packages/shared/src/**/*.test.ts',
+    ],
     globals: false,
     // Reset localStorage/session-state zwischen Tests, damit questionHistory
     // sich nicht durch die Testreihen zieht.
