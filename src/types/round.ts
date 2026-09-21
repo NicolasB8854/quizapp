@@ -85,14 +85,19 @@ export interface Avatar {
 /**
  * Spieler-Entität für die Personalisierung (siehe konzept-v2.md, Kapitel 2c und 8).
  *
- * Zuordnung zu einem Team über `teamId`. `name` kann leer sein — die UI zeigt dann
- * einen Platzhalter („Spieler 1"). `interests` sind die selbstgewählten Topics mit
- * ihrer Selbsteinschätzung; leere Liste = keine Präferenz.
+ * `teamId` ist optional (`null` = im Wartebereich/Pool): der neue Roster-Flow
+ * (Session S) erstellt Player erst ohne Team; die Zuordnung passiert per
+ * Shuffle oder Drag-and-Drop nach der Interessen-Erfassung. Beim Start eines
+ * Spiels muss jeder Player einem Team zugeordnet sein (Reducer-Guard).
+ *
+ * `name` kann leer sein — die UI zeigt dann einen Platzhalter („Spieler 1").
+ * `interests` sind die selbstgewählten Topics mit ihrer Selbsteinschätzung;
+ * leere Liste = keine Präferenz.
  */
 export interface Player {
   id: string
   name: string
-  teamId: string
+  teamId: string | null
   interests: PlayerInterest[]
   avatar: Avatar
 }

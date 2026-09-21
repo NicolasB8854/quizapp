@@ -635,6 +635,8 @@ function SpotlightStage() {
   const team = state.round.teams.find((t) => t.id === player.teamId)!
   // Steal-Rotation muss zum Reducer passen: bei 2 Teams das eine Gegenteam,
   // bei 3+ Teams das nächste in der Team-Rotation (siehe getNextTeamId).
+  // Im Playing sind Player garantiert einem Team zugeordnet (START_PLAYING-Guard).
+  if (player.teamId === null) return null
   const opponentId = getNextTeamId(state.round.teams, player.teamId)
   const opponent = state.round.teams.find((t) => t.id === opponentId)!
   const topic = TOPICS_BY_ID[spot.activeTopic]
@@ -2437,10 +2439,11 @@ function ExpertsStage() {
   // Frage-Phasen.
   if (!experts.activePlayerId || !experts.activeQuestion) return null
   const activePlayer = state.round.players.find((p) => p.id === experts.activePlayerId)
-  if (!activePlayer) return null
-  const activeTeam = teams.find((t) => t.id === activePlayer.teamId)!
+  if (!activePlayer || activePlayer.teamId === null) return null
+  const activeTeamId = activePlayer.teamId
+  const activeTeam = teams.find((t) => t.id === activeTeamId)!
   // Steal-Rotation muss zum Reducer passen (siehe EXPERTS_STEAL_ANSWER + getNextTeamId).
-  const opponent = teams.find((t) => t.id === getNextTeamId(teams, activePlayer.teamId))!
+  const opponent = teams.find((t) => t.id === getNextTeamId(teams, activeTeamId))!
   const topicId = experts.expertise[experts.activePlayerId]!
   const topicDef = TOPICS_BY_ID[topicId]
   const teamHex = getTeamColorHex(activeTeam.color)

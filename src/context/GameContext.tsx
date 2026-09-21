@@ -333,6 +333,19 @@ export interface Draft {
 
 // ---------- State-Shape -------------------------------------------------------
 
+/**
+ * Sub-Phasen innerhalb von `phase: 'lobby'` (Session S).
+ *
+ * Der Lobby-Flow ist jetzt sequenziell:
+ *  1. `roster`  — Spieler erfassen (Name/Avatar/Interessen), noch ohne Team.
+ *  2. `assign`  — Spieler auf Teams verteilen (Shuffle oder Drag-and-Drop).
+ *  3. `ready`   — Team-Ready-Karten + Start-CTA (das alte Lobby-UI).
+ *
+ * Außerhalb von `phase: 'lobby'` ist der Wert bedeutungslos, wir setzen ihn
+ * beim Übergang. Der Master kann per LOBBY_BACK zurückspringen.
+ */
+export type LobbyStep = 'roster' | 'assign' | 'ready'
+
 export interface GameState {
   phase: Phase
   draft: Draft
@@ -341,6 +354,7 @@ export interface GameState {
   matchPoints: Record<string, number>
   currentModeIndex: number
   live: LiveGame | null
+  lobbyStep: LobbyStep
 }
 
 // ---------- Actions -----------------------------------------------------------
@@ -387,13 +401,18 @@ export type GameAction =
   | { type: 'EXPERTS_MARK_PRIMARY'; outcome: 'correct' | 'wrong' | 'timeout' }
   | { type: 'EXPERTS_STEAL_ANSWER'; renderedIndex: number }
   | { type: 'EXPERTS_NEXT' }
-  | { type: 'ADD_PLAYER'; teamId: string }
+  | { type: 'ADD_PLAYER'; teamId: string | null }
   | { type: 'REMOVE_PLAYER'; playerId: string }
   | { type: 'SET_PLAYER_NAME'; playerId: string; name: string }
   | { type: 'SET_PLAYER_INTERESTS'; playerId: string; interests: PlayerInterest[] }
   | { type: 'SET_PLAYER_AVATAR'; playerId: string; avatar: Avatar }
-  | { type: 'ADD_PLAYER_FROM_LIBRARY'; teamId: string; profile: PlayerProfile }
+  | { type: 'ADD_PLAYER_FROM_LIBRARY'; teamId: string | null; profile: PlayerProfile }
   | { type: 'REPLACE_PLAYER_FROM_LIBRARY'; playerId: string; profile: PlayerProfile }
+  // Session S — Team-Zuweisungs-Flow:
+  | { type: 'LOBBY_ADVANCE' }
+  | { type: 'LOBBY_BACK' }
+  | { type: 'SHUFFLE_PLAYERS' }
+  | { type: 'MOVE_PLAYER_TO_TEAM'; playerId: string; teamId: string | null }
   | { type: 'FINISH_MODE' }
   | { type: 'BACK_TO_SETUP' }
   | { type: 'RESET_ALL' }
@@ -413,6 +432,7 @@ export const INITIAL_STATE: GameState = {
   matchPoints: {},
   currentModeIndex: 0,
   live: null,
+  lobbyStep: 'roster',
 }
 
 // ---------- Helper: Player-Handling ------------------------------------------
@@ -429,25 +449,32 @@ function newPlayerId(): string {
   return `player-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
 }
 
+/**
+ * Erzeugt Default-Player im Pool (teamId = null). Ab Session S werden Spieler
+ * erst im Roster-Schritt erfasst und im Assign-Schritt auf Teams verteilt —
+ * beim GO_TO_LOBBY existiert also noch keine Team-Zuordnung.
+ *
+ * Wir starten mit `teams.length * DEFAULT_PLAYERS_PER_TEAM` Slots. Das ist die
+ * gleiche Gesamtzahl wie im alten Flow (bei 2 Teams: 4 Slots), nur eben ohne
+ * feste Zuweisung. Der Master kann Slots im Roster-Schritt hinzufügen oder
+ * entfernen.
+ */
 function makeDefaultPlayers(teams: Team[]): Player[] {
+  const totalSlots = teams.length * DEFAULT_PLAYERS_PER_TEAM
   const players: Player[] = []
-  let slotIndex = 0
-  for (const team of teams) {
-    for (let i = 0; i < DEFAULT_PLAYERS_PER_TEAM; i++) {
-      players.push({
-        id: newPlayerId(),
-        name: '',
-        teamId: team.id,
-        interests: [],
-        avatar: getDefaultAvatar(slotIndex),
-      })
-      slotIndex++
-    }
+  for (let i = 0; i < totalSlots; i++) {
+    players.push({
+      id: newPlayerId(),
+      name: '',
+      teamId: null,
+      interests: [],
+      avatar: getDefaultAvatar(i),
+    })
   }
   return players
 }
 
-function countPlayersInTeam(players: readonly Player[], teamId: string): number {
+function countPlayersInTeam(players: readonly Player[], teamId: string | null): number {
   let n = 0
   for (const p of players) if (p.teamId === teamId) n += 1
   return n
@@ -1108,6 +1135,8 @@ export function reducer(state: GameState, action: GameAction): GameState {
         name: t.name.trim() || makeDefaultTeam(i).name,
         color: t.color,
       }))
+      // Session S: Default-Player landen im Pool (teamId = null). Der Assign-Schritt
+      // verteilt sie später via Shuffle oder Drag-and-Drop.
       const players = makeDefaultPlayers(teams)
       const round: RoundConfig = {
         id: `round-${Date.now()}`,
@@ -1123,6 +1152,7 @@ export function reducer(state: GameState, action: GameAction): GameState {
       return {
         ...state,
         phase: 'lobby',
+        lobbyStep: 'roster',
         round,
         results: [],
         matchPoints: Object.fromEntries(teams.map((t) => [t.id, 0])),
@@ -1133,14 +1163,104 @@ export function reducer(state: GameState, action: GameAction): GameState {
 
     case 'START_PLAYING': {
       if (!state.round) return state
+      // Session S: Player müssen alle einem Team zugeordnet sein. Sonst schweigt der
+      // Reducer — das UI ist dafür verantwortlich, den Start-CTA zu sperren.
+      const anyUnassigned = state.round.players.some((p) => p.teamId === null)
+      if (anyUnassigned) return state
       const firstModeId = state.round.gameModes[0]
       const live = initLiveFor(firstModeId, state.round.teams, state.round.players)
       return { ...state, phase: 'playing', currentModeIndex: 0, live }
     }
 
+    case 'LOBBY_ADVANCE': {
+      if (state.phase !== 'lobby' || !state.round) return state
+      if (state.lobbyStep === 'roster') {
+        // Weiter in den Assign-Schritt.
+        return { ...state, lobbyStep: 'assign' }
+      }
+      if (state.lobbyStep === 'assign') {
+        // Nur weiter, wenn alle Player einem Team zugeordnet sind.
+        const allAssigned = state.round.players.every((p) => p.teamId !== null)
+        if (!allAssigned) return state
+        return { ...state, lobbyStep: 'ready' }
+      }
+      return state
+    }
+
+    case 'LOBBY_BACK': {
+      if (state.phase !== 'lobby') return state
+      if (state.lobbyStep === 'assign')  return { ...state, lobbyStep: 'roster' }
+      if (state.lobbyStep === 'ready')   return { ...state, lobbyStep: 'assign' }
+      return state
+    }
+
+    case 'SHUFFLE_PLAYERS': {
+      if (!state.round || state.phase !== 'lobby') return state
+      // Alle Player werden gemischt und der Reihe nach auf Teams verteilt
+      // (Round-Robin). Damit sind Team-Größen möglichst gleich (±1 Spieler).
+      const players = [...state.round.players]
+      // Fisher-Yates-Shuffle. Math.random ist in Tests fixiert → deterministisch.
+      for (let i = players.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1))
+        ;[players[i], players[j]] = [players[j], players[i]]
+      }
+      const teams = state.round.teams
+      if (teams.length === 0) return state
+      const shuffledPlayers = players.map((p, idx) => ({
+        ...p,
+        teamId: teams[idx % teams.length].id,
+      }))
+      return {
+        ...state,
+        round: {
+          ...state.round,
+          players: shuffledPlayers,
+          interests: aggregatePlayerInterests(shuffledPlayers),
+        },
+      }
+    }
+
+    case 'MOVE_PLAYER_TO_TEAM': {
+      if (!state.round || state.phase !== 'lobby') return state
+      const target = state.round.players.find((p) => p.id === action.playerId)
+      if (!target) return state
+      // Kein No-op-Aufruf (spart eine State-Kopie beim Drag zurück aufs eigene Team).
+      if (target.teamId === action.teamId) return state
+      // Ziel-Team validieren (null = Pool ist immer erlaubt).
+      if (
+        action.teamId !== null &&
+        !state.round.teams.some((t) => t.id === action.teamId)
+      ) {
+        return state
+      }
+      // Ziel-Team hat Kapazitäts-Limit — Pool nicht.
+      if (
+        action.teamId !== null &&
+        countPlayersInTeam(state.round.players, action.teamId) >= MAX_PLAYERS_PER_TEAM
+      ) {
+        return state
+      }
+      const players = state.round.players.map((p) =>
+        p.id === action.playerId ? { ...p, teamId: action.teamId } : p,
+      )
+      return {
+        ...state,
+        round: {
+          ...state.round,
+          players,
+          interests: aggregatePlayerInterests(players),
+        },
+      }
+    }
+
     case 'ADD_PLAYER': {
       if (!state.round || state.phase !== 'lobby') return state
-      if (countPlayersInTeam(state.round.players, action.teamId) >= MAX_PLAYERS_PER_TEAM) {
+      // Team-Slots haben ein Cap; der Pool (teamId=null) hat effektiv ein Cap
+      // von MAX_TEAMS × MAX_PLAYERS_PER_TEAM (16), das reicht immer.
+      if (
+        action.teamId !== null &&
+        countPlayersInTeam(state.round.players, action.teamId) >= MAX_PLAYERS_PER_TEAM
+      ) {
         return state
       }
       const newPlayer: Player = {
@@ -1165,7 +1285,10 @@ export function reducer(state: GameState, action: GameAction): GameState {
       if (!state.round || state.phase !== 'lobby') return state
       const target = state.round.players.find((p) => p.id === action.playerId)
       if (!target) return state
+      // Pool-Player können immer entfernt werden. Team-Player nur, wenn das Team
+      // danach noch MIN_PLAYERS_PER_TEAM erfüllt (nur relevant im Ready-Schritt).
       if (
+        target.teamId !== null &&
         countPlayersInTeam(state.round.players, target.teamId) <= MIN_PLAYERS_PER_TEAM
       ) {
         return state
@@ -1219,7 +1342,11 @@ export function reducer(state: GameState, action: GameAction): GameState {
 
     case 'ADD_PLAYER_FROM_LIBRARY': {
       if (!state.round || state.phase !== 'lobby') return state
-      if (countPlayersInTeam(state.round.players, action.teamId) >= MAX_PLAYERS_PER_TEAM) {
+      // Team-Cap gilt nur bei tatsächlicher Team-Zuordnung; Pool-Adds sind frei.
+      if (
+        action.teamId !== null &&
+        countPlayersInTeam(state.round.players, action.teamId) >= MAX_PLAYERS_PER_TEAM
+      ) {
         return state
       }
       // Verhindern, dass das gleiche Profil doppelt zur Runde hinzugefügt wird.
@@ -1414,12 +1541,13 @@ export function reducer(state: GameState, action: GameAction): GameState {
       const live = state.live
       if (live.phase !== 'primary') return state
       const player = state.round.players.find((p) => p.id === live.activePlayerId)
-      if (!player) return state
+      if (!player || player.teamId === null) return state
+      const primaryTeamId = player.teamId
 
       if (action.outcome === 'correct') {
         const scores = {
           ...live.scores,
-          [player.teamId]: live.scores[player.teamId] + live.pointsPerCorrect,
+          [primaryTeamId]: live.scores[primaryTeamId] + live.pointsPerCorrect,
         }
         return {
           ...state,
@@ -1448,7 +1576,7 @@ export function reducer(state: GameState, action: GameAction): GameState {
       const live = state.live
       if (live.phase !== 'steal') return state
       const player = state.round.players.find((p) => p.id === live.activePlayerId)
-      if (!player) return state
+      if (!player || player.teamId === null) return state
       // Bei 2 Teams: automatisch das eine Gegenteam. Bei 3+ Teams: deterministisch
       // das nächste Team in der Rotation (fair über die Runden).
       const opponentId = getNextTeamId(state.round.teams, player.teamId)
@@ -1678,12 +1806,13 @@ export function reducer(state: GameState, action: GameAction): GameState {
       const live = state.live
       if (live.phase !== 'primary' || !live.activePlayerId) return state
       const player = state.round.players.find((p) => p.id === live.activePlayerId)
-      if (!player) return state
+      if (!player || player.teamId === null) return state
+      const primaryTeamId = player.teamId
 
       if (action.outcome === 'correct') {
         const scores = {
           ...live.scores,
-          [player.teamId]: (live.scores[player.teamId] ?? 0) + live.pointsPerCorrect,
+          [primaryTeamId]: (live.scores[primaryTeamId] ?? 0) + live.pointsPerCorrect,
         }
         return {
           ...state,
@@ -1713,7 +1842,7 @@ export function reducer(state: GameState, action: GameAction): GameState {
       const live = state.live
       if (live.phase !== 'steal-answer' || !live.activePlayerId) return state
       const player = state.round.players.find((p) => p.id === live.activePlayerId)
-      if (!player) return state
+      if (!player || player.teamId === null) return state
       // Steal-Rotation: bei 2 Teams das eine Gegenteam, bei 3+ das nächste in der Reihenfolge.
       const opponentId = getNextTeamId(state.round.teams, player.teamId)
       const opponent = opponentId ? state.round.teams.find((t) => t.id === opponentId) : null
@@ -1804,12 +1933,13 @@ export function reducer(state: GameState, action: GameAction): GameState {
       const live = state.live
       if (live.phase !== 'answering' || !live.activePlayerId || !live.activeQuestion) return state
       const activePlayer = state.round.players.find((p) => p.id === live.activePlayerId)
-      if (!activePlayer) return state
+      if (!activePlayer || activePlayer.teamId === null) return state
+      const activeTeamId = activePlayer.teamId
       const wasCorrect = action.renderedIndex === live.correctRenderedIndex
       const nextScores = wasCorrect
         ? {
             ...live.scores,
-            [activePlayer.teamId]: (live.scores[activePlayer.teamId] ?? 0) + live.pointsPerCorrect,
+            [activeTeamId]: (live.scores[activeTeamId] ?? 0) + live.pointsPerCorrect,
           }
         : live.scores
       return {

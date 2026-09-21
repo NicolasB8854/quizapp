@@ -18,10 +18,37 @@ beforeEach(() => {
 })
 
 // Kleiner Helper: Setup → Lobby → Playing für einen bestimmten Modus.
+/**
+ * Verteilt alle Pool-Player (teamId=null) blockweise auf die Teams: die ersten
+ * `perTeam` Player kommen in Team 0, die nächsten in Team 1, usw. Deterministisch
+ * und positional-stabil.
+ *
+ * Nutzen wir in Test-Boot-Helpern, damit die Zuordnung stabil ist und Assertions
+ * auf `p.teamId === 'team-a'` verlässlich funktionieren — inklusive der
+ * bestehenden Session-G-Tests, die davon ausgehen, dass Player[0..1] Team A sind.
+ */
+function assignPoolRoundRobin(state: GameState): GameState {
+  if (!state.round) return state
+  const teams = state.round.teams
+  if (teams.length === 0) return state
+  const perTeam = Math.ceil(state.round.players.length / teams.length)
+  let s = state
+  state.round.players.forEach((p, i) => {
+    if (p.teamId !== null) return
+    const teamIdx = Math.min(Math.floor(i / perTeam), teams.length - 1)
+    const teamId = teams[teamIdx].id
+    s = reducer(s, { type: 'MOVE_PLAYER_TO_TEAM', playerId: p.id, teamId })
+  })
+  return s
+}
+
 function bootIntoPlaying(modeId: 'category-duel' | 'flash'): GameState {
   let state = INITIAL_STATE
   state = reducer(state, { type: 'SET_MODE_SELECTION', modeIds: [modeId] })
   state = reducer(state, { type: 'GO_TO_LOBBY' })
+  // Session S: Pool-Player round-robin auf die Teams verteilen, sonst greift der
+  // START_PLAYING-Guard.
+  state = assignPoolRoundRobin(state)
   state = reducer(state, { type: 'START_PLAYING' })
   return state
 }
@@ -280,6 +307,7 @@ describe('reducer — Match-Tracker über mehrere Modi', () => {
       modeIds: ['category-duel', 'flash'],
     })
     s = reducer(s, { type: 'GO_TO_LOBBY' })
+    s = assignPoolRoundRobin(s)
     s = reducer(s, { type: 'START_PLAYING' })
 
     expect(s.currentModeIndex).toBe(0)
@@ -333,18 +361,18 @@ describe('reducer — Utility-Actions', () => {
 const gut = (topic: string) => ({ topic: topic as never, level: 'gut' as const })
 
 describe('reducer — Player-Ebene (Session D + E)', () => {
-  it('GO_TO_LOBBY legt pro Team zwei Default-Player mit leeren Interessen an', () => {
+  it('GO_TO_LOBBY legt Default-Player im Pool an (Session S: teamId=null bis Assign)', () => {
     const s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    // 2 Teams × 2 Default-Slots = 4 Player im Pool.
     expect(s.round?.players).toHaveLength(4)
-    const perTeam = new Map<string, number>()
     for (const p of s.round!.players) {
-      perTeam.set(p.teamId, (perTeam.get(p.teamId) ?? 0) + 1)
+      expect(p.teamId).toBeNull()
       expect(p.name).toBe('')
       expect(p.interests).toEqual([])
     }
-    expect(perTeam.get('team-a')).toBe(2)
-    expect(perTeam.get('team-b')).toBe(2)
     expect(s.round?.interests).toEqual([])
+    // Lobby-Schritt startet immer im Roster.
+    expect(s.lobbyStep).toBe('roster')
   })
 
   it('SET_PLAYER_INTERESTS setzt Spieler-Interessen und aggregiert round.interests', () => {
@@ -411,6 +439,7 @@ describe('reducer — Player-Ebene (Session D + E)', () => {
 
   it('ADD_PLAYER fügt einen leeren Spieler zum Team hinzu, respektiert Max 4', () => {
     let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    s = assignPoolRoundRobin(s)
     s = reducer(s, { type: 'ADD_PLAYER', teamId: 'team-a' })
     s = reducer(s, { type: 'ADD_PLAYER', teamId: 'team-a' })
     s = reducer(s, { type: 'ADD_PLAYER', teamId: 'team-a' })
@@ -421,6 +450,7 @@ describe('reducer — Player-Ebene (Session D + E)', () => {
 
   it('REMOVE_PLAYER entfernt, respektiert Min 1 pro Team', () => {
     let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    s = assignPoolRoundRobin(s)
     const teamAPlayers = s.round!.players.filter((p) => p.teamId === 'team-a')
     s = reducer(s, { type: 'REMOVE_PLAYER', playerId: teamAPlayers[0].id })
     let remaining = s.round!.players.filter((p) => p.teamId === 'team-a')
@@ -501,6 +531,7 @@ describe('reducer — Player-Ebene (Session D + E)', () => {
 
   it('REPLACE_PLAYER_FROM_LIBRARY ersetzt einen Slot, behält teamId', () => {
     let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    s = assignPoolRoundRobin(s)
     const target = s.round!.players.find((p) => p.teamId === 'team-b')!
     s = reducer(s, {
       type: 'REPLACE_PLAYER_FROM_LIBRARY',
@@ -538,6 +569,7 @@ describe('reducer — Player-Ebene (Session D + E)', () => {
   it('Blitzrunde: erste Frage kommt aus einem Interest-Topic der Spieler', () => {
     let s = reducer(INITIAL_STATE, { type: 'SET_MODE_SELECTION', modeIds: ['flash'] })
     s = reducer(s, { type: 'GO_TO_LOBBY' })
+    s = assignPoolRoundRobin(s)
     const firstPlayer = s.round!.players[0]
     s = reducer(s, {
       type: 'SET_PLAYER_INTERESTS',
@@ -555,6 +587,7 @@ describe('reducer — Player-Ebene (Session D + E)', () => {
   it('Blitzrunde: nächste Frage bleibt nach Möglichkeit im Interest-Topic', () => {
     let s = reducer(INITIAL_STATE, { type: 'SET_MODE_SELECTION', modeIds: ['flash'] })
     s = reducer(s, { type: 'GO_TO_LOBBY' })
+    s = assignPoolRoundRobin(s)
     const firstPlayer = s.round!.players[0]
     s = reducer(s, {
       type: 'SET_PLAYER_INTERESTS',
@@ -586,6 +619,7 @@ describe('reducer — Fachrunde (Session O)', () => {
       modeIds: ['experts'],
     })
     s = reducer(s, { type: 'GO_TO_LOBBY' })
+    s = assignPoolRoundRobin(s)
     s = reducer(s, { type: 'START_PLAYING' })
     return s
   }
@@ -742,6 +776,7 @@ describe('reducer — Elimination (Session N)', () => {
       modeIds: ['elimination'],
     })
     s = reducer(s, { type: 'GO_TO_LOBBY' })
+    s = assignPoolRoundRobin(s)
     s = reducer(s, { type: 'START_PLAYING' })
     return s
   }
@@ -770,7 +805,8 @@ describe('reducer — Elimination (Session N)', () => {
     if (s.live?.kind !== 'elimination') throw new Error('unreachable')
     expect(s.live.phase).toBe('revealed')
     expect(s.live.lastOutcome).toBe('correct')
-    expect(s.live.scores[active.teamId]).toBe(points)
+    // Player im Playing haben garantiert teamId (START_PLAYING-Guard).
+    expect(s.live.scores[active.teamId!]).toBe(points)
   })
 
   it('ELIM_ANSWER falsch: keine Punkte, Spieler wird beim NEXT eliminiert', () => {
@@ -878,6 +914,7 @@ describe('reducer — Duell 1:1 (Session M)', () => {
       modeIds: ['duel-1v1'],
     })
     s = reducer(s, { type: 'GO_TO_LOBBY' })
+    s = assignPoolRoundRobin(s)
     s = reducer(s, { type: 'START_PLAYING' })
     return s
   }
@@ -1021,6 +1058,7 @@ describe('reducer — Punktejagd (Session L)', () => {
       modeIds: ['category-board'],
     })
     s = reducer(s, { type: 'GO_TO_LOBBY' })
+    s = assignPoolRoundRobin(s)
     s = reducer(s, { type: 'START_PLAYING' })
     return s
   }
@@ -1189,6 +1227,7 @@ describe('reducer — Alles oder Nichts (Session K)', () => {
       modeIds: ['points-ladder'],
     })
     s = reducer(s, { type: 'GO_TO_LOBBY' })
+    s = assignPoolRoundRobin(s)
     s = reducer(s, { type: 'START_PLAYING' })
     return s
   }
@@ -1300,6 +1339,7 @@ describe('reducer — Sprinter (Session J)', () => {
       modeIds: ['sprinter'],
     })
     s = reducer(s, { type: 'GO_TO_LOBBY' })
+    s = assignPoolRoundRobin(s)
     s = reducer(s, { type: 'START_PLAYING' })
     return s
   }
@@ -1429,6 +1469,7 @@ describe('reducer — Klick! (Session I)', () => {
       modeIds: ['around-corner'],
     })
     s = reducer(s, { type: 'GO_TO_LOBBY' })
+    s = assignPoolRoundRobin(s)
     s = reducer(s, { type: 'START_PLAYING' })
     return s
   }
@@ -1508,6 +1549,7 @@ describe('reducer — Difficulty-Match (Session H)', () => {
   it('CD_PICK_TOPIC bevorzugt schwere Fragen wenn Team-Level nerd ist', () => {
     vi.restoreAllMocks()
     let base = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    base = assignPoolRoundRobin(base)
     const p1 = base.round!.players[0]
     base = reducer(base, {
       type: 'SET_PLAYER_INTERESTS',
@@ -1534,6 +1576,7 @@ describe('reducer — Difficulty-Match (Session H)', () => {
       modeIds: ['player-spotlight'],
     })
     base = reducer(base, { type: 'GO_TO_LOBBY' })
+    base = assignPoolRoundRobin(base)
     const p = base.round!.players.find((p) => p.teamId === 'team-a')!
     base = reducer(base, {
       type: 'SET_PLAYER_INTERESTS',
@@ -1558,6 +1601,7 @@ describe('reducer — Difficulty-Match (Session H)', () => {
       modeIds: ['player-spotlight'],
     })
     base = reducer(base, { type: 'GO_TO_LOBBY' })
+    base = assignPoolRoundRobin(base)
     const p = base.round!.players.find((p) => p.teamId === 'team-a')!
     base = reducer(base, {
       type: 'SET_PLAYER_INTERESTS',
@@ -1583,6 +1627,8 @@ describe('reducer — Heimspiel / Player Spotlight (Session G)', () => {
       modeIds: ['player-spotlight'],
     })
     s = reducer(s, { type: 'GO_TO_LOBBY' })
+    // Session S: erst Team-Zuordnung, dann können Tests Interests pro Team-Slot setzen.
+    s = assignPoolRoundRobin(s)
     return s
   }
 
@@ -1813,6 +1859,8 @@ function bootPlayingWithTeams(
   let s = withTeamCount(count)
   s = reducer(s, { type: 'SET_MODE_SELECTION', modeIds: [modeId] })
   s = reducer(s, { type: 'GO_TO_LOBBY' })
+  // Session S: Pool-Player deterministisch (round-robin) auf die Teams verteilen.
+  s = assignPoolRoundRobin(s)
   s = reducer(s, { type: 'START_PLAYING' })
   return s
 }
@@ -2061,5 +2109,256 @@ describe('reducer — Spotlight-Steal-Rotation (Session R)', () => {
     // Wir prüfen direkt, dass getNextTeamId die richtige Rotation liefert.
     // (Das ist bereits in teams.test.ts abgedeckt; der Reducer nutzt genau diesen Helper.)
     expect(s.round!.teams).toHaveLength(3)
+  })
+})
+// ---------------------------------------------------------------------------
+// Session S: Roster/Assign/Ready-Flow + Pool-Player-Handling
+// ---------------------------------------------------------------------------
+
+describe('reducer — Lobby-Step-Flow (Session S)', () => {
+  it('GO_TO_LOBBY startet immer im roster-Schritt', () => {
+    const s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    expect(s.phase).toBe('lobby')
+    expect(s.lobbyStep).toBe('roster')
+  })
+
+  it('LOBBY_ADVANCE roster → assign ist immer erlaubt', () => {
+    let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    s = reducer(s, { type: 'LOBBY_ADVANCE' })
+    expect(s.lobbyStep).toBe('assign')
+  })
+
+  it('LOBBY_ADVANCE assign → ready blockiert, solange Pool-Player vorhanden sind', () => {
+    let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    s = reducer(s, { type: 'LOBBY_ADVANCE' }) // roster → assign
+    // Alle Player sind noch im Pool → LOBBY_ADVANCE ist no-op.
+    s = reducer(s, { type: 'LOBBY_ADVANCE' })
+    expect(s.lobbyStep).toBe('assign')
+  })
+
+  it('LOBBY_ADVANCE assign → ready funktioniert, wenn alle Player assigned sind', () => {
+    let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    s = reducer(s, { type: 'LOBBY_ADVANCE' }) // roster → assign
+    s = assignPoolRoundRobin(s)
+    s = reducer(s, { type: 'LOBBY_ADVANCE' })
+    expect(s.lobbyStep).toBe('ready')
+  })
+
+  it('LOBBY_BACK bewegt sich rückwärts durch die Schritte', () => {
+    let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    s = reducer(s, { type: 'LOBBY_ADVANCE' })
+    s = assignPoolRoundRobin(s)
+    s = reducer(s, { type: 'LOBBY_ADVANCE' })
+    expect(s.lobbyStep).toBe('ready')
+    s = reducer(s, { type: 'LOBBY_BACK' })
+    expect(s.lobbyStep).toBe('assign')
+    s = reducer(s, { type: 'LOBBY_BACK' })
+    expect(s.lobbyStep).toBe('roster')
+    // Aus roster geht LOBBY_BACK nicht weiter (kein Underflow).
+    s = reducer(s, { type: 'LOBBY_BACK' })
+    expect(s.lobbyStep).toBe('roster')
+  })
+
+  it('LOBBY_ADVANCE außerhalb der lobby-Phase ist no-op', () => {
+    const s = reducer(INITIAL_STATE, { type: 'LOBBY_ADVANCE' })
+    // Wir sind noch in setup — kein Wechsel möglich.
+    expect(s.phase).toBe('setup')
+  })
+})
+
+describe('reducer — SHUFFLE_PLAYERS (Session S)', () => {
+  it('verteilt alle Pool-Player auf Teams', () => {
+    let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    // Vor Shuffle: alle im Pool.
+    expect(s.round!.players.every((p) => p.teamId === null)).toBe(true)
+    s = reducer(s, { type: 'SHUFFLE_PLAYERS' })
+    expect(s.round!.players.every((p) => p.teamId !== null)).toBe(true)
+  })
+
+  it('verteilt bei 2 Teams ~gleich viele Player pro Team (Round-Robin)', () => {
+    let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    s = reducer(s, { type: 'SHUFFLE_PLAYERS' })
+    const counts = new Map<string, number>()
+    for (const p of s.round!.players) {
+      counts.set(p.teamId!, (counts.get(p.teamId!) ?? 0) + 1)
+    }
+    // 4 Player / 2 Teams → 2:2.
+    expect(counts.get('team-a')).toBe(2)
+    expect(counts.get('team-b')).toBe(2)
+  })
+
+  it('verteilt bei 3 Teams gleich viele Player (2:2:2 bei 6 Playern)', () => {
+    // 3 Teams via ADD_TEAM → 3 × 2 = 6 Player.
+    let s = INITIAL_STATE
+    s = reducer(s, { type: 'ADD_TEAM' })
+    s = reducer(s, { type: 'GO_TO_LOBBY' })
+    expect(s.round!.players).toHaveLength(6)
+    s = reducer(s, { type: 'SHUFFLE_PLAYERS' })
+    const counts = new Map<string, number>()
+    for (const p of s.round!.players) {
+      counts.set(p.teamId!, (counts.get(p.teamId!) ?? 0) + 1)
+    }
+    expect(counts.get('team-a')).toBe(2)
+    expect(counts.get('team-b')).toBe(2)
+    expect(counts.get('team-c')).toBe(2)
+  })
+
+  it('aktualisiert round.interests entsprechend', () => {
+    // Player 0 hat 'film' als Interesse; Rest leer.
+    let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    s = reducer(s, {
+      type: 'SET_PLAYER_INTERESTS',
+      playerId: s.round!.players[0].id,
+      interests: [{ topic: 'film' as never, level: 'gut' }],
+    })
+    s = reducer(s, { type: 'SHUFFLE_PLAYERS' })
+    expect(s.round!.interests).toContain('film')
+  })
+})
+
+describe('reducer — MOVE_PLAYER_TO_TEAM (Session S)', () => {
+  it('verschiebt einen Player vom Pool in ein Team', () => {
+    let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    const player = s.round!.players[0]
+    s = reducer(s, {
+      type: 'MOVE_PLAYER_TO_TEAM',
+      playerId: player.id,
+      teamId: 'team-a',
+    })
+    const updated = s.round!.players.find((p) => p.id === player.id)!
+    expect(updated.teamId).toBe('team-a')
+  })
+
+  it('verschiebt einen Player zwischen Teams', () => {
+    let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    s = assignPoolRoundRobin(s)
+    const teamAPlayer = s.round!.players.find((p) => p.teamId === 'team-a')!
+    s = reducer(s, {
+      type: 'MOVE_PLAYER_TO_TEAM',
+      playerId: teamAPlayer.id,
+      teamId: 'team-b',
+    })
+    const updated = s.round!.players.find((p) => p.id === teamAPlayer.id)!
+    expect(updated.teamId).toBe('team-b')
+  })
+
+  it('verschiebt einen Player zurück in den Pool', () => {
+    let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    s = assignPoolRoundRobin(s)
+    const teamAPlayer = s.round!.players.find((p) => p.teamId === 'team-a')!
+    s = reducer(s, {
+      type: 'MOVE_PLAYER_TO_TEAM',
+      playerId: teamAPlayer.id,
+      teamId: null,
+    })
+    const updated = s.round!.players.find((p) => p.id === teamAPlayer.id)!
+    expect(updated.teamId).toBeNull()
+  })
+
+  it('blockiert, wenn Zielteam bereits 4 Player hat', () => {
+    let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    // Vier Player ins Team A verschieben.
+    for (const p of s.round!.players.slice(0, 4)) {
+      s = reducer(s, {
+        type: 'MOVE_PLAYER_TO_TEAM',
+        playerId: p.id,
+        teamId: 'team-a',
+      })
+    }
+    // ADD_PLAYER Team-a ist voll: Player kommt nicht rein
+    s = reducer(s, { type: 'ADD_PLAYER', teamId: null })
+    const extra = s.round!.players[s.round!.players.length - 1]
+    const before = { ...s.round!.players.find((p) => p.id === extra.id)! }
+    s = reducer(s, {
+      type: 'MOVE_PLAYER_TO_TEAM',
+      playerId: extra.id,
+      teamId: 'team-a',
+    })
+    const after = s.round!.players.find((p) => p.id === extra.id)!
+    // Der Move wurde ignoriert — teamId bleibt null.
+    expect(after.teamId).toBe(before.teamId)
+  })
+
+  it('ignoriert unbekannte Team-ID', () => {
+    let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    const player = s.round!.players[0]
+    s = reducer(s, {
+      type: 'MOVE_PLAYER_TO_TEAM',
+      playerId: player.id,
+      teamId: 'nonexistent-team',
+    })
+    // Player bleibt im Pool.
+    expect(s.round!.players.find((p) => p.id === player.id)!.teamId).toBeNull()
+  })
+})
+
+describe('reducer — START_PLAYING-Guard (Session S)', () => {
+  it('bleibt in Lobby, solange Player im Pool sind', () => {
+    let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    // Alle sind noch im Pool.
+    s = reducer(s, { type: 'START_PLAYING' })
+    expect(s.phase).toBe('lobby')
+    expect(s.live).toBeNull()
+  })
+
+  it('wechselt in Playing, wenn alle Player einem Team zugeordnet sind', () => {
+    let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    s = assignPoolRoundRobin(s)
+    s = reducer(s, { type: 'START_PLAYING' })
+    expect(s.phase).toBe('playing')
+    expect(s.live).not.toBeNull()
+  })
+
+  it('bleibt in Lobby, wenn nur ein Player im Pool ist (partial-assign)', () => {
+    let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    // Alle bis auf den letzten zuordnen.
+    for (const p of s.round!.players.slice(0, -1)) {
+      s = reducer(s, {
+        type: 'MOVE_PLAYER_TO_TEAM',
+        playerId: p.id,
+        teamId: 'team-a',
+      })
+    }
+    s = reducer(s, { type: 'START_PLAYING' })
+    expect(s.phase).toBe('lobby')
+  })
+})
+
+describe('reducer — Roster-Player-Ops (Session S)', () => {
+  it('ADD_PLAYER mit teamId=null fügt einen Pool-Player hinzu', () => {
+    let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    const before = s.round!.players.length
+    s = reducer(s, { type: 'ADD_PLAYER', teamId: null })
+    expect(s.round!.players).toHaveLength(before + 1)
+    expect(s.round!.players[s.round!.players.length - 1].teamId).toBeNull()
+  })
+
+  it('REMOVE_PLAYER entfernt Pool-Player ohne MIN-Guard', () => {
+    let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    // Alle 4 Player sind im Pool. Alle vier entfernen ist erlaubt.
+    for (const p of [...s.round!.players]) {
+      s = reducer(s, { type: 'REMOVE_PLAYER', playerId: p.id })
+    }
+    expect(s.round!.players).toHaveLength(0)
+  })
+
+  it('ADD_PLAYER_FROM_LIBRARY mit teamId=null lädt ins Roster (Pool)', () => {
+    let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    const before = s.round!.players.length
+    s = reducer(s, {
+      type: 'ADD_PLAYER_FROM_LIBRARY',
+      teamId: null,
+      profile: {
+        id: 'library-bob',
+        name: 'Bob',
+        interests: [],
+        avatar: { emoji: '🐼', colorHex: '#27D8FF' },
+        lastUsedAt: '2024-01-01T10:00:00Z',
+      },
+    })
+    expect(s.round!.players).toHaveLength(before + 1)
+    const bob = s.round!.players.find((p) => p.id === 'library-bob')!
+    expect(bob.teamId).toBeNull()
+    expect(bob.name).toBe('Bob')
   })
 })
