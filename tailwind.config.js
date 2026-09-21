@@ -53,11 +53,8 @@ export default {
         // Display: Bricolage Grotesque — moderne, geometrische Grotesk mit Show-Charakter.
         // Kommt dem Neue-Haas-Grotesk-Look der Mockups deutlich näher als Space Grotesk.
         // Body: Inter für UI, Navigation, Fragen und Meta.
-        // Script: Caveat — Neon-Cursive-Handschrift für Bühnen-Deko-Schilder
-        //         („Good Questions Better People", siehe Session U).
         display: ['"Bricolage Grotesque"', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
         sans:    ['Inter', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'sans-serif'],
-        script:  ['Caveat', 'cursive'],
       },
       boxShadow: {
         // Sanfte Glows für Fokus/Auswahl (siehe Guardrails: „Glow nur bei Fokus").

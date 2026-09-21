@@ -14,7 +14,6 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { X, ArrowRight, Crown, Check, XCircle, Lightbulb, Eye, Timer, SkipForward, TrendingUp, Users } from 'lucide-react'
 import { ScreenLayout } from '@/components/ScreenLayout'
-import { StageDecor } from '@/components/StageDecor'
 import { CategoryChip } from '@/components/CategoryChip'
 import { Button } from '@/components/Button'
 import { AnswerOption, type AnswerStatus } from '@/components/AnswerOption'
@@ -110,9 +109,6 @@ export default function GamePage() {
 
   return (
     <ScreenLayout variant="stage" hideNav hideFooter contentClassName="px-0">
-      {/* Bühnen-Deko: Neon-Cursive links, „Wissen verbindet"-Badge rechts unten, Publikums-Silhouetten. */}
-      <StageDecor />
-
       {/* Kompakter Show-Header: Wortmarke · Modus-Titel · Runden-Dots */}
       <div className="relative z-10 px-6 md:px-10 pt-5 md:pt-6 grid grid-cols-3 items-center">
         <div className="flex items-center gap-2 text-ink font-display font-bold uppercase tracking-widest text-sm">
