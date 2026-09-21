@@ -59,8 +59,10 @@ export function AnswerOption({ letter, status = 'idle', className, children, ...
       type="button"
       aria-pressed={status === 'selected'}
       className={cn(
-        'group w-full text-left rounded-card border transition-all duration-200',
-        'flex items-center gap-4 md:gap-5 p-4 md:p-5',
+        // Session U: rundere Pill-Form, angelehnt an das Studio-Mockup.
+        // Padding größer, damit der Antworttext atmet.
+        'group w-full text-left rounded-full border transition-all duration-200',
+        'flex items-center gap-4 md:gap-5 pl-3 md:pl-4 pr-6 md:pr-8 py-2.5 md:py-3',
         'disabled:cursor-default',
         wrapperByStatus[status],
         className,

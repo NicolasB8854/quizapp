@@ -12,8 +12,10 @@
 
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { X, ArrowRight, Crown, Check, XCircle, Lightbulb, Eye, Timer, SkipForward, TrendingUp } from 'lucide-react'
+import { X, ArrowRight, Crown, Check, XCircle, Lightbulb, Eye, Timer, SkipForward, TrendingUp, Users } from 'lucide-react'
 import { ScreenLayout } from '@/components/ScreenLayout'
+import { StageDecor } from '@/components/StageDecor'
+import { CategoryChip } from '@/components/CategoryChip'
 import { Button } from '@/components/Button'
 import { AnswerOption, type AnswerStatus } from '@/components/AnswerOption'
 import { TopicTile } from '@/components/TopicTile'
@@ -108,6 +110,9 @@ export default function GamePage() {
 
   return (
     <ScreenLayout variant="stage" hideNav hideFooter contentClassName="px-0">
+      {/* Bühnen-Deko: Neon-Cursive links, „Wissen verbindet"-Badge rechts unten, Publikums-Silhouetten. */}
+      <StageDecor />
+
       {/* Kompakter Show-Header: Wortmarke · Modus-Titel · Runden-Dots */}
       <div className="relative z-10 px-6 md:px-10 pt-5 md:pt-6 grid grid-cols-3 items-center">
         <div className="flex items-center gap-2 text-ink font-display font-bold uppercase tracking-widest text-sm">
@@ -238,30 +243,14 @@ function QuestionStage() {
 
   return (
     <div className="animate-titleIn">
-      {/* Kategorie-Header — leuchtender Chip mit Emoji + Punktzahl */}
-      <div className="flex justify-center">
-        <div
-          className="relative inline-flex flex-col items-center rounded-2xl px-6 md:px-10 py-4 md:py-5 border-2"
-          style={{
-            borderColor: 'rgba(124,92,255,0.6)',
-            background: 'rgba(11,16,32,0.7)',
-            boxShadow:
-              '0 0 0 1px rgba(124,92,255,0.4), 0 0 28px rgba(124,92,255,0.5), 0 0 60px rgba(124,92,255,0.3)',
-          }}
-        >
-          <div className="flex items-center gap-3">
-            <span className="text-3xl md:text-4xl" aria-hidden>
-              {topic.emoji}
-            </span>
-            <span className="font-display font-bold uppercase tracking-[0.28em] text-white text-neon-purple text-lg md:text-2xl">
-              {topic.label}
-            </span>
-          </div>
-          <span className="mt-1 font-display font-extrabold text-4xl md:text-5xl tabular-nums leading-none text-neon-purple text-white">
-            {live.pointsPerQuestion}
-          </span>
-        </div>
-      </div>
+      {/* Kategorie-Header — leuchtender Chip mit Emoji + Punktzahl. Session U:
+          zentrale CategoryChip-Component, damit Themen-Battle + Punktejagd + …
+          alle denselben Show-Anker haben. */}
+      <CategoryChip
+        categoryLabel={topic.label}
+        points={live.pointsPerQuestion}
+        emoji={topic.emoji}
+      />
 
       {/* Frage */}
       <div className="mt-8 md:mt-10">
@@ -1584,22 +1573,12 @@ function CategoryBoardStage() {
     <div className="animate-titleIn">
       {/* Header: Topic + Wert */}
       <div className="flex justify-center">
-        <div
-          className="relative inline-flex items-center gap-3 rounded-2xl px-6 py-3 border-2"
-          style={{
-            borderColor: 'rgba(240,178,58,0.6)',
-            background: 'rgba(11,16,32,0.7)',
-            boxShadow: '0 0 0 1px rgba(240,178,58,0.4), 0 0 24px rgba(240,178,58,0.4)',
-          }}
-        >
-          <span className="text-3xl md:text-4xl" aria-hidden>{topic.emoji}</span>
-          <span className="font-display font-bold uppercase tracking-[0.24em] text-white text-lg md:text-2xl">
-            {topic.label}
-          </span>
-          <span className="font-display font-extrabold text-mode-board tabular-nums text-3xl md:text-4xl">
-            {value}
-          </span>
-        </div>
+        <CategoryChip
+          categoryLabel={topic.label}
+          points={value}
+          emoji={topic.emoji}
+          accentHex="#F0B23A"
+        />
       </div>
 
       {/* Frage */}
@@ -2697,37 +2676,42 @@ function TeamSidebarCard({ team, score, matchPoint, isLeader, isCurrent }: TeamC
     <div
       className="relative rounded-card border p-4 md:p-5"
       style={{
-        borderColor: isCurrent ? `${hex}80` : 'rgba(255,255,255,0.08)',
-        background: 'rgba(11,16,32,0.7)',
+        borderColor: isCurrent ? `${hex}80` : `${hex}30`,
+        background: 'rgba(11,16,32,0.75)',
         boxShadow: isCurrent
           ? `0 0 0 1px ${hex}55, 0 0 28px -4px ${hex}80`
-          : undefined,
+          : `inset 0 0 0 1px ${hex}22`,
       }}
     >
-      {isLeader && (
-        <Crown
-          className="absolute -top-2.5 -right-2.5 h-6 w-6 text-mode-ladder drop-shadow-[0_0_8px_rgba(233,196,106,0.7)]"
-          aria-label="Führt aktuell"
-        />
-      )}
-      <div className="flex items-center gap-3">
-        <div
-          className={cn(
-            'h-10 w-10 rounded-full flex items-center justify-center font-display font-bold text-sm border-2',
-            tokens.chipStrong,
-          )}
-        >
-          {team.name.slice(0, 2).toUpperCase()}
-        </div>
-        <div className="min-w-0 flex-1">
-          <div className="eyebrow" style={{ color: hex }}>
-            Team {tokens.label}
-          </div>
-          <div className="truncate font-display font-bold text-ink text-sm md:text-base">
-            {team.name}
+      {/* Header-Zeile: Team-Icon links, Team-Label rechts, Krone bei Führung.
+          Session U: Users-Icon vor dem Team-Namen wie im Mockup. */}
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2 min-w-0">
+          <Users
+            className="h-4 w-4 shrink-0"
+            style={{ color: hex, filter: `drop-shadow(0 0 6px ${hex}80)` }}
+            aria-hidden
+          />
+          <div className="min-w-0">
+            <div
+              className="font-display font-bold uppercase tracking-[0.22em] text-[11px] leading-none"
+              style={{ color: hex }}
+            >
+              Team <span className="text-white">{tokens.label}</span>
+            </div>
+            <div className="mt-0.5 truncate font-display font-bold text-ink text-sm md:text-base">
+              {team.name}
+            </div>
           </div>
         </div>
+        {isLeader && (
+          <Crown
+            className="shrink-0 h-5 w-5 text-mode-ladder drop-shadow-[0_0_8px_rgba(233,196,106,0.7)]"
+            aria-label="Führt aktuell"
+          />
+        )}
       </div>
+
       <div
         className="mt-3 font-display font-extrabold tabular-nums text-4xl md:text-5xl leading-none"
         style={{ color: hex, textShadow: `0 0 20px ${hex}55` }}
