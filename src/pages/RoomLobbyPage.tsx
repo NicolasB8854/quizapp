@@ -24,7 +24,7 @@ import {
   RefreshCw,
   WifiOff,
 } from 'lucide-react'
-import type { GameAction, GameState } from '@quizapp/shared'
+import type { FlashLive, GameAction, GameState } from '@quizapp/shared'
 import type { Player, SkillLevel } from '@quizapp/shared'
 import {
   MODES,
@@ -77,7 +77,9 @@ export default function RoomLobbyPage() {
     }
   }, [playerName, roomCode, navigate])
 
-  const canDispatch = room.status === 'joined' && role === 'player'
+  // Master + Player dürfen dispatchen — Master ist der Show-Runner
+  // (Modi wählen, Reveals auslösen), Player interagieren via ihrem Handy.
+  const canDispatch = room.status === 'joined'
 
   const send = (action: GameAction) => {
     if (!canDispatch) return
@@ -240,8 +242,22 @@ function PhaseView({
           send={send}
         />
       )
-    case 'playing':
+    case 'playing': {
+      // Pro live.kind ein optimierter View. Fallback: generischer State-Dump.
+      const live = state.live
+      if (live?.kind === 'flash') {
+        return (
+          <FlashRoomView
+            state={state}
+            live={live}
+            playerId={playerId}
+            canDispatch={canDispatch}
+            send={send}
+          />
+        )
+      }
       return <PlayingPhaseView state={state} canDispatch={canDispatch} send={send} />
+    }
     case 'scoreboard':
       return <ScoreboardPhaseView state={state} canDispatch={canDispatch} send={send} />
   }
@@ -341,7 +357,7 @@ function SetupPhaseView({
 
       {!canDispatch && (
         <p className="text-center text-xs text-ink-muted">
-          Nur Player können Setup-Actions auslösen. Master schaut zu.
+          Verbindung wird aufgebaut …
         </p>
       )}
     </div>
@@ -466,7 +482,8 @@ function LobbyPhaseView({
 
       {role === 'master' && (
         <p className="text-center text-xs text-ink-muted">
-          Master schaut zu — Player wählen ihr Team selbst.
+          Master-Screen — Player tragen sich selbst ein, du kannst die Runde
+          starten wenn alle bereit sind.
         </p>
       )}
     </div>
@@ -636,6 +653,260 @@ function PlayerSelfCard({
         <PlayerInterestsPanel me={me} send={send} disabled={!canDispatch} />
       </div>
     </Card>
+  )
+}
+
+/**
+ * Blitzrunde: der erste voll spielbare Modus im Multi-Device-Room.
+ *
+ * Auf dem Handy: aktuelle Behauptung, für das eigene Team die zwei Buttons
+ * „Stimmt" / „Falsch". Nach der Antwort: Warten-Zustand oder Auflösen. Alle
+ * Teams (Player wie Master) können den Reveal auslösen — im Party-Kontext
+ * ist meistens der Master, aber wir sperren nichts.
+ */
+function FlashRoomView({
+  state,
+  live,
+  playerId,
+  canDispatch,
+  send,
+}: {
+  state: GameState
+  live: FlashLive
+  playerId: string | null
+  canDispatch: boolean
+  send: (a: GameAction) => void
+}) {
+  if (!state.round) return <LoadingCard label="Lade Runde …" />
+
+  const question = live.activeQuestion
+  const myPlayer = playerId
+    ? state.round.players.find((p) => p.id === playerId)
+    : null
+  const myTeamId = myPlayer?.teamId ?? null
+  const myTeamAnswer = myTeamId ? live.teamAnswers[myTeamId] : null
+  const allTeamsAnswered = state.round.teams.every(
+    (t) => live.teamAnswers[t.id] !== null && live.teamAnswers[t.id] !== undefined,
+  )
+
+  return (
+    <div className="space-y-3">
+      {/* Header: Zähler + Punkte-Übersicht */}
+      <Card className="p-3">
+        <div className="flex flex-wrap items-center gap-3">
+          <div>
+            <div className="text-[10px] uppercase tracking-[0.32em] text-brand-cyan-soft">
+              Blitzrunde
+            </div>
+            <div className="mt-0.5 font-mono text-sm text-white">
+              Behauptung {live.currentIndex + 1} / {live.totalStatements}
+            </div>
+          </div>
+          <div className="ml-auto flex flex-wrap gap-2">
+            {state.round.teams.map((team) => (
+              <div
+                key={team.id}
+                className="flex items-center gap-1.5 rounded-lg bg-white/[0.04] px-2 py-1"
+              >
+                <span
+                  className="h-2 w-2 rounded-full"
+                  style={{ background: getTeamColorHex(team.color) }}
+                />
+                <span className="text-xs text-white/80">{team.name}</span>
+                <span className="font-mono text-sm font-bold text-white">
+                  {live.scores[team.id] ?? 0}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Card>
+
+      {/* Frage */}
+      {question ? (
+        <Card
+          className={cn(
+            'space-y-3 p-4',
+            live.phase === 'revealed' &&
+              (question.correctAnswer
+                ? 'border-correct/40 bg-correct/[0.05]'
+                : 'border-wrong/40 bg-wrong/[0.05]'),
+          )}
+        >
+          <div className="text-center text-lg font-semibold text-white md:text-xl">
+            {question.question}
+          </div>
+          {live.phase === 'revealed' && (
+            <div className="rounded-lg bg-black/40 p-3 text-center">
+              <div className="text-[10px] uppercase tracking-[0.32em] text-white/50">
+                Antwort
+              </div>
+              <div
+                className={cn(
+                  'mt-1 text-2xl font-bold uppercase tracking-wide',
+                  question.correctAnswer ? 'text-correct' : 'text-wrong',
+                )}
+              >
+                {question.correctAnswer ? 'Stimmt' : 'Falsch'}
+              </div>
+              {question.explanation && (
+                <div className="mt-2 text-xs text-white/70">
+                  {question.explanation}
+                </div>
+              )}
+            </div>
+          )}
+        </Card>
+      ) : (
+        <LoadingCard label="Keine Frage geladen." />
+      )}
+
+      {/* Wahr/Falsch-Buttons oder Team-Antworten-Übersicht */}
+      {live.phase === 'answering' && myTeamId && (
+        <Card className="space-y-2 p-4">
+          <div className="text-[10px] uppercase tracking-[0.32em] text-ink-muted">
+            Antwort für dein Team ·{' '}
+            {state.round.teams.find((t) => t.id === myTeamId)?.name}
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <TfButton
+              label="Stimmt"
+              tone="correct"
+              active={myTeamAnswer === true}
+              onClick={() =>
+                send({
+                  type: 'FLASH_SET_ANSWER',
+                  teamId: myTeamId,
+                  answer: true,
+                })
+              }
+              disabled={!canDispatch}
+            />
+            <TfButton
+              label="Falsch"
+              tone="wrong"
+              active={myTeamAnswer === false}
+              onClick={() =>
+                send({
+                  type: 'FLASH_SET_ANSWER',
+                  teamId: myTeamId,
+                  answer: false,
+                })
+              }
+              disabled={!canDispatch}
+            />
+          </div>
+        </Card>
+      )}
+
+      {/* Team-Antworten-Panel: wer hat schon geantwortet */}
+      <Card className="space-y-2 p-3">
+        <div className="text-[10px] uppercase tracking-[0.32em] text-ink-muted">
+          Team-Antworten
+        </div>
+        <div className="grid gap-1.5 sm:grid-cols-2">
+          {state.round.teams.map((team) => {
+            const answer = live.teamAnswers[team.id]
+            const isRevealed = live.phase === 'revealed' && question
+            const correct = isRevealed && answer === question.correctAnswer
+            const wrong = isRevealed && answer !== null && !correct
+            return (
+              <div
+                key={team.id}
+                className={cn(
+                  'flex items-center gap-2 rounded-lg border px-2 py-1.5 text-sm',
+                  correct && 'border-correct/40 bg-correct/[0.08]',
+                  wrong && 'border-wrong/40 bg-wrong/[0.08]',
+                  !isRevealed && 'border-white/10 bg-white/[0.03]',
+                )}
+              >
+                <span
+                  className="h-2 w-2 rounded-full"
+                  style={{ background: getTeamColorHex(team.color) }}
+                />
+                <span className="flex-1 text-white/85">{team.name}</span>
+                {answer === null || answer === undefined ? (
+                  <span className="text-xs text-white/40">…</span>
+                ) : (
+                  <span
+                    className={cn(
+                      'font-mono text-xs font-bold uppercase',
+                      correct
+                        ? 'text-correct'
+                        : wrong
+                          ? 'text-wrong'
+                          : 'text-white/70',
+                    )}
+                  >
+                    {answer ? 'Stimmt' : 'Falsch'}
+                  </span>
+                )}
+              </div>
+            )
+          })}
+        </div>
+      </Card>
+
+      {/* Footer: Aktion */}
+      {live.phase === 'answering' ? (
+        <Button
+          size="lg"
+          variant={allTeamsAnswered ? 'primary' : 'secondary'}
+          onClick={() => send({ type: 'FLASH_REVEAL' })}
+          disabled={!canDispatch}
+          className="w-full"
+        >
+          {allTeamsAnswered ? 'Auflösen' : 'Auflösen (jederzeit)'}
+        </Button>
+      ) : (
+        <Button
+          size="lg"
+          variant="primary"
+          onClick={() => send({ type: 'FLASH_NEXT' })}
+          disabled={!canDispatch}
+          className="w-full"
+        >
+          {live.currentIndex + 1 >= live.totalStatements
+            ? 'Blitzrunde beenden'
+            : 'Nächste Behauptung'}
+        </Button>
+      )}
+    </div>
+  )
+}
+
+/** Kleiner True/False-Button, groß genug fürs Handy. */
+function TfButton({
+  label,
+  tone,
+  active,
+  onClick,
+  disabled,
+}: {
+  label: string
+  tone: 'correct' | 'wrong'
+  active: boolean
+  onClick: () => void
+  disabled?: boolean
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      className={cn(
+        'flex h-16 items-center justify-center rounded-xl border text-lg font-bold uppercase tracking-wider transition-all disabled:opacity-40',
+        active
+          ? tone === 'correct'
+            ? 'border-correct/70 bg-correct/20 text-correct'
+            : 'border-wrong/70 bg-wrong/20 text-wrong'
+          : tone === 'correct'
+            ? 'border-correct/30 bg-correct/[0.05] text-correct hover:bg-correct/10'
+            : 'border-wrong/30 bg-wrong/[0.05] text-wrong hover:bg-wrong/10',
+      )}
+    >
+      {label}
+    </button>
   )
 }
 

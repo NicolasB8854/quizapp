@@ -190,10 +190,9 @@ async function handleDispatch(
     await replyError(event, connectionId, 'NOT_IN_ROOM', 'Bitte erst JOIN_ROOM senden')
     return
   }
-  if (session.role !== 'player') {
-    await replyError(event, connectionId, 'ROLE_NOT_ALLOWED', 'Master darf keine Actions dispatchen')
-    return
-  }
+  // Master darf dispatchen — im Party-Kontext ist er der Show-Runner, der
+  // Reveals auslöst, Modi wechselt und die Runde führt. Player können
+  // natürlich auch dispatchen (buzzern, antworten, ihr eigenes Profil pflegen).
 
   const room = await getRoom(session.roomCode)
   if (!room) {
