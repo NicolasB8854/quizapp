@@ -25,7 +25,6 @@ import {
   RefreshCw,
   Volume2,
   VolumeX,
-  WifiOff,
 } from 'lucide-react'
 import type {
   AroundCornerLive,
@@ -56,6 +55,8 @@ import { Badge } from '@/components/Badge'
 import { PlayerInterestsPanel } from '@/components/PlayerInterestsPanel'
 import { ConfettiBurst } from '@/components/ConfettiBurst'
 import { ModeTransitionSplash } from '@/components/ModeTransitionSplash'
+import { ConnectionToast } from '@/components/ConnectionToast'
+import { PlayerTeamMatesPanel } from '@/components/PlayerTeamMatesPanel'
 import { useRoomSync } from '@/hooks/useRoomSync'
 import { useSoundEnabled } from '@/hooks/useSoundEnabled'
 import { playSound } from '@/lib/audio'
@@ -419,27 +420,49 @@ export default function RoomLobbyPage() {
           </Card>
         )}
 
-        {!wsUrl && (
-          <Card className="border-amber-500/40 bg-amber-500/10 p-4 text-sm text-amber-200">
-            <div className="flex items-start gap-3">
-              <WifiOff className="mt-0.5 h-4 w-4 flex-shrink-0" />
-              <span>VITE_WS_URL fehlt — Multi-Device deaktiviert.</span>
-            </div>
-          </Card>
-        )}
-
-        {room.lastError && (
-          <Card className="border-red-500/40 bg-red-500/10 p-4 text-sm text-red-200">
-            {room.lastError}
-          </Card>
-        )}
-
-        {/* Content nach Status */}
-        {room.status === 'connecting' || room.status === 'joining' ? (
-          <LoadingCard label="Verbinde …" />
+        {/* Verbindungs-Feedback: bleibt so lange wie möglich als schmaler
+             Toast; Content darunter bleibt sichtbar, damit Reconnects nicht
+             die ganze Bühne wegwischen. Priorität: Error > Reconnect > Config. */}
+        {room.lastError ? (
+          <ConnectionToast
+            tone="error"
+            label="Fehler"
+            message={room.lastError}
+          />
         ) : room.status === 'reconnecting' ? (
-          <LoadingCard label="Verbindung wird wiederhergestellt …" />
-        ) : room.status === 'joined' && room.state ? (
+          <ConnectionToast
+            tone="info"
+            label="Verbindung"
+            message="Wird wiederhergestellt …"
+            showSpinner
+          />
+        ) : !wsUrl ? (
+          <ConnectionToast
+            tone="warn"
+            label="Config"
+            message="VITE_WS_URL fehlt — Multi-Device deaktiviert."
+          />
+        ) : null}
+
+        {/* Teammates-Streifen: nur für Player im Playing, wenn Team gesetzt. */}
+        {role === 'player' &&
+          currentPhase === 'playing' &&
+          myPlayer &&
+          myTeam &&
+          room.state?.round && (
+            <PlayerTeamMatesPanel
+              team={myTeam}
+              myPlayer={myPlayer}
+              teamPlayers={room.state.round.players.filter(
+                (p) => p.teamId === myTeam.id,
+              )}
+            />
+          )}
+
+        {/* Content nach Status. Bei reconnecting mit vorhandenem State
+             behalten wir die letzte Bühne — Buttons sind über canDispatch
+             ohnehin deaktiviert. */}
+        {(room.status === 'joined' || room.status === 'reconnecting') && room.state ? (
           <PhaseView
             state={room.state}
             role={role}
@@ -447,6 +470,8 @@ export default function RoomLobbyPage() {
             canDispatch={canDispatch}
             send={send}
           />
+        ) : room.status === 'connecting' || room.status === 'joining' ? (
+          <LoadingCard label="Verbinde …" />
         ) : (
           <LoadingCard label="Warte auf Server …" />
         )}

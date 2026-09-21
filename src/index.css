@@ -133,6 +133,12 @@
   }
   .animate-splash-fade    { animation: splash-fade 1.6s ease-in-out forwards; }
   .animate-splash-content { animation: splash-content 1.6s ease-out forwards; }
+  /* Verbindungs-Toast: slidet unter dem Team-Farb-Balken ein. */
+  @keyframes toast-slide-in {
+    0%   { opacity: 0; transform: translateY(-16px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  .animate-toast-slide-in { animation: toast-slide-in 0.22s ease-out; }
   @media (prefers-reduced-motion: reduce) {
     .animate-splash-fade,
     .animate-splash-content {
