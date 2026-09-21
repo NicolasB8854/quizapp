@@ -62,6 +62,15 @@ async function scanAllQuestions(): Promise<Question[]> {
 }
 
 /**
+ * Erzwingt einen frischen Katalog-Scan beim nächsten Aufruf. Wird nach
+ * CRUD-Writes über die HTTP-API aufgerufen, damit Änderungen (auch aus
+ * anderen Editor-Sessions) direkt im gleichen Container greifen.
+ */
+export function invalidateCatalog(): void {
+  loaded = false
+}
+
+/**
  * Stellt sicher, dass der Katalog aus DDB geladen wurde. Idempotent —
  * wird bei jedem Handler-Aufruf gemacht, macht aber nur einmal pro
  * Container tatsächlich einen Scan.

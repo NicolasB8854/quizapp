@@ -1,18 +1,15 @@
 /**
- * WebSocket-Handler-Einstieg für die quizapp-Multiplayer-API.
+ * Multi-Protocol-Entry für die quizapp-Lambda.
  *
- * Routet anhand von `requestContext.routeKey` auf die drei getrennten
- * Handler-Module. Die eigentliche Business-Logik lebt in `handlers/message.ts`.
+ * Die gleiche Function bedient beide API Gateways:
+ *   - WebSocket (Multi-Device-Sessions): $connect / $disconnect / $default
+ *   - HTTP     (Fragen-Editor CRUD):    GET/POST/PUT/DELETE /questions[/id]
  *
- * Umgebungsvariablen (aus Terraform):
- *   ROOMS_TABLE     — DynamoDB-Tabelle mit dem Room-Snapshot
- *   SESSIONS_TABLE  — DynamoDB-Tabelle mit WS-Sessions
- *   PLAYERS_TABLE   — DynamoDB-Tabelle mit persistenten Player-Profilen (Phase 3c)
- *   ROOM_TTL_HOURS  — Auto-Cleanup-Fenster für Rooms
- *   LOG_LEVEL       — 'debug' | 'info'
+ * Diskriminator: `requestContext.http` existiert nur bei HTTP-Events.
  */
 
 import type {
+  APIGatewayProxyEventV2,
   APIGatewayProxyResultV2,
   APIGatewayProxyWebsocketEventV2,
 } from 'aws-lambda'
@@ -21,21 +18,39 @@ import { ensureCatalogLoaded } from './catalog'
 import { handleConnect } from './handlers/connect'
 import { handleDisconnect } from './handlers/disconnect'
 import { handleMessage } from './handlers/message'
+import { handleHttp } from './handlers/http'
+
+function isHttpEvent(event: unknown): event is APIGatewayProxyEventV2 {
+  return (
+    typeof event === 'object' &&
+    event !== null &&
+    'requestContext' in event &&
+    typeof (event as { requestContext: unknown }).requestContext === 'object' &&
+    (event as { requestContext: { http?: unknown } }).requestContext.http !== undefined
+  )
+}
 
 export async function handler(
-  event: APIGatewayProxyWebsocketEventV2,
+  event: unknown,
 ): Promise<APIGatewayProxyResultV2> {
-  // Beim ersten Aufruf im Container: Fragen aus DDB laden.
-  // Idempotent — nachfolgende Aufrufe sind no-op.
+  if (isHttpEvent(event)) {
+    // HTTP-CRUD läuft ohne Reducer-Katalog-Cache — der HTTP-Handler
+    // liest direkt aus DDB. Kein `ensureCatalogLoaded` nötig.
+    return handleHttp(event)
+  }
+
+  // Alles andere ist WebSocket. Vor dem Handler: sicherstellen dass
+  // der Fragen-Katalog aus DDB im Memory ist (Reducer nutzt ihn intern).
   await ensureCatalogLoaded()
 
-  const { routeKey } = event.requestContext
+  const wsEvent = event as APIGatewayProxyWebsocketEventV2
+  const { routeKey } = wsEvent.requestContext
   switch (routeKey) {
     case '$connect':
-      return handleConnect(event)
+      return handleConnect(wsEvent)
     case '$disconnect':
-      return handleDisconnect(event)
+      return handleDisconnect(wsEvent)
     default:
-      return handleMessage(event)
+      return handleMessage(wsEvent)
   }
 }

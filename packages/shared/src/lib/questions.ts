@@ -22,6 +22,57 @@ import type {
 import type { SkillLevel } from '../types/round'
 import { normalizeTag, type InterestProfile } from './interestProfile'
 
+import type {
+  OpenQuestion,
+  QuestionType,
+} from '../types/question'
+
+/**
+ * Fabrik für ein leeres, aber gültiges Question-Objekt eines bestimmten Typs.
+ * Wird vom Editor-UI genutzt, wenn der Nutzer „Neue Frage anlegen" klickt.
+ *
+ * Die `id` bleibt leer — der Server generiert eine echte ID beim `POST`.
+ * `difficulty` startet bei 3 (mittel), `tags` leer, `category` = 'popkultur'.
+ */
+export function createEmptyQuestion(type: QuestionType, topic: Topic): Question {
+  const base = {
+    id: '',
+    category: 'popkultur' as const,
+    topic,
+    difficulty: 3 as Difficulty,
+    question: '',
+    tags: [] as string[],
+  }
+  switch (type) {
+    case 'multiple-choice':
+      return {
+        ...base,
+        type: 'multiple-choice',
+        options: ['', '', '', ''],
+        correctIndex: 0,
+      } as MultipleChoiceQuestion
+    case 'true-false':
+      return {
+        ...base,
+        type: 'true-false',
+        correctAnswer: true,
+      } as TrueFalseQuestion
+    case 'open':
+      return {
+        ...base,
+        type: 'open',
+        answer: '',
+      } as OpenQuestion
+    case 'warmup-riddle':
+      return {
+        ...base,
+        type: 'warmup-riddle',
+        hints: ['', '', ''],
+        solution: '',
+      } as WarmupRiddleQuestion
+  }
+}
+
 // JSON-Import ist untypisiert — hier einmal narrowen. `let` statt `const`,
 // damit der Server zur Laufzeit den Katalog aus DynamoDB nachladen kann
 // (siehe `setQuestionCatalog`). Frontend nutzt weiter den Default aus JSON.

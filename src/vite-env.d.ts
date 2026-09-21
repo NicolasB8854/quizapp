@@ -15,6 +15,14 @@ interface ImportMetaEnv {
    * Kann leer bleiben — dann läuft die App im reinen Offline-Modus.
    */
   readonly VITE_WS_URL?: string
+
+  /**
+   * HTTP-API-Basis-URL für den Fragen-Editor (Review-Page CRUD).
+   * Beispiel: https://xxxx.execute-api.eu-central-1.amazonaws.com
+   *
+   * Kann leer bleiben — dann ist die Review-Page read-only (nutzt inline JSON).
+   */
+  readonly VITE_HTTP_URL?: string
 }
 
 interface ImportMeta {

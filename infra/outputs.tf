@@ -28,6 +28,11 @@ output "questions_table" {
   value       = aws_dynamodb_table.questions.name
 }
 
+output "http_endpoint" {
+  description = "HTTP-API-Basisurl für den Fragen-Editor (VITE_HTTP_URL)."
+  value       = aws_apigatewayv2_api.http.api_endpoint
+}
+
 output "lambda_function_name" {
   description = "Name der WS-Handler-Lambda (nützlich für `aws logs tail`)."
   value       = aws_lambda_function.ws_handler.function_name

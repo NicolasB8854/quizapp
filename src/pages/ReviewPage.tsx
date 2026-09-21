@@ -11,18 +11,21 @@
  *  - Detail-Overlay: alle Felder inkl. richtiger Antwort und Meta-Daten.
  */
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   ArrowLeft, Search, X as XIcon, Check, Tag, Calendar, ExternalLink, Sparkles,
+  Pencil, Plus, Loader2, WifiOff,
 } from 'lucide-react'
 import { ScreenLayout } from '@/components/ScreenLayout'
 import { Button } from '@/components/Button'
 import { Card } from '@/components/Card'
 import { Badge } from '@/components/Badge'
-import { getAllQuestions } from '@quizapp/shared'
+import { QuestionEditorModal } from '@/components/QuestionEditorModal'
+import { createEmptyQuestion, getAllQuestions } from '@quizapp/shared'
 import { TOPICS_BY_ID } from '@quizapp/shared'
 import type { Difficulty, Question, QuestionType, Topic } from '@quizapp/shared'
+import { isEditingConfigured, listQuestions } from '@/lib/questionsApi'
 import { cn } from '@/lib/classnames'
 
 // UI-Helper: alle möglichen Difficulty-Stufen (1-5) und Frage-Typen
@@ -53,7 +56,35 @@ const TYPE_SHORT: Record<QuestionType, string> = {
 
 export default function ReviewPage() {
   const navigate = useNavigate()
-  const catalog = useMemo(() => getAllQuestions(), [])
+  const canEdit = isEditingConfigured()
+
+  // Katalog: bei aktivierter HTTP-API live fetchen, sonst inline JSON.
+  const [catalog, setCatalog] = useState<Question[]>(() => getAllQuestions())
+  const [loading, setLoading] = useState(canEdit)
+  const [loadError, setLoadError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!canEdit) return
+    let cancelled = false
+    setLoading(true)
+    setLoadError(null)
+    listQuestions()
+      .then((items) => {
+        if (cancelled) return
+        setCatalog(items)
+      })
+      .catch((err) => {
+        if (cancelled) return
+        // Bei API-Fehler: fallback auf inline JSON, Warnung anzeigen.
+        setLoadError(err instanceof Error ? err.message : String(err))
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [canEdit])
 
   const [topicFilter,      setTopicFilter]      = useState<Topic | 'all'>('all')
   const [difficultyFilter, setDifficultyFilter] = useState<Difficulty | 'all'>('all')
@@ -61,6 +92,36 @@ export default function ReviewPage() {
   const [statusFilter,     setStatusFilter]     = useState<string>('all')
   const [search,           setSearch]           = useState('')
   const [detailId,         setDetailId]         = useState<string | null>(null)
+
+  // Editor-Modal-State: entweder eine existierende Frage oder eine frische
+  // (createEmptyQuestion-Ergebnis mit leerer id).
+  const [editing, setEditing] = useState<Question | null>(null)
+  const isNewEdit = editing !== null && editing.id === ''
+
+  const startNewQuestion = () => {
+    // Default: MC in Film (User kann alles ändern).
+    setEditing(createEmptyQuestion('multiple-choice', 'film'))
+  }
+
+  const handleSaved = (saved: Question) => {
+    setCatalog((prev) => {
+      const idx = prev.findIndex((q) => q.id === saved.id)
+      if (idx >= 0) {
+        const copy = [...prev]
+        copy[idx] = saved
+        return copy
+      }
+      return [...prev, saved]
+    })
+    setEditing(null)
+    setDetailId(saved.id)
+  }
+
+  const handleDeleted = (id: string) => {
+    setCatalog((prev) => prev.filter((q) => q.id !== id))
+    setEditing(null)
+    setDetailId(null)
+  }
 
   // Alle vorkommenden Status-Werte für den Filter
   const statusesInCatalog = useMemo(() => {
@@ -100,14 +161,26 @@ export default function ReviewPage() {
     <ScreenLayout
       variant="dim"
       navActions={
-        <Button
-          variant="ghost"
-          size="md"
-          leading={<ArrowLeft className="h-4 w-4" />}
-          onClick={() => navigate('/')}
-        >
-          Zurück
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="md"
+            leading={<ArrowLeft className="h-4 w-4" />}
+            onClick={() => navigate('/')}
+          >
+            Zurück
+          </Button>
+          {canEdit && (
+            <Button
+              variant="primary"
+              size="md"
+              leading={<Plus className="h-4 w-4" />}
+              onClick={startNewQuestion}
+            >
+              Neue Frage
+            </Button>
+          )}
+        </div>
       }
       headerMeta="Prototyp-Tools · Fragen-Review"
     >
@@ -122,8 +195,34 @@ export default function ReviewPage() {
             Der komplette Katalog auf einen Blick — Filter für Topic, Schwierigkeit,
             Typ und Status. Klick auf eine Frage öffnet die volle Ansicht mit
             Antwort, Erklärung und Meta-Daten.
+            {canEdit
+              ? ' Klick auf „Bearbeiten" ändert direkt in der Cloud.'
+              : ''}
           </p>
         </div>
+
+        {!canEdit && (
+          <Card className="mt-4 border-amber-500/40 bg-amber-500/10 p-3 text-sm text-amber-200">
+            <div className="flex items-center gap-2">
+              <WifiOff className="h-4 w-4" />
+              Read-only Modus — trag <code>VITE_HTTP_URL</code> in{' '}
+              <code>.env.local</code> ein, um Fragen direkt zu bearbeiten.
+            </div>
+          </Card>
+        )}
+
+        {loadError && (
+          <Card className="mt-4 border-red-500/40 bg-red-500/10 p-3 text-sm text-red-200">
+            Katalog konnte nicht geladen werden ({loadError}). Zeige inline-Fallback.
+          </Card>
+        )}
+
+        {loading && catalog.length === 0 && (
+          <Card className="mt-4 flex items-center gap-3 p-4 text-white/80">
+            <Loader2 className="h-4 w-4 animate-spin text-brand-purple-soft" />
+            <span>Katalog wird geladen …</span>
+          </Card>
+        )}
 
         {/* Statistik-Zeile */}
         <StatsBar total={totalStats} filtered={filteredStats} />
@@ -190,6 +289,18 @@ export default function ReviewPage() {
         <QuestionDetail
           question={detail}
           onClose={() => setDetailId(null)}
+          onEdit={canEdit ? () => setEditing(detail) : undefined}
+        />
+      )}
+
+      {/* Editor-Modal (Create / Update) */}
+      {editing && (
+        <QuestionEditorModal
+          initial={editing}
+          isNew={isNewEdit}
+          onSaved={handleSaved}
+          onDeleted={isNewEdit ? undefined : handleDeleted}
+          onClose={() => setEditing(null)}
         />
       )}
     </ScreenLayout>
@@ -589,9 +700,10 @@ function difficultyTone(d: Difficulty): 'correct' | 'cyan' | 'purple' | 'orange'
 interface QuestionDetailProps {
   question: Question
   onClose: () => void
+  onEdit?: () => void
 }
 
-function QuestionDetail({ question, onClose }: QuestionDetailProps) {
+function QuestionDetail({ question, onClose, onEdit }: QuestionDetailProps) {
   const topic = TOPICS_BY_ID[question.topic]
 
   return (
@@ -636,14 +748,27 @@ function QuestionDetail({ question, onClose }: QuestionDetailProps) {
               </div>
             </div>
           </div>
-          <button
-            type="button"
-            aria-label="Schließen"
-            onClick={onClose}
-            className="shrink-0 h-8 w-8 rounded-full inline-flex items-center justify-center text-ink-muted hover:text-ink hover:bg-white/10"
-          >
-            <XIcon className="h-4 w-4" />
-          </button>
+          <div className="flex shrink-0 items-center gap-1">
+            {onEdit && (
+              <button
+                type="button"
+                aria-label="Bearbeiten"
+                onClick={onEdit}
+                className="inline-flex h-8 items-center gap-1.5 rounded-full bg-brand-purple/20 px-3 text-xs font-semibold uppercase tracking-wider text-brand-purple-soft hover:bg-brand-purple/30"
+              >
+                <Pencil className="h-3.5 w-3.5" />
+                Bearbeiten
+              </button>
+            )}
+            <button
+              type="button"
+              aria-label="Schließen"
+              onClick={onClose}
+              className="shrink-0 h-8 w-8 rounded-full inline-flex items-center justify-center text-ink-muted hover:text-ink hover:bg-white/10"
+            >
+              <XIcon className="h-4 w-4" />
+            </button>
+          </div>
         </div>
 
         <div className="p-5 md:p-6 space-y-5">
