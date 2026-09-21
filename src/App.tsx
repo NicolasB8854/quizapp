@@ -20,6 +20,7 @@ import LobbyPage from '@/pages/LobbyPage'
 import GamePage from '@/pages/GamePage'
 import ScoreboardPage from '@/pages/ScoreboardPage'
 import ReviewPage from '@/pages/ReviewPage'
+import RoomDebugPage from '@/pages/RoomDebugPage'
 
 export default function App() {
   return (
@@ -32,6 +33,7 @@ export default function App() {
           <Route path="/game"       element={<GamePage />} />
           <Route path="/scoreboard" element={<ScoreboardPage />} />
           <Route path="/review"     element={<ReviewPage />} />
+          <Route path="/room-debug" element={<RoomDebugPage />} />
           <Route path="*"           element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>

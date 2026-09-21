@@ -110,8 +110,32 @@ const frontendReducer = createReducer({
  */
 export const reducer = frontendReducer
 
-export function GameProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(frontendReducer, INITIAL_STATE)
+/**
+ * Optionaler Remote-Sync-Kanal: wenn gesetzt, kommt der State vom Server
+ * (via `useRoomSync`), und Dispatch geht übers WebSocket. Der lokale
+ * `useReducer` wird trotzdem gehalten (als Fallback, falls Remote-Modus
+ * ausfällt) — aber der aktive `state`/`dispatch` bleiben Remote.
+ */
+export interface RemoteSyncBinding {
+  state: import('@quizapp/shared').GameState | null
+  dispatch: (action: import('@quizapp/shared').GameAction) => void
+}
+
+export function GameProvider({
+  children,
+  remoteSync,
+}: {
+  children: ReactNode
+  remoteSync?: RemoteSyncBinding
+}) {
+  const [localState, localDispatch] = useReducer(frontendReducer, INITIAL_STATE)
+  // Wenn Remote-Sync aktiv und einen State geliefert hat, gewinnt der Server.
+  // Sonst bleibt der Provider im klassischen Offline-Modus.
+  const useRemote = remoteSync !== undefined && remoteSync.state !== null
+  const state = useRemote ? (remoteSync!.state as GameState) : localState
+  const dispatch = useRemote
+    ? (remoteSync!.dispatch as typeof localDispatch)
+    : localDispatch
 
   // Duplicate-Check-Historie: sobald eine Frage tatsächlich gespielt wurde,
   // merken wir sie in `localStorage`. Der Reducer schreibt selbst nicht, damit
