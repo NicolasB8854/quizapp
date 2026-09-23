@@ -938,12 +938,23 @@ function LobbyPhaseView({
 
       {/* Eigene Player-Karte: nur wenn Player + im State registriert. */}
       {myPlayer && (
-        <PlayerSelfCard
-          state={state}
-          me={myPlayer}
-          canDispatch={canDispatch}
-          send={send}
-        />
+        <>
+          <PlayerSelfCard
+            state={state}
+            me={myPlayer}
+            canDispatch={canDispatch}
+            send={send}
+          />
+          {/* Interessen-Panel als eigene, prominent gestaltete Card.
+               Direkt unter dem PlayerSelfCard, damit der Player sofort
+               nach Namen/Team seine Interessen pflegt — vor dem Team-Roster. */}
+          <PlayerInterestsPanel
+            me={myPlayer}
+            send={send}
+            disabled={!canDispatch}
+            defaultCollapsed={false}
+          />
+        </>
       )}
 
       {/* Team-Roster für alle sichtbar. */}
@@ -1272,10 +1283,6 @@ function PlayerSelfCard({
         </div>
       </div>
 
-      {/* Interessen-Panel: eigene Auswahl mit Level-Zyklus + Sub-Tags */}
-      <div className="border-t border-white/10 pt-3">
-        <PlayerInterestsPanel me={me} send={send} disabled={!canDispatch} />
-      </div>
     </Card>
   )
 }

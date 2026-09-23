@@ -69,7 +69,7 @@ export function PlayerInterestsPanel({
   me,
   send,
   disabled,
-  defaultCollapsed = true,
+  defaultCollapsed = false,
 }: PlayerInterestsPanelProps) {
   const [collapsed, setCollapsed] = useState(defaultCollapsed)
   const [expandedTopic, setExpandedTopic] = useState<Topic | null>(null)
@@ -115,117 +115,168 @@ export function PlayerInterestsPanel({
     })
   }
 
-  return (
-    <div className="space-y-2">
-      <button
-        type="button"
-        onClick={() => setCollapsed((c) => !c)}
-        className="flex w-full items-center gap-2 text-xs text-white/70 hover:text-white"
-      >
-        <span className="uppercase tracking-[0.22em]">
-          Interessen ({activeCount}/12)
-        </span>
-        <div className="flex-1" />
-        <ChevronDown
-          className={cn(
-            'h-4 w-4 transition-transform',
-            collapsed && '-rotate-90',
-          )}
-        />
-      </button>
+  const hasInterests = activeCount > 0
+  const activeInterests = me.interests
 
+  return (
+    <Card
+      className={cn(
+        'space-y-3 p-4',
+        hasInterests
+          ? 'border-brand-purple/40 bg-brand-purple/[0.06]'
+          : 'border-brand-cyan/40 bg-brand-cyan/[0.06]',
+      )}
+    >
+      {/* Prominenter Kopf: Titel + kompakter Collapse-Toggle */}
+      <div className="flex items-start gap-3">
+        <div className="min-w-0 flex-1">
+          <div
+            className={cn(
+              'flex items-center gap-2 text-[10px] uppercase tracking-[0.32em]',
+              hasInterests ? 'text-brand-purple-soft' : 'text-brand-cyan-soft',
+            )}
+          >
+            <span aria-hidden>🎯</span>
+            <span>{hasInterests ? 'Deine Interessen' : 'Personalisierung'}</span>
+          </div>
+          <div className="mt-0.5 text-lg font-semibold text-white">
+            {hasInterests
+              ? `${activeCount} ${activeCount === 1 ? 'Interesse' : 'Interessen'} aktiv`
+              : 'Was interessiert dich?'}
+          </div>
+          <div className="mt-0.5 text-xs text-ink-muted">
+            {hasInterests
+              ? 'Die Fragen orientieren sich an deinem Profil. Klick auf eine Kachel unten zykelt bisschen → gut → nerd → aus.'
+              : 'Such nach einem Thema oder wähle eine Kategorie. Die Fragen passen sich an dich an.'}
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={() => setCollapsed((c) => !c)}
+          aria-label={collapsed ? 'Panel öffnen' : 'Panel einklappen'}
+          className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/[0.03] text-white/70 hover:text-white"
+        >
+          <ChevronDown
+            className={cn('h-4 w-4 transition-transform', collapsed && '-rotate-90')}
+          />
+        </button>
+      </div>
+
+      {/* Cross-Topic-Suche: immer sichtbar, auch wenn Rest eingeklappt. */}
+      <InterestSearchInput me={me} send={send} disabled={disabled} />
+
+      {/* Aktive Interessen als Chips (kompakt, klickbar): immer sichtbar,
+          damit der Player sein Profil auf einen Blick sieht. Klick zykelt
+          das Level; die kleine „+"-Zahl ruft den Sub-Tag-Editor auf. */}
+      {activeInterests.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {activeInterests.map((interest) => {
+            const topicDef = TOPICS_BY_ID[interest.topic]
+            if (!topicDef) return null
+            const tone =
+              interest.level === 2 || interest.level === 3 || interest.level === 5
+                ? LEVEL_TONE[interest.level]
+                : 'bg-white/[0.04] text-white/70 border-white/10'
+            const tagCount = interest.tags?.length ?? 0
+            return (
+              <div
+                key={interest.topic}
+                className={cn(
+                  'inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-xs',
+                  tone,
+                )}
+              >
+                <span aria-hidden>{topicDef.emoji}</span>
+                <button
+                  type="button"
+                  onClick={() => toggleLevel(interest.topic)}
+                  disabled={disabled}
+                  title={`Level: ${LEVEL_LABEL[interest.level]} — klicken zum Zykeln`}
+                  className="font-medium disabled:opacity-60"
+                >
+                  {topicDef.label}
+                </button>
+                <span className="rounded bg-white/20 px-1 text-[9px] font-bold uppercase tracking-wider">
+                  {LEVEL_LABEL[interest.level].slice(0, 3)}
+                </span>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setExpandedTopic(
+                      expandedTopic === interest.topic ? null : interest.topic,
+                    )
+                  }
+                  disabled={disabled}
+                  title="Sub-Interessen"
+                  className="text-[10px] opacity-70 hover:opacity-100 disabled:opacity-40"
+                >
+                  {tagCount > 0 ? `+${tagCount}` : '+'}
+                </button>
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      {/* Inline Sub-Tag-Editor für das expandierte Topic */}
+      {expandedTopic && (
+        <SubTagEditor
+          topic={expandedTopic}
+          currentTags={interestByTopic.get(expandedTopic)?.tags ?? []}
+          onChange={(tags) => setTags(expandedTopic, tags)}
+          onClose={() => setExpandedTopic(null)}
+          disabled={disabled}
+        />
+      )}
+
+      {/* Kategorien-Grid: der zweite Weg, wenn man schnell scannen will.
+          Bei collapsed=true blenden wir den Grid aus, Suche + aktive Chips
+          bleiben aber greifbar. */}
       {!collapsed && (
         <div className="space-y-2">
-          {/* Cross-Topic-Suche: der Kern-Einstieg. Wer weiß, was ihn
-              interessiert, tippt es direkt. Die Kacheln darunter sind
-              der zweite Weg für schnelles Scannen der 12 Kategorien. */}
-          <InterestSearchInput
-            me={me}
-            send={send}
-            disabled={disabled}
-          />
-
           <div className="text-[10px] uppercase tracking-[0.22em] text-ink-muted">
-            Oder Kategorien direkt wählen
+            Kategorien direkt wählen
           </div>
-
           <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-4">
             {TOPICS.map((topic) => {
               const level = interestByTopic.get(topic.id)?.level
-              const tags = interestByTopic.get(topic.id)?.tags ?? []
               const isActive = !!level
               const tone =
                 level === 2 || level === 3 || level === 5
                   ? LEVEL_TONE[level]
                   : 'bg-white/[0.04] text-white/50 border-white/10'
-              const isExpanded = expandedTopic === topic.id
+              const isExpandedTopic = expandedTopic === topic.id
               return (
-                <div key={topic.id} className="relative">
-                  <button
-                    type="button"
-                    onClick={() => toggleLevel(topic.id)}
-                    disabled={disabled}
-                    title={
-                      level
-                        ? `${topic.label} · ${LEVEL_LABEL[level]}`
-                        : topic.label
-                    }
-                    className={cn(
-                      'flex w-full items-center gap-1 rounded-lg border px-2 py-1.5 text-left text-[11px] font-medium transition-all disabled:opacity-40',
-                      tone,
-                      isExpanded && 'ring-1 ring-white/30',
-                    )}
-                  >
-                    <span aria-hidden className="text-sm">
-                      {topic.emoji}
-                    </span>
-                    <span className="min-w-0 flex-1 truncate">
-                      {topic.label}
-                    </span>
-                    {isActive && (
-                      <span className="rounded-full bg-white/20 px-1 text-[9px] font-bold uppercase tracking-wider">
-                        {LEVEL_LABEL[level!].slice(0, 3)}
-                      </span>
-                    )}
-                  </button>
-                  {isActive && (
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setExpandedTopic(isExpanded ? null : topic.id)
-                      }
-                      disabled={disabled}
-                      className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full border border-white/20 bg-navy-800 text-white/80 hover:border-white/40 disabled:opacity-40"
-                      title="Sub-Interessen"
-                    >
-                      <span className="text-[10px] font-bold">
-                        {tags.length > 0 ? tags.length : '+'}
-                      </span>
-                    </button>
+                <button
+                  key={topic.id}
+                  type="button"
+                  onClick={() => toggleLevel(topic.id)}
+                  disabled={disabled}
+                  title={
+                    level ? `${topic.label} · ${LEVEL_LABEL[level]}` : topic.label
+                  }
+                  className={cn(
+                    'flex w-full items-center gap-1 rounded-lg border px-2 py-1.5 text-left text-[11px] font-medium transition-all disabled:opacity-40',
+                    tone,
+                    isExpandedTopic && 'ring-1 ring-white/30',
                   )}
-                </div>
+                >
+                  <span aria-hidden className="text-sm">
+                    {topic.emoji}
+                  </span>
+                  <span className="min-w-0 flex-1 truncate">{topic.label}</span>
+                  {isActive && (
+                    <span className="rounded-full bg-white/20 px-1 text-[9px] font-bold uppercase tracking-wider">
+                      {LEVEL_LABEL[level!].slice(0, 3)}
+                    </span>
+                  )}
+                </button>
               )
             })}
           </div>
-
-          {/* Inline Sub-Tag-Editor für das gerade expandierte Topic */}
-          {expandedTopic && (
-            <SubTagEditor
-              topic={expandedTopic}
-              currentTags={interestByTopic.get(expandedTopic)?.tags ?? []}
-              onChange={(tags) => setTags(expandedTopic, tags)}
-              onClose={() => setExpandedTopic(null)}
-              disabled={disabled}
-            />
-          )}
-
-          <p className="text-[10px] text-ink-muted">
-            Tipp: Klick durchzykelt das Level (bisschen → gut → nerd → aus).
-            Klick auf die Zahl unten rechts öffnet Sub-Interessen.
-          </p>
         </div>
       )}
-    </div>
+    </Card>
   )
 }
 
