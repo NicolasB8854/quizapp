@@ -40,7 +40,7 @@ import type {
   SpotlightLive,
   SprinterLive,
 } from '@quizapp/shared'
-import type { Player, SkillLevel, Topic } from '@quizapp/shared'
+import type { GameModeId, Player, SkillLevel, Topic } from '@quizapp/shared'
 import {
   MODES,
   MODES_BY_ID,
@@ -926,6 +926,16 @@ function LobbyPhaseView({
         </div>
       </Card>
 
+      {/* Modi-Editor: Host darf noch in der Lobby Modi anpassen — ohne
+           BACK_TO_SETUP, damit die Player nicht rausfliegen. */}
+      {isHost && (
+        <LobbyModesPanel
+          selected={state.round.gameModes}
+          canDispatch={canDispatch}
+          send={send}
+        />
+      )}
+
       {/* Eigene Player-Karte: nur wenn Player + im State registriert. */}
       {myPlayer && (
         <PlayerSelfCard
@@ -1058,6 +1068,93 @@ function RosterPlayerRow({ player, isMe }: { player: Player; isMe: boolean }) {
         })}
       </div>
     </div>
+  )
+}
+
+/**
+ * Host-only Modi-Editor in der Lobby. Der Host kann Modi ergänzen oder
+ * entfernen, ohne dass Player aus der Runde fliegen — `SET_ROUND_MODES`
+ * arbeitet in-place und behält Roster + Teams. Nutzt dieselbe Modi-Liste
+ * wie der Setup-Screen, aber platzsparender (2-Spalten-Grid, kompakter
+ * Text).
+ */
+function LobbyModesPanel({
+  selected,
+  canDispatch,
+  send,
+}: {
+  selected: readonly GameModeId[]
+  canDispatch: boolean
+  send: (a: GameAction) => void
+}) {
+  const readyModes = useMemo(
+    () => MODES.filter((m) => m.status === 'ready'),
+    [],
+  )
+  const selectedSet = useMemo(() => new Set(selected), [selected])
+
+  const toggle = (id: GameModeId) => {
+    if (!canDispatch) return
+    const next = selectedSet.has(id)
+      ? selected.filter((m) => m !== id)
+      : [...selected, id]
+    if (next.length === 0) return // mindestens ein Modus
+    send({ type: 'SET_ROUND_MODES', modes: next })
+  }
+
+  return (
+    <Card className="space-y-2 p-4">
+      <div className="flex items-center gap-2">
+        <div className="text-xs uppercase tracking-[0.22em] text-ink-muted">
+          Modi ({selected.length})
+        </div>
+        <span className="text-[10px] uppercase tracking-[0.22em] text-brand-purple-soft">
+          Host
+        </span>
+      </div>
+      <div className="grid gap-1.5 sm:grid-cols-2">
+        {readyModes.map((mode) => {
+          const isSelected = selectedSet.has(mode.id)
+          return (
+            <button
+              key={mode.id}
+              type="button"
+              onClick={() => toggle(mode.id)}
+              disabled={!canDispatch}
+              className={cn(
+                'rounded-lg border px-2.5 py-1.5 text-left transition-all disabled:opacity-40',
+                isSelected
+                  ? 'border-brand-purple/60 bg-brand-purple/10'
+                  : 'border-white/10 bg-white/[0.03] hover:border-white/20',
+              )}
+            >
+              <div className="flex items-center gap-1.5">
+                <span
+                  aria-hidden
+                  className={cn(
+                    'flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full border text-[10px]',
+                    isSelected
+                      ? 'border-brand-purple bg-brand-purple/40 text-white'
+                      : 'border-white/30 text-transparent',
+                  )}
+                >
+                  ✓
+                </span>
+                <span className="text-sm font-semibold text-white">
+                  {mode.name}
+                </span>
+              </div>
+              <div className="mt-0.5 pl-6 text-[10px] text-ink-muted">
+                {mode.tagline}
+              </div>
+            </button>
+          )
+        })}
+      </div>
+      <p className="text-[10px] text-ink-muted">
+        Der Modus-Wechsel läuft ohne Roster-Reset — Player bleiben in ihren Teams.
+      </p>
+    </Card>
   )
 }
 

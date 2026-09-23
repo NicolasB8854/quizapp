@@ -120,14 +120,19 @@ async function handleJoinRoom(
   //   - Erst-Host wird angenommen; ist bereits ein Host mit anderer playerId
   //     im Room, wird der neue Host-Anfrager zum Player degradiert.
   //   - Reconnect derselben playerId behält Host-Status.
+  //   - Auto-Host-Promotion: joint ein Player in einen Room ohne Host, wird
+  //     er automatisch zum Host (praktisch für Solo-Player, die als erstes
+  //     joinen und nicht dachten, sich als Host anzumelden).
   //   - `stageOnly` ist bei `player` immer false, bei `host` übernimmt der
   //     vom Client vorgeschlagene Wert (Default false).
   let effectiveRole: 'player' | 'host' = msg.role
   let effectiveStageOnly = false
   let nextHostPlayerId: string | null | undefined = room.hostPlayerId ?? null
+  let autoPromoted = false
+
+  const existingHost = room.hostPlayerId ?? null
 
   if (msg.role === 'host') {
-    const existingHost = room.hostPlayerId ?? null
     if (!existingHost || existingHost === playerId) {
       effectiveRole = 'host'
       effectiveStageOnly = msg.stageOnly === true
@@ -135,6 +140,21 @@ async function handleJoinRoom(
     } else {
       // Bereits ein anderer Host im Room → als Player registrieren.
       effectiveRole = 'player'
+      effectiveStageOnly = false
+    }
+  } else if (msg.role === 'player') {
+    if (!existingHost) {
+      // Kein Host im Room — der erste Player übernimmt den Show-Runner-Job.
+      // Er kann trotzdem im Team-Roster mitspielen (stageOnly bleibt false).
+      effectiveRole = 'host'
+      effectiveStageOnly = false
+      nextHostPlayerId = playerId
+      autoPromoted = true
+    } else if (existingHost === playerId) {
+      // Reconnect eines früher als Host promoted Player. Host-Status
+      // wiederherstellen — auch wenn der Client die Rolle heruntergestuft
+      // hätte (der Server ist Quelle der Wahrheit).
+      effectiveRole = 'host'
       effectiveStageOnly = false
     }
   }
@@ -225,6 +245,7 @@ async function handleJoinRoom(
       role: effectiveRole,
       stageOnly: effectiveStageOnly,
       hostDemotedToPlayer: msg.role === 'host' && effectiveRole !== 'host',
+      autoPromotedToHost: autoPromoted,
       phase: currentState.phase,
       players: currentState.round?.players.length ?? 0,
     }),

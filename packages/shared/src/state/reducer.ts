@@ -31,7 +31,7 @@ import type {
   TrueFalseQuestion,
   WarmupRiddleQuestion,
 } from '../types'
-import { MODES_BY_ID } from '../data/modes'
+import { MODES, MODES_BY_ID } from '../data/modes'
 import {
   pickAnyMultipleChoice,
   pickQuestion,
@@ -426,6 +426,16 @@ export type GameAction =
    * und springt zurück in die Lobby (Step: ready). Keine Player fliegen raus.
    */
   | { type: 'RESTART_MATCH' }
+  /**
+   * Modi in einer bereits initialisierten Runde ändern. Nur in `phase='lobby'`
+   * erlaubt — läuft ohne Round-Reset, Player + Teams bleiben. `bestOf` wird
+   * automatisch auf `max(1, modes.length)` gesetzt.
+   *
+   * Anwendungsfälle: der Host hat die Runde spontan gestartet und will jetzt
+   * doch mehr/andere Modi. Ohne diese Action müsste er `BACK_TO_SETUP` machen,
+   * was aber alle Player rauswerfen würde.
+   */
+  | { type: 'SET_ROUND_MODES'; modes: GameModeId[] }
   | { type: 'RESET_ALL' }
 
 // ---------- Initial State -----------------------------------------------------
@@ -2777,6 +2787,35 @@ export function createReducer(deps: ReducerDeps) {
 
     case 'BACK_TO_SETUP':
       return { ...INITIAL_STATE, draft: state.draft }
+
+    case 'SET_ROUND_MODES': {
+      // In-place Modi-Wechsel während der Lobby-Phase. Nur die Ready-
+      // Modi aus dem Katalog werden akzeptiert; Duplikate raus,
+      // Reihenfolge bleibt in der übergebenen Sequenz.
+      if (!state.round || state.phase !== 'lobby') return state
+      const readyModeIds = new Set(
+        MODES.filter((m) => m.status === 'ready').map((m) => m.id),
+      )
+      const seen = new Set<GameModeId>()
+      const validated: GameModeId[] = []
+      for (const id of action.modes) {
+        if (!readyModeIds.has(id) || seen.has(id)) continue
+        seen.add(id)
+        validated.push(id)
+      }
+      if (validated.length === 0) return state
+      // Optional auch den Draft mit anpassen — konsistent für spätere
+      // Zurück-zum-Setup-Aktionen.
+      return {
+        ...state,
+        draft: { ...state.draft, selectedModes: [...validated] },
+        round: {
+          ...state.round,
+          gameModes: [...validated],
+          bestOf: Math.max(1, validated.length),
+        },
+      }
+    }
 
     case 'RESTART_MATCH': {
       // "Nochmal mit denselben Teams": Match neu, aber Runden-Kontext bleibt.
