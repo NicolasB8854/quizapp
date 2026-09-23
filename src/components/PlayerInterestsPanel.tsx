@@ -12,7 +12,7 @@
  */
 
 import { useMemo, useState } from 'react'
-import { ChevronDown, X } from 'lucide-react'
+import { ChevronDown, Search, X } from 'lucide-react'
 import type {
   GameAction,
   Player,
@@ -22,8 +22,11 @@ import type {
 } from '@quizapp/shared'
 import {
   TOPICS,
+  TOPICS_BY_ID,
   getInterestSuggestionsForTopic,
   getCatalogTagsByTopic,
+  buildInterestSearchIndex,
+  searchInterests,
 } from '@quizapp/shared'
 import { Card } from './Card'
 import { Button } from './Button'
@@ -133,6 +136,19 @@ export function PlayerInterestsPanel({
 
       {!collapsed && (
         <div className="space-y-2">
+          {/* Cross-Topic-Suche: der Kern-Einstieg. Wer weiß, was ihn
+              interessiert, tippt es direkt. Die Kacheln darunter sind
+              der zweite Weg für schnelles Scannen der 12 Kategorien. */}
+          <InterestSearchInput
+            me={me}
+            send={send}
+            disabled={disabled}
+          />
+
+          <div className="text-[10px] uppercase tracking-[0.22em] text-ink-muted">
+            Oder Kategorien direkt wählen
+          </div>
+
           <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-4">
             {TOPICS.map((topic) => {
               const level = interestByTopic.get(topic.id)?.level
@@ -207,6 +223,142 @@ export function PlayerInterestsPanel({
             Tipp: Klick durchzykelt das Level (bisschen → gut → nerd → aus).
             Klick auf die Zahl unten rechts öffnet Sub-Interessen.
           </p>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ---------- Cross-Topic-Suche ----------------------------------------------
+
+/**
+ * Suchfeld über alle 12 Topics + Katalog-Tags + Interest-Suggestions.
+ *
+ * Klick auf ein Ergebnis-Chip:
+ *   1. Falls das Ziel-Topic nicht aktiv, aktivieren wir es mit Level 3 („gut").
+ *      Der Spieler kann das Level danach über die Kachel weiter zykeln.
+ *   2. Der Tag wird zum Sub-Interesse-Set dieses Topics hinzugefügt.
+ *
+ * Die zwei Dispatches laufen sequentiell — im server-authoritativen Modell
+ * kommen zwei STATE-Broadcasts zurück; für ein Party-Party-Setup unkritisch.
+ */
+function InterestSearchInput({
+  me,
+  send,
+  disabled,
+}: {
+  me: Player
+  send: (a: GameAction) => void
+  disabled?: boolean
+}) {
+  const [query, setQuery] = useState('')
+
+  const index = useMemo(() => buildInterestSearchIndex(), [])
+
+  // Set der bereits gewählten Tags (case-insensitive), damit die Suche keine
+  // Chips für schon gesetzte Interessen wirft.
+  const alreadyChosen = useMemo(() => {
+    const s = new Set<string>()
+    for (const i of me.interests) {
+      for (const t of i.tags ?? []) s.add(t.trim().toLowerCase())
+    }
+    return s
+  }, [me.interests])
+
+  const results = useMemo(
+    () => searchInterests(index, query, alreadyChosen, 8),
+    [index, query, alreadyChosen],
+  )
+
+  const handlePick = (label: string, topic: Topic) => {
+    if (disabled) return
+    // 1) Topic aktivieren, falls noch nicht in den Interessen.
+    const has = me.interests.some((i) => i.topic === topic)
+    if (!has) {
+      const newInterests: PlayerInterest[] = [
+        ...me.interests,
+        { topic, level: 3, tags: [label] },
+      ]
+      send({
+        type: 'SET_PLAYER_INTERESTS',
+        playerId: me.id,
+        interests: newInterests,
+      })
+    } else {
+      // 2) Topic hatten wir schon → nur den Tag anhängen (dedup case-insensitive).
+      const currentTags = me.interests.find((i) => i.topic === topic)?.tags ?? []
+      const lower = label.toLowerCase()
+      if (currentTags.some((t) => t.toLowerCase() === lower)) {
+        setQuery('')
+        return
+      }
+      send({
+        type: 'SET_PLAYER_INTEREST_TAGS',
+        playerId: me.id,
+        topic,
+        tags: [...currentTags, label],
+      })
+    }
+    setQuery('')
+  }
+
+  return (
+    <div className="space-y-2">
+      <div className="relative">
+        <Search
+          className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40"
+          aria-hidden
+        />
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          disabled={disabled}
+          placeholder="Was interessiert dich? z. B. Marvel, Formel 1, Beatles"
+          className="w-full rounded-lg bg-white/10 py-2 pl-8 pr-8 text-sm text-white placeholder-white/40 disabled:opacity-50"
+          maxLength={40}
+        />
+        {query && (
+          <button
+            type="button"
+            onClick={() => setQuery('')}
+            aria-label="Leeren"
+            className="absolute right-2 top-1/2 -translate-y-1/2 rounded text-white/50 hover:text-white"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        )}
+      </div>
+
+      {query.trim().length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {results.length === 0 ? (
+            <div className="rounded border border-dashed border-white/10 px-2 py-1.5 text-[11px] text-ink-muted">
+              Kein passender Vorschlag. Öffne unten eine Kategorie, um freien
+              Text als Sub-Interesse zu erfassen.
+            </div>
+          ) : (
+            results.map((r) => {
+              const topicDef = TOPICS_BY_ID[r.topic]
+              return (
+                <button
+                  key={`${r.topic}:${r.label}`}
+                  type="button"
+                  onClick={() => handlePick(r.label, r.topic)}
+                  disabled={disabled}
+                  title={`Wird ${topicDef?.label} zugeordnet`}
+                  className={cn(
+                    'inline-flex items-center gap-1.5 rounded-full border px-2 py-1 text-xs transition-all disabled:opacity-40',
+                    r.source === 'tag'
+                      ? 'border-brand-purple/40 bg-brand-purple/[0.08] text-white hover:border-brand-purple/70 hover:bg-brand-purple/15'
+                      : 'border-white/15 bg-white/[0.04] text-white/85 hover:border-white/30 hover:bg-white/10',
+                  )}
+                >
+                  <span aria-hidden>{topicDef?.emoji}</span>
+                  <span>{r.label}</span>
+                </button>
+              )
+            })
+          )}
         </div>
       )}
     </div>

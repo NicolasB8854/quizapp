@@ -26,6 +26,7 @@ export * from './messages'
 // Pure logic
 export * from './lib/questions'
 export * from './lib/interestProfile'
+export * from './lib/interestSearch'
 export * from './lib/shuffle'
 export * from './lib/roomCode'
 
