@@ -198,21 +198,25 @@ function TopicGrid() {
           Kategorie wählen
         </h1>
         <p className="mt-2 text-ink-muted text-sm">
-          {live.usedTopics.length} von 12 gespielt · {live.pointsPerQuestion} Punkte pro Feld
+          {live.usedTopics.length} von {live.battleTopics.length} gespielt · {live.pointsPerQuestion} Punkte pro Feld
         </p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
-        {TOPICS.map((topic) => (
-          <TopicTile
-            key={topic.id}
-            topic={topic}
-            points={live.pointsPerQuestion}
-            used={usedSet.has(topic.id)}
-            isInterest={interestSet.has(topic.id)}
-            onSelect={() => dispatch({ type: 'CD_PICK_TOPIC', topic: topic.id })}
-          />
-        ))}
+        {live.battleTopics.map((topicId) => {
+          const topic = TOPICS_BY_ID[topicId]
+          if (!topic) return null
+          return (
+            <TopicTile
+              key={topic.id}
+              topic={topic}
+              points={live.pointsPerQuestion}
+              used={usedSet.has(topic.id)}
+              isInterest={interestSet.has(topic.id)}
+              onSelect={() => dispatch({ type: 'CD_PICK_TOPIC', topic: topic.id })}
+            />
+          )
+        })}
       </div>
     </div>
   )
