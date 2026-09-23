@@ -31,7 +31,17 @@ export interface UseRoomSyncOptions {
   wsUrl: string | undefined
   roomCode: string
   playerName: string
-  role: 'player' | 'master'
+  /**
+   * Angefragte Rolle. Vom Server bestätigte effektive Rolle steht im
+   * Hook-Response (`role` + `stageOnly`) — die kann bei Kollision
+   * (schon anderer Host im Room) abweichen.
+   */
+  role: 'player' | 'host'
+  /**
+   * Bei `role='host'`: `true` = reines Bühnen-Gerät (Big-Screen-Layout,
+   * kein Team-Beitritt); `false` = Host spielt mit. Bei `player` ignoriert.
+   */
+  stageOnly?: boolean
   /** Vorhandene `playerId` aus dem localStorage — für Wiedererkennung. */
   playerId?: string
   /** Wenn `false`, macht der Hook nichts (praktisch für UI-Vorbedingungen). */
@@ -50,6 +60,14 @@ export interface UseRoomSyncResult {
   status: RoomSyncStatus
   state: GameState | null
   playerId: string | null
+  /**
+   * Vom Server bestätigte Rolle. Kann von der angefragten Rolle abweichen,
+   * wenn z. B. bereits ein anderer Host im Room ist. `null` solange nicht
+   * gejoined.
+   */
+  role: 'player' | 'host' | null
+  /** Vom Server bestätigter Bühnen-Modus. `null` solange nicht gejoined. */
+  stageOnly: boolean | null
   lastError: string | null
   /**
    * Schickt eine Reducer-Action an den Server. Kein direkter Local-Update:
@@ -64,6 +82,8 @@ export function useRoomSync(opts: UseRoomSyncOptions): UseRoomSyncResult {
   const [status, setStatus] = useState<RoomSyncStatus>('idle')
   const [state, setState] = useState<GameState | null>(null)
   const [playerId, setPlayerId] = useState<string | null>(opts.playerId ?? null)
+  const [effectiveRole, setEffectiveRole] = useState<'player' | 'host' | null>(null)
+  const [effectiveStageOnly, setEffectiveStageOnly] = useState<boolean | null>(null)
   const [lastError, setLastError] = useState<string | null>(null)
 
   // Wir halten Referenzen auf mutierende Werte, damit der useEffect nicht
@@ -71,8 +91,10 @@ export function useRoomSync(opts: UseRoomSyncOptions): UseRoomSyncResult {
   const playerIdRef = useRef<string | null>(opts.playerId ?? null)
   const playerNameRef = useRef(opts.playerName)
   const roleRef = useRef(opts.role)
+  const stageOnlyRef = useRef(opts.stageOnly ?? false)
   playerNameRef.current = opts.playerName
   roleRef.current = opts.role
+  stageOnlyRef.current = opts.stageOnly ?? false
 
   const clientRef = useRef<WSClient | null>(null)
 
@@ -94,6 +116,7 @@ export function useRoomSync(opts: UseRoomSyncOptions): UseRoomSyncResult {
         roomCode: opts.roomCode,
         playerName: playerNameRef.current,
         role: roleRef.current,
+        stageOnly: stageOnlyRef.current,
         ...(playerIdRef.current ? { playerId: playerIdRef.current } : {}),
       })
     })
@@ -103,6 +126,8 @@ export function useRoomSync(opts: UseRoomSyncOptions): UseRoomSyncResult {
         case 'JOINED':
           playerIdRef.current = msg.playerId
           setPlayerId(msg.playerId)
+          setEffectiveRole(msg.role)
+          setEffectiveStageOnly(msg.stageOnly)
           setState(msg.state)
           setStatus('joined')
           setLastError(null)
@@ -154,5 +179,13 @@ export function useRoomSync(opts: UseRoomSyncOptions): UseRoomSyncResult {
     return c.send({ type: 'DISPATCH', action })
   }, [])
 
-  return { status, state, playerId, lastError, dispatch }
+  return {
+    status,
+    state,
+    playerId,
+    role: effectiveRole,
+    stageOnly: effectiveStageOnly,
+    lastError,
+    dispatch,
+  }
 }

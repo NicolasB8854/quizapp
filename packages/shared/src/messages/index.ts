@@ -26,11 +26,26 @@ export interface JoinRoomMessage {
   playerName: string
   playerId?: string
   /**
-   * `master` = Read-only-Anzeige-Client (großer Bildschirm), darf State
-   * beobachten aber nicht dispatchen.
-   * `player` = Interaktiver Client (Handy), darf State-Actions senden.
+   * Rolle im Room:
+   *   `host`   = Show-Runner: darf Setup ändern, Weiter/Auflösen/Restart
+   *              drücken. Spielt per Default mit (siehe `stageOnly`).
+   *   `player` = normaler Teilnehmer, sendet nur Player-Actions.
+   *
+   * Es gibt maximal einen Host pro Room. Wer den Room erstellt, wird Host;
+   * versucht später jemand als `host` zu joinen und ist bereits ein Host
+   * mit anderer `playerId` da, wird der Neue automatisch als `player`
+   * registriert. Reconnects derselben `playerId` behalten Host-Status.
    */
-  role: 'player' | 'master'
+  role: 'player' | 'host'
+  /**
+   * Wenn `true` und Rolle `host`: das Gerät ist reine Bühne (TV/Beamer)
+   * und wird NICHT als Spieler ins Team-Roster eingetragen. Zeigt Frage/
+   * Options im Big-Screen-Presenter-Layout. Default `false` — der Host
+   * spielt mit auf seinem Handy.
+   *
+   * Bei Rolle `player` ignoriert.
+   */
+  stageOnly?: boolean
 }
 
 /**
@@ -75,7 +90,14 @@ export interface JoinedMessage {
   type: 'JOINED'
   roomCode: string
   playerId: string
-  role: 'player' | 'master'
+  /**
+   * Vom Server bestätigte effektive Rolle. Kann von der angefragten Rolle
+   * abweichen: wer als `host` joint, während bereits ein anderer Host im
+   * Room ist, wird als `player` bestätigt.
+   */
+  role: 'player' | 'host'
+  /** Vom Server bestätigter effektiver Bühnen-Modus. */
+  stageOnly: boolean
   state: GameState
 }
 

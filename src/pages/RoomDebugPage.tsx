@@ -25,7 +25,7 @@ export default function RoomDebugPage() {
   const wsUrl = import.meta.env.VITE_WS_URL
   const [roomCode, setRoomCode] = useState('TEST')
   const [playerName, setPlayerName] = useState('Sara')
-  const [role, setRole] = useState<'player' | 'master'>('player')
+  const [role, setRole] = useState<'player' | 'host'>('player')
   const [enabled, setEnabled] = useState(false)
 
   const room = useRoomSync({
@@ -36,7 +36,7 @@ export default function RoomDebugPage() {
     enabled,
   })
 
-  const canDispatch = room.status === 'joined' && role === 'player'
+  const canDispatch = room.status === 'joined'
 
   const send = (action: GameAction) => {
     if (!canDispatch) return
@@ -82,11 +82,11 @@ export default function RoomDebugPage() {
               <select
                 className="mt-1 w-full rounded bg-white/10 px-3 py-2 text-white"
                 value={role}
-                onChange={(e) => setRole(e.target.value as 'player' | 'master')}
+                onChange={(e) => setRole(e.target.value as 'player' | 'host')}
                 disabled={enabled}
               >
                 <option value="player">player</option>
-                <option value="master">master</option>
+                <option value="host">host</option>
               </select>
             </label>
           </div>
@@ -146,9 +146,9 @@ export default function RoomDebugPage() {
               RESET_ALL
             </Button>
           </div>
-          {role === 'master' && (
+          {role === 'host' && (
             <p className="text-xs text-white/60">
-              Master-Rolle: Dispatch ist serverseitig gesperrt (ROLE_NOT_ALLOWED).
+              Host-Rolle: darf Show-Runner-Aktionen dispatchen (Weiter, Auflösen etc.).
             </p>
           )}
         </Card>

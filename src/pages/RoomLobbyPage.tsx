@@ -57,6 +57,7 @@ import { ConfettiBurst } from '@/components/ConfettiBurst'
 import { ModeTransitionSplash } from '@/components/ModeTransitionSplash'
 import { ConnectionToast } from '@/components/ConnectionToast'
 import { PlayerTeamMatesPanel } from '@/components/PlayerTeamMatesPanel'
+import { HostActionBar } from '@/components/HostActionBar'
 import { useRoomSync } from '@/hooks/useRoomSync'
 import { useSoundEnabled } from '@/hooks/useSoundEnabled'
 import { playSound } from '@/lib/audio'
@@ -74,16 +75,32 @@ export default function RoomLobbyPage() {
   // Query-Params haben Vorrang, sonst Fallback auf gespeicherte Identity.
   const identity = useMemo(() => readRoomIdentity(), [])
   const playerName = searchParams.get('name') ?? identity.playerName ?? ''
-  const role = (searchParams.get('role') as 'player' | 'master') ?? 'player'
+  // URL-Parsing für Rolle & Bühnen-Modus. Legacy: alte Bookmarks/URLs mit
+  // `role=master` werden als "Host + reine Bühne" interpretiert.
+  const rawRole = searchParams.get('role') ?? 'player'
+  const legacyMaster = rawRole === 'master'
+  const requestedRole: 'player' | 'host' =
+    rawRole === 'host' || legacyMaster ? 'host' : 'player'
+  const requestedStageOnly =
+    searchParams.get('stageOnly') === '1' || legacyMaster
 
   const room = useRoomSync({
     wsUrl,
     roomCode,
     playerName,
-    role,
+    role: requestedRole,
+    stageOnly: requestedStageOnly,
     playerId: identity.playerId ?? undefined,
     enabled: !!wsUrl && !!roomCode && !!playerName,
   })
+
+  // Effektive Rolle & Bühnen-Modus: vom Server bestätigt (im JOINED
+  // beantwortet). Solange wir noch nicht verbunden sind, verwenden wir die
+  // angefragten Werte als Vorschau — sonst würde die UI zwischen Player-
+  // und Host-Optik hin- und herflackern beim Reconnect.
+  const role: 'player' | 'host' = room.role ?? requestedRole
+  const stageOnly: boolean = room.stageOnly ?? requestedStageOnly
+  const isHost = role === 'host'
 
   // Bei erstem JOINED die Server-bestätigte playerId in localStorage merken.
   useEffect(() => {
@@ -116,12 +133,12 @@ export default function RoomLobbyPage() {
     }
   }
 
-  // Team-Farb-Präsenz: sobald der Player einem Team beigetreten ist, ziehen
-  // wir seine Team-Farbe als dünnen Balken über den Content. Gibt jedem Handy
-  // ein sofort erkennbares „das ist meine Farbe"-Signal, ohne die
-  // Content-Karten selbst zu überladen.
+  // Team-Farb-Präsenz: sobald der eigene Player einem Team beigetreten ist,
+  // ziehen wir seine Team-Farbe als dünnen Balken über den Content. Gilt für
+  // alle, die im Roster stehen — also normale Player UND mitspielende Hosts.
+  // Nur Stage-Only-Bühnen haben keinen eigenen Player-Eintrag.
   const myPlayer =
-    role === 'player' && room.playerId && room.state?.round
+    !stageOnly && room.playerId && room.state?.round
       ? room.state.round.players.find((p) => p.id === room.playerId) ?? null
       : null
   const myTeam = myPlayer
@@ -323,7 +340,7 @@ export default function RoomLobbyPage() {
       <div
         className={cn(
           'mx-auto space-y-4 p-4 md:p-6',
-          role === 'master' ? 'max-w-6xl' : 'max-w-3xl',
+          stageOnly ? 'max-w-6xl' : 'max-w-3xl',
         )}
       >
         {/* Header */}
@@ -359,18 +376,18 @@ export default function RoomLobbyPage() {
           <StatusBadge status={room.status} />
         </div>
 
-        {/* Header-Variante nach Rolle + Phase:
-             - Master + setup/lobby → Hero mit QR (Onboarding-Phase)
-             - Master + playing/scoreboard → kompakter Header (Content dominiert)
-             - Player → immer compact-Streifen */}
-        {role === 'master' &&
+        {/* Header-Variante nach Bühnen-Modus + Phase:
+             - Stage + setup/lobby → Hero mit QR (Onboarding-Phase)
+             - Stage + playing/scoreboard → kompakter Header (Content dominiert)
+             - Player oder mitspielender Host → immer compact-Streifen */}
+        {stageOnly &&
         (room.state?.phase === 'setup' || room.state?.phase === 'lobby') ? (
           <MasterHero
             roomCode={roomCode}
             playerCount={room.state?.round?.players.length ?? 0}
             onCopyCode={copyCode}
           />
-        ) : role === 'master' ? (
+        ) : stageOnly ? (
           <MasterCompactHeader
             roomCode={roomCode}
             onCopyCode={copyCode}
@@ -444,8 +461,21 @@ export default function RoomLobbyPage() {
           />
         ) : null}
 
-        {/* Teammates-Streifen: nur für Player im Playing, wenn Team gesetzt. */}
-        {role === 'player' &&
+        {/* Host-Steuerungs-Bar oben: nur für den mitspielenden Host, damit
+             er die aktuelle Show-Aktion immer griffbereit hat. */}
+        {isHost &&
+          !stageOnly &&
+          currentPhase === 'playing' &&
+          room.state && (
+            <HostActionBar
+              state={room.state}
+              canDispatch={canDispatch}
+              send={send}
+            />
+          )}
+
+        {/* Teammates-Streifen: für alle mit Team im Playing (Player + mitspielender Host). */}
+        {!stageOnly &&
           currentPhase === 'playing' &&
           myPlayer &&
           myTeam &&
@@ -466,6 +496,7 @@ export default function RoomLobbyPage() {
           <PhaseView
             state={room.state}
             role={role}
+            stageOnly={stageOnly}
             playerId={room.playerId}
             canDispatch={canDispatch}
             send={send}
@@ -615,22 +646,25 @@ function LoadingCard({ label }: { label: string }) {
 function PhaseView({
   state,
   role,
+  stageOnly,
   playerId,
   canDispatch,
   send,
 }: {
   state: GameState
-  role: 'player' | 'master'
+  role: 'player' | 'host'
+  stageOnly: boolean
   playerId: string | null
   canDispatch: boolean
   send: (a: GameAction) => void
 }) {
+  const isHost = role === 'host'
   switch (state.phase) {
     case 'setup':
       return (
         <SetupPhaseView
           state={state}
-          role={role}
+          isHost={isHost}
           canDispatch={canDispatch}
           send={send}
         />
@@ -640,6 +674,7 @@ function PhaseView({
         <LobbyPhaseView
           state={state}
           role={role}
+          stageOnly={stageOnly}
           playerId={playerId}
           canDispatch={canDispatch}
           send={send}
@@ -654,6 +689,7 @@ function PhaseView({
             state={state}
             live={live}
             playerId={playerId}
+            isHost={isHost}
             canDispatch={canDispatch}
             send={send}
           />
@@ -665,6 +701,7 @@ function PhaseView({
             state={state}
             live={live}
             playerId={playerId}
+            isHost={isHost}
             canDispatch={canDispatch}
             send={send}
           />
@@ -676,6 +713,7 @@ function PhaseView({
             state={state}
             live={live}
             playerId={playerId}
+            isHost={isHost}
             canDispatch={canDispatch}
             send={send}
           />
@@ -687,28 +725,29 @@ function PhaseView({
             live={live}
             playerId={playerId}
             state={state}
+            isHost={isHost}
             canDispatch={canDispatch}
             send={send}
           />
         )
       }
       if (live?.kind === 'points-ladder') {
-        return <LadderRoomView state={state} live={live} playerId={playerId} canDispatch={canDispatch} send={send} />
+        return <LadderRoomView state={state} live={live} playerId={playerId} isHost={isHost} canDispatch={canDispatch} send={send} />
       }
       if (live?.kind === 'sprinter') {
-        return <SprinterRoomView state={state} live={live} playerId={playerId} canDispatch={canDispatch} send={send} />
+        return <SprinterRoomView state={state} live={live} playerId={playerId} isHost={isHost} canDispatch={canDispatch} send={send} />
       }
       if (live?.kind === 'elimination') {
-        return <EliminationRoomView state={state} live={live} playerId={playerId} canDispatch={canDispatch} send={send} />
+        return <EliminationRoomView state={state} live={live} playerId={playerId} isHost={isHost} canDispatch={canDispatch} send={send} />
       }
       if (live?.kind === 'category-board') {
-        return <BoardRoomView state={state} live={live} playerId={playerId} canDispatch={canDispatch} send={send} />
+        return <BoardRoomView state={state} live={live} playerId={playerId} isHost={isHost} canDispatch={canDispatch} send={send} />
       }
       if (live?.kind === 'duel-1v1') {
-        return <DuelRoomView state={state} live={live} playerId={playerId} canDispatch={canDispatch} send={send} />
+        return <DuelRoomView state={state} live={live} playerId={playerId} isHost={isHost} canDispatch={canDispatch} send={send} />
       }
       if (live?.kind === 'experts') {
-        return <ExpertsRoomView state={state} live={live} playerId={playerId} canDispatch={canDispatch} send={send} />
+        return <ExpertsRoomView state={state} live={live} playerId={playerId} isHost={isHost} canDispatch={canDispatch} send={send} />
       }
       return <PlayingPhaseView state={state} canDispatch={canDispatch} send={send} />
     }
@@ -716,7 +755,7 @@ function PhaseView({
       return (
         <ScoreboardPhaseView
           state={state}
-          role={role}
+          isHost={isHost}
           canDispatch={canDispatch}
           send={send}
         />
@@ -726,30 +765,30 @@ function PhaseView({
 
 function SetupPhaseView({
   state,
-  role,
+  isHost,
   canDispatch,
   send,
 }: {
   state: GameState
-  role: 'player' | 'master'
+  isHost: boolean
   canDispatch: boolean
   send: (a: GameAction) => void
 }) {
   const readyModes = MODES.filter((m) => m.status === 'ready')
-  // Setup ist Show-Runner-Territorium — der Master konfiguriert Modi/Teams
+  // Setup ist Show-Runner-Territorium — der Host konfiguriert Modi/Teams
   // für alle. Player warten nur; sonst könnten sie z. B. Teams entfernen,
-  // während der Master schon konfiguriert.
-  if (role !== 'master') {
+  // während der Host schon konfiguriert.
+  if (!isHost) {
     return (
       <Card className="space-y-2 p-5 text-center">
         <div className="text-[10px] uppercase tracking-[0.32em] text-brand-purple-soft">
           Setup
         </div>
         <div className="text-base font-semibold text-white">
-          Warte auf den Master
+          Warte auf den Host
         </div>
         <div className="text-xs text-ink-muted">
-          Der Master wählt die Modi und startet die Lobby. Gleich geht&apos;s los.
+          Der Host wählt die Modi und startet die Lobby. Gleich geht&apos;s los.
         </div>
       </Card>
     )
@@ -848,24 +887,27 @@ function SetupPhaseView({
 function LobbyPhaseView({
   state,
   role,
+  stageOnly,
   playerId,
   canDispatch,
   send,
 }: {
   state: GameState
-  role: 'player' | 'master'
+  role: 'player' | 'host'
+  stageOnly: boolean
   playerId: string | null
   canDispatch: boolean
   send: (a: GameAction) => void
 }) {
   if (!state.round) return <LoadingCard label="Lade Runde …" />
+  const isHost = role === 'host'
   const readyToStart =
     state.round.players.length > 0 &&
     state.round.players.every((p) => p.teamId !== null)
 
-  // Eigener Player im State (falls Player-Rolle).
+  // Eigener Player im State: alle die nicht Bühne sind haben einen.
   const myPlayer =
-    role === 'player' && playerId
+    !stageOnly && playerId
       ? state.round.players.find((p) => p.id === playerId) ?? null
       : null
 
@@ -955,15 +997,19 @@ function LobbyPhaseView({
         size="lg"
         variant="primary"
         onClick={() => send({ type: 'START_PLAYING' })}
-        disabled={!canDispatch || !readyToStart}
+        disabled={!canDispatch || !readyToStart || !isHost}
         className="w-full"
       >
-        {readyToStart ? 'Runde starten' : 'Wartet auf Team-Auswahl'}
+        {readyToStart
+          ? isHost
+            ? 'Runde starten'
+            : 'Wartet auf den Host'
+          : 'Wartet auf Team-Auswahl'}
       </Button>
 
-      {role === 'master' && (
+      {stageOnly && (
         <p className="text-center text-xs text-ink-muted">
-          Master-Screen — Player tragen sich selbst ein, du kannst die Runde
+          Bühnen-Screen — Player tragen sich selbst ein, du kannst die Runde
           starten wenn alle bereit sind.
         </p>
       )}
@@ -1155,12 +1201,14 @@ function CategoryDuelRoomView({
   state,
   live,
   playerId,
+  isHost,
   canDispatch,
   send,
 }: {
   state: GameState
   live: CategoryDuelLive
   playerId: string | null
+  isHost: boolean
   canDispatch: boolean
   send: (a: GameAction) => void
 }) {
@@ -1245,6 +1293,7 @@ function CategoryDuelRoomView({
         <CDRevealedView
           live={live}
           isMaster={isMaster}
+          isHost={isHost}
           canDispatch={canDispatch}
           send={send}
         />
@@ -1458,11 +1507,13 @@ function CDAnsweringView({
 function CDRevealedView({
   live,
   isMaster,
+  isHost,
   canDispatch,
   send,
 }: {
   live: CategoryDuelLive
   isMaster: boolean
+  isHost: boolean
   canDispatch: boolean
   send: (a: GameAction) => void
 }) {
@@ -1599,7 +1650,7 @@ function CDRevealedView({
         size="lg"
         variant="primary"
         onClick={() => send({ type: 'CD_NEXT_TURN' })}
-        disabled={!canDispatch || !isMaster}
+        disabled={!canDispatch || !isHost}
         className={cn('w-full', isMaster && 'h-16 text-lg')}
       >
         {live.usedTopics.length >= 12 ? 'Runde beenden' : 'Nächste Runde'}
@@ -1625,12 +1676,14 @@ function SpotlightRoomView({
   state,
   live,
   playerId,
+  isHost,
   canDispatch,
   send,
 }: {
   state: GameState
   live: SpotlightLive
   playerId: string | null
+  isHost: boolean
   canDispatch: boolean
   send: (a: GameAction) => void
 }) {
@@ -1663,7 +1716,7 @@ function SpotlightRoomView({
           size="lg"
           variant="primary"
           onClick={() => send({ type: 'FINISH_MODE' })}
-          disabled={!canDispatch || !isMaster}
+          disabled={!canDispatch || !isHost}
           className={cn('w-full', isMaster && 'h-16 text-lg')}
         >
           Modus überspringen
@@ -1824,7 +1877,7 @@ function SpotlightRoomView({
             size="lg"
             variant="primary"
             onClick={() => send({ type: 'SPOTLIGHT_NEXT' })}
-            disabled={!canDispatch || !isMaster}
+            disabled={!canDispatch || !isHost}
             className={cn('w-full', isMaster && 'h-16 text-lg')}
           >
             {live.currentIndex + 1 >= live.playerOrder.length
@@ -2037,12 +2090,14 @@ function AroundCornerRoomView({
   live,
   playerId,
   state,
+  isHost,
   canDispatch,
   send,
 }: {
   live: AroundCornerLive
   playerId: string | null
   state: GameState
+  isHost: boolean
   canDispatch: boolean
   send: (a: GameAction) => void
 }) {
@@ -2060,7 +2115,7 @@ function AroundCornerRoomView({
           size="lg"
           variant="primary"
           onClick={() => send({ type: 'AC_NEXT' })}
-          disabled={!canDispatch || !isMaster}
+          disabled={!canDispatch || !isHost}
           className={cn('w-full', isMaster && 'h-16 text-lg')}
         >
           Modus beenden
@@ -2178,7 +2233,7 @@ function AroundCornerRoomView({
             size="lg"
             variant="primary"
             onClick={() => send({ type: 'AC_REVEAL_SOLUTION' })}
-            disabled={!canDispatch || !isMaster}
+            disabled={!canDispatch || !isHost}
             className={cn('w-full', isMaster && 'h-16 text-lg')}
           >
             Auflösen
@@ -2189,7 +2244,7 @@ function AroundCornerRoomView({
           size="lg"
           variant="primary"
           onClick={() => send({ type: 'AC_NEXT' })}
-          disabled={!canDispatch || !isMaster}
+          disabled={!canDispatch || !isHost}
           className={cn('w-full', isMaster && 'h-16 text-lg')}
         >
           {live.currentIndex + 1 >= live.totalRiddles
@@ -2213,12 +2268,14 @@ function FlashRoomView({
   state,
   live,
   playerId,
+  isHost,
   canDispatch,
   send,
 }: {
   state: GameState
   live: FlashLive
   playerId: string | null
+  isHost: boolean
   canDispatch: boolean
   send: (a: GameAction) => void
 }) {
@@ -2463,7 +2520,7 @@ function FlashRoomView({
           size="lg"
           variant={allTeamsAnswered ? 'primary' : 'secondary'}
           onClick={() => send({ type: 'FLASH_REVEAL' })}
-          disabled={!canDispatch || !isMaster}
+          disabled={!canDispatch || !isHost}
           className={cn('w-full', isMaster && 'h-16 text-lg')}
         >
           {allTeamsAnswered ? 'Auflösen' : 'Auflösen (jederzeit)'}
@@ -2473,7 +2530,7 @@ function FlashRoomView({
           size="lg"
           variant="primary"
           onClick={() => send({ type: 'FLASH_NEXT' })}
-          disabled={!canDispatch || !isMaster}
+          disabled={!canDispatch || !isHost}
           className={cn('w-full', isMaster && 'h-16 text-lg')}
         >
           {live.currentIndex + 1 >= live.totalStatements
@@ -2535,12 +2592,14 @@ function LadderRoomView({
   state,
   live,
   playerId,
+  isHost,
   canDispatch,
   send,
 }: {
   state: GameState
   live: PointsLadderLive
   playerId: string | null
+  isHost: boolean
   canDispatch: boolean
   send: (a: GameAction) => void
 }) {
@@ -2562,7 +2621,7 @@ function LadderRoomView({
           size="lg"
           variant="primary"
           onClick={() => send({ type: 'FINISH_MODE' })}
-          disabled={!canDispatch || !isMaster}
+          disabled={!canDispatch || !isHost}
           className="w-full"
         >
           Modus überspringen
@@ -2685,7 +2744,7 @@ function LadderRoomView({
           size="lg"
           variant={allAnswered ? 'primary' : 'secondary'}
           onClick={() => send({ type: 'LADDER_REVEAL' })}
-          disabled={!canDispatch || !isMaster}
+          disabled={!canDispatch || !isHost}
           className={cn('w-full', isMaster && 'h-16 text-lg')}
         >
           {allAnswered ? 'Auflösen' : 'Auflösen (jederzeit)'}
@@ -2695,7 +2754,7 @@ function LadderRoomView({
           size="lg"
           variant="primary"
           onClick={() => send({ type: 'LADDER_NEXT' })}
-          disabled={!canDispatch || !isMaster}
+          disabled={!canDispatch || !isHost}
           className={cn('w-full', isMaster && 'h-16 text-lg')}
         >
           {live.currentIndex + 1 >= live.totalQuestions ? 'Runde beenden' : 'Nächste Stufe'}
@@ -2711,12 +2770,14 @@ function SprinterRoomView({
   state,
   live,
   playerId,
+  isHost,
   canDispatch,
   send,
 }: {
   state: GameState
   live: SprinterLive
   playerId: string | null
+  isHost: boolean
   canDispatch: boolean
   send: (a: GameAction) => void
 }) {
@@ -2773,7 +2834,7 @@ function SprinterRoomView({
           size="lg"
           variant="primary"
           onClick={() => send({ type: 'SPRINTER_START_NEXT_TEAM' })}
-          disabled={!canDispatch || !isMaster}
+          disabled={!canDispatch || !isHost}
           className={cn('w-full', isMaster && 'h-16 text-lg')}
         >
           {nextTeam ? `${nextTeam.name} startet` : 'Runde beenden'}
@@ -2881,7 +2942,7 @@ function SprinterRoomView({
             size="lg"
             variant="ghost"
             onClick={() => send({ type: 'SPRINTER_TIME_UP' })}
-            disabled={!canDispatch || !isMaster}
+            disabled={!canDispatch || !isHost}
             className="w-full h-16 text-lg"
           >
             Timer stoppen
@@ -2928,12 +2989,14 @@ function EliminationRoomView({
   state,
   live,
   playerId,
+  isHost,
   canDispatch,
   send,
 }: {
   state: GameState
   live: EliminationLive
   playerId: string | null
+  isHost: boolean
   canDispatch: boolean
   send: (a: GameAction) => void
 }) {
@@ -2974,7 +3037,7 @@ function EliminationRoomView({
           size="lg"
           variant="primary"
           onClick={() => send({ type: 'FINISH_MODE' })}
-          disabled={!canDispatch || !isMaster}
+          disabled={!canDispatch || !isHost}
           className={cn('w-full', isMaster && 'h-16 text-lg')}
         >
           Runde abschließen
@@ -3097,7 +3160,7 @@ function EliminationRoomView({
           size="lg"
           variant="primary"
           onClick={() => send({ type: 'ELIM_NEXT' })}
-          disabled={!canDispatch || !isMaster}
+          disabled={!canDispatch || !isHost}
           className={cn('w-full', isMaster && 'h-16 text-lg')}
         >
           Nächster Spieler
@@ -3113,12 +3176,14 @@ function BoardRoomView({
   state,
   live,
   playerId,
+  isHost,
   canDispatch,
   send,
 }: {
   state: GameState
   live: CategoryBoardLive
   playerId: string | null
+  isHost: boolean
   canDispatch: boolean
   send: (a: GameAction) => void
 }) {
@@ -3297,7 +3362,7 @@ function BoardRoomView({
                 size="lg"
                 variant="primary"
                 onClick={() => send({ type: 'BOARD_NEXT' })}
-                disabled={!canDispatch || !isMaster}
+                disabled={!canDispatch || !isHost}
                 className={cn('w-full', isMaster && 'h-16 text-lg')}
               >
                 {live.playedCells.length + 1 >= live.boardTopics.length * live.cellValues.length
@@ -3368,12 +3433,14 @@ function DuelRoomView({
   state,
   live,
   playerId,
+  isHost,
   canDispatch,
   send,
 }: {
   state: GameState
   live: DuelLive
   playerId: string | null
+  isHost: boolean
   canDispatch: boolean
   send: (a: GameAction) => void
 }) {
@@ -3599,7 +3666,7 @@ function DuelRoomView({
                 size="lg"
                 variant="primary"
                 onClick={() => send({ type: 'DUEL_NEXT' })}
-                disabled={!canDispatch || !isMaster}
+                disabled={!canDispatch || !isHost}
                 className={cn('w-full', isMaster && 'h-16 text-lg')}
               >
                 {live.currentIndex + 1 >= live.totalDuels ? 'Duelle beenden' : 'Nächstes Duell'}
@@ -3618,12 +3685,14 @@ function ExpertsRoomView({
   state,
   live,
   playerId,
+  isHost,
   canDispatch,
   send,
 }: {
   state: GameState
   live: ExpertsLive
   playerId: string | null
+  isHost: boolean
   canDispatch: boolean
   send: (a: GameAction) => void
 }) {
@@ -3651,7 +3720,7 @@ function ExpertsRoomView({
           size="lg"
           variant="primary"
           onClick={() => send({ type: 'FINISH_MODE' })}
-          disabled={!canDispatch || !isMaster}
+          disabled={!canDispatch || !isHost}
           className="w-full"
         >
           Modus überspringen
@@ -3868,7 +3937,7 @@ function ExpertsRoomView({
             <button
               type="button"
               onClick={() => send({ type: 'EXPERTS_MARK_PRIMARY', outcome: 'correct' })}
-              disabled={!canDispatch || !isMaster}
+              disabled={!canDispatch || !isHost}
               className={cn(
                 'flex items-center justify-center rounded-xl border font-bold uppercase tracking-wider transition-all disabled:opacity-40 border-correct/60 bg-correct/15 text-correct',
                 isMaster ? 'h-20 text-2xl' : 'h-14 text-lg',
@@ -3879,7 +3948,7 @@ function ExpertsRoomView({
             <button
               type="button"
               onClick={() => send({ type: 'EXPERTS_MARK_PRIMARY', outcome: 'wrong' })}
-              disabled={!canDispatch || !isMaster}
+              disabled={!canDispatch || !isHost}
               className={cn(
                 'flex items-center justify-center rounded-xl border font-bold uppercase tracking-wider transition-all disabled:opacity-40 border-wrong/60 bg-wrong/15 text-wrong',
                 isMaster ? 'h-20 text-2xl' : 'h-14 text-lg',
@@ -3930,7 +3999,7 @@ function ExpertsRoomView({
             size="lg"
             variant="primary"
             onClick={() => send({ type: 'EXPERTS_NEXT' })}
-            disabled={!canDispatch || !isMaster}
+            disabled={!canDispatch || !isHost}
             className={cn('w-full', isMaster && 'h-16 text-lg')}
           >
             {live.currentIndex + 1 >= live.playerOrder.length ? 'Runde beenden' : 'Nächster Experte'}
@@ -4243,18 +4312,17 @@ function PlayingPhaseView({
 
 function ScoreboardPhaseView({
   state,
-  role,
+  isHost,
   canDispatch,
   send,
 }: {
   state: GameState
-  role: 'player' | 'master'
+  isHost: boolean
   canDispatch: boolean
   send: (a: GameAction) => void
 }) {
-  // "Nochmal" ist eine Show-Entscheidung — nur der Master darf das für alle
-  // triggern, sonst könnte ein Player mitten im Endstand die Runde neu starten.
-  const isMaster = role === 'master'
+  // "Nochmal" und "Modi neu wählen" sind Show-Entscheidungen — nur der Host
+  // darf das für alle triggern.
   return (
     <div className="space-y-3">
       <Card className="space-y-3 p-4">
@@ -4282,18 +4350,28 @@ function ScoreboardPhaseView({
         </div>
       </Card>
 
-      {isMaster ? (
-        <div className="flex gap-2">
-          <Button
-            variant="secondary"
-            leading={<RefreshCw className="h-4 w-4" />}
-            onClick={() => send({ type: 'RESTART_MATCH' })}
-            disabled={!canDispatch}
-            className="flex-1"
-          >
-            Nochmal
-          </Button>
-          <Link to="/" className="flex-1">
+      {isHost ? (
+        <div className="space-y-2">
+          <div className="flex gap-2">
+            <Button
+              variant="primary"
+              leading={<RefreshCw className="h-4 w-4" />}
+              onClick={() => send({ type: 'RESTART_MATCH' })}
+              disabled={!canDispatch}
+              className="flex-1"
+            >
+              Nochmal — gleiche Modi
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => send({ type: 'BACK_TO_SETUP' })}
+              disabled={!canDispatch}
+              className="flex-1"
+            >
+              Modi neu wählen
+            </Button>
+          </div>
+          <Link to="/" className="block">
             <Button variant="ghost" className="w-full">
               Zur Startseite
             </Button>
@@ -4301,7 +4379,7 @@ function ScoreboardPhaseView({
         </div>
       ) : (
         <Card className="p-3 text-center text-xs text-ink-muted">
-          Warte auf den Master — er entscheidet, ob eine neue Runde startet.
+          Warte auf den Host — er entscheidet, ob eine neue Runde startet.
         </Card>
       )}
     </div>

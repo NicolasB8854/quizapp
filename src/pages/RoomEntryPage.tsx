@@ -35,16 +35,25 @@ export default function RoomEntryPage() {
   const identity = useMemo(() => readRoomIdentity(), [])
   const [intent, setIntent] = useState<Intent>(prefilledCode ? 'join' : 'create')
   const [name, setName] = useState(identity.playerName ?? '')
-  const [role, setRole] = useState<'player' | 'master'>('player')
+  /**
+   * Bühnen-Modus für den Host (nur beim Raum-Erstellen relevant).
+   *   `false` (Default) = der Ersteller ist Host + spielt mit auf seinem Handy.
+   *   `true`            = der Ersteller ist reine Bühne (TV/Beamer-Setup),
+   *                       kein Team-Beitritt, großer Presenter-Screen.
+   * Beim Joinen (intent='join') immer false — Gäste sind normale Player.
+   */
+  const [hostStageOnly, setHostStageOnly] = useState(false)
   const [freshCode] = useState(() => generateRoomCode(4))
   const [joinCode, setJoinCode] = useState(prefilledCode)
 
   const chosenCode = intent === 'create' ? freshCode : joinCode.trim().toUpperCase()
-  // Master ist der Bühnen-Screen — kein Team-Mitglied. Der Name wird
-  // serverseitig nirgends genutzt (der Master ist per `isMaster = !myPlayer`
-  // erkannt, nicht per Name), also verlangen wir ihn erst gar nicht.
-  const nameRequired = role === 'player'
-  const effectiveName = nameRequired ? name.trim() : 'Master'
+  // Wer erstellt, ist Host. Wer joint, ist Player.
+  const role: 'host' | 'player' = intent === 'create' ? 'host' : 'player'
+  const stageOnly = intent === 'create' && hostStageOnly
+  // Name-Feld: entfällt nur wenn der Host reine Bühne ist. Sonst braucht
+  // jeder einen Namen, weil er als Player im Roster erscheint.
+  const nameRequired = !stageOnly
+  const effectiveName = nameRequired ? name.trim() : 'Bühne'
   const canSubmit =
     !!wsUrl &&
     (!nameRequired || effectiveName.length > 0) &&
@@ -57,6 +66,7 @@ export default function RoomEntryPage() {
       name: effectiveName,
       role,
     })
+    if (stageOnly) params.set('stageOnly', '1')
     navigate(`/room/${chosenCode}?${params.toString()}`)
   }
 
@@ -113,7 +123,7 @@ export default function RoomEntryPage() {
               onClick={() => setIntent('join')}
               icon={<Users className="h-5 w-5" />}
               title="Bestehendem Raum joinen"
-              subtitle="Code vom Master erfragen"
+              subtitle="Code vom Host erfragen"
             />
           </div>
 
@@ -133,29 +143,34 @@ export default function RoomEntryPage() {
             </Card>
           )}
 
-          {/* Rolle */}
-          <Card className="space-y-2 p-4">
-            <div className="text-xs uppercase tracking-[0.22em] text-ink-muted">
-              Rolle
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              <RoleButton
-                active={role === 'player'}
-                onClick={() => setRole('player')}
-                title="Player"
-                subtitle="Buzzern, antworten, Fragen wählen"
-              />
-              <RoleButton
-                active={role === 'master'}
-                onClick={() => setRole('master')}
-                title="Master-Screen"
-                subtitle="Nur Anzeige (auf großem TV/Beamer)"
-              />
-            </div>
-          </Card>
+          {/* Bühnen-Toggle: nur bei Room-Erstellen sichtbar. Default aus —
+              der Ersteller spielt mit auf seinem Handy und hat die
+              Show-Runner-Buttons in einer Bar oben. Wer einen TV/Beamer
+              hat, aktiviert den Toggle und bekommt den großen Presenter-
+              Screen; er ist dann NICHT im Team-Roster. */}
+          {intent === 'create' && (
+            <Card className="space-y-3 p-4">
+              <div className="text-xs uppercase tracking-[0.22em] text-ink-muted">
+                Modus
+              </div>
+              <div className="grid gap-2 sm:grid-cols-2">
+                <RoleButton
+                  active={!hostStageOnly}
+                  onClick={() => setHostStageOnly(false)}
+                  title="Ich spiele mit"
+                  subtitle="Host und Spieler in einem — perfekt fürs Handy"
+                />
+                <RoleButton
+                  active={hostStageOnly}
+                  onClick={() => setHostStageOnly(true)}
+                  title="Nur Bühne"
+                  subtitle="Großer Screen zeigt Frage & Scores für alle"
+                />
+              </div>
+            </Card>
+          )}
 
-          {/* Name — nur für Player. Der Master-Screen ist die Bühne, kein
-              Team-Mitglied; der Name würde nirgends auftauchen. */}
+          {/* Name — bei Bühne-Only unnötig, sonst pflichtbelegt. */}
           {nameRequired && (
             <Card className="space-y-2 p-4">
               <label className="block text-xs uppercase tracking-[0.22em] text-ink-muted">

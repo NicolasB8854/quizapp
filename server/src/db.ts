@@ -13,7 +13,8 @@
  *   - SESSIONS_TABLE (PK: connectionId, GSI: RoomIndex hash=roomCode)
  *       - roomCode:    string
  *       - playerId:    string
- *       - role:        'player' | 'master'
+ *       - role:        'player' | 'host'
+ *       - stageOnly:   boolean  (true = Big-Screen-Modus, kein Team-Beitritt)
  *       - playerName:  string
  *       - connectedAt: ISO-String
  *       - expiresAt:   Unix-Sekunden (TTL)
@@ -50,6 +51,15 @@ export interface RoomRecord {
   roomCode: string
   state: GameState
   askedQuestionIds: string[]
+  /**
+   * `playerId` des aktuellen Hosts. `null` = kein Host im Room. Wird beim
+   * ersten `JOIN_ROOM` mit `role='host'` gesetzt. Bleibt beim Reconnect
+   * desselben Players erhalten; wechselt nur, wenn ein anderer Player
+   * explizit Host wird (nach expliziter Übergabe — aktuell nicht
+   * implementiert, deshalb bleibt der ursprüngliche Host gültig bis er
+   * disconnected und ein Neuer joint).
+   */
+  hostPlayerId?: string | null
   updatedAt: string
   expiresAt: number
 }
@@ -88,7 +98,12 @@ export interface SessionRecord {
   connectionId: string
   roomCode: string
   playerId: string
-  role: 'player' | 'master'
+  role: 'player' | 'host'
+  /**
+   * Bei Rolle `host`: `true` = Bühne (kein Team-Beitritt, Big-Screen-Layout);
+   * `false` = Host spielt mit auf seinem Gerät. Für `player` immer `false`.
+   */
+  stageOnly: boolean
   playerName: string
   connectedAt: string
   expiresAt: number

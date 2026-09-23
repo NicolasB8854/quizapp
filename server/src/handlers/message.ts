@@ -110,22 +110,44 @@ async function handleJoinRoom(
       roomCode,
       state: INITIAL_STATE,
       askedQuestionIds: [],
+      hostPlayerId: null,
     })
   }
 
   const playerId = msg.playerId ?? newPlayerId()
 
-  // Für Player: Roster-Registrierung im State — jeder Player joint automatisch
-  // im state.round.players, damit alle Handys ein gemeinsames Roster sehen.
-  //   1. Ist noch keine Runde aktiv (`phase='setup'`): erst eine leere Multi-
-  //      Player-Runde initialisieren (INIT_MULTIPLAYER_ROUND).
-  //   2. In Lobby-Phase: ADD_PLAYER mit der Session-Player-ID. Der Reducer
-  //      ist idempotent — beim Reconnect kein Duplikat.
-  // Master-Rolle registriert keinen Player-Eintrag (nur passiver Zuschauer).
+  // Rolle & Bühnen-Modus finalisieren (Server ist authoritativ):
+  //   - Erst-Host wird angenommen; ist bereits ein Host mit anderer playerId
+  //     im Room, wird der neue Host-Anfrager zum Player degradiert.
+  //   - Reconnect derselben playerId behält Host-Status.
+  //   - `stageOnly` ist bei `player` immer false, bei `host` übernimmt der
+  //     vom Client vorgeschlagene Wert (Default false).
+  let effectiveRole: 'player' | 'host' = msg.role
+  let effectiveStageOnly = false
+  let nextHostPlayerId: string | null | undefined = room.hostPlayerId ?? null
+
+  if (msg.role === 'host') {
+    const existingHost = room.hostPlayerId ?? null
+    if (!existingHost || existingHost === playerId) {
+      effectiveRole = 'host'
+      effectiveStageOnly = msg.stageOnly === true
+      nextHostPlayerId = playerId
+    } else {
+      // Bereits ein anderer Host im Room → als Player registrieren.
+      effectiveRole = 'player'
+      effectiveStageOnly = false
+    }
+  }
+
+  // Player-Roster-Registrierung: gilt für alle nicht-Bühnen-Sessions,
+  // also normale Player UND mitspielende Hosts.
+  //   1. Noch keine Runde aktiv (`phase='setup'`): erst INIT_MULTIPLAYER_ROUND.
+  //   2. In Lobby-Phase: ADD_PLAYER (idempotent via playerId).
+  const shouldRegisterAsPlayer = !effectiveStageOnly
   let currentState = room.state
   let stateChanged = false
 
-  if (msg.role === 'player') {
+  if (shouldRegisterAsPlayer) {
     const reducer = createReducer({
       getAskedQuestionIds: () => new Set(room.askedQuestionIds),
     })
@@ -152,11 +174,14 @@ async function handleJoinRoom(
     }
   }
 
-  if (stateChanged) {
+  // Room speichern, wenn State oder Host geändert.
+  const hostChanged = (room.hostPlayerId ?? null) !== (nextHostPlayerId ?? null)
+  if (stateChanged || hostChanged) {
     await putRoom({
       roomCode,
       state: currentState,
       askedQuestionIds: room.askedQuestionIds,
+      hostPlayerId: nextHostPlayerId,
     })
   }
 
@@ -164,7 +189,8 @@ async function handleJoinRoom(
     connectionId,
     roomCode,
     playerId,
-    role: msg.role,
+    role: effectiveRole,
+    stageOnly: effectiveStageOnly,
     playerName: msg.playerName,
   })
 
@@ -173,7 +199,8 @@ async function handleJoinRoom(
     type: 'JOINED',
     roomCode,
     playerId,
-    role: msg.role,
+    role: effectiveRole,
+    stageOnly: effectiveStageOnly,
     state: currentState,
   })
 
@@ -195,7 +222,9 @@ async function handleJoinRoom(
       connectionId,
       roomCode,
       playerId,
-      role: msg.role,
+      role: effectiveRole,
+      stageOnly: effectiveStageOnly,
+      hostDemotedToPlayer: msg.role === 'host' && effectiveRole !== 'host',
       phase: currentState.phase,
       players: currentState.round?.players.length ?? 0,
     }),
@@ -251,6 +280,7 @@ async function handleDispatch(
     roomCode: room.roomCode,
     state: nextState,
     askedQuestionIds,
+    hostPlayerId: room.hostPlayerId ?? null,
   })
 
   const { sent, gone } = await broadcastToRoom(event, session.roomCode, {
