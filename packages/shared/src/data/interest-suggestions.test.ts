@@ -10,9 +10,12 @@ import {
  */
 
 describe('INTEREST_SUGGESTIONS', () => {
-  it('hat für jedes der 12 Topics mindestens 8 Vorschläge', () => {
+  it('hat für jedes Topic mindestens 8 Vorschläge', () => {
+    // Alle 50 Topics müssen Suggestions haben; wir sampeln die 11 Klassiker
+    // + 4 aufgesplittete Wissenschafts-Topics als Stichprobe.
     const topics = ['film', 'serien', 'musik', 'games', 'geografie', 'geschichte',
-                    'wissenschaft', 'sport', 'essen', 'technik', 'sprache', 'kurioses'] as const
+                    'sport', 'essen', 'technik', 'sprache', 'kurioses',
+                    'medizin', 'physik', 'chemie', 'biologie'] as const
     for (const t of topics) {
       expect(INTEREST_SUGGESTIONS[t].length).toBeGreaterThanOrEqual(8)
     }

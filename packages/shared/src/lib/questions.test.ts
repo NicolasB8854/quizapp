@@ -250,20 +250,20 @@ describe('questions', () => {
       // Math.random=0 → r = 0 * total → landet im ersten (shared-)Bucket.
       // Erste wissenschaft-TF-Frage ist q-flash-02 laut Katalog-Reihenfolge.
       const picked = pickTrueFalse(new Set(), {
-        shared: new Set(['wissenschaft']),
+        shared: new Set(['medizin']),
         individual: new Set(),
         levelPerTopic: new Map(),
       })
-      expect(picked?.topic).toBe('wissenschaft')
+      expect(picked?.topic).toBe('medizin')
     })
 
     it('individual-only Profile: greift auf individual-Bucket bei Math.random=0', () => {
       const picked = pickTrueFalse(new Set(), {
         shared: new Set(),
-        individual: new Set(['wissenschaft']),
+        individual: new Set(['medizin']),
         levelPerTopic: new Map(),
       })
-      expect(picked?.topic).toBe('wissenschaft')
+      expect(picked?.topic).toBe('medizin')
     })
 
     it('leerer Shared-Bucket fällt automatisch auf individual/wildcard', () => {
@@ -284,20 +284,20 @@ describe('questions', () => {
       const pool = getTrueFalsePool()
       const excluded = new Set(pool.map((q) => q.id))
       const picked = pickTrueFalse(excluded, {
-        shared: new Set(['wissenschaft']),
+        shared: new Set(['medizin']),
         individual: new Set(),
         levelPerTopic: new Map(),
       })
       expect(picked).not.toBeNull()
       // Der Filter greift trotzdem — wissenschaft ist im Pool vertreten.
-      expect(picked!.topic).toBe('wissenschaft')
+      expect(picked!.topic).toBe('medizin')
     })
 
     it('Verteilung über 500 Ziehungen: shared wird deutlich häufiger gezogen als wildcard', () => {
       // Verifikation der 60/30/10-Gewichtung mit Math.random-Mock aufgeräumt.
       vi.restoreAllMocks()
       const profile = {
-        shared: new Set<Topic>(['wissenschaft']),
+        shared: new Set<Topic>(['medizin']),
         individual: new Set<Topic>(['sprache']),
         levelPerTopic: new Map(),
       }
@@ -305,7 +305,7 @@ describe('questions', () => {
       for (let i = 0; i < 500; i++) {
         const p = pickTrueFalse(new Set(), profile)
         if (!p) continue
-        if (p.topic === 'wissenschaft') counts.shared++
+        if (p.topic === 'medizin') counts.shared++
         else if (p.topic === 'sprache') counts.individual++
         else counts.wildcard++
       }

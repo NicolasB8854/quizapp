@@ -1348,7 +1348,7 @@ function CategoryDuelRoomView({
                 {currentTeam?.name} am Zug
               </span>
               <span className="font-mono text-xs text-ink-muted">
-                · {live.usedTopics.length} / 12
+                · {live.usedTopics.length} / {live.battleTopics.length}
               </span>
             </div>
           </div>
@@ -1450,7 +1450,9 @@ function CDPickTopicView({
             : 'grid-cols-3 sm:grid-cols-4',
         )}
       >
-        {TOPICS.map((topic) => {
+        {live.battleTopics.map((topicId) => {
+          const topic = TOPICS_BY_ID[topicId]
+          if (!topic) return null
           const isUsed = used.has(topic.id)
           const disabled = isUsed || !canPlay
           return (
@@ -1757,7 +1759,7 @@ function CDRevealedView({
         disabled={!canDispatch || !isHost}
         className={cn('w-full', isMaster && 'h-16 text-lg')}
       >
-        {live.usedTopics.length >= 12 ? 'Runde beenden' : 'Nächste Runde'}
+        {live.usedTopics.length >= live.battleTopics.length ? 'Runde beenden' : 'Nächste Runde'}
       </Button>
     </>
   )

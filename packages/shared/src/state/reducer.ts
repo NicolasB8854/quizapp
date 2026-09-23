@@ -32,7 +32,9 @@ import type {
   WarmupRiddleQuestion,
 } from '../types'
 import { MODES, MODES_BY_ID } from '../data/modes'
+import { TOPICS } from '../data/topics'
 import {
+  getMultipleChoiceByTopic,
   pickAnyMultipleChoice,
   pickQuestion,
   pickTrueFalse,
@@ -75,8 +77,15 @@ export type Phase = 'setup' | 'lobby' | 'playing' | 'scoreboard'
 /** Alle Live-States sind diskriminierte Unions. Genau ein Modus je Zeit-Slot ist aktiv. */
 export interface CategoryDuelLive {
   kind: 'category-duel'
-  /** Punkte pro Frage — konstant für alle 12 Kacheln des Grids. */
+  /** Punkte pro Frage — konstant für alle Kacheln des Grids. */
   pointsPerQuestion: number
+  /**
+   * Vorausgewählte Themen für die aktuelle Runde (typisch 12 aus 50).
+   * Wird beim `initCategoryDuel` per Team-Interessen-gewichteter Wahl
+   * bestimmt, damit jede Runde unterschiedliche Kacheln zeigt und
+   * gleichzeitig auf die Interessen der Spieler eingeht.
+   */
+  battleTopics: Topic[]
   usedTopics: Topic[]
   currentTeamIndex: number
   phase: 'pick-topic' | 'answering' | 'revealed'
@@ -503,10 +512,12 @@ function countPlayersInTeam(players: readonly Player[], teamId: string | null): 
 
 // ---------- Reducer -----------------------------------------------------------
 
-function initCategoryDuel(teams: Team[]): CategoryDuelLive {
+function initCategoryDuel(teams: Team[], players: readonly Player[]): CategoryDuelLive {
+  const profile = computeInterestProfile(players)
   return {
     kind: 'category-duel',
     pointsPerQuestion: 500,
+    battleTopics: pickBattleTopics(profile),
     usedTopics: [],
     currentTeamIndex: 0,
     phase: 'pick-topic',
@@ -882,26 +893,73 @@ const BOARD_VALUES = [100, 200, 300, 400] as const
 /** Level je Board-Reihe: Reihe 0 = leicht (bisschen=2), Reihe 3 = experten (nerd=5). */
 const BOARD_LEVELS: PlayerInterest['level'][] = [2, 3, 3, 5]
 
-/** Wählt die Topics für das Board — bevorzugt Interessen, füllt sonst nach Katalog auf. */
-function pickBoardTopics(profile: ReturnType<typeof computeInterestProfile>): Topic[] {
-  const interestOrdered: Topic[] = [
-    ...Array.from(profile.shared),
-    ...Array.from(profile.individual),
-  ]
-  const fallbackOrder: Topic[] = [
-    'film', 'serien', 'musik', 'games', 'geografie',
-    'geschichte', 'wissenschaft', 'sport', 'essen', 'technik',
-    'sprache', 'kurioses',
-  ]
+/**
+ * Wählt `count` Topics für einen Modus, gewichtet nach Team-Interessen.
+ *
+ * Reihenfolge:
+ *  1. Alle `shared`-Interessen (mind. 2 Spieler interessiert) — höchste Priorität.
+ *  2. Alle `individual`-Interessen — sekundär.
+ *  3. Auffüll aus dem Rest der 50 Topics in einer stabilen Zufalls-Reihenfolge
+ *     (deterministisch für einen gegebenen Aufrufer — `Math.random` gibt eine
+ *     akzeptable Streuung für Party-Kontext).
+ *
+ * So bekommt jede Runde einen Mix aus für die Gruppe passenden und
+ * überraschenden Kategorien. Bei sehr großen `count`-Werten (nahe 50)
+ * werden praktisch alle Topics gezogen.
+ */
+export function pickTopicsWeighted(
+  profile: ReturnType<typeof computeInterestProfile>,
+  count: number,
+): Topic[] {
   const chosen: Topic[] = []
   const seen = new Set<Topic>()
-  for (const t of [...interestOrdered, ...fallbackOrder]) {
-    if (chosen.length >= BOARD_COLUMNS) break
-    if (seen.has(t)) continue
+
+  // Nur Topics einbeziehen, die tatsächlich Fragen im Katalog haben. Sonst
+  // hätten wir „tote" Kacheln, deren Klick den Reducer stillschweigend
+  // ignoriert. Bevorzugt spielbare Interessen; nicht-spielbare Interessen
+  // fallen einfach durchs Raster (später ergänzen wir Fragen).
+  const isPlayable = (t: Topic): boolean =>
+    getMultipleChoiceByTopic(t).length > 0
+
+  const push = (t: Topic) => {
+    if (chosen.length >= count) return
+    if (seen.has(t)) return
+    if (!isPlayable(t)) return
     seen.add(t)
     chosen.push(t)
   }
+
+  // 1) Shared-Interessen zuerst, dann individual.
+  for (const t of profile.shared) push(t)
+  for (const t of profile.individual) push(t)
+
+  // 2) Rest zufällig aus allen Topics ergänzen (nur spielbare).
+  if (chosen.length < count) {
+    const rest = TOPICS_LIST.filter((t) => !seen.has(t))
+    // Fisher-Yates auf einer Kopie — vermeidet Reihenfolgen-Bias.
+    for (let i = rest.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[rest[i], rest[j]] = [rest[j], rest[i]]
+    }
+    for (const t of rest) push(t)
+  }
+
   return chosen
+}
+
+// Cache aller Topic-IDs für pickTopicsWeighted (statt bei jedem Aufruf über
+// TOPICS zu iterieren).
+const TOPICS_LIST: Topic[] = TOPICS.map((t) => t.id)
+
+/** Wählt die 5 Topics für das Board. */
+function pickBoardTopics(profile: ReturnType<typeof computeInterestProfile>): Topic[] {
+  return pickTopicsWeighted(profile, BOARD_COLUMNS)
+}
+
+/** Wählt die 12 Topics für das Themen-Battle-Grid. */
+const BATTLE_TOPIC_COUNT = 12
+function pickBattleTopics(profile: ReturnType<typeof computeInterestProfile>): Topic[] {
+  return pickTopicsWeighted(profile, BATTLE_TOPIC_COUNT)
 }
 
 function initCategoryBoard(teams: Team[], players: readonly Player[]): CategoryBoardLive {
@@ -1077,7 +1135,7 @@ function initLiveFor(
 ): LiveGame | null {
   switch (modeId) {
     case 'category-duel':
-      return initCategoryDuel(teams)
+      return initCategoryDuel(teams, players)
     case 'flash':
       return initFlash(teams, players, deps)
     case 'player-spotlight':
@@ -1512,6 +1570,8 @@ export function createReducer(deps: ReducerDeps) {
       if (!state.round || !state.live || state.live.kind !== 'category-duel') return state
       if (state.live.phase !== 'pick-topic') return state
       if (state.live.usedTopics.includes(action.topic)) return state
+      // Session AC: Topic muss zu den 12 vorgewählten `battleTopics` gehören.
+      if (!state.live.battleTopics.includes(action.topic)) return state
 
       // Kombinierter Ausschluss: bereits in dieser Runde gespielt + Historie aus
       // vorherigen Runden (localStorage). `pickQuestion` fällt automatisch auf den
@@ -2697,8 +2757,8 @@ export function createReducer(deps: ReducerDeps) {
         ? [...state.live.usedQuestionIds, state.live.activeQuestion.id]
         : state.live.usedQuestionIds
 
-      // Alle 12 Kacheln durch → Modus zu Ende, weiter im FINISH_MODE-Handler.
-      const isModeDone = usedTopics.length >= 12
+      // Alle Kacheln durch → Modus zu Ende, weiter im FINISH_MODE-Handler.
+      const isModeDone = usedTopics.length >= state.live.battleTopics.length
 
       const teamCount = state.round.teams.length
       const nextLive: CategoryDuelLive = {

@@ -57,22 +57,78 @@ export type PersonalizationFit =
   | 'wildcard'         // Überraschung / Out-of-Element
 
 /**
- * Feinkategorien für das Themen-Battle-Grid (12 Kacheln).
- * Jede Frage verweist über `topic` auf genau eine Feinkategorie.
+ * Themenfelder — 50 Kategorien für Interessen-Matching, Themen-Battle-Grid
+ * (12 Kacheln nach Team-Interessen), Board (5 Kategorien) und Experts-Fachwahl.
+ *
+ * Jede Frage verweist über `topic` auf genau eine Kategorie. Wenn eine Frage
+ * mehrere Kategorien treffen könnte, wählt der Autor die spezifischste.
+ *
+ * Session AC: von 12 auf 50 erweitert. `wissenschaft` wurde in sieben
+ * Sub-Disziplinen aufgesplittet (astronomie/physik/biologie/chemie/medizin/
+ * psychologie/mathematik), `kurioses` bleibt breit für Fun-Facts und
+ * Weltrekorde.
  */
 export type Topic =
+  // Klassiker (11)
   | 'film'
   | 'serien'
   | 'musik'
   | 'games'
   | 'geografie'
   | 'geschichte'
-  | 'wissenschaft'
   | 'sport'
   | 'essen'
   | 'technik'
   | 'sprache'
   | 'kurioses'
+  // Denken & Gesellschaft (5)
+  | 'religion'
+  | 'politik'
+  | 'wirtschaft'
+  | 'recht'
+  | 'bildung'
+  // Alltag & Lifestyle (6)
+  | 'gesundheit'
+  | 'reisen'
+  | 'mode'
+  | 'wohnen'
+  | 'beauty'
+  | 'autos'
+  // Natur & Umwelt (3)
+  | 'natur'
+  | 'umwelt'
+  | 'wetter'
+  // Hobbys & Handwerk (4)
+  | 'hobbys'
+  | 'handwerk'
+  | 'pflanzen'
+  | 'fotografie'
+  // Kunst & Buchstaben (5)
+  | 'kunst'
+  | 'literatur'
+  | 'theater'
+  | 'architektur'
+  | 'comics'
+  // Wissenschaft — vertieft (7)
+  | 'astronomie'
+  | 'physik'
+  | 'biologie'
+  | 'chemie'
+  | 'medizin'
+  | 'psychologie'
+  | 'mathematik'
+  // Fantasy & Fandom (2)
+  | 'anime'
+  | 'scifi'
+  // Party & Fun (4)
+  | 'beziehungen'
+  | 'mystery'
+  | 'astrologie'
+  | 'prominente'
+  // Trinken & Genuss (3)
+  | 'getraenke'
+  | 'kaffee'
+  | 'suesses'
 
 /**
  * Zeitbezug einer Frage.

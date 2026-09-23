@@ -125,7 +125,9 @@ describe('reducer — Themen-Battle', () => {
 
   it('CD_PICK_TOPIC zieht eine Frage und liefert konsistente Shuffle-Metadaten', () => {
     let s = bootIntoPlaying('category-duel')
-    s = reducer(s, { type: 'CD_PICK_TOPIC', topic: 'film' })
+    if (s.live?.kind !== 'category-duel') throw new Error('unreachable')
+    const firstTopic = s.live.battleTopics[0]
+    s = reducer(s, { type: 'CD_PICK_TOPIC', topic: firstTopic })
     if (s.live?.kind !== 'category-duel') throw new Error('unreachable')
     expect(s.live.phase).toBe('answering')
     expect(s.live.activeQuestion).not.toBeNull()
@@ -139,7 +141,9 @@ describe('reducer — Themen-Battle', () => {
 
   it('CD_SELECT_ANSWER: richtig → Punkte für Team am Zug', () => {
     let s = bootIntoPlaying('category-duel')
-    s = reducer(s, { type: 'CD_PICK_TOPIC', topic: 'film' })
+    if (s.live?.kind !== 'category-duel') throw new Error('unreachable')
+    const firstTopic = s.live.battleTopics[0]
+    s = reducer(s, { type: 'CD_PICK_TOPIC', topic: firstTopic })
     if (s.live?.kind !== 'category-duel') throw new Error('unreachable')
     const correctIdx = s.live.correctRenderedIndex
     s = reducer(s, { type: 'CD_SELECT_ANSWER', renderedIndex: correctIdx })
@@ -151,7 +155,9 @@ describe('reducer — Themen-Battle', () => {
 
   it('CD_SELECT_ANSWER: falsch → keine Punkte', () => {
     let s = bootIntoPlaying('category-duel')
-    s = reducer(s, { type: 'CD_PICK_TOPIC', topic: 'film' })
+    if (s.live?.kind !== 'category-duel') throw new Error('unreachable')
+    const firstTopic = s.live.battleTopics[0]
+    s = reducer(s, { type: 'CD_PICK_TOPIC', topic: firstTopic })
     if (s.live?.kind !== 'category-duel') throw new Error('unreachable')
     const wrongIdx = (s.live.correctRenderedIndex + 1) % s.live.shuffledOptions.length
     s = reducer(s, { type: 'CD_SELECT_ANSWER', renderedIndex: wrongIdx })
@@ -162,7 +168,9 @@ describe('reducer — Themen-Battle', () => {
 
   it('CD_NEXT_TURN wechselt Team, verbucht Topic und Question-ID', () => {
     let s = bootIntoPlaying('category-duel')
-    s = reducer(s, { type: 'CD_PICK_TOPIC', topic: 'film' })
+    if (s.live?.kind !== 'category-duel') throw new Error('unreachable')
+    const firstTopic = s.live.battleTopics[0]
+    s = reducer(s, { type: 'CD_PICK_TOPIC', topic: firstTopic })
     if (s.live?.kind !== 'category-duel') throw new Error('unreachable')
     const askedId = s.live.activeQuestion!.id
     s = reducer(s, { type: 'CD_SELECT_ANSWER', renderedIndex: 0 })
@@ -170,30 +178,30 @@ describe('reducer — Themen-Battle', () => {
     if (s.live?.kind !== 'category-duel') throw new Error('unreachable')
     expect(s.live.currentTeamIndex).toBe(1)
     expect(s.live.phase).toBe('pick-topic')
-    expect(s.live.usedTopics).toContain('film')
+    expect(s.live.usedTopics).toContain(firstTopic)
     expect(s.live.usedQuestionIds).toContain(askedId)
     expect(s.live.activeQuestion).toBeNull()
   })
 
   it('CD_PICK_TOPIC schließt bereits verbrauchte Topics aus', () => {
     let s = bootIntoPlaying('category-duel')
-    s = reducer(s, { type: 'CD_PICK_TOPIC', topic: 'film' })
+    if (s.live?.kind !== 'category-duel') throw new Error('unreachable')
+    const firstTopic = s.live.battleTopics[0]
+    s = reducer(s, { type: 'CD_PICK_TOPIC', topic: firstTopic })
     s = reducer(s, { type: 'CD_SELECT_ANSWER', renderedIndex: 0 })
     s = reducer(s, { type: 'CD_NEXT_TURN' })
     // Zweites CD_PICK_TOPIC auf gleichen Topic → wird ignoriert.
     const before = s.live
-    s = reducer(s, { type: 'CD_PICK_TOPIC', topic: 'film' })
+    s = reducer(s, { type: 'CD_PICK_TOPIC', topic: firstTopic })
     expect(s.live).toBe(before)
   })
 
-  it('Alle 12 Topics abgearbeitet → FINISH_MODE → scoreboard bei Single-Modus', () => {
-    const topics = [
-      'film', 'serien', 'musik', 'games',
-      'geografie', 'geschichte', 'wissenschaft', 'sport',
-      'essen', 'technik', 'sprache', 'kurioses',
-    ] as const
-
+  it('Alle Battle-Topics abgearbeitet → FINISH_MODE → scoreboard bei Single-Modus', () => {
     let s = bootIntoPlaying('category-duel')
+    if (s.live?.kind !== 'category-duel') throw new Error('unreachable')
+    // Kopie, da wir während der Iteration den Live-State modifizieren.
+    const topics = [...s.live.battleTopics]
+
     for (const t of topics) {
       s = reducer(s, { type: 'CD_PICK_TOPIC', topic: t })
       // Immer richtig → alle Punkte für Team A (Team-Wechsel geschieht in NEXT_TURN).
@@ -314,12 +322,9 @@ describe('reducer — Match-Tracker über mehrere Modi', () => {
     expect(s.currentModeIndex).toBe(0)
     expect(s.live?.kind).toBe('category-duel')
 
-    // Themen-Battle „durchspielen" → wir simulieren nur 12 Topics.
-    const topics = [
-      'film', 'serien', 'musik', 'games',
-      'geografie', 'geschichte', 'wissenschaft', 'sport',
-      'essen', 'technik', 'sprache', 'kurioses',
-    ] as const
+    // Themen-Battle „durchspielen" — alle Kacheln der Runde durchgehen.
+    if (s.live?.kind !== 'category-duel') throw new Error('unreachable')
+    const topics = [...s.live.battleTopics]
     for (const t of topics) {
       s = reducer(s, { type: 'CD_PICK_TOPIC', topic: t })
       if (s.live?.kind !== 'category-duel') break
@@ -382,11 +387,11 @@ describe('reducer — Player-Ebene (Session D + E)', () => {
     s = reducer(s, {
       type: 'SET_PLAYER_INTERESTS',
       playerId: firstPlayer.id,
-      interests: [gut('wissenschaft'), gut('sprache')],
+      interests: [gut('medizin'), gut('sprache')],
     })
-    expect(s.round?.interests).toEqual(['wissenschaft', 'sprache'])
+    expect(s.round?.interests).toEqual(['medizin', 'sprache'])
     expect(s.round?.players[0].interests).toEqual([
-      gut('wissenschaft'),
+      gut('medizin'),
       gut('sprache'),
     ])
   })
@@ -420,9 +425,9 @@ describe('reducer — Player-Ebene (Session D + E)', () => {
     s = reducer(s, {
       type: 'SET_PLAYER_INTERESTS',
       playerId: p2.id,
-      interests: [gut('musik'), gut('wissenschaft')],
+      interests: [gut('musik'), gut('medizin')],
     })
-    expect(s.round?.interests).toEqual(['film', 'musik', 'wissenschaft'])
+    expect(s.round?.interests).toEqual(['film', 'musik', 'medizin'])
   })
 
   it('Player-Actions werden während des Spiels ignoriert', () => {
@@ -575,14 +580,14 @@ describe('reducer — Player-Ebene (Session D + E)', () => {
     s = reducer(s, {
       type: 'SET_PLAYER_INTERESTS',
       playerId: firstPlayer.id,
-      interests: [gut('wissenschaft')],
+      interests: [gut('medizin')],
     })
     s = reducer(s, { type: 'START_PLAYING' })
     if (s.live?.kind !== 'flash') throw new Error('unreachable')
     // Math.random ist auf 0 gepinnt → im weighted pick landen wir im ersten Bucket
     // (shared oder individual — hier: individual, weil nur ein Player Interesse hat).
     // Beide Buckets liefern eine wissenschaft-Frage.
-    expect(s.live.activeQuestion?.topic).toBe('wissenschaft')
+    expect(s.live.activeQuestion?.topic).toBe('medizin')
   })
 
   it('Blitzrunde: nächste Frage bleibt nach Möglichkeit im Interest-Topic', () => {
@@ -593,7 +598,7 @@ describe('reducer — Player-Ebene (Session D + E)', () => {
     s = reducer(s, {
       type: 'SET_PLAYER_INTERESTS',
       playerId: firstPlayer.id,
-      interests: [gut('wissenschaft')],
+      interests: [gut('medizin')],
     })
     s = reducer(s, { type: 'START_PLAYING' })
     if (s.live?.kind !== 'flash') throw new Error('unreachable')
@@ -609,7 +614,7 @@ describe('reducer — Player-Ebene (Session D + E)', () => {
       s = reducer(s, { type: 'FLASH_REVEAL' })
       s = reducer(s, { type: 'FLASH_NEXT' })
     }
-    expect(topics).toEqual(['wissenschaft', 'wissenschaft'])
+    expect(topics).toEqual(['medizin', 'medizin'])
   })
 })
 
@@ -642,10 +647,10 @@ describe('reducer — Fachrunde (Session O)', () => {
     s = reducer(s, {
       type: 'EXPERTS_SET_EXPERTISE',
       playerId: pid,
-      topic: 'wissenschaft',
+      topic: 'medizin',
     })
     if (s.live?.kind !== 'experts') throw new Error('unreachable')
-    expect(s.live.expertise[pid]).toBe('wissenschaft')
+    expect(s.live.expertise[pid]).toBe('medizin')
   })
 
   it('EXPERTS_START_ROUND: mit ≥1 Fach → primary, Timer läuft, erste Frage im Fach', () => {
@@ -655,13 +660,13 @@ describe('reducer — Fachrunde (Session O)', () => {
     s = reducer(s, {
       type: 'EXPERTS_SET_EXPERTISE',
       playerId: pid,
-      topic: 'wissenschaft',
+      topic: 'medizin',
     })
     s = reducer(s, { type: 'EXPERTS_START_ROUND' })
     if (s.live?.kind !== 'experts') throw new Error('unreachable')
     expect(s.live.phase).toBe('primary')
     expect(s.live.activePlayerId).toBe(pid)
-    expect(s.live.activeQuestion?.topic).toBe('wissenschaft')
+    expect(s.live.activeQuestion?.topic).toBe('medizin')
     expect(s.live.soloStartedAt).not.toBeNull()
     // playerOrder wurde auf die mit Fach reduziert.
     expect(s.live.playerOrder).toEqual([pid])
@@ -683,7 +688,7 @@ describe('reducer — Fachrunde (Session O)', () => {
     s = reducer(s, {
       type: 'EXPERTS_SET_EXPERTISE',
       playerId: pid,
-      topic: 'wissenschaft',
+      topic: 'medizin',
     })
     s = reducer(s, { type: 'EXPERTS_START_ROUND' })
     if (s.live?.kind !== 'experts') throw new Error('unreachable')
@@ -704,7 +709,7 @@ describe('reducer — Fachrunde (Session O)', () => {
     s = reducer(s, {
       type: 'EXPERTS_SET_EXPERTISE',
       playerId: pid,
-      topic: 'wissenschaft',
+      topic: 'medizin',
     })
     s = reducer(s, { type: 'EXPERTS_START_ROUND' })
     s = reducer(s, { type: 'EXPERTS_MARK_PRIMARY', outcome: 'wrong' })
@@ -720,7 +725,7 @@ describe('reducer — Fachrunde (Session O)', () => {
     s = reducer(s, {
       type: 'EXPERTS_SET_EXPERTISE',
       playerId: pid,
-      topic: 'wissenschaft',
+      topic: 'medizin',
     })
     s = reducer(s, { type: 'EXPERTS_START_ROUND' })
     s = reducer(s, { type: 'EXPERTS_MARK_PRIMARY', outcome: 'timeout' })
@@ -736,7 +741,7 @@ describe('reducer — Fachrunde (Session O)', () => {
     s = reducer(s, {
       type: 'EXPERTS_SET_EXPERTISE',
       playerId: teamAPlayer.id,
-      topic: 'wissenschaft',
+      topic: 'medizin',
     })
     s = reducer(s, { type: 'EXPERTS_START_ROUND' })
     if (s.live?.kind !== 'experts') throw new Error('unreachable')
@@ -760,7 +765,7 @@ describe('reducer — Fachrunde (Session O)', () => {
     s = reducer(s, {
       type: 'EXPERTS_SET_EXPERTISE',
       playerId: teamAPlayer.id,
-      topic: 'wissenschaft',
+      topic: 'medizin',
     })
     s = reducer(s, { type: 'EXPERTS_START_ROUND' })
     s = reducer(s, { type: 'EXPERTS_MARK_PRIMARY', outcome: 'correct' })
@@ -1653,7 +1658,7 @@ describe('reducer — Heimspiel / Player Spotlight (Session G)', () => {
       s = reducer(s, {
         type: 'SET_PLAYER_INTERESTS',
         playerId: p.id,
-        interests: [gut('wissenschaft')],
+        interests: [gut('medizin')],
       })
     }
     s = reducer(s, { type: 'START_PLAYING' })
@@ -1670,7 +1675,7 @@ describe('reducer — Heimspiel / Player Spotlight (Session G)', () => {
     s = reducer(s, {
       type: 'SET_PLAYER_INTERESTS',
       playerId: p.id,
-      interests: [gut('wissenschaft')],
+      interests: [gut('medizin')],
     })
     s = reducer(s, { type: 'START_PLAYING' })
     if (s.live?.kind !== 'player-spotlight') throw new Error('unreachable')
@@ -1691,7 +1696,7 @@ describe('reducer — Heimspiel / Player Spotlight (Session G)', () => {
     s = reducer(s, {
       type: 'SET_PLAYER_INTERESTS',
       playerId: p.id,
-      interests: [gut('wissenschaft')],
+      interests: [gut('medizin')],
     })
     s = reducer(s, { type: 'START_PLAYING' })
     s = reducer(s, { type: 'SPOTLIGHT_MARK_PRIMARY', outcome: 'wrong' })
@@ -1708,7 +1713,7 @@ describe('reducer — Heimspiel / Player Spotlight (Session G)', () => {
     s = reducer(s, {
       type: 'SET_PLAYER_INTERESTS',
       playerId: p.id,
-      interests: [gut('wissenschaft')],
+      interests: [gut('medizin')],
     })
     s = reducer(s, { type: 'START_PLAYING' })
     if (s.live?.kind !== 'player-spotlight') throw new Error('unreachable')
@@ -1730,7 +1735,7 @@ describe('reducer — Heimspiel / Player Spotlight (Session G)', () => {
     s = reducer(s, {
       type: 'SET_PLAYER_INTERESTS',
       playerId: p.id,
-      interests: [gut('wissenschaft')],
+      interests: [gut('medizin')],
     })
     s = reducer(s, { type: 'START_PLAYING' })
     if (s.live?.kind !== 'player-spotlight') throw new Error('unreachable')
@@ -1751,7 +1756,7 @@ describe('reducer — Heimspiel / Player Spotlight (Session G)', () => {
     s = reducer(s, {
       type: 'SET_PLAYER_INTERESTS',
       playerId: p.id,
-      interests: [gut('wissenschaft')],
+      interests: [gut('medizin')],
     })
     s = reducer(s, { type: 'START_PLAYING' })
     const before = s.live
@@ -1765,7 +1770,7 @@ describe('reducer — Heimspiel / Player Spotlight (Session G)', () => {
     s = reducer(s, {
       type: 'SET_PLAYER_INTERESTS',
       playerId: pA1.id,
-      interests: [gut('wissenschaft')],
+      interests: [gut('medizin')],
     })
     s = reducer(s, {
       type: 'SET_PLAYER_INTERESTS',
@@ -1789,7 +1794,7 @@ describe('reducer — Heimspiel / Player Spotlight (Session G)', () => {
     s = reducer(s, {
       type: 'SET_PLAYER_INTERESTS',
       playerId: p.id,
-      interests: [gut('wissenschaft')],
+      interests: [gut('medizin')],
     })
     // Nur ein Spieler mit Interesse — Order-Länge = 1.
     s = reducer(s, { type: 'START_PLAYING' })
@@ -1810,14 +1815,14 @@ describe('reducer — Heimspiel / Player Spotlight (Session G)', () => {
       playerId: p.id,
       interests: [
         { topic: 'film' as never, level: 2 },
-        { topic: 'wissenschaft' as never, level: 5 },
+        { topic: 'medizin' as never, level: 5 },
         { topic: 'musik' as never, level: 3 },
       ],
     })
     s = reducer(s, { type: 'START_PLAYING' })
     if (s.live?.kind !== 'player-spotlight') throw new Error('unreachable')
-    // 'wissenschaft' hat 'nerd' und sollte gewählt werden.
-    expect(s.live.activeTopic).toBe('wissenschaft')
+    // 'medizin' hat 'nerd' und sollte gewählt werden.
+    expect(s.live.activeTopic).toBe('medizin')
   })
 })
 
@@ -1827,7 +1832,7 @@ describe('reducer — Sanity', () => {
   it('Alle Themen-Battle-Topics haben mindestens eine Frage im Katalog', () => {
     const topics = [
       'film', 'serien', 'musik', 'games',
-      'geografie', 'geschichte', 'wissenschaft', 'sport',
+      'geografie', 'geschichte', 'medizin', 'sport',
       'essen', 'technik', 'sprache', 'kurioses',
     ] as const
     for (const t of topics) {
@@ -1971,10 +1976,9 @@ describe('reducer — CD_NEXT_TURN modulo N (Session R)', () => {
     const doOneTurn = (state: GameState): GameState => {
       const live = state.live
       if (!live || live.kind !== 'category-duel') return state
-      // Nimm irgendeinen ungespielten Topic — wir starten immer beim ersten verfügbaren.
+      // Nimm irgendeinen ungespielten Topic aus den vorausgewählten battleTopics.
       const usedSet = new Set(live.usedTopics)
-      const topics = ['film', 'serien', 'musik', 'games', 'geografie', 'geschichte', 'wissenschaft', 'sport', 'essen', 'technik', 'sprache', 'kurioses'] as const
-      const nextTopic = topics.find((t) => !usedSet.has(t))!
+      const nextTopic = live.battleTopics.find((t) => !usedSet.has(t))!
       let next = reducer(state, { type: 'CD_PICK_TOPIC', topic: nextTopic })
       // Antwort abgeben (erste Option).
       next = reducer(next, { type: 'CD_SELECT_ANSWER', renderedIndex: 0 })

@@ -67,10 +67,10 @@ describe('searchInterests', () => {
   })
 
   it('ordnet dem Ergebnis das Topic korrekt zu', () => {
-    // Katalog hat "Cochlea" tag, gehört zu wissenschaft (Anatomie/Ohr-Frage).
+    // Katalog hat "Cochlea" tag, gehört zu medizin (Anatomie/Ohr-Frage).
     const results = searchInterests(index, 'cochlea')
     expect(results.length).toBeGreaterThan(0)
-    expect(results[0].topic).toBe('wissenschaft')
+    expect(results[0].topic).toBe('medizin')
   })
 
   it('filtert bereits gewählte Labels raus', () => {
