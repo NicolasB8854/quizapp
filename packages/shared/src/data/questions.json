@@ -7744,5 +7744,1107 @@
     "aiGenerated": false,
     "createdAt": "2026-09-21T20:06:33Z",
     "updatedAt": "2026-09-21T20:55:21Z"
+  },
+  {
+    "id": "q-wissenschaft-20",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "allgemeinbildung",
+    "topic": "wissenschaft",
+    "difficulty": 3,
+    "question": "Welcher psychologische Effekt beschreibt, dass Menschen mit geringer Kompetenz ihre eigenen Fähigkeiten systematisch überschätzen?",
+    "options": [
+      "Halo-Effekt",
+      "Dunning-Kruger-Effekt",
+      "Barnum-Effekt",
+      "Placebo-Effekt"
+    ],
+    "correctIndex": 1,
+    "gmNote": "Benannt 1999 nach den Sozialpsychologen David Dunning und Justin Kruger. Wer wenig weiß, weiß auch nicht, was er nicht weiß.",
+    "tags": [
+      "Psychologie",
+      "Kognitive Verzerrung",
+      "Dunning-Kruger"
+    ],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-09-23T08:12:37Z",
+    "updatedAt": "2026-09-23T08:12:37Z"
+  },
+  {
+    "id": "q-wissenschaft-21",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "allgemeinbildung",
+    "topic": "wissenschaft",
+    "difficulty": 2,
+    "question": "Welcher russische Forscher zeigte am Speichelfluss von Hunden erstmals das Prinzip der klassischen Konditionierung?",
+    "options": [
+      "B. F. Skinner",
+      "Sigmund Freud",
+      "Iwan Pawlow",
+      "Carl Rogers"
+    ],
+    "correctIndex": 2,
+    "gmNote": "Nobelpreis für Medizin 1904 — Experimente mit dem Glockensignal vor der Fütterung.",
+    "tags": [
+      "Psychologie",
+      "Konditionierung",
+      "Pawlow"
+    ],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-09-23T08:12:37Z",
+    "updatedAt": "2026-09-23T08:12:37Z"
+  },
+  {
+    "id": "q-wissenschaft-22",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "allgemeinbildung",
+    "topic": "wissenschaft",
+    "difficulty": 3,
+    "question": "Welche Blutgruppe gilt bei Erythrozyten-Transfusionen als universeller Spender?",
+    "options": [
+      "A negativ",
+      "0 negativ",
+      "AB positiv",
+      "B positiv"
+    ],
+    "correctIndex": 1,
+    "gmNote": "Ohne A/B-Antigene und ohne Rhesus-D — passt in praktisch jedes Empfängerblut. Für Plasma ist es umgekehrt AB.",
+    "tags": [
+      "Medizin",
+      "Blutgruppe",
+      "Transfusion"
+    ],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-09-23T08:12:37Z",
+    "updatedAt": "2026-09-23T08:12:37Z"
+  },
+  {
+    "id": "q-wissenschaft-23",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "allgemeinbildung",
+    "topic": "wissenschaft",
+    "difficulty": 2,
+    "question": "Wie heißt das schneckenförmige Sinnesorgan im Innenohr, in dem Schallwellen in Nervenimpulse umgewandelt werden?",
+    "options": [
+      "Trommelfell",
+      "Amboss",
+      "Cochlea",
+      "Bogengang"
+    ],
+    "correctIndex": 2,
+    "gmNote": "Cochlea = lateinisch „Schnecke“. Die Sinneshaarzellen sitzen auf der Basilarmembran und feuern tonotopisch.",
+    "tags": [
+      "Anatomie",
+      "Ohr",
+      "Cochlea"
+    ],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-09-23T08:12:37Z",
+    "updatedAt": "2026-09-23T08:12:37Z"
+  },
+  {
+    "id": "q-wissenschaft-24",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "allgemeinbildung",
+    "topic": "wissenschaft",
+    "difficulty": 2,
+    "question": "Welche Infektionskrankheit erklärte die WHO 1980 offiziell als weltweit ausgerottet?",
+    "options": [
+      "Kinderlähmung",
+      "Diphtherie",
+      "Masern",
+      "Pocken"
+    ],
+    "correctIndex": 3,
+    "gmNote": "Letzter natürlicher Fall 1977 in Somalia. Bis heute die einzige beim Menschen ausgerottete Infektionskrankheit.",
+    "tags": [
+      "Medizin",
+      "Pocken",
+      "WHO"
+    ],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-09-23T08:12:37Z",
+    "updatedAt": "2026-09-23T08:12:37Z"
+  },
+  {
+    "id": "q-wissenschaft-25",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "allgemeinbildung",
+    "topic": "wissenschaft",
+    "difficulty": 2,
+    "question": "Wie viele Knochen hat ein erwachsener Mensch typischerweise?",
+    "options": [
+      "178",
+      "206",
+      "258",
+      "316"
+    ],
+    "correctIndex": 1,
+    "gmNote": "Neugeborene starten mit rund 270, viele wachsen später zusammen. Wirbel- und Schädelknochen liefern den größten Zählunterschied.",
+    "tags": [
+      "Anatomie",
+      "Knochen"
+    ],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-09-23T08:12:37Z",
+    "updatedAt": "2026-09-23T08:12:37Z"
+  },
+  {
+    "id": "q-wissenschaft-26",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "allgemeinbildung",
+    "topic": "wissenschaft",
+    "difficulty": 2,
+    "question": "Welcher Umweltreiz ist entscheidend, damit die Haut Vitamin D selbst herstellen kann?",
+    "options": [
+      "Wärme über 30 °C",
+      "UVB-Strahlung",
+      "Salzhaltige Luft",
+      "Kontakt mit Wasser"
+    ],
+    "correctIndex": 1,
+    "gmNote": "7-Dehydrocholesterol wird durch UVB (~290–315 nm) zu Prävitamin D3 umgewandelt. Fensterglas filtert UVB heraus.",
+    "tags": [
+      "Gesundheit",
+      "Vitamin D",
+      "UV-Strahlung"
+    ],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-09-23T08:12:37Z",
+    "updatedAt": "2026-09-23T08:12:37Z"
+  },
+  {
+    "id": "q-wissenschaft-27",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "allgemeinbildung",
+    "topic": "wissenschaft",
+    "difficulty": 2,
+    "question": "Welche Stufe steht in Abraham Maslows klassischer Bedürfnispyramide an der Spitze?",
+    "options": [
+      "Sicherheit",
+      "Zugehörigkeit",
+      "Wertschätzung",
+      "Selbstverwirklichung"
+    ],
+    "correctIndex": 3,
+    "gmNote": "Reihenfolge von unten nach oben: physiologisch, Sicherheit, Zugehörigkeit, Wertschätzung, Selbstverwirklichung.",
+    "tags": [
+      "Psychologie",
+      "Maslow",
+      "Motivation"
+    ],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-09-23T08:12:37Z",
+    "updatedAt": "2026-09-23T08:12:37Z"
+  },
+  {
+    "id": "q-wissenschaft-28",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "allgemeinbildung",
+    "topic": "wissenschaft",
+    "difficulty": 2,
+    "question": "Welcher Botenstoff wird populär als „Glückshormon“ bezeichnet und ist an der Stimmungsregulation beteiligt?",
+    "options": [
+      "Insulin",
+      "Adrenalin",
+      "Serotonin",
+      "Kortisol"
+    ],
+    "correctIndex": 2,
+    "gmNote": "SSRI-Antidepressiva erhöhen die verfügbare Menge im synaptischen Spalt. Serotonin wird zu über 90 % im Darm produziert.",
+    "tags": [
+      "Psychologie",
+      "Serotonin",
+      "Neurotransmitter"
+    ],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-09-23T08:12:37Z",
+    "updatedAt": "2026-09-23T08:12:37Z"
+  },
+  {
+    "id": "q-wissenschaft-29",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "allgemeinbildung",
+    "topic": "wissenschaft",
+    "difficulty": 2,
+    "question": "Wer entdeckte 1928 durch Zufall die antibakterielle Wirkung des Penicillins?",
+    "options": [
+      "Louis Pasteur",
+      "Robert Koch",
+      "Alexander Fleming",
+      "Paul Ehrlich"
+    ],
+    "correctIndex": 2,
+    "gmNote": "Ein Schimmelpilz (Penicillium notatum) wuchs in einer vergessenen Bakterienkultur — um die Kolonie herum hemmte er das Wachstum.",
+    "tags": [
+      "Medizin",
+      "Penicillin",
+      "Fleming"
+    ],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-09-23T08:12:37Z",
+    "updatedAt": "2026-09-23T08:12:37Z"
+  },
+  {
+    "id": "q-wissenschaft-30",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "allgemeinbildung",
+    "topic": "wissenschaft",
+    "difficulty": 1,
+    "question": "Wie viele Kammern hat das menschliche Herz insgesamt?",
+    "options": [
+      "2",
+      "3",
+      "4",
+      "5"
+    ],
+    "correctIndex": 2,
+    "gmNote": "Zwei Vorhöfe (Atrien) plus zwei Hauptkammern (Ventrikel), getrennt durch die Herzscheidewand.",
+    "tags": [
+      "Anatomie",
+      "Herz"
+    ],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-09-23T08:12:37Z",
+    "updatedAt": "2026-09-23T08:12:37Z"
+  },
+  {
+    "id": "q-wissenschaft-31",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "allgemeinbildung",
+    "topic": "wissenschaft",
+    "difficulty": 2,
+    "question": "In welcher Schlafphase treten die intensivsten und lebhaftesten Träume auf?",
+    "options": [
+      "Einschlafphase (N1)",
+      "Leichtschlaf (N2)",
+      "Tiefschlaf (N3)",
+      "REM-Schlaf"
+    ],
+    "correctIndex": 3,
+    "gmNote": "Namensgebende Rapid Eye Movements + fast vollständige Muskelatonie. Ein Erwachsener durchläuft pro Nacht 4–6 REM-Zyklen.",
+    "tags": [
+      "Gesundheit",
+      "Schlaf",
+      "REM"
+    ],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-09-23T08:12:37Z",
+    "updatedAt": "2026-09-23T08:12:37Z"
+  },
+  {
+    "id": "q-wissenschaft-32",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "allgemeinbildung",
+    "topic": "wissenschaft",
+    "difficulty": 3,
+    "question": "Wie nennt man die Tendenz, Informationen bevorzugt so wahrzunehmen, dass sie die eigenen Überzeugungen bestätigen?",
+    "options": [
+      "Ankereffekt",
+      "Attributionsfehler",
+      "Confirmation Bias",
+      "Framing-Effekt"
+    ],
+    "correctIndex": 2,
+    "gmNote": "Deutsch auch „Bestätigungsfehler“. Wirkt auf Recherche, Erinnerung und Bewertung von Argumenten.",
+    "tags": [
+      "Psychologie",
+      "Bias",
+      "Confirmation Bias"
+    ],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-09-23T08:12:37Z",
+    "updatedAt": "2026-09-23T08:12:37Z"
+  },
+  {
+    "id": "q-wissenschaft-33",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "allgemeinbildung",
+    "topic": "wissenschaft",
+    "difficulty": 3,
+    "question": "Welcher Muskel gilt gemessen an seiner Kraft pro Querschnittsfläche als der stärkste des menschlichen Körpers?",
+    "options": [
+      "Bizeps",
+      "Waden­muskel (Gastrocnemius)",
+      "Kaumuskel (Masseter)",
+      "Großer Gesäßmuskel"
+    ],
+    "correctIndex": 2,
+    "gmNote": "Der Masseter kann kurzfristig Kaudrücke von über 700 N erreichen — bezogen auf seine Größe ist er die Nummer 1.",
+    "tags": [
+      "Anatomie",
+      "Muskel",
+      "Masseter"
+    ],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-09-23T08:12:37Z",
+    "updatedAt": "2026-09-23T08:12:37Z"
+  },
+  {
+    "id": "q-wissenschaft-34",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "allgemeinbildung",
+    "topic": "wissenschaft",
+    "difficulty": 4,
+    "question": "Welche Erbkrankheit wird durch einen Defekt auf dem X-Chromosom verursacht und tritt darum fast ausschließlich bei Männern auf?",
+    "options": [
+      "Mukoviszidose",
+      "Sichelzellanämie",
+      "Hämophilie A",
+      "Chorea Huntington"
+    ],
+    "correctIndex": 2,
+    "gmNote": "Männer haben nur ein X-Chromosom — ein Defekt schlägt sofort durch. Frauen sind meist heterozygote Überträgerinnen.",
+    "tags": [
+      "Medizin",
+      "Genetik",
+      "Hämophilie"
+    ],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-09-23T08:12:37Z",
+    "updatedAt": "2026-09-23T08:12:37Z"
+  },
+  {
+    "id": "q-flash-31",
+    "type": "true-false",
+    "status": "approved",
+    "category": "allgemeinbildung",
+    "topic": "wissenschaft",
+    "difficulty": 2,
+    "question": "Der Mensch nutzt im Alltag nur rund 10 Prozent seines Gehirns.",
+    "correctAnswer": false,
+    "gmNote": "Populärer Mythos. Bildgebende Verfahren zeigen, dass im Verlauf eines Tages praktisch alle Hirnregionen aktiv sind.",
+    "tags": [
+      "Gehirn",
+      "Mythos",
+      "Neurowissenschaft"
+    ],
+    "compatibleModes": [
+      "flash"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-09-23T08:12:37Z",
+    "updatedAt": "2026-09-23T08:12:37Z"
+  },
+  {
+    "id": "q-flash-32",
+    "type": "true-false",
+    "status": "approved",
+    "category": "allgemeinbildung",
+    "topic": "wissenschaft",
+    "difficulty": 3,
+    "question": "Das menschliche Herz pumpt pro Tag rund 7 000 Liter Blut durch den Körper.",
+    "correctAnswer": true,
+    "gmNote": "Bei ca. 5 Liter pro Minute × 60 × 24 = 7 200 Liter. In etwa 70 Jahren rund 180 Millionen Liter.",
+    "tags": [
+      "Herz",
+      "Physiologie"
+    ],
+    "compatibleModes": [
+      "flash"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-09-23T08:12:37Z",
+    "updatedAt": "2026-09-23T08:12:37Z"
+  },
+  {
+    "id": "q-flash-33",
+    "type": "true-false",
+    "status": "approved",
+    "category": "allgemeinbildung",
+    "topic": "wissenschaft",
+    "difficulty": 3,
+    "question": "Die Leber ist das einzige menschliche Organ, das sich nach teilweiser Entfernung wieder regenerieren kann.",
+    "correctAnswer": true,
+    "gmNote": "Bis zu zwei Drittel können entfernt werden — die Restleber wächst innerhalb von Wochen nahezu auf Originalgröße nach.",
+    "tags": [
+      "Anatomie",
+      "Leber",
+      "Regeneration"
+    ],
+    "compatibleModes": [
+      "flash"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-09-23T08:12:37Z",
+    "updatedAt": "2026-09-23T08:12:37Z"
+  },
+  {
+    "id": "q-essen-16",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "alltag-lifestyle",
+    "topic": "essen",
+    "difficulty": 3,
+    "question": "Welches deutsche Weinanbaugebiet ist mit rund 27 000 Hektar Rebfläche das größte des Landes?",
+    "options": [
+      "Mosel",
+      "Rheinhessen",
+      "Pfalz",
+      "Baden"
+    ],
+    "correctIndex": 1,
+    "gmNote": "Rheinhessen liegt zwischen Mainz, Bingen, Alzey und Worms — die Pfalz folgt auf Platz 2.",
+    "tags": [
+      "Wein",
+      "Deutschland",
+      "Rheinhessen"
+    ],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-09-23T08:12:37Z",
+    "updatedAt": "2026-09-23T08:12:37Z"
+  },
+  {
+    "id": "q-essen-17",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "alltag-lifestyle",
+    "topic": "essen",
+    "difficulty": 2,
+    "question": "Welches Land ist heute mit weitem Abstand der größte Kaffee-Produzent der Welt?",
+    "options": [
+      "Kolumbien",
+      "Vietnam",
+      "Brasilien",
+      "Äthiopien"
+    ],
+    "correctIndex": 2,
+    "gmNote": "Brasilien produziert seit über 150 Jahren rund ein Drittel der weltweiten Kaffee-Ernte, überwiegend Arabica in Minas Gerais.",
+    "tags": [
+      "Kaffee",
+      "Brasilien"
+    ],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-09-23T08:12:37Z",
+    "updatedAt": "2026-09-23T08:12:37Z"
+  },
+  {
+    "id": "q-essen-18",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "alltag-lifestyle",
+    "topic": "essen",
+    "difficulty": 2,
+    "question": "Welches Gewürz stammt vom Blütengriffel einer Krokus-Art und gilt gewichtsbezogen als das teuerste der Welt?",
+    "options": [
+      "Vanille",
+      "Kardamom",
+      "Sternanis",
+      "Safran"
+    ],
+    "correctIndex": 3,
+    "gmNote": "Rund 150 000 Blüten für ein Kilogramm — Handarbeit, deshalb der Preis. Hauptanbau: Iran und Kaschmir.",
+    "tags": [
+      "Gewürz",
+      "Safran"
+    ],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-09-23T08:12:37Z",
+    "updatedAt": "2026-09-23T08:12:37Z"
+  },
+  {
+    "id": "q-essen-19",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "alltag-lifestyle",
+    "topic": "essen",
+    "difficulty": 3,
+    "question": "Wie heißt die Garmethode, bei der Lebensmittel im vakuumierten Beutel bei niedriger Temperatur langsam im Wasserbad gegart werden?",
+    "options": [
+      "Blanchieren",
+      "Pochieren",
+      "Sous-vide",
+      "Confieren"
+    ],
+    "correctIndex": 2,
+    "gmNote": "Französisch „unter Vakuum“. Typisch 55–65 °C, mehrere Stunden — gleichmäßiger Garpunkt ohne Übergarung an den Rändern.",
+    "tags": [
+      "Kochtechnik",
+      "Sous-vide"
+    ],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-09-23T08:12:37Z",
+    "updatedAt": "2026-09-23T08:12:37Z"
+  },
+  {
+    "id": "q-essen-20",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "alltag-lifestyle",
+    "topic": "essen",
+    "difficulty": 3,
+    "question": "Aus welchem Land kam die Nudelsuppe Ramen ursprünglich, bevor sie in Japan zum Nationalgericht wurde?",
+    "options": [
+      "China",
+      "Korea",
+      "Vietnam",
+      "Taiwan"
+    ],
+    "correctIndex": 0,
+    "gmNote": "Ende des 19./Anfang des 20. Jahrhunderts von chinesischen Gastwirten in Yokohama eingeführt (Lāmiàn / Ramen).",
+    "tags": [
+      "Nudeln",
+      "Ramen",
+      "Asien"
+    ],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-09-23T08:12:37Z",
+    "updatedAt": "2026-09-23T08:12:37Z"
+  },
+  {
+    "id": "q-essen-21",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "alltag-lifestyle",
+    "topic": "essen",
+    "difficulty": 3,
+    "question": "Welche Pflanze verleiht dem Getränk Absinth seinen bitteren Geschmack und den historischen Ruf als „grüne Fee“?",
+    "options": [
+      "Anis",
+      "Wermut (Artemisia absinthium)",
+      "Fenchel",
+      "Ysop"
+    ],
+    "correctIndex": 1,
+    "gmNote": "Neben Wermut gehören Anis und Fenchel dazu — grüne Farbe kommt vom Chlorophyll der Kräuter, nicht vom Thujon.",
+    "tags": [
+      "Getränk",
+      "Absinth",
+      "Kräuter"
+    ],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-09-23T08:12:37Z",
+    "updatedAt": "2026-09-23T08:12:37Z"
+  },
+  {
+    "id": "q-essen-22",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "alltag-lifestyle",
+    "topic": "essen",
+    "difficulty": 1,
+    "question": "Aus welcher Pflanze wird Rohrzucker gewonnen?",
+    "options": [
+      "Zuckerrübe",
+      "Ahornbaum",
+      "Zuckerrohr",
+      "Agave"
+    ],
+    "correctIndex": 2,
+    "gmNote": "Ein bis fünf Meter hohes Süßgras aus tropischen Regionen. Der Saft aus dem Halm wird eingedickt und kristallisiert.",
+    "tags": [
+      "Zucker",
+      "Zuckerrohr"
+    ],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-09-23T08:12:37Z",
+    "updatedAt": "2026-09-23T08:12:37Z"
+  },
+  {
+    "id": "q-essen-23",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "alltag-lifestyle",
+    "topic": "essen",
+    "difficulty": 2,
+    "question": "Welche Zutat gibt dem Bier hauptsächlich seine bittere Note und wirkt außerdem als natürliches Konservierungsmittel?",
+    "options": [
+      "Malz",
+      "Hefe",
+      "Hopfen",
+      "Gerstenkorn"
+    ],
+    "correctIndex": 2,
+    "gmNote": "Alpha-Säuren (Humulone) aus den Dolden entfalten sich beim Kochen der Würze — je länger, desto bitterer.",
+    "tags": [
+      "Bier",
+      "Hopfen"
+    ],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-09-23T08:12:37Z",
+    "updatedAt": "2026-09-23T08:12:37Z"
+  },
+  {
+    "id": "q-essen-24",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "alltag-lifestyle",
+    "topic": "essen",
+    "difficulty": 2,
+    "question": "Aus welchem Land stammt das Gericht Bibimbap — eine warme Reisschüssel mit Gemüse, Ei und oft Fleisch?",
+    "options": [
+      "China",
+      "Japan",
+      "Vietnam",
+      "Korea"
+    ],
+    "correctIndex": 3,
+    "gmNote": "Wörtlich „gemischter Reis“. Klassisch in der heißen Steinschale Dolsot, mit rotem Gochujang-Paprikapaste-Klecks obendrauf.",
+    "tags": [
+      "Küche",
+      "Korea",
+      "Bibimbap"
+    ],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-09-23T08:12:37Z",
+    "updatedAt": "2026-09-23T08:12:37Z"
+  },
+  {
+    "id": "q-essen-25",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "alltag-lifestyle",
+    "topic": "essen",
+    "difficulty": 2,
+    "question": "Wodurch unterscheidet sich klassischer Espresso in der Zubereitung vom Filterkaffee?",
+    "options": [
+      "Er wird über 10 Minuten mit heißem Wasser aufgegossen",
+      "Wasser wird mit rund 9 bar Druck durch feines Kaffeemehl gepresst",
+      "Er wird bei Raumtemperatur kalt extrahiert",
+      "Er wird über offener Flamme aufgekocht"
+    ],
+    "correctIndex": 1,
+    "gmNote": "Etwa 25 ml in 25–30 Sekunden bei rund 9 bar und ~90 °C — daraus resultiert die typische Crema.",
+    "tags": [
+      "Kaffee",
+      "Espresso"
+    ],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-09-23T08:12:37Z",
+    "updatedAt": "2026-09-23T08:12:37Z"
+  },
+  {
+    "id": "q-essen-26",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "alltag-lifestyle",
+    "topic": "essen",
+    "difficulty": 2,
+    "question": "Aus welcher Pflanze wird der kalorienarme Süßstoff Stevia gewonnen?",
+    "options": [
+      "Aloe Vera",
+      "Yucca",
+      "Steviablätter (Süßkraut)",
+      "Palme"
+    ],
+    "correctIndex": 2,
+    "gmNote": "Stevia rebaudiana, ein südamerikanisches Korbblütengewächs. Die Steviolglykoside süßen bis zu 300× stärker als Zucker.",
+    "tags": [
+      "Süßstoff",
+      "Stevia"
+    ],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-09-23T08:12:37Z",
+    "updatedAt": "2026-09-23T08:12:37Z"
+  },
+  {
+    "id": "q-essen-27",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "alltag-lifestyle",
+    "topic": "essen",
+    "difficulty": 2,
+    "question": "Welche Geschmacksrichtung wurde neben süß, sauer, salzig und bitter als fünfter Grundgeschmack anerkannt?",
+    "options": [
+      "Fettig",
+      "Metallisch",
+      "Umami",
+      "Scharf"
+    ],
+    "correctIndex": 2,
+    "gmNote": "Vom japanischen Chemiker Kikunae Ikeda 1908 an Glutaminsäure aus Kombu-Alge beschrieben. Wörtlich „schmackhaft“.",
+    "tags": [
+      "Geschmack",
+      "Umami"
+    ],
+    "compatibleModes": [
+      "category-duel",
+      "flash",
+      "player-spotlight",
+      "sprinter",
+      "points-ladder",
+      "category-board",
+      "duel-1v1",
+      "elimination",
+      "experts"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-09-23T08:12:37Z",
+    "updatedAt": "2026-09-23T08:12:37Z"
+  },
+  {
+    "id": "q-flash-34",
+    "type": "true-false",
+    "status": "approved",
+    "category": "alltag-lifestyle",
+    "topic": "essen",
+    "difficulty": 2,
+    "question": "Champagner darf laut EU-Recht nur aus der französischen Region Champagne stammen.",
+    "correctAnswer": true,
+    "gmNote": "Geschützte Ursprungsbezeichnung (AOC seit 1936, EU-weit anerkannt). Deutsche Winzer nennen ihre Version darum Sekt oder Crémant.",
+    "tags": [
+      "Champagner",
+      "Wein",
+      "EU-Recht"
+    ],
+    "compatibleModes": [
+      "flash"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-09-23T08:12:37Z",
+    "updatedAt": "2026-09-23T08:12:37Z"
+  },
+  {
+    "id": "q-flash-35",
+    "type": "true-false",
+    "status": "approved",
+    "category": "alltag-lifestyle",
+    "topic": "essen",
+    "difficulty": 3,
+    "question": "Weißer und grüner Spargel sind zwei verschiedene Sorten der Spargelpflanze.",
+    "correctAnswer": false,
+    "gmNote": "Es ist dieselbe Sorte — weißer Spargel wächst nur unter der Erde und bildet ohne Licht kein Chlorophyll. Sobald er die Erde durchstößt, wird er grün.",
+    "tags": [
+      "Spargel",
+      "Botanik"
+    ],
+    "compatibleModes": [
+      "flash"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-09-23T08:12:37Z",
+    "updatedAt": "2026-09-23T08:12:37Z"
   }
 ]
