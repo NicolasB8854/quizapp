@@ -140,12 +140,30 @@ export function GameProvider({
   // Duplicate-Check-Historie: sobald eine Frage tatsächlich gespielt wurde,
   // merken wir sie in `localStorage`. Der Reducer schreibt selbst nicht, damit
   // er pure bleibt — der Effect hier ist der Sync-Kanal zu Storage.
-  const liveUsedQuestionIds = state.live?.usedQuestionIds
-  useEffect(() => {
-    if (liveUsedQuestionIds && liveUsedQuestionIds.length > 0) {
-      markQuestionsAsked(liveUsedQuestionIds)
+  //
+  // Zwei Quellen kombiniert:
+  //   1. `state.live.usedQuestionIds` — der laufende Modus.
+  //   2. `state.results[*].questionsUsed` — abgeschlossene Modi. Ohne diese
+  //      Quelle würde pro Modus die letzte Frage verloren gehen, weil der
+  //      Reducer sie in `advancedBase.usedQuestionIds` pushed und direkt
+  //      danach `FINISH_MODE` das Live-Object durch den nächsten Modus
+  //      ersetzt (mit leerem `usedQuestionIds`).
+  const usedIdsForHistory = useMemo(() => {
+    const ids = new Set<string>()
+    for (const r of state.results ?? []) {
+      for (const id of r.questionsUsed ?? []) ids.add(id)
     }
-  }, [liveUsedQuestionIds])
+    if (state.live?.usedQuestionIds) {
+      for (const id of state.live.usedQuestionIds) ids.add(id)
+    }
+    return Array.from(ids)
+  }, [state.results, state.live?.usedQuestionIds])
+
+  useEffect(() => {
+    if (usedIdsForHistory.length > 0) {
+      markQuestionsAsked(usedIdsForHistory)
+    }
+  }, [usedIdsForHistory])
 
   // Player-Bibliothek: beim Wechsel in die Spielphase snapshoten wir alle
   // Spieler mit echtem Namen — für Wiederverwendung an späteren Abenden.

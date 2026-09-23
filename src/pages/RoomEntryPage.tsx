@@ -40,14 +40,21 @@ export default function RoomEntryPage() {
   const [joinCode, setJoinCode] = useState(prefilledCode)
 
   const chosenCode = intent === 'create' ? freshCode : joinCode.trim().toUpperCase()
+  // Master ist der Bühnen-Screen — kein Team-Mitglied. Der Name wird
+  // serverseitig nirgends genutzt (der Master ist per `isMaster = !myPlayer`
+  // erkannt, nicht per Name), also verlangen wir ihn erst gar nicht.
+  const nameRequired = role === 'player'
+  const effectiveName = nameRequired ? name.trim() : 'Master'
   const canSubmit =
-    !!wsUrl && name.trim().length > 0 && chosenCode.length >= 3
+    !!wsUrl &&
+    (!nameRequired || effectiveName.length > 0) &&
+    chosenCode.length >= 3
 
   const submit = (e: FormEvent) => {
     e.preventDefault()
     if (!canSubmit) return
     const params = new URLSearchParams({
-      name: name.trim(),
+      name: effectiveName,
       role,
     })
     navigate(`/room/${chosenCode}?${params.toString()}`)
@@ -126,20 +133,6 @@ export default function RoomEntryPage() {
             </Card>
           )}
 
-          {/* Name */}
-          <Card className="space-y-2 p-4">
-            <label className="block text-xs uppercase tracking-[0.22em] text-ink-muted">
-              Dein Name
-            </label>
-            <input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full rounded-lg bg-white/10 px-4 py-3 text-lg text-white placeholder-white/30"
-              placeholder="z. B. Sara"
-              maxLength={40}
-            />
-          </Card>
-
           {/* Rolle */}
           <Card className="space-y-2 p-4">
             <div className="text-xs uppercase tracking-[0.22em] text-ink-muted">
@@ -160,6 +153,23 @@ export default function RoomEntryPage() {
               />
             </div>
           </Card>
+
+          {/* Name — nur für Player. Der Master-Screen ist die Bühne, kein
+              Team-Mitglied; der Name würde nirgends auftauchen. */}
+          {nameRequired && (
+            <Card className="space-y-2 p-4">
+              <label className="block text-xs uppercase tracking-[0.22em] text-ink-muted">
+                Dein Name
+              </label>
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full rounded-lg bg-white/10 px-4 py-3 text-lg text-white placeholder-white/30"
+                placeholder="z. B. Sara"
+                maxLength={40}
+              />
+            </Card>
+          )}
 
           <Button
             type="submit"

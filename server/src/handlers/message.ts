@@ -40,13 +40,35 @@ async function replyError(
 }
 
 /**
- * Extrahiert alle Frage-IDs, die aktuell irgendwo im live-State stecken.
- * Wird nach jeder Action aufgerufen, um `askedQuestionIds` sauber zu halten.
+ * Extrahiert alle Frage-IDs, die in diesem Match bereits verbraucht wurden.
+ *
+ * Zwei Quellen werden gemergt, weil beide zusammen erst das vollständige
+ * Bild liefern:
+ *
+ *  1. `state.results[*].questionsUsed` — die abgeschlossenen Modi. Der
+ *     Reducer pushed beim letzten `..._NEXT` die aktive Frage in
+ *     `advancedBase.usedQuestionIds`, bevor er `FINISH_MODE` triggert;
+ *     `FINISH_MODE` speichert das Array in `GameResult.questionsUsed`.
+ *     Ohne diesen Zweig würde pro abgeschlossenem Modus die letzte
+ *     Frage verloren gehen, weil `state.live` beim Modus-Wechsel sofort
+ *     durch den neuen Modus mit leerem `usedQuestionIds` ersetzt wird.
+ *
+ *  2. `state.live.usedQuestionIds` — der aktuell laufende Modus. Enthält
+ *     alle bereits abgehakten Fragen, aber (per Design) noch nicht die
+ *     `activeQuestion` — die kommt erst beim nächsten `_NEXT` dazu.
+ *
+ * Der Merge ist idempotent: Fragen, die bereits in `askedQuestionIds`
+ * stecken, werden im Aufrufer via Set-Semantik nicht doppelt eingefügt.
  */
 function collectUsedIdsFromState(state: GameState): string[] {
-  const live = state.live
-  if (!live) return []
-  return live.usedQuestionIds ?? []
+  const ids = new Set<string>()
+  for (const result of state.results ?? []) {
+    for (const id of result.questionsUsed ?? []) ids.add(id)
+  }
+  if (state.live?.usedQuestionIds) {
+    for (const id of state.live.usedQuestionIds) ids.add(id)
+  }
+  return Array.from(ids)
 }
 
 /**
