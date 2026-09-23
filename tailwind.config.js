@@ -4,6 +4,13 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  // Sticky-Hover-Bug auf Touch-Geräten fixen: Tailwind 3.4 packt bei diesem
+  // Flag alle `hover:`-Klassen unter `@media (hover: hover)`. Nach einem Tap
+  // auf dem Handy bleibt der Browser sonst im `:hover`-Zustand hängen und
+  // die letzte getappte Option leuchtet in der nächsten Frage weiter.
+  future: {
+    hoverOnlyWhenSupported: true,
+  },
   theme: {
     extend: {
       colors: {

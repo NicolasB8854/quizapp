@@ -630,6 +630,7 @@ function PhaseView({
       return (
         <SetupPhaseView
           state={state}
+          role={role}
           canDispatch={canDispatch}
           send={send}
         />
@@ -712,20 +713,47 @@ function PhaseView({
       return <PlayingPhaseView state={state} canDispatch={canDispatch} send={send} />
     }
     case 'scoreboard':
-      return <ScoreboardPhaseView state={state} canDispatch={canDispatch} send={send} />
+      return (
+        <ScoreboardPhaseView
+          state={state}
+          role={role}
+          canDispatch={canDispatch}
+          send={send}
+        />
+      )
   }
 }
 
 function SetupPhaseView({
   state,
+  role,
   canDispatch,
   send,
 }: {
   state: GameState
+  role: 'player' | 'master'
   canDispatch: boolean
   send: (a: GameAction) => void
 }) {
   const readyModes = MODES.filter((m) => m.status === 'ready')
+  // Setup ist Show-Runner-Territorium — der Master konfiguriert Modi/Teams
+  // für alle. Player warten nur; sonst könnten sie z. B. Teams entfernen,
+  // während der Master schon konfiguriert.
+  if (role !== 'master') {
+    return (
+      <Card className="space-y-2 p-5 text-center">
+        <div className="text-[10px] uppercase tracking-[0.32em] text-brand-purple-soft">
+          Setup
+        </div>
+        <div className="text-base font-semibold text-white">
+          Warte auf den Master
+        </div>
+        <div className="text-xs text-ink-muted">
+          Der Master wählt die Modi und startet die Lobby. Gleich geht&apos;s los.
+        </div>
+      </Card>
+    )
+  }
   return (
     <div className="space-y-3">
       <Card className="space-y-3 p-4">
@@ -1571,7 +1599,7 @@ function CDRevealedView({
         size="lg"
         variant="primary"
         onClick={() => send({ type: 'CD_NEXT_TURN' })}
-        disabled={!canDispatch}
+        disabled={!canDispatch || !isMaster}
         className={cn('w-full', isMaster && 'h-16 text-lg')}
       >
         {live.usedTopics.length >= 12 ? 'Runde beenden' : 'Nächste Runde'}
@@ -1635,7 +1663,7 @@ function SpotlightRoomView({
           size="lg"
           variant="primary"
           onClick={() => send({ type: 'FINISH_MODE' })}
-          disabled={!canDispatch}
+          disabled={!canDispatch || !isMaster}
           className={cn('w-full', isMaster && 'h-16 text-lg')}
         >
           Modus überspringen
@@ -1796,7 +1824,7 @@ function SpotlightRoomView({
             size="lg"
             variant="primary"
             onClick={() => send({ type: 'SPOTLIGHT_NEXT' })}
-            disabled={!canDispatch}
+            disabled={!canDispatch || !isMaster}
             className={cn('w-full', isMaster && 'h-16 text-lg')}
           >
             {live.currentIndex + 1 >= live.playerOrder.length
@@ -2032,7 +2060,7 @@ function AroundCornerRoomView({
           size="lg"
           variant="primary"
           onClick={() => send({ type: 'AC_NEXT' })}
-          disabled={!canDispatch}
+          disabled={!canDispatch || !isMaster}
           className={cn('w-full', isMaster && 'h-16 text-lg')}
         >
           Modus beenden
@@ -2150,7 +2178,7 @@ function AroundCornerRoomView({
             size="lg"
             variant="primary"
             onClick={() => send({ type: 'AC_REVEAL_SOLUTION' })}
-            disabled={!canDispatch}
+            disabled={!canDispatch || !isMaster}
             className={cn('w-full', isMaster && 'h-16 text-lg')}
           >
             Auflösen
@@ -2161,7 +2189,7 @@ function AroundCornerRoomView({
           size="lg"
           variant="primary"
           onClick={() => send({ type: 'AC_NEXT' })}
-          disabled={!canDispatch}
+          disabled={!canDispatch || !isMaster}
           className={cn('w-full', isMaster && 'h-16 text-lg')}
         >
           {live.currentIndex + 1 >= live.totalRiddles
@@ -2435,7 +2463,7 @@ function FlashRoomView({
           size="lg"
           variant={allTeamsAnswered ? 'primary' : 'secondary'}
           onClick={() => send({ type: 'FLASH_REVEAL' })}
-          disabled={!canDispatch}
+          disabled={!canDispatch || !isMaster}
           className={cn('w-full', isMaster && 'h-16 text-lg')}
         >
           {allTeamsAnswered ? 'Auflösen' : 'Auflösen (jederzeit)'}
@@ -2445,7 +2473,7 @@ function FlashRoomView({
           size="lg"
           variant="primary"
           onClick={() => send({ type: 'FLASH_NEXT' })}
-          disabled={!canDispatch}
+          disabled={!canDispatch || !isMaster}
           className={cn('w-full', isMaster && 'h-16 text-lg')}
         >
           {live.currentIndex + 1 >= live.totalStatements
@@ -2534,7 +2562,7 @@ function LadderRoomView({
           size="lg"
           variant="primary"
           onClick={() => send({ type: 'FINISH_MODE' })}
-          disabled={!canDispatch}
+          disabled={!canDispatch || !isMaster}
           className="w-full"
         >
           Modus überspringen
@@ -2657,7 +2685,7 @@ function LadderRoomView({
           size="lg"
           variant={allAnswered ? 'primary' : 'secondary'}
           onClick={() => send({ type: 'LADDER_REVEAL' })}
-          disabled={!canDispatch}
+          disabled={!canDispatch || !isMaster}
           className={cn('w-full', isMaster && 'h-16 text-lg')}
         >
           {allAnswered ? 'Auflösen' : 'Auflösen (jederzeit)'}
@@ -2667,7 +2695,7 @@ function LadderRoomView({
           size="lg"
           variant="primary"
           onClick={() => send({ type: 'LADDER_NEXT' })}
-          disabled={!canDispatch}
+          disabled={!canDispatch || !isMaster}
           className={cn('w-full', isMaster && 'h-16 text-lg')}
         >
           {live.currentIndex + 1 >= live.totalQuestions ? 'Runde beenden' : 'Nächste Stufe'}
@@ -2745,7 +2773,7 @@ function SprinterRoomView({
           size="lg"
           variant="primary"
           onClick={() => send({ type: 'SPRINTER_START_NEXT_TEAM' })}
-          disabled={!canDispatch}
+          disabled={!canDispatch || !isMaster}
           className={cn('w-full', isMaster && 'h-16 text-lg')}
         >
           {nextTeam ? `${nextTeam.name} startet` : 'Runde beenden'}
@@ -2853,7 +2881,7 @@ function SprinterRoomView({
             size="lg"
             variant="ghost"
             onClick={() => send({ type: 'SPRINTER_TIME_UP' })}
-            disabled={!canDispatch}
+            disabled={!canDispatch || !isMaster}
             className="w-full h-16 text-lg"
           >
             Timer stoppen
@@ -2946,7 +2974,7 @@ function EliminationRoomView({
           size="lg"
           variant="primary"
           onClick={() => send({ type: 'FINISH_MODE' })}
-          disabled={!canDispatch}
+          disabled={!canDispatch || !isMaster}
           className={cn('w-full', isMaster && 'h-16 text-lg')}
         >
           Runde abschließen
@@ -3069,7 +3097,7 @@ function EliminationRoomView({
           size="lg"
           variant="primary"
           onClick={() => send({ type: 'ELIM_NEXT' })}
-          disabled={!canDispatch}
+          disabled={!canDispatch || !isMaster}
           className={cn('w-full', isMaster && 'h-16 text-lg')}
         >
           Nächster Spieler
@@ -3269,7 +3297,7 @@ function BoardRoomView({
                 size="lg"
                 variant="primary"
                 onClick={() => send({ type: 'BOARD_NEXT' })}
-                disabled={!canDispatch}
+                disabled={!canDispatch || !isMaster}
                 className={cn('w-full', isMaster && 'h-16 text-lg')}
               >
                 {live.playedCells.length + 1 >= live.boardTopics.length * live.cellValues.length
@@ -3571,7 +3599,7 @@ function DuelRoomView({
                 size="lg"
                 variant="primary"
                 onClick={() => send({ type: 'DUEL_NEXT' })}
-                disabled={!canDispatch}
+                disabled={!canDispatch || !isMaster}
                 className={cn('w-full', isMaster && 'h-16 text-lg')}
               >
                 {live.currentIndex + 1 >= live.totalDuels ? 'Duelle beenden' : 'Nächstes Duell'}
@@ -3623,7 +3651,7 @@ function ExpertsRoomView({
           size="lg"
           variant="primary"
           onClick={() => send({ type: 'FINISH_MODE' })}
-          disabled={!canDispatch}
+          disabled={!canDispatch || !isMaster}
           className="w-full"
         >
           Modus überspringen
@@ -3840,7 +3868,7 @@ function ExpertsRoomView({
             <button
               type="button"
               onClick={() => send({ type: 'EXPERTS_MARK_PRIMARY', outcome: 'correct' })}
-              disabled={!canDispatch}
+              disabled={!canDispatch || !isMaster}
               className={cn(
                 'flex items-center justify-center rounded-xl border font-bold uppercase tracking-wider transition-all disabled:opacity-40 border-correct/60 bg-correct/15 text-correct',
                 isMaster ? 'h-20 text-2xl' : 'h-14 text-lg',
@@ -3851,7 +3879,7 @@ function ExpertsRoomView({
             <button
               type="button"
               onClick={() => send({ type: 'EXPERTS_MARK_PRIMARY', outcome: 'wrong' })}
-              disabled={!canDispatch}
+              disabled={!canDispatch || !isMaster}
               className={cn(
                 'flex items-center justify-center rounded-xl border font-bold uppercase tracking-wider transition-all disabled:opacity-40 border-wrong/60 bg-wrong/15 text-wrong',
                 isMaster ? 'h-20 text-2xl' : 'h-14 text-lg',
@@ -3902,7 +3930,7 @@ function ExpertsRoomView({
             size="lg"
             variant="primary"
             onClick={() => send({ type: 'EXPERTS_NEXT' })}
-            disabled={!canDispatch}
+            disabled={!canDispatch || !isMaster}
             className={cn('w-full', isMaster && 'h-16 text-lg')}
           >
             {live.currentIndex + 1 >= live.playerOrder.length ? 'Runde beenden' : 'Nächster Experte'}
@@ -4215,13 +4243,18 @@ function PlayingPhaseView({
 
 function ScoreboardPhaseView({
   state,
+  role,
   canDispatch,
   send,
 }: {
   state: GameState
+  role: 'player' | 'master'
   canDispatch: boolean
   send: (a: GameAction) => void
 }) {
+  // "Nochmal" ist eine Show-Entscheidung — nur der Master darf das für alle
+  // triggern, sonst könnte ein Player mitten im Endstand die Runde neu starten.
+  const isMaster = role === 'master'
   return (
     <div className="space-y-3">
       <Card className="space-y-3 p-4">
@@ -4249,22 +4282,28 @@ function ScoreboardPhaseView({
         </div>
       </Card>
 
-      <div className="flex gap-2">
-        <Button
-          variant="secondary"
-          leading={<RefreshCw className="h-4 w-4" />}
-          onClick={() => send({ type: 'BACK_TO_SETUP' })}
-          disabled={!canDispatch}
-          className="flex-1"
-        >
-          Nochmal
-        </Button>
-        <Link to="/" className="flex-1">
-          <Button variant="ghost" className="w-full">
-            Zur Startseite
+      {isMaster ? (
+        <div className="flex gap-2">
+          <Button
+            variant="secondary"
+            leading={<RefreshCw className="h-4 w-4" />}
+            onClick={() => send({ type: 'RESTART_MATCH' })}
+            disabled={!canDispatch}
+            className="flex-1"
+          >
+            Nochmal
           </Button>
-        </Link>
-      </div>
+          <Link to="/" className="flex-1">
+            <Button variant="ghost" className="w-full">
+              Zur Startseite
+            </Button>
+          </Link>
+        </div>
+      ) : (
+        <Card className="p-3 text-center text-xs text-ink-muted">
+          Warte auf den Master — er entscheidet, ob eine neue Runde startet.
+        </Card>
+      )}
     </div>
   )
 }

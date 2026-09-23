@@ -420,6 +420,12 @@ export type GameAction =
   | { type: 'MOVE_PLAYER_TO_TEAM'; playerId: string; teamId: string | null }
   | { type: 'FINISH_MODE' }
   | { type: 'BACK_TO_SETUP' }
+  /**
+   * "Nochmal mit denselben Teams": Match neu starten, aber Roster + gewählte
+   * Modi behalten. Setzt matchPoints/results/currentModeIndex/live zurück
+   * und springt zurück in die Lobby (Step: ready). Keine Player fliegen raus.
+   */
+  | { type: 'RESTART_MATCH' }
   | { type: 'RESET_ALL' }
 
 // ---------- Initial State -----------------------------------------------------
@@ -2771,6 +2777,25 @@ export function createReducer(deps: ReducerDeps) {
 
     case 'BACK_TO_SETUP':
       return { ...INITIAL_STATE, draft: state.draft }
+
+    case 'RESTART_MATCH': {
+      // "Nochmal mit denselben Teams": Match neu, aber Runden-Kontext bleibt.
+      // Nur Match-Scores, Results, Modus-Fortschritt und Live-State werden
+      // zurückgesetzt. Die geladene Runde (Teams, Player, gewählte Modi,
+      // Interessen) bleibt intakt — kein Player muss neu joinen.
+      if (!state.round) return state
+      return {
+        ...state,
+        phase: 'lobby',
+        lobbyStep: 'ready',
+        currentModeIndex: 0,
+        matchPoints: Object.fromEntries(
+          state.round.teams.map((t) => [t.id, 0]),
+        ),
+        results: [],
+        live: null,
+      }
+    }
 
     case 'RESET_ALL':
       return INITIAL_STATE
