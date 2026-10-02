@@ -11,7 +11,8 @@
 
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Trophy, RotateCcw, Home } from 'lucide-react'
+import { RotateCcw, Home } from 'lucide-react'
+import { WinnerHero } from '@/components/WinnerHero'
 import { ScreenLayout } from '@/components/ScreenLayout'
 import { Button } from '@/components/Button'
 import { Card } from '@/components/Card'
@@ -39,44 +40,7 @@ export default function ScoreboardPage() {
       <div className="mx-auto max-w-5xl pt-4 md:pt-10 pb-16 animate-titleIn">
         {/* Sieger-Fläche */}
         <div className="text-center">
-          {(() => {
-            // Sieger-Farb-Tokens einmalig auflösen für Trophäe + Headline.
-            const winnerTokens = matchWinner ? getTeamColorTokens(matchWinner.color) : null
-            const winnerHex = winnerTokens?.hex
-            return (
-              <>
-                <div
-                  className="mx-auto h-20 w-20 md:h-24 md:w-24 rounded-full flex items-center justify-center border-2"
-                  style={{
-                    borderColor: winnerHex ? `${winnerHex}B3` : 'rgba(255,255,255,0.1)',
-                    boxShadow: winnerHex
-                      ? `0 0 0 1px ${winnerHex}66, 0 0 40px ${winnerHex}8C`
-                      : undefined,
-                    background: 'rgba(11,16,32,0.6)',
-                  }}
-                >
-                  <Trophy
-                    className={cn(
-                      'h-10 w-10 md:h-12 md:w-12',
-                      winnerTokens ? winnerTokens.softText : 'text-ink-muted',
-                    )}
-                  />
-                </div>
-                <div className="mt-5 eyebrow">
-                  {matchWinner ? 'Sieger des Abends' : 'Unentschieden'}
-                </div>
-                <h1
-                  className={cn(
-                    'mt-3 font-display font-bold uppercase leading-[0.9] tracking-tight',
-                    'text-5xl md:text-7xl',
-                    winnerTokens ? winnerTokens.neonText : 'text-ink',
-                  )}
-                >
-                  {matchWinner ? matchWinner.name : 'Ehrenvolles Remis'}
-                </h1>
-              </>
-            )
-          })()}
+          <WinnerHero winner={matchWinner} players={state.round.players} large />
           <p className="mt-4 text-ink-muted max-w-md mx-auto">
             {matchWinner
               ? `${state.matchPoints[matchWinner.id] ?? 0} Match-Punkte in ${state.round.gameModes.length} Modi.`

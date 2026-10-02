@@ -25,6 +25,7 @@ import {
   RefreshCw,
   Volume2,
   VolumeX,
+  Crown,
 } from 'lucide-react'
 import type {
   AroundCornerLive,
@@ -59,6 +60,7 @@ import { ModeTransitionSplash } from '@/components/ModeTransitionSplash'
 import { ConnectionToast } from '@/components/ConnectionToast'
 import { PlayerTeamMatesPanel } from '@/components/PlayerTeamMatesPanel'
 import { HostActionBar } from '@/components/HostActionBar'
+import { findMatchWinner, WinnerHero } from '@/components/WinnerHero'
 import { useRoomSync } from '@/hooks/useRoomSync'
 import { useSoundEnabled } from '@/hooks/useSoundEnabled'
 import { playSound } from '@/lib/audio'
@@ -4593,18 +4595,28 @@ function ScoreboardPhaseView({
 }) {
   // "Nochmal" und "Modi neu wählen" sind Show-Entscheidungen — nur der Host
   // darf das für alle triggern.
+  const winner = state.round ? findMatchWinner(state.round.teams, state.matchPoints) : null
+  const ranked = state.round
+    ? [...state.round.teams].sort((a, b) => (state.matchPoints[b.id] ?? 0) - (state.matchPoints[a.id] ?? 0))
+    : []
   return (
     <div className="space-y-3">
+      <Card className="p-6">
+        <WinnerHero winner={winner} players={state.round?.players ?? []} />
+      </Card>
       <Card className="space-y-3 p-4">
         <div className="text-xs uppercase tracking-[0.22em] text-ink-muted">
-          Endstand
+          Endstand · Match-Punkte
         </div>
         <div className="space-y-2">
-          {state.round?.teams.map((team) => (
+          {ranked.map((team) => (
             <div
               key={team.id}
               className="flex items-center gap-3 rounded-lg bg-white/[0.03] px-3 py-2"
             >
+              {winner?.id === team.id && (
+                <Crown aria-hidden className="h-4 w-4 text-amber-300" fill="currentColor" />
+              )}
               <span
                 className="h-3 w-3 rounded-full"
                 style={{ background: getTeamColorHex(team.color) }}
