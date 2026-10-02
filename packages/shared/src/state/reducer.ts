@@ -33,7 +33,7 @@ import type {
   WarmupRiddleQuestion,
 } from '../types'
 import { MODES, MODES_BY_ID } from '../data/modes'
-import { TOPICS } from '../data/topics'
+import { TOPICS, sortTopicsAlphabetically } from '../data/topics'
 import {
   getMultipleChoiceByTopic,
   clampDifficulty,
@@ -1069,13 +1069,13 @@ const TOPICS_LIST: Topic[] = TOPICS.map((t) => t.id)
 
 /** Wählt die 5 Topics für das Board. */
 function pickBoardTopics(profile: ReturnType<typeof computeInterestProfile>): Topic[] {
-  return pickTopicsWeighted(profile, BOARD_COLUMNS)
+  return sortTopicsAlphabetically(pickTopicsWeighted(profile, BOARD_COLUMNS))
 }
 
 /** Wählt die 12 Topics für das Themen-Battle-Grid. */
 const BATTLE_TOPIC_COUNT = 12
 function pickBattleTopics(profile: ReturnType<typeof computeInterestProfile>): Topic[] {
-  return pickTopicsWeighted(profile, BATTLE_TOPIC_COUNT)
+  return sortTopicsAlphabetically(pickTopicsWeighted(profile, BATTLE_TOPIC_COUNT))
 }
 
 function initCategoryBoard(teams: Team[], players: readonly Player[]): CategoryBoardLive {

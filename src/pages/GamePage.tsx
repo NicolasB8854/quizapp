@@ -31,7 +31,7 @@ import {
   useElimination,
   useExperts,
 } from '@/context/GameContext'
-import { TOPICS, TOPICS_BY_ID } from '@quizapp/shared'
+import { TOPICS_ALPHABETICAL, TOPICS_BY_ID } from '@quizapp/shared'
 import { MODES_BY_ID } from '@quizapp/shared'
 import { getNextTeamId, getTeamColorHex, getTeamColorTokens } from '@quizapp/shared'
 import type { Player, Team } from '@quizapp/shared'
@@ -2449,7 +2449,7 @@ function ExpertsStage() {
                   )}
                 </div>
                 <div className="flex flex-wrap gap-1.5">
-                  {[...TOPICS].sort((x, y) => x.label.localeCompare(y.label, 'de')).map((topic) => {
+                  {TOPICS_ALPHABETICAL.map((topic) => {
                     const isOn = chosen === topic.id
                     return (
                       <button

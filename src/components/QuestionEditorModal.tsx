@@ -15,7 +15,7 @@ import type {
   QuestionType,
   Topic,
 } from '@quizapp/shared'
-import { TOPICS } from '@quizapp/shared'
+import { TOPICS_ALPHABETICAL } from '@quizapp/shared'
 import { Button } from './Button'
 import { Card } from './Card'
 import {
@@ -279,7 +279,7 @@ export function QuestionEditorModal({
                 }
                 className="mt-1 w-full rounded bg-white/10 px-2 py-2 text-white"
               >
-                {TOPICS.map((t) => (
+                {TOPICS_ALPHABETICAL.map((t) => (
                   <option key={t.id} value={t.id}>
                     {t.emoji} {t.label}
                   </option>

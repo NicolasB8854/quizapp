@@ -26,7 +26,7 @@ import { Button } from '@/components/Button'
 import { AvatarBadge } from '@/components/AvatarBadge'
 import { useGame, type GameAction } from '@/context/GameContext'
 import { MODES_BY_ID } from '@quizapp/shared'
-import { TOPICS, TOPICS_BY_ID } from '@quizapp/shared'
+import { TOPICS_ALPHABETICAL, TOPICS_BY_ID } from '@quizapp/shared'
 import { AVATAR_COLORS } from '@quizapp/shared'
 import { downscaleImageToDataUrl } from '@/lib/image'
 import { getTeamColorTokens } from '@quizapp/shared'
@@ -523,7 +523,7 @@ function RosterPlayerRow({ player, placeholderIndex, dispatch }: RosterPlayerRow
         )}
       </div>
       <div className="mt-3 flex flex-wrap gap-1.5">
-        {TOPICS.map((topic) => {
+        {TOPICS_ALPHABETICAL.map((topic) => {
           const interest = interestByTopic.get(topic.id)
           const level = interest?.level
           return (

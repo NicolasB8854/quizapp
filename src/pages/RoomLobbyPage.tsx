@@ -45,7 +45,7 @@ import {
   answeringTeamId,
   MODES,
   MODES_BY_ID,
-  TOPICS,
+  TOPICS_ALPHABETICAL,
   TOPICS_BY_ID,
   getTeamColorHex,
 } from '@quizapp/shared'
@@ -3927,9 +3927,6 @@ function DuelRoomView({
 
 // ---------- Experts (Fachrunde mit Timer) ----------------------------------
 
-/** Themen alphabetisch (deutsche Sortierung) für Auswahllisten. */
-const TOPICS_ALPHA = [...TOPICS].sort((x, y) => x.label.localeCompare(y.label, 'de'))
-
 function ExpertsRoomView({
   state,
   live,
@@ -4045,7 +4042,7 @@ function ExpertsRoomView({
                     <option value="" disabled>
                       Fachgebiet wählen …
                     </option>
-                    {TOPICS_ALPHA.map((t) => (
+                    {TOPICS_ALPHABETICAL.map((t) => (
                       <option key={t.id} value={t.id}>
                         {t.emoji} {t.label}
                       </option>

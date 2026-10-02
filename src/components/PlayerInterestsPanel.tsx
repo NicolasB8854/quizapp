@@ -21,7 +21,7 @@ import type {
   Topic,
 } from '@quizapp/shared'
 import {
-  TOPICS,
+  TOPICS_ALPHABETICAL,
   TOPICS_BY_ID,
   getInterestSuggestionsForTopic,
   getCatalogTagsByTopic,
@@ -238,7 +238,7 @@ export function PlayerInterestsPanel({
             Kategorien direkt wählen
           </div>
           <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-4">
-            {TOPICS.map((topic) => {
+            {TOPICS_ALPHABETICAL.map((topic) => {
               const level = interestByTopic.get(topic.id)?.level
               const isActive = !!level
               const tone =
