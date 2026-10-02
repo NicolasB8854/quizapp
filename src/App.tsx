@@ -26,6 +26,8 @@ const ReviewPage = lazy(() => import('@/pages/ReviewPage'))
 const RoomEntryPage = lazy(() => import('@/pages/RoomEntryPage'))
 const RoomLobbyPage = lazy(() => import('@/pages/RoomLobbyPage'))
 const RoomDebugPage = lazy(() => import('@/pages/RoomDebugPage'))
+const SoloPage = lazy(() => import('@/pages/SoloPage'))
+const ModesPage = lazy(() => import('@/pages/ModesPage'))
 
 function PageFallback() {
   return (
@@ -50,6 +52,8 @@ export default function App() {
             <Route path="/room"       element={<RoomEntryPage />} />
             <Route path="/room/:code" element={<RoomLobbyPage />} />
             <Route path="/room-debug" element={<RoomDebugPage />} />
+            <Route path="/solo"       element={<SoloPage />} />
+            <Route path="/modi"       element={<ModesPage />} />
             <Route path="*"           element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>

@@ -54,7 +54,7 @@ export const MODES: GameMode[] = [
     chipLabel: 'Expertise',
     tagline: 'Jede:r bringt ein eigenes Fachgebiet mit.',
     description:
-      'Vor Rundenstart legt jede:r Spieler:in ein Fachgebiet fest. 20 Sekunden Solo-Zeit, dann Buzzer-Steal für die Gegenseite (halbe Punkte).',
+      'Jede:r wählt ein Fachgebiet und bekommt fünf Fragen daraus — immer schwerer, 100 bis 500 Punkte. Erst die Frage, dann „Antworten anzeigen“: 20 Sekunden. Fehler → das Gegenteam darf stealen (halbe Punkte).',
     estimatedMinutes: 20,
     scoresMatchPoint: true,
     accent: 'experts',
@@ -66,7 +66,7 @@ export const MODES: GameMode[] = [
     chipLabel: 'Ausdauer',
     tagline: 'Wer falsch antwortet, setzt sich. Letzter bringt den Bonus.',
     description:
-      'Alle Spieler stehen im Ring, reihum eine Frage. Fehler → Ausscheiden. Wenn nur noch ein Team steht, gibt es einen Team-Bonus.',
+      'Alle Spieler stehen im Ring, reihum eine Frage — jede Runde eine Stufe schwerer. Fehler → Ausscheiden. Wenn nur noch ein Team steht, gibt es einen Team-Bonus.',
     estimatedMinutes: 10,
     scoresMatchPoint: true,
     accent: 'sprinter',
@@ -90,7 +90,7 @@ export const MODES: GameMode[] = [
     chipLabel: 'Tempo',
     tagline: '90 Sekunden pro Team. Weiter oder Antwort — deine Wahl.',
     description:
-      'Jedes Team bekommt einen Zeit-Sprint mit möglichst vielen Fragen. „Weiter" kostet nichts, Auslassen ist Strategie.',
+      'Jedes Team bekommt einen Zeit-Sprint mit möglichst vielen Fragen. Falsch geantwortet → die anderen dürfen buzzern: richtig gibt Punkte, falsch kostet Punkte. Auslassen kostet nichts.',
     estimatedMinutes: 10,
     scoresMatchPoint: true,
     accent: 'sprinter',
@@ -102,7 +102,7 @@ export const MODES: GameMode[] = [
     chipLabel: 'Spannung',
     tagline: 'Fünf Fragen, jede mehr wert als die vorherige.',
     description:
-      'Aufsteigende Punkte-Ladder mit hohem Endgewinn. Verdeckte Antworten der Teams, gleichzeitige Auflösung.',
+      'Fünf Stufen von leicht bis Experte mit hohem Endgewinn. Die Teams loggen verdeckt ein, aufgelöst wird gleichzeitig.',
     estimatedMinutes: 15,
     scoresMatchPoint: true,
     accent: 'ladder',
@@ -126,7 +126,7 @@ export const MODES: GameMode[] = [
     chipLabel: 'Persönlich',
     tagline: 'Deine Kategorie, dein Moment im Rampenlicht.',
     description:
-      'Jeder Spieler bekommt eine Frage aus seinem eigenen Interessensprofil. Antwortet frei — bei Fehler übernimmt das Gegenteam (halbe Punkte).',
+      'Jeder Spieler bekommt eine Frage aus seinem eigenen Interessensprofil und tippt die Antwort auf seinem Handy. Bei Fehler übernimmt das Gegenteam (halbe Punkte).',
     estimatedMinutes: 12,
     scoresMatchPoint: true,
     accent: 'spotlight',

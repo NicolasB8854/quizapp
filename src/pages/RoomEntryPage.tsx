@@ -72,7 +72,7 @@ export default function RoomEntryPage() {
 
   return (
     <ScreenLayout variant="dim">
-      <div className="mx-auto max-w-2xl space-y-6 p-6">
+      <div className="mx-auto w-full max-w-xl space-y-5 px-4 py-4 md:py-8">
         <div className="flex items-center gap-3">
           <Button
             variant="ghost"
@@ -85,13 +85,13 @@ export default function RoomEntryPage() {
         </div>
 
         <div>
-          <div className="eyebrow">Multi-Device</div>
+          <div className="eyebrow">Spieleabend</div>
           <h1 className="mt-1 font-display text-3xl font-bold uppercase tracking-tight text-white md:text-4xl">
-            Party auf mehreren Handys
+            {intent === 'join' ? 'Raum beitreten' : 'Raum eröffnen'}
           </h1>
           <p className="mt-2 max-w-lg text-sm text-ink-muted">
-            Ein Gerät zeigt das Spiel groß, die anderen sind Buzzer und
-            Antwort-Controller. Alle sehen live denselben Stand.
+            Jede:r spielt auf dem eigenen Handy. Optional wird ein TV oder Laptop
+            zum Master-Screen, der Frage und Punkte groß für alle zeigt.
           </p>
         </div>
 
@@ -157,14 +157,14 @@ export default function RoomEntryPage() {
                 <RoleButton
                   active={!hostStageOnly}
                   onClick={() => setHostStageOnly(false)}
-                  title="Ich spiele mit"
-                  subtitle="Host und Spieler in einem — perfekt fürs Handy"
+                  title="Ohne Master-Screen"
+                  subtitle="Ich spiele auf diesem Handy mit und steuere die Runde"
                 />
                 <RoleButton
                   active={hostStageOnly}
                   onClick={() => setHostStageOnly(true)}
-                  title="Nur Bühne"
-                  subtitle="Großer Screen zeigt Frage & Scores für alle"
+                  title="Mit Master-Screen"
+                  subtitle="Dieses Gerät ist nur die Bühne (TV/Laptop), alle spielen am Handy"
                 />
               </div>
             </Card>

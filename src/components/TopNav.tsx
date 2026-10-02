@@ -19,9 +19,9 @@ interface Props {
 
 const NAV_ITEMS = [
   { label: 'Start',            to: '/' },
-  { label: 'Spielmodi',        to: '/setup?flow=night' },
-  { label: 'So funktioniert\u2019s', to: '/' },
-  { label: 'Über uns',         to: '/' },
+  { label: 'Spielmodi',        to: '/modi' },
+  { label: 'Solo',             to: '/solo' },
+  { label: 'So funktioniert\u2019s', to: '/#so-gehts' },
 ]
 
 export function TopNav({ actions }: Props) {
