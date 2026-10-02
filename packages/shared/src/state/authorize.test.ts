@@ -53,4 +53,13 @@ describe('authorizeAction', () => {
     expect(authorizeAction(flash, { type: 'FLASH_SET_ANSWER', teamId: 't2', answer: true }, { playerId: 'p1' }).ok).toBe(false)
     expect(authorizeAction(flash, { type: 'LADDER_SET_ANSWER', teamId: 't1', renderedIndex: 2 }, { playerId: 'p1' }).ok).toBe(true)
   })
+
+  it('Spotlight/Fachrunde: nur der aktive Spieler antwortet, Steal nur das nächste Team', () => {
+    const experts = stateWith({ kind: 'experts', phase: 'primary', activePlayerId: 'p1' })
+    expect(authorizeAction(experts, { type: 'EXPERTS_PRIMARY_ANSWER', renderedIndex: 0 }, { playerId: 'p1' }).ok).toBe(true)
+    expect(authorizeAction(experts, { type: 'EXPERTS_PRIMARY_ANSWER', renderedIndex: 0 }, { playerId: 'p2' }).ok).toBe(false)
+    const spot = stateWith({ kind: 'player-spotlight', phase: 'steal', activePlayerId: 'p1' })
+    expect(authorizeAction(spot, { type: 'SPOTLIGHT_STEAL_ANSWER', renderedIndex: 0 }, { playerId: 'p2' }).ok).toBe(true)
+    expect(authorizeAction(spot, { type: 'SPOTLIGHT_STEAL_ANSWER', renderedIndex: 0 }, { playerId: 'p3' }).ok).toBe(false)
+  })
 })

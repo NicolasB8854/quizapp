@@ -1988,6 +1988,7 @@ function SpotlightRoomView({
           isTeamMate={isTeamMate}
           canDispatch={canDispatch}
           playerName={activePlayer?.name ?? ''}
+          shuffledOptions={live.shuffledOptions}
           send={send}
         />
       )}
@@ -2031,6 +2032,7 @@ function SpotlightPrimaryPanel({
   isTeamMate,
   canDispatch,
   playerName,
+  shuffledOptions,
   send,
 }: {
   isMaster: boolean
@@ -2038,46 +2040,74 @@ function SpotlightPrimaryPanel({
   isTeamMate: boolean
   canDispatch: boolean
   playerName: string
+  shuffledOptions: string[]
   send: (a: GameAction) => void
 }) {
-  // Primär-Phase: Frage wurde vorgelesen, Player antwortet mündlich.
-  // Master (oder der Player selbst) klickt „richtig" oder „falsch".
+  // Primär-Phase: Alle sehen die Antwortmöglichkeiten. Der aktive Spieler tippt
+  // auf seinem Gerät — Auswertung automatisch, kein Master nötig. Ein reines
+  // Bühnen-Gerät kann stellvertretend tippen oder eine mündliche Antwort bewerten.
+  const canClick = canDispatch && (isMyTurn || isMaster)
   return (
-    <Card className={cn('space-y-3', isMaster ? 'p-5' : 'p-4')}>
-      <div className="text-[10px] uppercase tracking-[0.32em] text-ink-muted">
-        {isMyTurn
-          ? 'Sag deine Antwort — jemand markiert Richtig / Falsch'
-          : isTeamMate
-            ? `${playerName} antwortet frei — kein Reinreden`
-            : `Master markiert die Antwort für ${playerName}`}
+    <>
+      <Card className={cn('space-y-2', isMaster ? 'p-5' : 'p-3')}>
+        <div className="text-[10px] uppercase tracking-[0.32em] text-ink-muted">
+          {isMyTurn
+            ? 'Du bist dran — tippe deine Antwort'
+            : isTeamMate
+              ? `${playerName} antwortet — kein Reinreden`
+              : `${playerName} antwortet`}
+        </div>
+      </Card>
+      <div className={cn('space-y-2', isMaster && 'md:grid md:grid-cols-2 md:gap-3 md:space-y-0')}>
+        {shuffledOptions.map((option, idx) => (
+          <button
+            key={idx}
+            type="button"
+            onClick={() => send({ type: 'SPOTLIGHT_PRIMARY_ANSWER', renderedIndex: idx })}
+            disabled={!canClick}
+            className={cn(
+              'flex w-full items-center rounded-xl border text-left transition-all disabled:cursor-default',
+              isMaster ? 'gap-4 px-5 py-4' : 'gap-3 px-4 py-3',
+              canClick
+                ? 'border-brand-pink/40 bg-white/[0.04] text-white hover:border-brand-pink/70 hover:bg-brand-pink/10'
+                : 'border-white/10 bg-white/[0.03] text-white/80',
+            )}
+          >
+            <span
+              className={cn(
+                'flex items-center justify-center rounded-full bg-white/10 font-mono font-bold',
+                isMaster ? 'h-11 w-11 text-lg' : 'h-8 w-8 text-sm',
+              )}
+            >
+              {String.fromCharCode(65 + idx)}
+            </span>
+            <span className={cn('flex-1', isMaster ? 'text-lg md:text-xl' : 'text-sm md:text-base')}>
+              {option}
+            </span>
+          </button>
+        ))}
       </div>
-      <div className="grid grid-cols-2 gap-2">
-        <button
-          type="button"
-          onClick={() => send({ type: 'SPOTLIGHT_MARK_PRIMARY', outcome: 'correct' })}
-          disabled={!canDispatch || isTeamMate}
-          className={cn(
-            'flex items-center justify-center rounded-xl border font-bold uppercase tracking-wider transition-all disabled:opacity-40',
-            isMaster ? 'h-20 text-2xl' : 'h-16 text-lg',
-            'border-correct/60 bg-correct/15 text-correct hover:bg-correct/25',
-          )}
-        >
-          Richtig!
-        </button>
-        <button
-          type="button"
-          onClick={() => send({ type: 'SPOTLIGHT_MARK_PRIMARY', outcome: 'wrong' })}
-          disabled={!canDispatch || isTeamMate}
-          className={cn(
-            'flex items-center justify-center rounded-xl border font-bold uppercase tracking-wider transition-all disabled:opacity-40',
-            isMaster ? 'h-20 text-2xl' : 'h-16 text-lg',
-            'border-wrong/60 bg-wrong/15 text-wrong hover:bg-wrong/25',
-          )}
-        >
-          Falsch
-        </button>
-      </div>
-    </Card>
+      {isMaster && (
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            onClick={() => send({ type: 'SPOTLIGHT_MARK_PRIMARY', outcome: 'correct' })}
+            disabled={!canDispatch}
+            className="h-12 rounded-xl border border-correct/40 bg-correct/10 text-sm font-semibold text-correct disabled:opacity-40"
+          >
+            Mündlich richtig
+          </button>
+          <button
+            type="button"
+            onClick={() => send({ type: 'SPOTLIGHT_MARK_PRIMARY', outcome: 'wrong' })}
+            disabled={!canDispatch}
+            className="h-12 rounded-xl border border-wrong/40 bg-wrong/10 text-sm font-semibold text-wrong disabled:opacity-40"
+          >
+            Mündlich falsch
+          </button>
+        </div>
+      )}
+    </>
   )
 }
 
@@ -2145,12 +2175,14 @@ function SpotlightRevealPanel({
   const question = live.activeQuestion!
   const correctIdx = live.correctRenderedIndex
   const stealIdx = live.stealRenderedIndex
+  const primaryIdx = live.primaryRenderedIndex ?? null
   return (
     <>
       <div className={cn('space-y-2', isMaster && 'md:grid md:grid-cols-2 md:gap-3 md:space-y-0')}>
         {live.shuffledOptions.map((option, idx) => {
           const isCorrect = idx === correctIdx
-          const isSteal = idx === stealIdx
+          // Falsch getippt: vom Gegner (Steal) oder vom aktiven Spieler.
+          const isSteal = idx === stealIdx || idx === primaryIdx
           return (
             <div
               key={idx}
@@ -3828,6 +3860,9 @@ function DuelRoomView({
 
 // ---------- Experts (Fachrunde mit Timer) ----------------------------------
 
+/** Themen alphabetisch (deutsche Sortierung) für Auswahllisten. */
+const TOPICS_ALPHA = [...TOPICS].sort((x, y) => x.label.localeCompare(y.label, 'de'))
+
 function ExpertsRoomView({
   state,
   live,
@@ -3855,7 +3890,9 @@ function ExpertsRoomView({
     live.phase === 'primary' ? live.soloStartedAt : null,
     live.soloDurationSeconds,
     () => {
-      if (isMaster || isMyTurn) send({ type: 'EXPERTS_MARK_PRIMARY', outcome: 'timeout' })
+      // Mehrfach-Dispatch ist harmlos (Reducer prüft die Phase) — so feuert der
+      // Timeout auch, wenn das Gerät des aktiven Spielers gerade weg ist.
+      if (isMaster || isMyTurn || isHost) send({ type: 'EXPERTS_MARK_PRIMARY', outcome: 'timeout' })
     },
   )
 
@@ -3925,31 +3962,33 @@ function ExpertsRoomView({
                     </span>
                   )}
                 </div>
-                <div
-                  className={cn(
-                    'grid gap-1.5',
-                    isMaster ? 'grid-cols-6 gap-2' : 'grid-cols-4 gap-1 sm:grid-cols-6',
-                  )}
-                >
-                  {TOPICS.map((t) => (
-                    <button
-                      key={t.id}
-                      type="button"
-                      onClick={() => send({ type: 'EXPERTS_SET_EXPERTISE', playerId: id, topic: t.id })}
-                      disabled={!canEdit}
-                      title={t.label}
-                      className={cn(
-                        'rounded-lg border transition-all disabled:opacity-40',
-                        isMaster ? 'py-3 text-3xl md:text-4xl' : 'py-1 text-[10px]',
-                        chosen === t.id
-                          ? 'border-mode-experts/60 bg-mode-experts/15 text-mode-experts'
-                          : 'border-white/10 bg-white/[0.03] text-white/70 hover:border-mode-experts/40 hover:bg-mode-experts/[0.08]',
-                      )}
-                    >
-                      <span aria-hidden>{t.emoji}</span>
-                    </button>
-                  ))}
-                </div>
+                {canEdit ? (
+                  <select
+                    value={chosen ?? ''}
+                    onChange={(e) =>
+                      e.target.value &&
+                      send({ type: 'EXPERTS_SET_EXPERTISE', playerId: id, topic: e.target.value as Topic })
+                    }
+                    aria-label={`Fachgebiet für ${player.name || 'Spieler'}`}
+                    className={cn(
+                      'w-full rounded-lg border border-white/15 bg-white/[0.04] text-white focus:border-mode-experts/60 focus:outline-none',
+                      isMaster ? 'px-4 py-3 text-lg' : 'px-3 py-2.5 text-base',
+                    )}
+                  >
+                    <option value="" disabled>
+                      Fachgebiet wählen …
+                    </option>
+                    {TOPICS_ALPHA.map((t) => (
+                      <option key={t.id} value={t.id}>
+                        {t.emoji} {t.label}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <div className={cn('text-white/80', isMaster ? 'text-lg' : 'text-sm')}>
+                    {chosen ? `${TOPICS_BY_ID[chosen].emoji} ${TOPICS_BY_ID[chosen].label}` : 'wählt noch …'}
+                  </div>
+                )}
               </Card>
             )
           })}
@@ -3991,7 +4030,7 @@ function ExpertsRoomView({
                 isMaster ? 'text-2xl md:text-3xl' : 'text-sm',
               )}
             >
-              Zug {live.currentIndex + 1} / {live.playerOrder.length}
+              Frage {live.currentStep + 1} / {live.questionsPerPlayer} · {live.pointsPerCorrect} Punkte
             </div>
           </div>
           {live.phase === 'primary' && (
@@ -4070,7 +4109,7 @@ function ExpertsRoomView({
         />
       )}
 
-      {live.phase === 'primary' && (
+      {live.phase === 'question-shown' && (
         <Card className={cn('space-y-3', isMaster ? 'p-5' : 'p-4')}>
           <div
             className={cn(
@@ -4078,33 +4117,42 @@ function ExpertsRoomView({
               isMaster ? 'text-xs' : 'text-[10px]',
             )}
           >
-            Solo-Antwort (frei) · Master markiert
+            {isMyTurn ? 'Lies die Frage — dann Antworten aufdecken' : `${activePlayer?.name ?? 'Experte'} liest die Frage`}
           </div>
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              type="button"
-              onClick={() => send({ type: 'EXPERTS_MARK_PRIMARY', outcome: 'correct' })}
-              disabled={!canDispatch || !isHost}
-              className={cn(
-                'flex items-center justify-center rounded-xl border font-bold uppercase tracking-wider transition-all disabled:opacity-40 border-correct/60 bg-correct/15 text-correct',
-                isMaster ? 'h-20 text-2xl' : 'h-14 text-lg',
-              )}
-            >
-              Richtig
-            </button>
-            <button
-              type="button"
-              onClick={() => send({ type: 'EXPERTS_MARK_PRIMARY', outcome: 'wrong' })}
-              disabled={!canDispatch || !isHost}
-              className={cn(
-                'flex items-center justify-center rounded-xl border font-bold uppercase tracking-wider transition-all disabled:opacity-40 border-wrong/60 bg-wrong/15 text-wrong',
-                isMaster ? 'h-20 text-2xl' : 'h-14 text-lg',
-              )}
-            >
-              Falsch
-            </button>
-          </div>
+          <Button
+            size="lg"
+            variant="primary"
+            onClick={() => send({ type: 'EXPERTS_SHOW_OPTIONS' })}
+            disabled={!canDispatch || !(isMyTurn || isMaster || isHost)}
+            className={cn('w-full', isMaster && 'h-16 text-lg')}
+          >
+            Antworten anzeigen · {live.soloDurationSeconds}s
+          </Button>
         </Card>
+      )}
+
+      {live.phase === 'primary' && (
+        <>
+          <Card className={cn(isMaster ? 'p-5' : 'p-3')}>
+            <div
+              className={cn(
+                'uppercase tracking-[0.32em] text-ink-muted',
+                isMaster ? 'text-xs' : 'text-[10px]',
+              )}
+            >
+              {isMyTurn ? 'Du bist dran — tippe deine Antwort' : `${activePlayer?.name ?? 'Experte'} antwortet`}
+            </div>
+          </Card>
+          <OptionsGrid
+            options={live.shuffledOptions}
+            correctIdx={null}
+            selectedIdxByTeam={{}}
+            teams={state.round.teams}
+            onSelect={(idx) => send({ type: 'EXPERTS_PRIMARY_ANSWER', renderedIndex: idx })}
+            canClick={canDispatch && (isMyTurn || isMaster)}
+            isMaster={isMaster}
+          />
+        </>
       )}
 
       {live.phase === 'steal-answer' && (
@@ -4141,15 +4189,26 @@ function ExpertsRoomView({
             onSelect={() => {}}
             canClick={false}
             isMaster={isMaster}
+            highlightMyPick={live.primaryRenderedIndex ?? undefined}
           />
+          {question?.explanation && (
+            <Card className={cn('text-white/80', isMaster ? 'p-5 text-base md:text-lg' : 'p-3 text-sm')}>
+              <div className={cn('mb-1 uppercase tracking-[0.22em] text-ink-muted', isMaster ? 'text-xs' : 'text-[10px]')}>
+                Erklärung
+              </div>
+              {question.explanation}
+            </Card>
+          )}
           <Button
             size="lg"
             variant="primary"
             onClick={() => send({ type: 'EXPERTS_NEXT' })}
-            disabled={!canDispatch || !isHost}
+            disabled={!canDispatch || !(isHost || isMaster)}
             className={cn('w-full', isMaster && 'h-16 text-lg')}
           >
-            {live.currentIndex + 1 >= live.playerOrder.length ? 'Runde beenden' : 'Nächster Experte'}
+            {live.currentIndex + 1 >= live.playerOrder.length * live.questionsPerPlayer
+              ? 'Runde beenden'
+              : 'Nächste Frage'}
           </Button>
         </>
       )}

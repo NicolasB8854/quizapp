@@ -92,7 +92,7 @@ export default function GamePage() {
     ? round.players.find((p) => p.id === expertsLive.activePlayerId)?.teamId ?? null
     : null
   const expertsCurrentTeamId = expertsLive
-    ? expertsLive.phase === 'primary'
+    ? expertsLive.phase === 'primary' || expertsLive.phase === 'question-shown'
       ? expertsPlayerTeamId
       : expertsLive.phase === 'steal-answer'
       ? round.teams.find((t) => t.id !== expertsPlayerTeamId)?.id ?? null
@@ -2380,7 +2380,7 @@ function ExpertsStage() {
             Jeder wählt sein Fach
           </h1>
           <p className="mt-2 text-sm text-ink-muted max-w-lg mx-auto">
-            Jede:r Spieler:in bekommt später eine Frage aus seinem Fach.{' '}
+            Jede:r bekommt fünf Fragen aus seinem Fach — von 100 bis 500 Punkte, immer schwerer.{' '}
             {chosenCount === 0
               ? 'Wählt mindestens eins.'
               : `${chosenCount} von ${experts.playerOrder.length} Fächern gesetzt.`}
@@ -2415,7 +2415,7 @@ function ExpertsStage() {
                   )}
                 </div>
                 <div className="flex flex-wrap gap-1.5">
-                  {TOPICS.map((topic) => {
+                  {[...TOPICS].sort((x, y) => x.label.localeCompare(y.label, 'de')).map((topic) => {
                     const isOn = chosen === topic.id
                     return (
                       <button
@@ -2483,7 +2483,7 @@ function ExpertsStage() {
       {/* Progress */}
       <div className="text-center mb-3">
         <div className="eyebrow" style={{ color: '#B78BFF' }}>
-          Fachrunde · Spieler {experts.currentIndex + 1} von {experts.playerOrder.length}
+          Fachrunde · Frage {experts.currentStep + 1} von {experts.questionsPerPlayer} · {experts.pointsPerCorrect} Punkte
         </div>
       </div>
 
@@ -2543,8 +2543,10 @@ function ExpertsStage() {
         }}
       >
         <div className="eyebrow" style={{ color: '#B78BFF' }}>
-          {experts.phase === 'primary'
-            ? `${activeName} antwortet frei`
+          {experts.phase === 'question-shown'
+            ? `${activeName} liest die Frage`
+            : experts.phase === 'primary'
+            ? `${activeName} antwortet`
             : experts.phase === 'steal-answer'
             ? `Steal für ${opponent.name} · ${stealPoints} Punkte`
             : 'Auflösung'}
@@ -2555,31 +2557,31 @@ function ExpertsStage() {
       </div>
 
       {/* Phasen-Interaktion */}
+      {experts.phase === 'question-shown' && (
+        <div className="mt-6 md:mt-8 flex justify-center">
+          <Button
+            variant="primary"
+            size="lg"
+            trailing={<Timer className="h-5 w-5" />}
+            onClick={() => dispatch({ type: 'EXPERTS_SHOW_OPTIONS' })}
+          >
+            Antworten anzeigen · {experts.soloDurationSeconds}s
+          </Button>
+        </div>
+      )}
+
       {experts.phase === 'primary' && (
-        <div className="mt-6 md:mt-8">
-          <p className="text-center text-sm text-ink-muted mb-4">
-            Optionen bleiben verdeckt — Antwort mündlich. Master markiert:
-          </p>
-          <div className="grid grid-cols-2 gap-3 md:gap-4 max-w-xl mx-auto">
-            <button
-              type="button"
-              onClick={() =>
-                dispatch({ type: 'EXPERTS_MARK_PRIMARY', outcome: 'correct' })
-              }
-              className="h-14 rounded-card border font-display font-bold uppercase tracking-widest text-sm border-correct/60 bg-correct/15 text-correct hover:bg-correct/25 transition-colors"
+        <div className="mt-6 md:mt-8 grid md:grid-cols-2 gap-3 md:gap-4">
+          {experts.shuffledOptions.map((option, idx) => (
+            <AnswerOption
+              key={`experts-primary-${experts.currentIndex}-${idx}`}
+              letter={LETTERS[idx]}
+              status="idle"
+              onClick={() => dispatch({ type: 'EXPERTS_PRIMARY_ANSWER', renderedIndex: idx })}
             >
-              Richtig
-            </button>
-            <button
-              type="button"
-              onClick={() =>
-                dispatch({ type: 'EXPERTS_MARK_PRIMARY', outcome: 'wrong' })
-              }
-              className="h-14 rounded-card border font-display font-bold uppercase tracking-widest text-sm border-wrong/60 bg-wrong/15 text-wrong hover:bg-wrong/25 transition-colors"
-            >
-              Falsch
-            </button>
-          </div>
+              {option}
+            </AnswerOption>
+          ))}
         </div>
       )}
 

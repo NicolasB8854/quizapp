@@ -34,6 +34,15 @@ export function answeringTeamId(state: GameState): string | null {
   return null
 }
 
+/** Team, das beim Spotlight-/Fachrunden-Steal antworten darf (Rotation wie im Reducer). */
+export function stealTeamId(state: GameState): string | null {
+  const live = state.live
+  if (!live || (live.kind !== 'player-spotlight' && live.kind !== 'experts')) return null
+  const active = state.round?.players.find((p) => p.id === live.activePlayerId)
+  if (!active?.teamId) return null
+  return getNextTeamId(state.round?.teams ?? [], active.teamId)
+}
+
 export function authorizeAction(
   state: GameState,
   action: GameAction,
@@ -57,6 +66,20 @@ export function authorizeAction(
     case 'BOARD_ANSWER':
     case 'DUEL_ANSWER': {
       const team = answeringTeamId(state)
+      return team !== null && team === myTeam
+        ? OK
+        : { ok: false, reason: 'Dein Team ist gerade nicht dran' }
+    }
+    case 'SPOTLIGHT_PRIMARY_ANSWER':
+    case 'EXPERTS_PRIMARY_ANSWER': {
+      const live = state.live
+      const active =
+        live && (live.kind === 'player-spotlight' || live.kind === 'experts') ? live.activePlayerId : null
+      return active === me.id ? OK : { ok: false, reason: 'Nur der aktive Spieler antwortet' }
+    }
+    case 'SPOTLIGHT_STEAL_ANSWER':
+    case 'EXPERTS_STEAL_ANSWER': {
+      const team = stealTeamId(state)
       return team !== null && team === myTeam
         ? OK
         : { ok: false, reason: 'Dein Team ist gerade nicht dran' }

@@ -140,6 +140,11 @@ export interface SpotlightLive {
   phase: 'primary' | 'steal' | 'revealed' | 'empty'
   /** Vom Gegenteam gewählter Rendered-Index in der Steal-Phase; null, wenn Steal nicht ausgelöst. */
   stealRenderedIndex: number | null
+  /**
+   * Vom aktiven Spieler auf dem eigenen Gerät getippte Option (Multi-Device).
+   * null bei mündlicher Antwort, die per SPOTLIGHT_MARK_PRIMARY bewertet wurde.
+   */
+  primaryRenderedIndex?: number | null
   primaryOutcome: 'correct' | 'wrong' | null
   stealOutcome: 'correct' | 'wrong' | null
   scores: Record<string, number>
@@ -307,7 +312,19 @@ export interface ExpertsLive {
   activeQuestion: MultipleChoiceQuestion | null
   shuffledOptions: string[]
   correctRenderedIndex: number
-  phase: 'setup-experts' | 'primary' | 'steal-answer' | 'revealed' | 'empty'
+  /**
+   * question-shown: Frage sichtbar, Optionen noch verdeckt, Timer läuft nicht.
+   * primary: Optionen sichtbar, 20-s-Timer läuft, aktiver Spieler tippt.
+   */
+  phase: 'setup-experts' | 'question-shown' | 'primary' | 'steal-answer' | 'revealed' | 'empty'
+  /** Stufe der aktuellen Frage (0-basiert): Schwierigkeit = currentStep + 1. */
+  currentStep: number
+  /** Fragen pro Spieler (aufsteigend schwer). */
+  questionsPerPlayer: number
+  /** Punktwert je Stufe, z. B. [100, 200, 300, 400, 500]. */
+  pointValues: number[]
+  /** Vom aktiven Spieler getippte Option; null bei Timeout/mündlicher Bewertung. */
+  primaryRenderedIndex: number | null
   /** Fach pro Spieler; `null` solange nicht gewählt. Persistiert im Setup. */
   expertise: Record<string, Topic | null>
   /** Timer-Anker für die Solo-Phase (ms since epoch). UI zeigt den Countdown. */
@@ -389,6 +406,8 @@ export type GameAction =
   | { type: 'FLASH_REVEAL' }
   | { type: 'FLASH_NEXT' }
   | { type: 'SPOTLIGHT_MARK_PRIMARY'; outcome: 'correct' | 'wrong' }
+  /** Multi-Device: aktiver Spieler tippt eine Option, Auswertung automatisch. */
+  | { type: 'SPOTLIGHT_PRIMARY_ANSWER'; renderedIndex: number }
   | { type: 'SPOTLIGHT_STEAL_ANSWER'; renderedIndex: number }
   | { type: 'SPOTLIGHT_NEXT' }
   | { type: 'AC_REVEAL_HINT' }
@@ -414,6 +433,10 @@ export type GameAction =
   | { type: 'EXPERTS_SET_EXPERTISE'; playerId: string; topic: Topic }
   | { type: 'EXPERTS_START_ROUND' }
   | { type: 'EXPERTS_MARK_PRIMARY'; outcome: 'correct' | 'wrong' | 'timeout' }
+  /** Fachrunde: „Antworten anzeigen" — deckt Optionen auf und startet den Timer. */
+  | { type: 'EXPERTS_SHOW_OPTIONS' }
+  /** Fachrunde: aktiver Spieler tippt eine Option, Auswertung automatisch. */
+  | { type: 'EXPERTS_PRIMARY_ANSWER'; renderedIndex: number }
   | { type: 'EXPERTS_STEAL_ANSWER'; renderedIndex: number }
   | { type: 'EXPERTS_NEXT' }
   | { type: 'ADD_PLAYER'; teamId: string | null; playerId?: string; playerName?: string }
@@ -631,6 +654,7 @@ function initSpotlight(teams: Team[], players: readonly Player[], deps: ReducerD
       correctRenderedIndex: 0,
       phase: 'empty',
       stealRenderedIndex: null,
+      primaryRenderedIndex: null,
       primaryOutcome: null,
       stealOutcome: null,
       scores,
@@ -663,6 +687,7 @@ function initSpotlight(teams: Team[], players: readonly Player[], deps: ReducerD
       correctRenderedIndex: 0,
       phase: 'empty',
       stealRenderedIndex: null,
+      primaryRenderedIndex: null,
       primaryOutcome: null,
       stealOutcome: null,
       scores,
@@ -686,6 +711,7 @@ function initSpotlight(teams: Team[], players: readonly Player[], deps: ReducerD
     correctRenderedIndex: shuffle.renderedIndexOf(question.correctIndex),
     phase: 'primary',
     stealRenderedIndex: null,
+    primaryRenderedIndex: null,
     primaryOutcome: null,
     stealOutcome: null,
     scores,
@@ -697,8 +723,61 @@ function initSpotlight(teams: Team[], players: readonly Player[], deps: ReducerD
 /**
  * Fachrunde: Punkte, Timer, halbe Punkte beim Steal.
  */
-const EXPERTS_POINTS = 500
+export const EXPERTS_POINT_VALUES = [100, 200, 300, 400, 500] as const
+export const EXPERTS_QUESTIONS_PER_PLAYER = EXPERTS_POINT_VALUES.length
 const EXPERTS_TIMER_SECONDS = 20
+
+/**
+ * Fachrunde-Zugfolge: Runde für Runde durch alle Fach-Spieler, pro Runde eine
+ * Stufe schwerer. Zug i → Spieler playerOrder[i % n], Stufe floor(i / n).
+ * So steigt die Schwierigkeit für alle gleichzeitig (100 → 500).
+ */
+export function expertsTurn(index: number, playerCount: number): { playerIndex: number; step: number } {
+  const n = Math.max(1, playerCount)
+  return { playerIndex: index % n, step: Math.floor(index / n) }
+}
+
+/**
+ * Lädt den Zug `index` (oder den nächsten spielbaren danach). Gibt null zurück,
+ * wenn alle Züge gespielt sind.
+ */
+function loadExpertsTurn(
+  live: ExpertsLive,
+  index: number,
+  usedQuestionIds: readonly string[],
+  deps: ReducerDeps,
+): ExpertsLive | null {
+  const n = live.playerOrder.length
+  const total = n * live.questionsPerPlayer
+  const excluded = new Set(usedQuestionIds)
+  for (const id of deps.getAskedQuestionIds()) excluded.add(id)
+  for (let i = index; i < total; i++) {
+    const { playerIndex, step } = expertsTurn(i, n)
+    const playerId = live.playerOrder[playerIndex]
+    const topic = live.expertise[playerId]
+    if (!topic) continue
+    const question = pickByTargetDifficulty(excluded, clampDifficulty(step + 1), topic)
+    if (!question) continue
+    const shuffle = shuffleWithMapping(question.options, `experts:${playerId}:${question.id}`)
+    return {
+      ...live,
+      usedQuestionIds: [...usedQuestionIds],
+      currentIndex: i,
+      currentStep: step,
+      pointsPerCorrect: live.pointValues[step] ?? live.pointValues[live.pointValues.length - 1],
+      activePlayerId: playerId,
+      activeQuestion: question,
+      shuffledOptions: shuffle.shuffled,
+      correctRenderedIndex: shuffle.renderedIndexOf(question.correctIndex),
+      phase: 'question-shown',
+      soloStartedAt: null,
+      primaryOutcome: null,
+      stealOutcome: null,
+      primaryRenderedIndex: null,
+    }
+  }
+  return null
+}
 
 function initExperts(teams: Team[], players: readonly Player[]): ExpertsLive {
   const scores = Object.fromEntries(teams.map((t) => [t.id, 0]))
@@ -722,7 +801,11 @@ function initExperts(teams: Team[], players: readonly Player[]): ExpertsLive {
       stealOutcome: null,
       scores,
       usedQuestionIds: [],
-      pointsPerCorrect: EXPERTS_POINTS,
+      pointsPerCorrect: EXPERTS_POINT_VALUES[0],
+      currentStep: 0,
+      questionsPerPlayer: EXPERTS_QUESTIONS_PER_PLAYER,
+      pointValues: [...EXPERTS_POINT_VALUES],
+      primaryRenderedIndex: null,
     }
   }
   // Setup-Phase: alle Spieler bekommen expertise:null als Startwert.
@@ -742,7 +825,11 @@ function initExperts(teams: Team[], players: readonly Player[]): ExpertsLive {
     stealOutcome: null,
     scores,
     usedQuestionIds: [],
-    pointsPerCorrect: EXPERTS_POINTS,
+    pointsPerCorrect: EXPERTS_POINT_VALUES[0],
+    currentStep: 0,
+    questionsPerPlayer: EXPERTS_QUESTIONS_PER_PLAYER,
+    pointValues: [...EXPERTS_POINT_VALUES],
+    primaryRenderedIndex: null,
   }
 }
 
@@ -1754,6 +1841,15 @@ export function createReducer(deps: ReducerDeps) {
       }
     }
 
+    case 'SPOTLIGHT_PRIMARY_ANSWER': {
+      if (!state.live || state.live.kind !== 'player-spotlight') return state
+      if (state.live.phase !== 'primary') return state
+      const outcome = action.renderedIndex === state.live.correctRenderedIndex ? 'correct' : 'wrong'
+      const marked = reducer(state, { type: 'SPOTLIGHT_MARK_PRIMARY', outcome })
+      if (!marked.live || marked.live.kind !== 'player-spotlight') return marked
+      return { ...marked, live: { ...marked.live, primaryRenderedIndex: action.renderedIndex } }
+    }
+
     case 'SPOTLIGHT_STEAL_ANSWER': {
       if (!state.round || !state.live || state.live.kind !== 'player-spotlight') return state
       const live = state.live
@@ -1812,6 +1908,7 @@ export function createReducer(deps: ReducerDeps) {
         correctRenderedIndex: 0,
         phase: 'primary',
         stealRenderedIndex: null,
+        primaryRenderedIndex: null,
         primaryOutcome: null,
         stealOutcome: null,
       }
@@ -1936,54 +2033,33 @@ export function createReducer(deps: ReducerDeps) {
       if (live.phase !== 'setup-experts') return state
 
       const activeOrder = live.playerOrder.filter((id) => live.expertise[id] !== null)
-      if (activeOrder.length === 0) {
-        // Kein Spieler hat ein Fach → Modus überspringen.
-        return reducer(
-          {
-            ...state,
-            live: { ...live, phase: 'empty', playerOrder: [] },
-          },
-          { type: 'FINISH_MODE' },
-        )
-      }
-
-      const firstPlayerId = activeOrder[0]
-      const topic = live.expertise[firstPlayerId]!
-      const excluded = new Set<string>()
-      for (const id of deps.getAskedQuestionIds()) excluded.add(id)
-      const player = state.round.players.find((p) => p.id === firstPlayerId)
-      const level = player ? getPlayerLevelForTopic(player, topic) : undefined
-      const tags = player ? getPlayerTagsForTopic(player, topic) : undefined
-      const question = pickQuestion(topic, excluded, level, tags)
-
-      if (!question) {
-        // Kein Content für dieses Fach → weiterspringen.
+      const loaded =
+        activeOrder.length > 0
+          ? loadExpertsTurn({ ...live, playerOrder: activeOrder }, 0, live.usedQuestionIds, deps)
+          : null
+      if (!loaded) {
+        // Kein Spieler mit Fach oder kein Content → Modus überspringen.
         return reducer(
           { ...state, live: { ...live, phase: 'empty', playerOrder: activeOrder } },
           { type: 'FINISH_MODE' },
         )
       }
+      return { ...state, live: loaded }
+    }
 
-      const shuffle = shuffleWithMapping(
-        question.options,
-        `experts:${firstPlayerId}:${question.id}`,
-      )
-      return {
-        ...state,
-        live: {
-          ...live,
-          playerOrder: activeOrder,
-          currentIndex: 0,
-          activePlayerId: firstPlayerId,
-          activeQuestion: question,
-          shuffledOptions: shuffle.shuffled,
-          correctRenderedIndex: shuffle.renderedIndexOf(question.correctIndex),
-          phase: 'primary',
-          soloStartedAt: Date.now(),
-          primaryOutcome: null,
-          stealOutcome: null,
-        },
-      }
+    case 'EXPERTS_SHOW_OPTIONS': {
+      if (!state.live || state.live.kind !== 'experts') return state
+      if (state.live.phase !== 'question-shown') return state
+      return { ...state, live: { ...state.live, phase: 'primary', soloStartedAt: Date.now() } }
+    }
+
+    case 'EXPERTS_PRIMARY_ANSWER': {
+      if (!state.live || state.live.kind !== 'experts') return state
+      if (state.live.phase !== 'primary') return state
+      const outcome = action.renderedIndex === state.live.correctRenderedIndex ? 'correct' : 'wrong'
+      const marked = reducer(state, { type: 'EXPERTS_MARK_PRIMARY', outcome })
+      if (!marked.live || marked.live.kind !== 'experts') return marked
+      return { ...marked, live: { ...marked.live, primaryRenderedIndex: action.renderedIndex } }
     }
 
     case 'EXPERTS_MARK_PRIMARY': {
@@ -2060,58 +2136,24 @@ export function createReducer(deps: ReducerDeps) {
       const usedQuestionIds = live.activeQuestion
         ? [...live.usedQuestionIds, live.activeQuestion.id]
         : live.usedQuestionIds
-      const nextIndex = live.currentIndex + 1
-      const isModeDone = nextIndex >= live.playerOrder.length
-
-      const advancedBase: ExpertsLive = {
-        ...live,
-        usedQuestionIds,
-        currentIndex: nextIndex,
-        activePlayerId: null,
-        activeQuestion: null,
-        shuffledOptions: [],
-        correctRenderedIndex: 0,
-        phase: 'primary',
-        soloStartedAt: null,
-        primaryOutcome: null,
-        stealOutcome: null,
+      const loaded = loadExpertsTurn(live, live.currentIndex + 1, usedQuestionIds, deps)
+      if (!loaded) {
+        return reducer(
+          {
+            ...state,
+            live: {
+              ...live,
+              usedQuestionIds,
+              activePlayerId: null,
+              activeQuestion: null,
+              shuffledOptions: [],
+              soloStartedAt: null,
+            },
+          },
+          { type: 'FINISH_MODE' },
+        )
       }
-
-      if (isModeDone) {
-        return reducer({ ...state, live: advancedBase }, { type: 'FINISH_MODE' })
-      }
-
-      const nextPlayerId = live.playerOrder[nextIndex]
-      const topic = live.expertise[nextPlayerId]
-      const nextPlayer = state.round.players.find((p) => p.id === nextPlayerId)
-      if (!topic || !nextPlayer) {
-        return reducer({ ...state, live: advancedBase }, { type: 'EXPERTS_NEXT' })
-      }
-
-      const excluded = new Set(usedQuestionIds)
-      for (const id of deps.getAskedQuestionIds()) excluded.add(id)
-      const level = getPlayerLevelForTopic(nextPlayer, topic)
-      const tags = getPlayerTagsForTopic(nextPlayer, topic)
-      const nextQuestion = pickQuestion(topic, excluded, level, tags)
-      if (!nextQuestion) {
-        return reducer({ ...state, live: advancedBase }, { type: 'EXPERTS_NEXT' })
-      }
-
-      const shuffle = shuffleWithMapping(
-        nextQuestion.options,
-        `experts:${nextPlayerId}:${nextQuestion.id}`,
-      )
-      return {
-        ...state,
-        live: {
-          ...advancedBase,
-          activePlayerId: nextPlayerId,
-          activeQuestion: nextQuestion,
-          shuffledOptions: shuffle.shuffled,
-          correctRenderedIndex: shuffle.renderedIndexOf(nextQuestion.correctIndex),
-          soloStartedAt: Date.now(),
-        },
-      }
+      return { ...state, live: loaded }
     }
 
     case 'ELIM_ANSWER': {
