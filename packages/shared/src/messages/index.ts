@@ -122,6 +122,7 @@ export interface ErrorMessage {
     | 'NOT_IN_ROOM'
     | 'ROLE_NOT_ALLOWED'
     | 'REDUCER_REJECTED'
+    | 'FORBIDDEN'
     | 'INTERNAL_ERROR'
   message: string
 }

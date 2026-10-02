@@ -19,6 +19,7 @@ export type * from './types/playerProfile'
 
 // State (Reducer + Actions + State-Shape)
 export * from './state/reducer'
+export * from './state/authorize'
 
 // WebSocket-Messages (Multiplayer-Transport)
 export * from './messages'

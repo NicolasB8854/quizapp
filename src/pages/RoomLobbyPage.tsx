@@ -42,6 +42,7 @@ import type {
 } from '@quizapp/shared'
 import type { GameModeId, Player, SkillLevel, Topic } from '@quizapp/shared'
 import {
+  answeringTeamId,
   MODES,
   MODES_BY_ID,
   TOPICS,
@@ -3305,7 +3306,7 @@ function BoardRoomView({
   const isMyPick = !!myPlayer && myPlayer.teamId === live.cellPickerTeamId
   const isMyBuzz = !!myPlayer && myPlayer.teamId === live.buzzingTeamId
   const isMySteal =
-    !!myPlayer && !!live.buzzingTeamId && myPlayer.teamId !== live.buzzingTeamId
+    !!myPlayer && live.phase === 'steal-answer' && answeringTeamId(state) === myPlayer.teamId
 
   return (
     <div className="space-y-3">
@@ -3400,8 +3401,11 @@ function BoardRoomView({
               >
                 Wer buzzert zuerst?
               </div>
-              <div className="grid grid-cols-2 gap-2">
-                {state.round.teams.map((team) => (
+              <div className={cn('grid gap-2', isMaster ? 'grid-cols-2' : 'grid-cols-1')}>
+                {state.round.teams
+                  // Spieler sehen nur den Buzzer ihres eigenen Teams.
+                  .filter((team) => isMaster || team.id === myPlayer?.teamId)
+                  .map((team) => (
                   <button
                     key={team.id}
                     type="button"
@@ -3700,8 +3704,11 @@ function DuelRoomView({
               >
                 Buzzer!
               </div>
-              <div className="grid grid-cols-2 gap-2">
-                {live.duelingTeamIds.map((teamId) => {
+              <div className={cn('grid gap-2', isMaster ? 'grid-cols-2' : 'grid-cols-1')}>
+                {live.duelingTeamIds
+                  // Spieler sehen nur den Buzzer ihres eigenen Teams.
+                  .filter((teamId) => isMaster || teamId === myPlayer?.teamId)
+                  .map((teamId) => {
                   const team = state.round?.teams.find((t) => t.id === teamId)
                   if (!team) return null
                   return (
