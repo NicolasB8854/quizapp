@@ -10,7 +10,6 @@
  * Präferenz per Skill-Level: `nerd` bekommt schwerere Fragen, `bisschen` leichtere.
  */
 
-import rawQuestions from '../data/questions.json'
 import type {
   Difficulty,
   MultipleChoiceQuestion,
@@ -76,7 +75,28 @@ export function createEmptyQuestion(type: QuestionType, topic: Topic): Question 
 // JSON-Import ist untypisiert — hier einmal narrowen. `let` statt `const`,
 // damit der Server zur Laufzeit den Katalog aus DynamoDB nachladen kann
 // (siehe `setQuestionCatalog`). Frontend nutzt weiter den Default aus JSON.
-let ALL_QUESTIONS: Question[] = rawQuestions as unknown as Question[]
+//
+// Performance: Der Katalog (~1 MB JSON) ist NICHT mehr statisch importiert,
+// sonst landet er im Start-Bundle jeder Seite. Frontend lädt ihn per
+// `loadBundledCatalog()` als eigenen Chunk nach; Server und Tests setzen ihn
+// direkt per `setQuestionCatalog`.
+let ALL_QUESTIONS: Question[] = []
+let catalogLoaded = false
+let catalogLoading: Promise<void> | null = null
+
+/** True, sobald ein Katalog gesetzt wurde. */
+export function isCatalogLoaded(): boolean {
+  return catalogLoaded
+}
+
+/** Lädt den mitgelieferten JSON-Katalog als separaten Chunk (idempotent). */
+export function loadBundledCatalog(): Promise<void> {
+  if (catalogLoaded) return Promise.resolve()
+  catalogLoading ??= import('../data/questions.json').then((m) => {
+    if (!catalogLoaded) setQuestionCatalog(m.default as unknown as Question[])
+  })
+  return catalogLoading
+}
 
 export function getAllQuestions(): Question[] {
   return ALL_QUESTIONS
@@ -94,6 +114,7 @@ export function getAllQuestions(): Question[] {
  */
 export function setQuestionCatalog(questions: Question[]): void {
   ALL_QUESTIONS = questions
+  catalogLoaded = true
 }
 
 /**

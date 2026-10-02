@@ -37,6 +37,7 @@ export default defineConfig({
       'packages/shared/src/**/*.test.ts',
     ],
     globals: false,
+    setupFiles: ['./vitest.setup.ts'],
     // Reset localStorage/session-state zwischen Tests, damit questionHistory
     // sich nicht durch die Testreihen zieht.
     clearMocks: true,
