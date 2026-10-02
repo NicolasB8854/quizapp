@@ -52,6 +52,7 @@ import {
 } from '@quizapp/shared'
 import { ScreenLayout } from '@/components/ScreenLayout'
 import { Card } from '@/components/Card'
+import { AvatarBadge } from '@/components/AvatarBadge'
 import { Button } from '@/components/Button'
 import { Badge } from '@/components/Badge'
 import { PlayerInterestsPanel } from '@/components/PlayerInterestsPanel'
@@ -1935,19 +1936,13 @@ function SpotlightRoomView({
             isMaster ? 'p-6' : 'p-3',
           )}
         >
-          <span
-            className={cn(
-              'flex flex-shrink-0 items-center justify-center rounded-full font-bold text-white',
-              isMaster ? 'h-16 w-16 text-2xl' : 'h-10 w-10 text-base',
-            )}
-            style={{
-              background: activeTeam
-                ? getTeamColorHex(activeTeam.color)
-                : 'rgba(255,255,255,0.1)',
-            }}
-          >
-            {(activePlayer.name || 'N').slice(0, 1).toUpperCase()}
-          </span>
+          <AvatarBadge
+            avatar={activePlayer.avatar}
+            size={isMaster ? 'xl' : 'lg'}
+            teamHex={activeTeam ? getTeamColorHex(activeTeam.color) : undefined}
+            name={activePlayer.name}
+            className="flex-shrink-0"
+          />
           <div className="min-w-0 flex-1">
             <div
               className={cn(
@@ -1956,6 +1951,11 @@ function SpotlightRoomView({
               )}
             >
               {activePlayer.name || 'Namenlos'}
+              {activePlayer.avatar.title && (
+                <span className="ml-2 rounded-full bg-amber-300/15 px-2 py-0.5 align-middle text-xs font-semibold text-amber-200">
+                  {activePlayer.avatar.title}
+                </span>
+              )}
             </div>
             <div className={cn('text-white/70', isMaster ? 'text-base' : 'text-xs')}>
               {activeTeam?.name}
@@ -3348,18 +3348,21 @@ function EliminationRoomView({
             isMaster ? 'p-5' : 'p-3',
           )}
         >
-          <span
-            className={cn(
-              'flex flex-shrink-0 items-center justify-center rounded-full font-bold text-white',
-              isMaster ? 'h-14 w-14 text-xl' : 'h-9 w-9 text-sm',
-            )}
-            style={{ background: activeTeam ? getTeamColorHex(activeTeam.color) : 'rgba(255,255,255,0.1)' }}
-          >
-            {(activePlayer.name || 'N').slice(0, 1).toUpperCase()}
-          </span>
+          <AvatarBadge
+            avatar={activePlayer.avatar}
+            size={isMaster ? 'xl' : 'lg'}
+            teamHex={activeTeam ? getTeamColorHex(activeTeam.color) : undefined}
+            name={activePlayer.name}
+            className="flex-shrink-0"
+          />
           <div>
             <div className={cn('font-semibold text-white', isMaster ? 'text-2xl' : 'text-base')}>
               {activePlayer.name || 'Namenlos'}
+              {activePlayer.avatar.title && (
+                <span className="ml-2 rounded-full bg-amber-300/15 px-2 py-0.5 align-middle text-xs font-semibold text-amber-200">
+                  {activePlayer.avatar.title}
+                </span>
+              )}
             </div>
             <div className={cn('text-white/70', isMaster ? 'text-base' : 'text-xs')}>
               {activeTeam?.name}
@@ -4152,18 +4155,21 @@ function ExpertsRoomView({
             isMaster ? 'p-5' : 'p-3',
           )}
         >
-          <span
-            className={cn(
-              'flex flex-shrink-0 items-center justify-center rounded-full font-bold text-white',
-              isMaster ? 'h-14 w-14 text-xl' : 'h-9 w-9 text-sm',
-            )}
-            style={{ background: activeTeam ? getTeamColorHex(activeTeam.color) : 'rgba(255,255,255,0.1)' }}
-          >
-            {(activePlayer.name || 'N').slice(0, 1).toUpperCase()}
-          </span>
+          <AvatarBadge
+            avatar={activePlayer.avatar}
+            size={isMaster ? 'xl' : 'lg'}
+            teamHex={activeTeam ? getTeamColorHex(activeTeam.color) : undefined}
+            name={activePlayer.name}
+            className="flex-shrink-0"
+          />
           <div className="min-w-0 flex-1">
             <div className={cn('font-semibold text-white', isMaster ? 'text-xl md:text-2xl' : 'text-base')}>
               {activePlayer.name || 'Namenlos'}
+              {activePlayer.avatar.title && (
+                <span className="ml-2 rounded-full bg-amber-300/15 px-2 py-0.5 align-middle text-xs font-semibold text-amber-200">
+                  {activePlayer.avatar.title}
+                </span>
+              )}
             </div>
             <div className={cn('text-white/70', isMaster ? 'text-base' : 'text-xs')}>
               {activeTeam?.name}
