@@ -388,6 +388,9 @@ export default function RoomLobbyPage() {
             playerCount={room.state?.round?.players.length ?? 0}
             onCopyCode={copyCode}
           />
+        ) : currentPhase === 'playing' ? (
+          // Während der Fragen: kein Room-Code — voller Fokus auf Frage und Antworten.
+          !stageOnly && <PlayerInGameStrip teamName={myTeam?.name ?? null} teamColor={myTeamColor} playerName={playerName} />
         ) : stageOnly ? (
           <MasterCompactHeader
             roomCode={roomCode}
@@ -582,6 +585,31 @@ function MasterHero({
  * damit spät-joinende Gäste ihn noch abtippen könnten. Der QR fliegt raus —
  * die Show soll dominieren.
  */
+/** Schmaler Identitäts-Streifen für Spieler während der Fragen (ohne Room-Code). */
+function PlayerInGameStrip({
+  teamName,
+  teamColor,
+  playerName,
+}: {
+  teamName: string | null
+  teamColor: string | null | undefined
+  playerName: string
+}) {
+  return (
+    <div className="flex items-center justify-end gap-2 px-1 text-sm font-semibold text-white">
+      {teamColor && (
+        <span
+          className="h-2.5 w-2.5 rounded-full"
+          style={{ background: teamColor, boxShadow: `0 0 8px ${teamColor}` }}
+          aria-hidden
+        />
+      )}
+      <span className="text-ink-muted">{teamName ?? 'Player'}</span>
+      <span>· {playerName}</span>
+    </div>
+  )
+}
+
 function MasterCompactHeader({
   roomCode,
   onCopyCode,
@@ -2840,7 +2868,13 @@ function LadderRoomView({
       <TeamAnswersPanel
         teams={state.round.teams}
         teamAnswers={Object.fromEntries(
-          Object.entries(live.teamAnswers).map(([k, v]) => [k, v === null || v === undefined ? null : `Antwort ${String.fromCharCode(65 + (v as number))}`]),
+          Object.entries(live.teamAnswers).map(([k, v]) => {
+            if (v === null || v === undefined) return [k, null]
+            // Vor der Auflösung nur „eingeloggt" zeigen — sonst schaut man beim Gegner ab.
+            // Das eigene Team sieht seinen Buchstaben weiterhin.
+            if (live.phase !== 'revealed' && k !== myTeamId) return [k, '✓ eingeloggt']
+            return [k, `Antwort ${String.fromCharCode(65 + (v as number))}`]
+          }),
         )}
         isMaster={isMaster}
       />
