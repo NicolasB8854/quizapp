@@ -4002,22 +4002,24 @@ function TeamScoreChip({
   isMaster: boolean
 }) {
   const delta = useScoreDelta(score)
+  const hex = getTeamColorHex(team.color)
   return (
     <div
       className={cn(
-        'relative flex items-center gap-1.5 rounded-lg bg-white/[0.04]',
-        isMaster ? 'px-3 py-2' : 'px-2 py-1',
+        'relative flex items-center gap-2 rounded-full border-2 bg-navy-900/80',
+        isMaster ? 'px-4 py-2' : 'px-3 py-1',
       )}
+      style={{ borderColor: `${hex}99`, boxShadow: `0 0 18px -8px ${hex}` }}
     >
       <span
-        className={cn('rounded-full', isMaster ? 'h-3 w-3' : 'h-2 w-2')}
-        style={{ background: getTeamColorHex(team.color) }}
+        className={cn('rounded-full', isMaster ? 'h-3 w-3' : 'h-2.5 w-2.5')}
+        style={{ background: hex, boxShadow: `0 0 8px ${hex}` }}
       />
-      <span className={cn('text-white/80', isMaster ? 'text-sm' : 'text-xs')}>{team.name}</span>
+      <span className={cn('font-medium text-white/85', isMaster ? 'text-base' : 'text-sm')}>{team.name}</span>
       <span
         className={cn(
-          'font-mono font-bold text-white tabular-nums',
-          isMaster ? 'text-2xl' : 'text-sm',
+          'font-display font-extrabold text-white tabular-nums',
+          isMaster ? 'text-2xl' : 'text-base',
         )}
       >
         {score}
