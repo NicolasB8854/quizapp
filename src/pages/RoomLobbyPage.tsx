@@ -53,6 +53,7 @@ import {
 import { ScreenLayout } from '@/components/ScreenLayout'
 import { Card } from '@/components/Card'
 import { AvatarBadge } from '@/components/AvatarBadge'
+import { BuzzerButton, ShowAnswers, ShowQuestion, ShowStatus, ShowTimer } from '@/components/show/ShowBlocks'
 import { Button } from '@/components/Button'
 import { Badge } from '@/components/Badge'
 import { PlayerInterestsPanel } from '@/components/PlayerInterestsPanel'
@@ -1573,76 +1574,20 @@ function CDAnsweringView({
 
   return (
     <>
-      <Card
-        className={cn(
-          'space-y-3',
-          isMaster ? 'p-8 md:p-10' : 'p-4',
-        )}
-      >
-        {topicDef && (
-          <div
-            className={cn(
-              'flex items-center gap-2 uppercase tracking-[0.22em] text-brand-cyan-soft',
-              isMaster ? 'text-sm md:text-base' : 'text-xs',
-            )}
-          >
-            <span
-              aria-hidden
-              className={isMaster ? 'text-2xl md:text-3xl' : ''}
-            >
-              {topicDef.emoji}
-            </span>
-            {topicDef.label}
-          </div>
-        )}
-        <div
-          className={cn(
-            'font-semibold text-white',
-            isMaster
-              ? 'text-3xl leading-tight md:text-5xl md:leading-tight'
-              : 'text-lg md:text-xl',
-          )}
-        >
-          {question.question}
-        </div>
-      </Card>
+      <QuestionCard
+        text={question.question}
+        isMaster={isMaster}
+        revealedTone={null}
+        eyebrow={topicDef ? `${topicDef.emoji} ${topicDef.label}` : null}
+      />
 
-      <div className={cn('space-y-2', isMaster && 'md:grid md:grid-cols-2 md:gap-3 md:space-y-0')}>
-        {live.shuffledOptions.map((option, idx) => (
-          <button
-            key={idx}
-            type="button"
-            onClick={() =>
-              send({ type: 'CD_SELECT_ANSWER', renderedIndex: idx })
-            }
-            disabled={!canPlay}
-            className={cn(
-              'flex w-full items-center rounded-xl border text-left transition-all disabled:opacity-40',
-              isMaster ? 'gap-4 px-5 py-4' : 'gap-3 px-4 py-3',
-              canPlay
-                ? 'border-brand-purple/40 bg-white/[0.04] text-white hover:border-brand-purple/70 hover:bg-brand-purple/10'
-                : 'border-white/10 bg-white/[0.03] text-white/70',
-            )}
-          >
-            <span
-              className={cn(
-                'flex items-center justify-center rounded-full bg-white/10 font-mono font-bold',
-                isMaster ? 'h-11 w-11 text-lg' : 'h-8 w-8 text-sm',
-              )}
-            >
-              {String.fromCharCode(65 + idx)}
-            </span>
-            <span
-              className={cn(
-                'flex-1',
-                isMaster ? 'text-lg md:text-xl' : 'text-sm md:text-base',
-              )}
-            >
-              {option}
-            </span>
-          </button>
-        ))}
-      </div>
+      <ShowAnswers
+        options={live.shuffledOptions}
+        correctIdx={null}
+        onSelect={(idx) => send({ type: 'CD_SELECT_ANSWER', renderedIndex: idx })}
+        canClick={canPlay}
+        stage={isMaster}
+      />
 
       {!canPlay && (
         <p className="text-center text-xs text-ink-muted">
@@ -1682,124 +1627,22 @@ function CDRevealedView({
 
   return (
     <>
-      <Card
-        className={cn(
-          'space-y-3',
-          isMaster ? 'p-8 md:p-10' : 'p-4',
-          wasCorrect
-            ? 'border-correct/40 bg-correct/[0.06]'
-            : 'border-wrong/40 bg-wrong/[0.06]',
-        )}
-      >
-        {topicDef && (
-          <div
-            className={cn(
-              'flex items-center gap-2 uppercase tracking-[0.22em] text-white/70',
-              isMaster ? 'text-sm md:text-base' : 'text-xs',
-            )}
-          >
-            <span
-              aria-hidden
-              className={isMaster ? 'text-2xl md:text-3xl' : ''}
-            >
-              {topicDef.emoji}
-            </span>
-            {topicDef.label}
-          </div>
-        )}
-        <div
-          className={cn(
-            'font-semibold text-white',
-            isMaster
-              ? 'text-3xl leading-tight md:text-5xl md:leading-tight'
-              : 'text-lg md:text-xl',
-          )}
-        >
-          {question.question}
-        </div>
-      </Card>
+      <QuestionCard
+        text={question.question}
+        isMaster={isMaster}
+        revealedTone={wasCorrect ? 'correct' : 'wrong'}
+        explanation={question.explanation}
+        eyebrow={topicDef ? `${topicDef.emoji} ${topicDef.label}` : null}
+      />
 
-      <div className={cn('space-y-2', isMaster && 'md:grid md:grid-cols-2 md:gap-3 md:space-y-0')}>
-        {live.shuffledOptions.map((option, idx) => {
-          const isCorrect = idx === correctIdx
-          const isSelected = idx === selectedIdx
-          return (
-            <div
-              key={idx}
-              className={cn(
-                'flex items-center rounded-xl border',
-                isMaster ? 'gap-4 px-5 py-4' : 'gap-3 px-4 py-3',
-                isCorrect
-                  ? 'border-correct/60 bg-correct/15 text-correct'
-                  : isSelected
-                    ? 'border-wrong/60 bg-wrong/15 text-wrong'
-                    : 'border-white/10 bg-white/[0.02] text-white/60',
-              )}
-            >
-              <span
-                className={cn(
-                  'flex items-center justify-center rounded-full font-mono font-bold',
-                  isMaster ? 'h-11 w-11 text-lg' : 'h-8 w-8 text-sm',
-                  isCorrect
-                    ? 'bg-correct/25'
-                    : isSelected
-                      ? 'bg-wrong/25'
-                      : 'bg-white/10',
-                )}
-              >
-                {String.fromCharCode(65 + idx)}
-              </span>
-              <span
-                className={cn(
-                  'flex-1',
-                  isMaster ? 'text-lg md:text-xl' : 'text-sm md:text-base',
-                )}
-              >
-                {option}
-              </span>
-              {isCorrect && (
-                <span
-                  className={cn(
-                    'uppercase tracking-wider',
-                    isMaster ? 'text-sm font-bold' : 'text-xs',
-                  )}
-                >
-                  richtig
-                </span>
-              )}
-              {isSelected && !isCorrect && (
-                <span
-                  className={cn(
-                    'uppercase tracking-wider',
-                    isMaster ? 'text-sm font-bold' : 'text-xs',
-                  )}
-                >
-                  gewählt
-                </span>
-              )}
-            </div>
-          )
-        })}
-      </div>
-
-      {question.explanation && (
-        <Card
-          className={cn(
-            'text-white/80',
-            isMaster ? 'p-5 text-base md:text-lg' : 'p-3 text-sm',
-          )}
-        >
-          <div
-            className={cn(
-              'mb-1 uppercase tracking-[0.22em] text-ink-muted',
-              'text-xs',
-            )}
-          >
-            Erklärung
-          </div>
-          {question.explanation}
-        </Card>
-      )}
+      <ShowAnswers
+        options={live.shuffledOptions}
+        correctIdx={correctIdx}
+        myPick={selectedIdx ?? undefined}
+        onSelect={() => {}}
+        canClick={false}
+        stage={isMaster}
+      />
 
       <Button
         size="lg"
@@ -1972,29 +1815,15 @@ function SpotlightRoomView({
 
       {/* Frage */}
       {question ? (
-        <Card
-          className={cn(
-            'space-y-3',
-            isMaster ? 'p-8 md:p-12' : 'p-4',
-            live.phase === 'revealed' &&
-              live.primaryOutcome === 'correct' &&
-              'border-correct/40 bg-correct/[0.06]',
-            live.phase === 'revealed' &&
-              live.primaryOutcome === 'wrong' &&
-              'border-wrong/40 bg-wrong/[0.06]',
-          )}
-        >
-          <div
-            className={cn(
-              'font-semibold text-white',
-              isMaster
-                ? 'text-3xl leading-tight md:text-5xl md:leading-tight'
-                : 'text-lg md:text-xl',
-            )}
-          >
-            {question.question}
-          </div>
-        </Card>
+        <QuestionCard
+          text={question.question}
+          isMaster={isMaster}
+          revealedTone={
+            live.phase === 'revealed' ? (live.primaryOutcome === 'correct' ? 'correct' : 'wrong') : null
+          }
+          explanation={question.explanation}
+          eyebrow={topicDef ? `${topicDef.emoji} ${topicDef.label}` : null}
+        />
       ) : (
         <LoadingCard label="Frage wird geladen …" />
       )}
@@ -2062,71 +1891,35 @@ function SpotlightPrimaryPanel({
   shuffledOptions: string[]
   send: (a: GameAction) => void
 }) {
-  // Primär-Phase: Alle sehen die Antwortmöglichkeiten. Der aktive Spieler tippt
-  // auf seinem Gerät — Auswertung automatisch, kein Master nötig. Ein reines
-  // Bühnen-Gerät kann stellvertretend tippen oder eine mündliche Antwort bewerten.
-  const canClick = canDispatch && (isMyTurn || isMaster)
+  // Alle sehen die Optionen, der aktive Spieler tippt; die Bühne kann
+  // stellvertretend tippen oder eine mündliche Antwort bewerten.
   return (
-    <>
-      <Card className={cn('space-y-2', isMaster ? 'p-5' : 'p-3')}>
-        <div className="text-xs uppercase tracking-[0.32em] text-ink-muted">
-          {isMyTurn
-            ? 'Du bist dran — tippe deine Antwort'
-            : isTeamMate
-              ? `${playerName} antwortet — kein Reinreden`
-              : `${playerName} antwortet`}
-        </div>
-      </Card>
-      <div className={cn('space-y-2', isMaster && 'md:grid md:grid-cols-2 md:gap-3 md:space-y-0')}>
-        {shuffledOptions.map((option, idx) => (
-          <button
-            key={idx}
-            type="button"
-            onClick={() => send({ type: 'SPOTLIGHT_PRIMARY_ANSWER', renderedIndex: idx })}
-            disabled={!canClick}
-            className={cn(
-              'flex w-full items-center rounded-xl border text-left transition-all disabled:cursor-default',
-              isMaster ? 'gap-4 px-5 py-4' : 'gap-3 px-4 py-3',
-              canClick
-                ? 'border-brand-pink/40 bg-white/[0.04] text-white hover:border-brand-pink/70 hover:bg-brand-pink/10'
-                : 'border-white/10 bg-white/[0.03] text-white/80',
-            )}
-          >
-            <span
-              className={cn(
-                'flex items-center justify-center rounded-full bg-white/10 font-mono font-bold',
-                isMaster ? 'h-11 w-11 text-lg' : 'h-8 w-8 text-sm',
-              )}
-            >
-              {String.fromCharCode(65 + idx)}
-            </span>
-            <span className={cn('flex-1', isMaster ? 'text-lg md:text-xl' : 'text-sm md:text-base')}>
-              {option}
-            </span>
-          </button>
-        ))}
-      </div>
+    <div className="space-y-3">
+      <ShowStatus tone={isMyTurn ? 'active' : 'neutral'} stage={isMaster}>
+        {isMyTurn
+          ? 'Du bist dran — tippe deine Antwort'
+          : isTeamMate
+            ? `${playerName} antwortet — kein Reinreden`
+            : `${playerName} antwortet`}
+      </ShowStatus>
+      <ShowAnswers
+        options={shuffledOptions}
+        correctIdx={null}
+        onSelect={(idx) => send({ type: 'SPOTLIGHT_PRIMARY_ANSWER', renderedIndex: idx })}
+        canClick={canDispatch && (isMyTurn || isMaster)}
+        stage={isMaster}
+      />
       {isMaster && (
         <div className="grid grid-cols-2 gap-2">
-          <button
-            type="button"
-            onClick={() => send({ type: 'SPOTLIGHT_MARK_PRIMARY', outcome: 'correct' })}
-            disabled={!canDispatch}
-            className="h-12 rounded-xl border border-correct/40 bg-correct/10 text-sm font-semibold text-correct disabled:opacity-40"
-          >
+          <Button variant="secondary" onClick={() => send({ type: 'SPOTLIGHT_MARK_PRIMARY', outcome: 'correct' })} disabled={!canDispatch}>
             Mündlich richtig
-          </button>
-          <button
-            type="button"
-            onClick={() => send({ type: 'SPOTLIGHT_MARK_PRIMARY', outcome: 'wrong' })}
-            disabled={!canDispatch}
-            className="h-12 rounded-xl border border-wrong/40 bg-wrong/10 text-sm font-semibold text-wrong disabled:opacity-40"
-          >
+          </Button>
+          <Button variant="secondary" onClick={() => send({ type: 'SPOTLIGHT_MARK_PRIMARY', outcome: 'wrong' })} disabled={!canDispatch}>
             Mündlich falsch
-          </button>
+          </Button>
         </div>
       )}
-    </>
+    </div>
   )
 }
 
@@ -2143,128 +1936,41 @@ function SpotlightStealPanel({
   shuffledOptions: string[]
   send: (a: GameAction) => void
 }) {
-  const canClick = canDispatch && (isMaster || isOpponent)
   return (
-    <>
-      <Card className={cn('space-y-2', isMaster ? 'p-5' : 'p-3')}>
-        <div className="text-xs uppercase tracking-[0.32em] text-brand-orange-soft">
-          Steal — Gegenteam ist dran (halbe Punkte)
-        </div>
-      </Card>
-      <div className={cn('space-y-2', isMaster && 'md:grid md:grid-cols-2 md:gap-3 md:space-y-0')}>
-        {shuffledOptions.map((option, idx) => (
-          <button
-            key={idx}
-            type="button"
-            onClick={() => send({ type: 'SPOTLIGHT_STEAL_ANSWER', renderedIndex: idx })}
-            disabled={!canClick}
-            className={cn(
-              'flex w-full items-center rounded-xl border text-left transition-all disabled:opacity-40',
-              isMaster ? 'gap-4 px-5 py-4' : 'gap-3 px-4 py-3',
-              canClick
-                ? 'border-brand-orange/40 bg-white/[0.04] text-white hover:border-brand-orange/70 hover:bg-brand-orange/10'
-                : 'border-white/10 bg-white/[0.03] text-white/70',
-            )}
-          >
-            <span
-              className={cn(
-                'flex items-center justify-center rounded-full bg-white/10 font-mono font-bold',
-                isMaster ? 'h-11 w-11 text-lg' : 'h-8 w-8 text-sm',
-              )}
-            >
-              {String.fromCharCode(65 + idx)}
-            </span>
-            <span className={cn('flex-1', isMaster ? 'text-lg md:text-xl' : 'text-sm md:text-base')}>
-              {option}
-            </span>
-          </button>
-        ))}
-      </div>
-    </>
+    <div className="space-y-3">
+      <ShowStatus tone={isOpponent ? 'active' : 'warn'} stage={isMaster}>
+        {isOpponent ? 'Steal! Ihr dürft antworten — halbe Punkte' : 'Falsch — das Gegenteam darf stealen'}
+      </ShowStatus>
+      <ShowAnswers
+        options={shuffledOptions}
+        correctIdx={null}
+        onSelect={(idx) => send({ type: 'SPOTLIGHT_STEAL_ANSWER', renderedIndex: idx })}
+        canClick={canDispatch && (isMaster || isOpponent)}
+        stage={isMaster}
+      />
+    </div>
   )
 }
 
-function SpotlightRevealPanel({
-  isMaster,
-  live,
-}: {
-  isMaster: boolean
-  live: SpotlightLive
-}) {
-  const question = live.activeQuestion!
-  const correctIdx = live.correctRenderedIndex
-  const stealIdx = live.stealRenderedIndex
-  const primaryIdx = live.primaryRenderedIndex ?? null
+function SpotlightRevealPanel({ isMaster, live }: { isMaster: boolean; live: SpotlightLive }) {
+  const wrongPicks: Record<number, string[]> = {}
+  if (live.primaryRenderedIndex != null && live.primaryRenderedIndex !== live.correctRenderedIndex) {
+    wrongPicks[live.primaryRenderedIndex] = ['primary']
+  }
+  if (live.stealRenderedIndex != null && live.stealRenderedIndex !== live.correctRenderedIndex) {
+    wrongPicks[live.stealRenderedIndex] = [...(wrongPicks[live.stealRenderedIndex] ?? []), 'steal']
+  }
   return (
-    <>
-      <div className={cn('space-y-2', isMaster && 'md:grid md:grid-cols-2 md:gap-3 md:space-y-0')}>
-        {live.shuffledOptions.map((option, idx) => {
-          const isCorrect = idx === correctIdx
-          // Falsch getippt: vom Gegner (Steal) oder vom aktiven Spieler.
-          const isSteal = idx === stealIdx || idx === primaryIdx
-          return (
-            <div
-              key={idx}
-              className={cn(
-                'flex items-center rounded-xl border',
-                isMaster ? 'gap-4 px-5 py-4' : 'gap-3 px-4 py-3',
-                isCorrect
-                  ? 'border-correct/60 bg-correct/15 text-correct'
-                  : isSteal
-                    ? 'border-wrong/60 bg-wrong/15 text-wrong'
-                    : 'border-white/10 bg-white/[0.02] text-white/60',
-              )}
-            >
-              <span
-                className={cn(
-                  'flex items-center justify-center rounded-full font-mono font-bold',
-                  isMaster ? 'h-11 w-11 text-lg' : 'h-8 w-8 text-sm',
-                  isCorrect ? 'bg-correct/25' : isSteal ? 'bg-wrong/25' : 'bg-white/10',
-                )}
-              >
-                {String.fromCharCode(65 + idx)}
-              </span>
-              <span
-                className={cn(
-                  'flex-1',
-                  isMaster ? 'text-lg md:text-xl' : 'text-sm md:text-base',
-                )}
-              >
-                {option}
-              </span>
-              {isCorrect && (
-                <span className={cn('uppercase tracking-wider', isMaster ? 'text-sm font-bold' : 'text-xs')}>
-                  richtig
-                </span>
-              )}
-            </div>
-          )
-        })}
-      </div>
-
-      {question.explanation && (
-        <Card
-          className={cn(
-            'text-white/80',
-            isMaster ? 'p-5 text-base md:text-lg' : 'p-3 text-sm',
-          )}
-        >
-          <div
-            className={cn(
-              'mb-1 uppercase tracking-[0.22em] text-ink-muted',
-              'text-xs',
-            )}
-          >
-            Erklärung
-          </div>
-          {question.explanation}
-        </Card>
-      )}
-    </>
+    <ShowAnswers
+      options={live.shuffledOptions}
+      correctIdx={live.correctRenderedIndex}
+      picksByIndex={wrongPicks}
+      onSelect={() => {}}
+      canClick={false}
+      stage={isMaster}
+    />
   )
 }
-
-// ---------- Klick! (Warm-Up-Rätsel) ----------------------------------------
 
 /**
  * Klick! / Around-Corner: fünf Rätsel-Fragen mit stufenweisen Hinweisen.
@@ -2328,24 +2034,11 @@ function AroundCornerRoomView({
       </Card>
 
       {/* Frage */}
-      <Card
-        className={cn(
-          'space-y-3',
-          isMaster ? 'p-8 md:p-12' : 'p-4',
-          live.phase === 'revealed' && 'border-correct/40 bg-correct/[0.05]',
-        )}
-      >
-        <div
-          className={cn(
-            'font-semibold text-white',
-            isMaster
-              ? 'text-3xl leading-tight md:text-5xl md:leading-tight'
-              : 'text-lg md:text-xl',
-          )}
-        >
-          {question.question}
-        </div>
-      </Card>
+      <QuestionCard
+        text={question.question}
+        isMaster={isMaster}
+        revealedTone={live.phase === 'revealed' ? 'correct' : null}
+      />
 
       {/* Hinweise (progressiv) */}
       {revealedHints.length > 0 && (
@@ -2536,58 +2229,13 @@ function FlashRoomView({
 
       {/* Frage — gr\u00f6\u00dfer im Master-Presenter-Mode */}
       {question ? (
-        <Card
-          className={cn(
-            'space-y-3',
-            isMaster ? 'p-8 md:p-12' : 'p-4',
-            live.phase === 'revealed' &&
-              (question.correctAnswer
-                ? 'border-correct/40 bg-correct/[0.05]'
-                : 'border-wrong/40 bg-wrong/[0.05]'),
-          )}
-        >
-          <div
-            className={cn(
-              'text-center font-semibold text-white',
-              isMaster
-                ? 'text-3xl leading-tight md:text-5xl md:leading-tight'
-                : 'text-lg md:text-xl',
-            )}
-          >
-            {question.question}
-          </div>
-          {live.phase === 'revealed' && (
-            <div
-              className={cn(
-                'rounded-lg bg-black/40 text-center',
-                isMaster ? 'p-6' : 'p-3',
-              )}
-            >
-              <div className="text-xs uppercase tracking-[0.32em] text-white/50">
-                Antwort
-              </div>
-              <div
-                className={cn(
-                  'mt-1 font-bold uppercase tracking-wide',
-                  isMaster ? 'text-5xl md:text-7xl' : 'text-2xl',
-                  question.correctAnswer ? 'text-correct' : 'text-wrong',
-                )}
-              >
-                {question.correctAnswer ? 'Stimmt' : 'Falsch'}
-              </div>
-              {question.explanation && (
-                <div
-                  className={cn(
-                    'mt-2 text-white/70',
-                    isMaster ? 'text-base md:text-lg' : 'text-xs',
-                  )}
-                >
-                  {question.explanation}
-                </div>
-              )}
-            </div>
-          )}
-        </Card>
+        <QuestionCard
+          text={question.question}
+          isMaster={isMaster}
+          revealedTone={live.phase === 'revealed' ? 'neutral' : null}
+          explanation={question.explanation}
+          eyebrow={live.phase === 'revealed' ? (question.correctAnswer ? 'Auflösung: Stimmt ✓' : 'Auflösung: Falsch ✗') : 'Wahr oder falsch?'}
+        />
       ) : (
         <LoadingCard label="Keine Frage geladen." />
       )}
@@ -2876,6 +2524,7 @@ function LadderRoomView({
 
       {/* Frage */}
       <QuestionCard
+          explanation={question?.explanation}
         text={question.question}
         isMaster={isMaster}
         revealedTone={
@@ -3079,26 +2728,17 @@ function SprinterRoomView({
             </div>
           )}
         </div>
-        <div className="ml-auto text-right">
-          <div
-            className={cn(
-              'uppercase tracking-[0.22em] text-ink-muted',
-              'text-xs',
-            )}
-          >
-            Verbleibend
-          </div>
-          <div
-            className={cn(
-              'font-mono font-bold tabular-nums',
-              isMaster ? 'text-6xl' : 'text-3xl',
-              remainingSecs <= 10 ? 'text-wrong animate-timer-pulse' : 'text-white',
-            )}
-          >
-            {inRebound && live.sprintStartedAt && live.reboundStartedAt
-              ? `${Math.max(0, Math.floor(live.sprintDurationSeconds - (live.reboundStartedAt - live.sprintStartedAt) / 1000))}s ⏸`
-              : `${Math.max(0, Math.floor(remainingSecs))}s`}
-          </div>
+        <div className="ml-auto">
+          <ShowTimer
+            stage={isMaster}
+            paused={inRebound}
+            critical={!inRebound && remainingSecs <= 10}
+            seconds={
+              inRebound && live.sprintStartedAt && live.reboundStartedAt
+                ? live.sprintDurationSeconds - (live.reboundStartedAt - live.sprintStartedAt) / 1000
+                : remainingSecs
+            }
+          />
         </div>
         <div className="w-full">
           <div className="flex flex-wrap gap-2">
@@ -3114,7 +2754,8 @@ function SprinterRoomView({
         </div>
       </Card>
 
-      <QuestionCard text={question.question} isMaster={isMaster} revealedTone={null} />
+      <QuestionCard
+          explanation={question?.explanation} text={question.question} isMaster={isMaster} revealedTone={null} />
 
       {live.phase === 'rebound-buzz' && (
         <Card className={cn('space-y-2', isMaster ? 'p-5' : 'p-4')}>
@@ -3127,22 +2768,13 @@ function SprinterRoomView({
               // Spieler sehen nur den Buzzer ihres eigenen Teams.
               .filter((team) => isMaster || team.id === myPlayer?.teamId)
               .map((team) => (
-                <button
+                <BuzzerButton
                   key={team.id}
-                  type="button"
-                  onClick={() => send({ type: 'SPRINTER_REBOUND_BUZZ', teamId: team.id })}
+                  team={team}
+                  onBuzz={() => send({ type: 'SPRINTER_REBOUND_BUZZ', teamId: team.id })}
                   disabled={!canDispatch}
-                  className={cn(
-                    'rounded-xl border py-3 text-center font-bold text-white transition-all disabled:opacity-40',
-                    isMaster ? 'h-20 text-2xl md:text-3xl' : 'h-14 text-base',
-                  )}
-                  style={{
-                    borderColor: getTeamColorHex(team.color),
-                    background: `${getTeamColorHex(team.color)}22`,
-                  }}
-                >
-                  {team.name} buzzt
-                </button>
+                  stage={isMaster}
+                />
               ))}
           </div>
           {(isMaster || isHost || isMyTeam) && (
@@ -3372,6 +3004,7 @@ function EliminationRoomView({
       )}
 
       <QuestionCard
+          explanation={question?.explanation}
         text={question.question}
         isMaster={isMaster}
         revealedTone={
@@ -3535,6 +3168,7 @@ function BoardRoomView({
       {live.phase !== 'pick-cell' && live.activeQuestion && (
         <>
           <QuestionCard
+          explanation={live.activeQuestion?.explanation}
             text={live.activeQuestion.question}
             isMaster={isMaster}
             revealedTone={
@@ -3561,22 +3195,13 @@ function BoardRoomView({
                   // Spieler sehen nur den Buzzer ihres eigenen Teams.
                   .filter((team) => isMaster || team.id === myPlayer?.teamId)
                   .map((team) => (
-                  <button
+                  <BuzzerButton
                     key={team.id}
-                    type="button"
-                    onClick={() => send({ type: 'BOARD_BUZZER', teamId: team.id })}
+                    team={team}
+                    onBuzz={() => send({ type: 'BOARD_BUZZER', teamId: team.id })}
                     disabled={!canDispatch}
-                    className={cn(
-                      'rounded-xl border py-3 text-center font-bold text-white transition-all disabled:opacity-40',
-                      isMaster ? 'h-20 text-2xl md:text-3xl' : 'h-14 text-base',
-                    )}
-                    style={{
-                      borderColor: getTeamColorHex(team.color),
-                      background: `${getTeamColorHex(team.color)}22`,
-                    }}
-                  >
-                    {team.name} buzzt
-                  </button>
+                    stage={isMaster}
+                  />
                 ))}
               </div>
             </Card>
@@ -3838,6 +3463,7 @@ function DuelRoomView({
       {live.phase !== 'setup-duel' && live.activeQuestion && (
         <>
           <QuestionCard
+          explanation={live.activeQuestion?.explanation}
             text={live.activeQuestion.question}
             isMaster={isMaster}
             revealedTone={
@@ -3867,22 +3493,13 @@ function DuelRoomView({
                   const team = state.round?.teams.find((t) => t.id === teamId)
                   if (!team) return null
                   return (
-                    <button
+                    <BuzzerButton
                       key={teamId}
-                      type="button"
-                      onClick={() => send({ type: 'DUEL_BUZZER', teamId })}
+                      team={team}
+                      onBuzz={() => send({ type: 'DUEL_BUZZER', teamId: teamId })}
                       disabled={!canDispatch}
-                      className={cn(
-                        'rounded-xl border py-3 text-center font-bold text-white transition-all disabled:opacity-40',
-                        isMaster ? 'h-20 text-2xl md:text-3xl' : 'h-14 text-base',
-                      )}
-                      style={{
-                        borderColor: getTeamColorHex(team.color),
-                        background: `${getTeamColorHex(team.color)}22`,
-                      }}
-                    >
-                      {team.name} buzzt
-                    </button>
+                      stage={isMaster}
+                    />
                   )
                 })}
               </div>
@@ -4120,24 +3737,8 @@ function ExpertsRoomView({
             </div>
           </div>
           {live.phase === 'primary' && (
-            <div className="ml-auto text-right">
-              <div
-                className={cn(
-                  'uppercase tracking-[0.22em] text-ink-muted',
-                  'text-xs',
-                )}
-              >
-                Timer
-              </div>
-              <div
-                className={cn(
-                  'font-mono font-bold tabular-nums',
-                  isMaster ? 'text-5xl md:text-6xl' : 'text-2xl',
-                  remainingSecs <= 5 ? 'text-wrong animate-timer-pulse' : 'text-white',
-                )}
-              >
-                {Math.max(0, Math.floor(remainingSecs))}s
-              </div>
+            <div className="ml-auto">
+              <ShowTimer seconds={remainingSecs} stage={isMaster} />
             </div>
           )}
           <div className="w-full flex flex-wrap gap-2">
@@ -4186,6 +3787,7 @@ function ExpertsRoomView({
 
       {question && (
         <QuestionCard
+          explanation={question?.explanation}
           text={question.question}
           isMaster={isMaster}
           revealedTone={
@@ -4280,14 +3882,6 @@ function ExpertsRoomView({
             isMaster={isMaster}
             highlightMyPick={live.primaryRenderedIndex ?? undefined}
           />
-          {question?.explanation && (
-            <Card className={cn('text-white/80', isMaster ? 'p-5 text-base md:text-lg' : 'p-3 text-sm')}>
-              <div className={cn('mb-1 uppercase tracking-[0.22em] text-ink-muted', 'text-xs')}>
-                Erklärung
-              </div>
-              {question.explanation}
-            </Card>
-          )}
           <Button
             size="lg"
             variant="primary"
@@ -4315,36 +3909,23 @@ function QuestionCard({
   text,
   isMaster,
   revealedTone,
+  explanation,
+  eyebrow,
 }: {
   text: string
   isMaster: boolean
   revealedTone: 'correct' | 'wrong' | 'neutral' | null
+  explanation?: string | null
+  eyebrow?: string | null
 }) {
-  // `key` an revealedTone koppelt die Component-Instanz an den Tone-Wechsel:
-  // sobald sich `correct` / `wrong` ändert, wird der Card neu gemountet und
-  // die CSS-Animation läuft frisch. Ohne key würde ein Wiederholungs-Reveal
-  // die Animation nicht neu triggern.
   return (
-    <Card
-      key={revealedTone ?? 'neutral'}
-      className={cn(
-        'space-y-3',
-        isMaster ? 'p-8 md:p-12' : 'p-4',
-        revealedTone === 'correct' && 'border-correct/40 bg-correct/[0.06] animate-reveal-correct',
-        revealedTone === 'wrong' && 'border-wrong/40 bg-wrong/[0.06] animate-reveal-wrong',
-      )}
-    >
-      <div
-        className={cn(
-          'font-semibold text-white',
-          isMaster
-            ? 'text-3xl leading-tight md:text-5xl md:leading-tight'
-            : 'text-lg md:text-xl',
-        )}
-      >
-        {text}
-      </div>
-    </Card>
+    <ShowQuestion
+      text={text}
+      stage={isMaster}
+      tone={revealedTone}
+      explanation={explanation}
+      eyebrow={eyebrow ?? undefined}
+    />
   )
 }
 
@@ -4361,6 +3942,7 @@ function OptionsGrid({
   canClick,
   isMaster,
   highlightMyPick,
+  disabledIdx,
 }: {
   options: string[]
   correctIdx: number | null
@@ -4370,74 +3952,23 @@ function OptionsGrid({
   canClick: boolean
   isMaster: boolean
   highlightMyPick?: number
+  disabledIdx?: number | null
 }) {
   return (
-    <div className={cn('space-y-2', isMaster && 'md:grid md:grid-cols-2 md:gap-3 md:space-y-0')}>
-      {options.map((option, idx) => {
-        const isCorrect = correctIdx !== null && idx === correctIdx
-        const wrongPicks = selectedIdxByTeam[idx]?.filter(() => idx !== correctIdx) ?? []
-        const isMine = highlightMyPick === idx
-        return (
-          <button
-            key={idx}
-            type="button"
-            onClick={() => canClick && onSelect(idx)}
-            disabled={!canClick}
-            className={cn(
-              'flex w-full items-center rounded-xl border text-left transition-all disabled:cursor-default disabled:opacity-100',
-              isMaster ? 'gap-4 px-5 py-4' : 'gap-3 px-4 py-3',
-              isCorrect
-                ? 'border-correct/60 bg-correct/15 text-correct'
-                : wrongPicks.length > 0
-                  ? 'border-wrong/60 bg-wrong/15 text-wrong'
-                  : isMine
-                    ? 'border-brand-purple/60 bg-brand-purple/15 text-brand-purple-soft'
-                    : canClick
-                      ? 'border-brand-purple/40 bg-white/[0.04] text-white hover:border-brand-purple/70 hover:bg-brand-purple/10'
-                      : 'border-white/10 bg-white/[0.02] text-white/70',
-            )}
-          >
-            <span
-              className={cn(
-                'flex items-center justify-center rounded-full bg-white/10 font-mono font-bold',
-                isMaster ? 'h-11 w-11 text-lg' : 'h-8 w-8 text-sm',
-                isCorrect && 'bg-correct/25',
-                wrongPicks.length > 0 && !isCorrect && 'bg-wrong/25',
-              )}
-            >
-              {String.fromCharCode(65 + idx)}
-            </span>
-            <span className={cn('flex-1', isMaster ? 'text-lg md:text-xl' : 'text-sm md:text-base')}>
-              {option}
-            </span>
-            {selectedIdxByTeam[idx] && selectedIdxByTeam[idx].length > 0 && (
-              <span className="flex gap-1">
-                {selectedIdxByTeam[idx].map((teamId) => {
-                  const team = teams.find((t) => t.id === teamId)
-                  if (!team) return null
-                  return (
-                    <span
-                      key={teamId}
-                      className="h-2 w-2 rounded-full"
-                      style={{ background: getTeamColorHex(team.color) }}
-                    />
-                  )
-                })}
-              </span>
-            )}
-          </button>
-        )
-      })}
-    </div>
+    <ShowAnswers
+      options={options}
+      correctIdx={correctIdx}
+      picksByIndex={selectedIdxByTeam}
+      teams={teams}
+      onSelect={onSelect}
+      canClick={canClick}
+      stage={isMaster}
+      myPick={highlightMyPick}
+      disabledIdx={disabledIdx}
+    />
   )
 }
 
-/**
- * Trackt Änderungen an `score` und meldet für ~1.4s den positiven Delta.
- * Wird für die `+N`-Toast-Animation am TeamScoreChip verwendet. Negative
- * Deltas werden bewusst ignoriert — im Party-Kontext ist ein Punkt-Abzug
- * eher selten und würde sonst schnell irritieren.
- */
 function useScoreDelta(score: number): number | null {
   const previousRef = useRef(score)
   const [delta, setDelta] = useState<number | null>(null)
