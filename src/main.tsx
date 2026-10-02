@@ -2,6 +2,9 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { loadBundledCatalog } from '@quizapp/shared'
 import App from './App'
+// Fonts selbst gehostet (kein Google-Request, kein Render-Blocking, DSGVO).
+import '@fontsource-variable/inter/wght.css'
+import '@fontsource-variable/bricolage-grotesque/opsz.css'
 import './index.css'
 
 createRoot(document.getElementById('root')!).render(

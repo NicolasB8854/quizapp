@@ -60,8 +60,8 @@ export default {
         // Display: Bricolage Grotesque — moderne, geometrische Grotesk mit Show-Charakter.
         // Kommt dem Neue-Haas-Grotesk-Look der Mockups deutlich näher als Space Grotesk.
         // Body: Inter für UI, Navigation, Fragen und Meta.
-        display: ['"Bricolage Grotesque"', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
-        sans:    ['Inter', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'sans-serif'],
+        display: ['"Bricolage Grotesque Variable"', '"Inter Variable"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        sans:    ['"Inter Variable"', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'sans-serif'],
       },
       boxShadow: {
         // Sanfte Glows für Fokus/Auswahl (siehe Guardrails: „Glow nur bei Fokus").

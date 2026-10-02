@@ -80,7 +80,8 @@ function PhotoBackdrop({ variant }: { variant: LayoutVariant }) {
       />
     )
   }
-  const src = variant === 'stage' ? '/img/stage-bg.jpg' : '/img/home-bg.jpg'
+  const base = variant === 'stage' ? '/img/stage-bg' : '/img/home-bg'
+  const src = `${base}.jpg`
   const overlay =
     variant === 'stage'
       ? // Bühne (Session V): sehr leichtes Overlay, damit das Foto durchleuchtet.
@@ -93,6 +94,12 @@ function PhotoBackdrop({ variant }: { variant: LayoutVariant }) {
     <div aria-hidden className="fixed inset-0 z-0 pointer-events-none">
       <img
         src={src}
+        // Handys laden die 900-px-Variante (~50 kB statt ~140 kB).
+        srcSet={`${base}-900.jpg 900w, ${src} 1672w`}
+        // Abgedunkelter Hintergrund: auf Handys reicht die halbe Auflösung,
+        // sonst würde ein 3x-Display wieder das große Bild ziehen.
+        sizes="(max-width: 768px) 50vw, 100vw"
+        decoding="async"
         alt=""
         className="h-full w-full object-cover"
         // Stage-Foto: mehr Sättigung damit die Bühnen-Neons zünden.
