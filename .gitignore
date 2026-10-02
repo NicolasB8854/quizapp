@@ -62,3 +62,4 @@ crash.log
 crash.*.log
 .terraformrc
 terraform.rc
+.audit-work/

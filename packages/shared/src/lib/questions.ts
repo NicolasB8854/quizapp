@@ -168,6 +168,39 @@ export function pickAnyMultipleChoice(
   )
 }
 
+/**
+ * Zieht eine ungenutzte Multiple-Choice-Frage mit **exakt** der Ziel-Schwierigkeit.
+ *
+ * Für Modi mit fester Schwierigkeitskurve (Elimination, Punkte-Leiter, Fachrunde).
+ * Anders als `pickByDifficulty` (weiche Gewichtung nach Spieler-Level) ist das hier
+ * eine harte Vorgabe. Fallback-Kaskade, falls die Stufe erschöpft ist:
+ *   1. exakte Stufe, 2. ±1 (bevorzugt die leichtere), 3. ±2, …, 4. beliebig.
+ * Verbrauchte Fragen werden erst gezogen, wenn der gesamte Pool leer ist.
+ * Optional auf ein Topic beschränkt.
+ */
+export function pickByTargetDifficulty(
+  usedIds: ReadonlySet<string>,
+  target: Difficulty,
+  topic?: Topic,
+): MultipleChoiceQuestion | null {
+  const pool = topic ? getMultipleChoiceByTopic(topic) : getAllMultipleChoice()
+  if (pool.length === 0) return null
+  const fresh = pool.filter((q) => !usedIds.has(q.id))
+  const candidates = fresh.length > 0 ? fresh : pool
+  for (let dist = 0; dist <= 4; dist++) {
+    for (const d of dist === 0 ? [target] : [target - dist, target + dist]) {
+      const bucket = candidates.filter((q) => q.difficulty === d)
+      if (bucket.length > 0) return bucket[Math.floor(Math.random() * bucket.length)]
+    }
+  }
+  return candidates[Math.floor(Math.random() * candidates.length)]
+}
+
+/** Begrenzt eine Zahl auf die Difficulty-Skala 1-5. */
+export function clampDifficulty(n: number): Difficulty {
+  return Math.min(5, Math.max(1, Math.round(n))) as Difficulty
+}
+
 // ---------- Interest-Tag-Bonus (Session AB) ----------------------------------
 
 /**

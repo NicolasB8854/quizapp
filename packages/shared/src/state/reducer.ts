@@ -18,6 +18,7 @@
 
 import type {
   Avatar,
+  Difficulty,
   GameModeId,
   GameResult,
   MultipleChoiceQuestion,
@@ -35,7 +36,9 @@ import { MODES, MODES_BY_ID } from '../data/modes'
 import { TOPICS } from '../data/topics'
 import {
   getMultipleChoiceByTopic,
+  clampDifficulty,
   pickAnyMultipleChoice,
+  pickByTargetDifficulty,
   pickQuestion,
   pickTrueFalse,
   pickWarmupRiddle,
@@ -770,6 +773,15 @@ function buildEliminationOrder(
   return order
 }
 
+/**
+ * Elimination-Kurve: jede volle Runde durch die Startaufstellung hebt die
+ * Schwierigkeit um eine Stufe (Runde 1 → 1, Runde 2 → 2, … ab Runde 5 → 5).
+ * So bekommt innerhalb einer Runde jeder Spieler dieselbe Stufe.
+ */
+export function eliminationDifficulty(askedCount: number, playerCount: number): Difficulty {
+  return clampDifficulty(1 + Math.floor(askedCount / Math.max(1, playerCount)))
+}
+
 function initElimination(teams: Team[], players: readonly Player[], deps: ReducerDeps): EliminationLive {
   const scores = Object.fromEntries(teams.map((t) => [t.id, 0]))
   const playerOrder = buildEliminationOrder(teams, players)
@@ -796,7 +808,7 @@ function initElimination(teams: Team[], players: readonly Player[], deps: Reduce
   const firstPlayerId = playerOrder[0]
   const excluded = new Set<string>()
   for (const id of deps.getAskedQuestionIds()) excluded.add(id)
-  const question = pickAnyMultipleChoice(excluded)
+  const question = pickByTargetDifficulty(excluded, eliminationDifficulty(0, playerOrder.length))
   if (!question) {
     return {
       kind: 'elimination',
@@ -994,15 +1006,14 @@ const LADDER_VALUES = [200, 500, 1000, 2500, 5000] as const
  * Difficulty-Präferenz pro Ladder-Stufe. Frühe Fragen leicht, spätere schwer.
  * Nutzt DIFFICULTY_WEIGHTS aus Session H über `pickAnyMultipleChoice(_, level)`.
  */
-/** Level pro Ladder-Stufe (Session X: numerisch, 2=bisschen, 3=gut, 5=nerd). */
-const LADDER_LEVELS: PlayerInterest['level'][] = [2, 3, 3, 5, 5]
+/** Feste Schwierigkeit pro Ladder-Stufe: 1 → 5, wie beim Millionär. */
+export const LADDER_DIFFICULTIES: readonly Difficulty[] = [1, 2, 3, 4, 5]
 
 function pickLadderQuestion(
   usedIds: Set<string>,
   index: number,
 ): MultipleChoiceQuestion | null {
-  const level = LADDER_LEVELS[index] ?? 3
-  return pickAnyMultipleChoice(usedIds, level)
+  return pickByTargetDifficulty(usedIds, LADDER_DIFFICULTIES[index] ?? 3)
 }
 
 function initPointsLadder(teams: Team[], deps: ReducerDeps): PointsLadderLive {
@@ -2197,7 +2208,10 @@ export function createReducer(deps: ReducerDeps) {
       // Nächste Frage ziehen.
       const excluded = new Set(usedQuestionIds)
       for (const id of deps.getAskedQuestionIds()) excluded.add(id)
-      const nextQuestion = pickAnyMultipleChoice(excluded)
+      const nextQuestion = pickByTargetDifficulty(
+        excluded,
+        eliminationDifficulty(usedQuestionIds.length, live.playerOrder.length),
+      )
       if (!nextQuestion) {
         // Kein MC mehr → Modus mit aktuellem Stand beenden.
         const winnerTeamId = remainingTeams.size === 1 ? [...remainingTeams][0] : null
