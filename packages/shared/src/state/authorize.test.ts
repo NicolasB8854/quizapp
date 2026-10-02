@@ -72,4 +72,12 @@ describe('authorizeAction', () => {
     expect(authorizeAction(rebound, { type: 'SPRINTER_REBOUND_ANSWER', renderedIndex: 0 }, { playerId: 'p2' }).ok).toBe(true)
     expect(authorizeAction(rebound, { type: 'SPRINTER_REBOUND_ANSWER', renderedIndex: 0 }, { playerId: 'p1' }).ok).toBe(false)
   })
+
+  it('Profilangaben nur für den eigenen Spieler', () => {
+    const lobby = stateWith({ kind: 'flash' })
+    const avatar = { colorHex: '#fff', photoDataUrl: null }
+    expect(authorizeAction(lobby, { type: 'SET_PLAYER_AVATAR', playerId: 'p1', avatar }, { playerId: 'p1' }).ok).toBe(true)
+    expect(authorizeAction(lobby, { type: 'SET_PLAYER_AVATAR', playerId: 'p2', avatar }, { playerId: 'p1' }).ok).toBe(false)
+    expect(authorizeAction(lobby, { type: 'SET_PLAYER_NAME', playerId: 'p2', name: 'x' }, { playerId: null }).ok).toBe(true)
+  })
 })

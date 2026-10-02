@@ -20,6 +20,11 @@ export interface SoloStats {
   lastPlayedDay: string | null
   /** Aufeinanderfolgende Tage mit mindestens einer Runde. */
   streakDays: number
+  /** Gespielte / gewonnene Spieleabende auf diesem Gerät. */
+  nightsPlayed: number
+  nightsWon: number
+  /** Schlüssel bereits gezählter Spieleabende (verhindert Doppelzählung bei Reconnect). */
+  countedNights: string[]
 }
 
 export const EMPTY_STATS: SoloStats = {
@@ -29,6 +34,9 @@ export const EMPTY_STATS: SoloStats = {
   perTopic: {},
   lastPlayedDay: null,
   streakDays: 0,
+  nightsPlayed: 0,
+  nightsWon: 0,
+  countedNights: [],
 }
 
 export function readSoloStats(): SoloStats {
@@ -36,9 +44,22 @@ export function readSoloStats(): SoloStats {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return { ...EMPTY_STATS, perTopic: {} }
     const parsed = JSON.parse(raw) as Partial<SoloStats>
-    return { ...EMPTY_STATS, ...parsed, perTopic: { ...(parsed.perTopic ?? {}) } }
+    return {
+      ...EMPTY_STATS,
+      ...parsed,
+      perTopic: { ...(parsed.perTopic ?? {}) },
+      countedNights: [...(parsed.countedNights ?? [])],
+    }
   } catch {
     return { ...EMPTY_STATS, perTopic: {} }
+  }
+}
+
+function writeStats(stats: SoloStats): void {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(stats))
+  } catch {
+    // Silent.
   }
 }
 
@@ -67,6 +88,7 @@ export function applySoloRun(
         ? stats.streakDays + 1
         : 1
   return {
+    ...stats,
     runs: stats.runs + 1,
     bestScore: Math.max(stats.bestScore, score),
     totalScore: stats.totalScore + score,
@@ -81,10 +103,41 @@ export function saveSoloRun(
   score: number,
 ): SoloStats {
   const next = applySoloRun(readSoloStats(), answers, score)
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
-  } catch {
-    // Silent — Solo bleibt spielbar.
+  writeStats(next)
+  return next
+}
+
+/** Spieleabend einrechnen (pure). Gleicher `key` zählt nur einmal. */
+export function applyNight(stats: SoloStats, key: string, won: boolean, now: Date = new Date()): SoloStats {
+  if (stats.countedNights.includes(key)) return stats
+  const today = dayString(now)
+  const yesterday = dayString(new Date(now.getTime() - 86_400_000))
+  return {
+    ...stats,
+    nightsPlayed: stats.nightsPlayed + 1,
+    nightsWon: stats.nightsWon + (won ? 1 : 0),
+    countedNights: [...stats.countedNights, key].slice(-50),
+    lastPlayedDay: today,
+    streakDays:
+      stats.lastPlayedDay === today ? stats.streakDays : stats.lastPlayedDay === yesterday ? stats.streakDays + 1 : 1,
   }
+}
+
+export function saveNight(key: string, won: boolean): SoloStats {
+  const next = applyNight(readSoloStats(), key, won)
+  writeStats(next)
+  return next
+}
+
+/** Antworten aus einem Spieleabend ins Themen-Profil einrechnen. */
+export function saveNightAnswers(answers: ReadonlyArray<{ topic: Topic; correct: boolean }>): SoloStats {
+  const current = readSoloStats()
+  const perTopic: SoloStats['perTopic'] = { ...current.perTopic }
+  for (const a of answers) {
+    const prev = perTopic[a.topic] ?? { answered: 0, correct: 0 }
+    perTopic[a.topic] = { answered: prev.answered + 1, correct: prev.correct + (a.correct ? 1 : 0) }
+  }
+  const next = { ...current, perTopic }
+  writeStats(next)
   return next
 }

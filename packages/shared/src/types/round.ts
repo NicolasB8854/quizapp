@@ -103,6 +103,10 @@ export interface PlayerInterest {
 export interface Avatar {
   colorHex: string
   photoDataUrl: string | null
+  /** Optionales Emoji als Avatar-Motiv (wenn kein Foto gesetzt ist). */
+  emoji?: string | null
+  /** Angezeigter Titel aus der Geräte-Statistik, z. B. „Chemie-Profi". */
+  title?: string | null
 }
 
 /**

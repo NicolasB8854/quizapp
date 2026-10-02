@@ -62,6 +62,7 @@ import { PlayerTeamMatesPanel } from '@/components/PlayerTeamMatesPanel'
 import { HostActionBar } from '@/components/HostActionBar'
 import { findMatchWinner, WinnerHero } from '@/components/WinnerHero'
 import { useRoomSync } from '@/hooks/useRoomSync'
+import { useDeviceProfileSync } from '@/hooks/useDeviceProfileSync'
 import { useSoundEnabled } from '@/hooks/useSoundEnabled'
 import { playSound } from '@/lib/audio'
 import { readRoomIdentity, saveRoomIdentity } from '@/lib/roomIdentity'
@@ -148,6 +149,9 @@ export default function RoomLobbyPage() {
     ? room.state?.round?.teams.find((t) => t.id === myPlayer.teamId) ?? null
     : null
   const myTeamColor = myTeam ? getTeamColorHex(myTeam.color) : null
+
+  // Geräte-Profil: Avatar/Titel übernehmen, eigene Antworten + Abende zählen.
+  useDeviceProfileSync({ state: room.state ?? null, myPlayer, roomCode, canDispatch, send })
 
   // ---- Confetti-Feedback -----------------------------------------------
   // Kleiner Burst bei jedem Score-Anstieg im Playing (Team-Farbe der Punkte-
@@ -1088,8 +1092,14 @@ function RosterPlayerRow({ player, isMe }: { player: Player; isMe: boolean }) {
           isMe ? 'font-semibold text-white' : 'text-white/85',
         )}
       >
+        {player.avatar.emoji ? `${player.avatar.emoji} ` : ''}
         {player.name || 'Namenlos'}
       </span>
+      {player.avatar.title && (
+        <span className="rounded-full bg-amber-300/15 px-2 py-0.5 text-[10px] font-semibold text-amber-200">
+          {player.avatar.title}
+        </span>
+      )}
       {isMe && (
         <span className="text-[9px] uppercase tracking-[0.22em] text-brand-purple-soft">
           Du

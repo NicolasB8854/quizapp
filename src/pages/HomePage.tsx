@@ -10,9 +10,13 @@
  */
 import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { Play, User, LogIn, Monitor, Smartphone, LayoutGrid, ArrowRight } from 'lucide-react'
+import { Play, User, LogIn, Monitor, Smartphone, LayoutGrid, ArrowRight, Crown } from 'lucide-react'
 import { ScreenLayout } from '@/components/ScreenLayout'
 import { Card } from '@/components/Card'
+import { AvatarBadge } from '@/components/AvatarBadge'
+import { readMyProfile } from '@/lib/myProfile'
+import { readSoloStats } from '@/lib/soloStats'
+import { primaryTitle } from '@/lib/titles'
 import { cn } from '@/lib/classnames'
 
 export default function HomePage() {
@@ -20,6 +24,8 @@ export default function HomePage() {
   const { hash } = useLocation()
   const [code, setCode] = useState('')
   const cleanCode = code.trim().toUpperCase()
+  const [profile] = useState(() => readMyProfile())
+  const [title] = useState(() => primaryTitle(readSoloStats()))
 
   useEffect(() => {
     if (hash) document.getElementById(hash.slice(1))?.scrollIntoView({ behavior: 'smooth' })
@@ -81,6 +87,29 @@ export default function HomePage() {
             <ArrowRight className="h-5 w-5 opacity-70 transition-transform group-hover:translate-x-0.5" />
           </Link>
         </section>
+
+        {/* PROFIL */}
+        <Link
+          to="/profil"
+          className="flex items-center gap-3 rounded-2xl border border-white/10 bg-navy-900/70 p-3 backdrop-blur transition-colors hover:border-white/25"
+        >
+          <AvatarBadge avatar={profile.avatar} size="lg" name={profile.name} />
+          <span className="min-w-0 flex-1">
+            <span className="block truncate font-semibold text-white">
+              {profile.name.trim() || 'Profil anlegen'}
+            </span>
+            <span className="block text-xs text-ink-muted">
+              {title ? (
+                <span className="inline-flex items-center gap-1 text-amber-200">
+                  <Crown className="h-3 w-3" fill="currentColor" aria-hidden /> {title}
+                </span>
+              ) : (
+                'Avatar, Titel & Statistik'
+              )}
+            </span>
+          </span>
+          <ArrowRight className="h-4 w-4 text-ink-muted" />
+        </Link>
 
         {/* RAUM BEITRETEN */}
         <Card className="p-4">

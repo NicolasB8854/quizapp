@@ -22,6 +22,7 @@ import { Button } from '@/components/Button'
 import { Card } from '@/components/Card'
 import { AnswerOption, type AnswerStatus } from '@/components/AnswerOption'
 import { readSoloStats, saveSoloRun, type SoloStats } from '@/lib/soloStats'
+import { primaryTitle } from '@/lib/titles'
 import { cn } from '@/lib/classnames'
 
 const SEEN_KEY = 'quizapp:soloSeen'
@@ -342,6 +343,11 @@ function ResultView({
         <div className="text-sm text-ink-muted">
           {correct} von {answers.length} richtig · Bestwert {stats.bestScore}
         </div>
+        {primaryTitle(stats) && (
+          <Link to="/profil" className="inline-flex items-center gap-1 rounded-full bg-amber-300/15 px-3 py-1 text-sm font-semibold text-amber-200">
+            <Crown className="h-3.5 w-3.5" fill="currentColor" aria-hidden /> {primaryTitle(stats)}
+          </Link>
+        )}
       </Card>
       <Card className="space-y-2 p-4">
         {answers.map((a, i) => (

@@ -100,7 +100,9 @@ export function AvatarBadge({
         boxShadow: shadow,
       }}
     >
-      {initials ? (
+      {avatar.emoji ? (
+        <span aria-hidden className="font-sans">{avatar.emoji}</span>
+      ) : initials ? (
         <span aria-hidden>{initials}</span>
       ) : (
         <User className={cn(ICON_SIZE[size], 'text-ink/70')} aria-hidden />

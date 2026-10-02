@@ -71,6 +71,12 @@ export function authorizeAction(
         ? OK
         : { ok: false, reason: 'Dein Team ist gerade nicht dran' }
     }
+    case 'SET_PLAYER_AVATAR':
+    case 'SET_PLAYER_NAME':
+    case 'SET_PLAYER_INTERESTS':
+    case 'SET_PLAYER_INTEREST_TAGS':
+      // Profilangaben pflegt jede:r nur für sich selbst.
+      return action.playerId === me.id ? OK : { ok: false, reason: 'Nur das eigene Profil ist änderbar' }
     case 'SPRINTER_ANSWER':
     case 'SPRINTER_SKIP':
     case 'SPRINTER_REBOUND_ANSWER': {

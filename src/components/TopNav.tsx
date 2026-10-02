@@ -21,6 +21,7 @@ const NAV_ITEMS = [
   { label: 'Start',            to: '/' },
   { label: 'Spielmodi',        to: '/modi' },
   { label: 'Solo',             to: '/solo' },
+  { label: 'Profil',           to: '/profil' },
   { label: 'So funktioniert\u2019s', to: '/#so-gehts' },
 ]
 
