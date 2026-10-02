@@ -191,7 +191,7 @@ function RoomCodeHero({ code, compact }: RoomCodeHeroProps) {
     return (
       <div className="flex justify-center">
         <div className="inline-flex items-center gap-3 rounded-full border border-brand-purple/50 bg-navy-900/70 px-4 py-1.5 animate-breathe">
-          <div className="text-[10px] uppercase tracking-[0.22em] text-brand-purple-soft">
+          <div className="text-xs uppercase tracking-[0.22em] text-brand-purple-soft">
             Room Code
           </div>
           <div className="font-display font-extrabold text-white text-xl md:text-2xl tabular-nums text-neon-purple tracking-wide">
@@ -268,7 +268,7 @@ function LobbyStepIndicator({ step, className }: LobbyStepIndicatorProps) {
                 </span>
                 <span
                   className={cn(
-                    'text-[11px] md:text-xs uppercase tracking-[0.22em]',
+                    'text-xs md:text-xs uppercase tracking-[0.22em]',
                     active ? 'text-ink font-semibold' : 'text-ink-muted',
                   )}
                 >
@@ -555,7 +555,7 @@ function RosterPlayerRow({ player, placeholderIndex, dispatch }: RosterPlayerRow
           )
         })}
       </div>
-      <div className="mt-2 text-[10px] uppercase tracking-[0.22em] text-ink-faint">
+      <div className="mt-2 text-xs uppercase tracking-[0.22em] text-ink-faint">
         Tippen zyklt: aus → bisschen → gut → nerd → aus.
       </div>
 
@@ -567,7 +567,7 @@ function RosterPlayerRow({ player, placeholderIndex, dispatch }: RosterPlayerRow
             const topicDef = TOPICS_BY_ID[i.topic]
             const tags = i.tags ?? []
             return (
-              <div key={i.topic} className="flex items-center gap-2 flex-wrap text-[11px]">
+              <div key={i.topic} className="flex items-center gap-2 flex-wrap text-xs">
                 <span aria-hidden>{topicDef?.emoji}</span>
                 <span className="text-ink-muted min-w-[70px]">{topicDef?.label}</span>
                 {tags.length > 0 ? (
@@ -730,7 +730,7 @@ function AssignSection({ round, dispatch }: AssignSectionProps) {
         })}
       </div>
 
-      <p className="mt-4 text-center text-[11px] uppercase tracking-[0.22em] text-ink-faint">
+      <p className="mt-4 text-center text-xs uppercase tracking-[0.22em] text-ink-faint">
         Tipp: Doppelklick auf einen Spieler im Wartebereich als Touch-Alternative
       </p>
     </section>
@@ -773,7 +773,7 @@ function PoolDropZone({ players, onDropPlayer, children }: PoolDropZoneProps) {
     >
       <div className="flex items-center justify-between mb-3">
         <div className="eyebrow">Wartebereich</div>
-        <div className="text-[11px] text-ink-muted tabular-nums">
+        <div className="text-xs text-ink-muted tabular-nums">
           {players.length} {players.length === 1 ? 'Spieler' : 'Spieler'} übrig
         </div>
       </div>
@@ -836,7 +836,7 @@ function TeamAssignSlot({ team, players, onDropPlayer, onSendToPool }: TeamAssig
           <div className="eyebrow" style={{ color: hex }}>
             {team.name}
           </div>
-          <div className="text-[11px] text-ink-muted tabular-nums">
+          <div className="text-xs text-ink-muted tabular-nums">
             {players.length}/4 Spieler
           </div>
         </div>
@@ -911,7 +911,7 @@ function DraggablePlayerCard({
       <AvatarBadge avatar={player.avatar} size="sm" teamHex={teamHex} name={player.name} />
       <span className="truncate max-w-[10rem]">{displayName}</span>
       {player.interests.length > 0 && (
-        <span className="text-[10px] text-ink-faint tabular-nums">
+        <span className="text-xs text-ink-faint tabular-nums">
           {player.interests.length}★
         </span>
       )}
@@ -1127,7 +1127,7 @@ function TeamSummaryRow({ round }: TeamSummaryRowProps) {
             <span className="font-display font-semibold text-sm text-ink">
               {team.name}
             </span>
-            <span className="text-[11px] text-ink-muted tabular-nums">
+            <span className="text-xs text-ink-muted tabular-nums">
               {teamPlayers.length}
             </span>
           </div>
@@ -1196,7 +1196,7 @@ function InterestChip({ emoji, label, level, subCount = 0, onClick }: InterestCh
       title={level ? `${label} · ${LEVEL_LABEL[level]}${subCount > 0 ? ` · ${subCount} Details` : ''}` : label}
       className={cn(
         'inline-flex items-center gap-1.5 h-7 rounded-full px-2.5',
-        'text-[11px] font-medium transition-all border',
+        'text-xs font-medium transition-all border',
         off
           ? 'bg-navy-800/70 border-white/10 text-ink-muted hover:border-white/25 hover:text-ink'
           : LEVEL_STYLE[level],
@@ -1208,7 +1208,7 @@ function InterestChip({ emoji, label, level, subCount = 0, onClick }: InterestCh
       {subCount > 0 && (
         <span
           aria-label={`${subCount} Details`}
-          className="ml-0.5 inline-flex items-center justify-center h-4 min-w-4 px-1 rounded-full bg-white/25 text-[9px] font-bold"
+          className="ml-0.5 inline-flex items-center justify-center h-4 min-w-4 px-1 rounded-full bg-white/25 text-xs font-bold"
         >
           {subCount}
         </span>
@@ -1296,7 +1296,7 @@ function InterestDetailsEditor({
               <div className="mt-0.5 font-display font-semibold text-lg text-ink">
                 Was speziell interessiert dich an {topicDef?.label}?
               </div>
-              <div className="mt-0.5 text-[11px] text-ink-muted">
+              <div className="mt-0.5 text-xs text-ink-muted">
                 z. B. „Fußball", „NBA", „Marvel" — passendere Fragen im Spiel.
               </div>
             </div>
@@ -1321,7 +1321,7 @@ function InterestDetailsEditor({
               Deine Auswahl {tags.length > 0 && `(${tags.length})`}
             </div>
             {tags.length === 0 ? (
-              <div className="text-[11px] text-ink-faint italic">
+              <div className="text-xs text-ink-faint italic">
                 Noch keine Sub-Interessen gewählt.
               </div>
             ) : (
@@ -1329,7 +1329,7 @@ function InterestDetailsEditor({
                 {tags.map((t) => (
                   <span
                     key={t}
-                    className="inline-flex items-center gap-1.5 h-7 rounded-full pl-3 pr-1 text-[11px] font-medium bg-brand-purple/25 border border-brand-purple/70 text-white"
+                    className="inline-flex items-center gap-1.5 h-7 rounded-full pl-3 pr-1 text-xs font-medium bg-brand-purple/25 border border-brand-purple/70 text-white"
                   >
                     {t}
                     <button
@@ -1373,7 +1373,7 @@ function InterestDetailsEditor({
                   disabled={!input.trim()}
                   className={cn(
                     'inline-flex items-center gap-1 h-10 rounded-lg px-4',
-                    'font-display font-bold uppercase tracking-[0.16em] text-[11px]',
+                    'font-display font-bold uppercase tracking-[0.16em] text-xs',
                     'bg-brand-purple/25 border border-brand-purple/60 text-white',
                     'hover:bg-brand-purple/40 transition-colors',
                     'disabled:opacity-40 disabled:cursor-not-allowed',
@@ -1398,7 +1398,7 @@ function InterestDetailsEditor({
                     key={s}
                     type="button"
                     onClick={() => addTag(s)}
-                    className="inline-flex items-center h-7 rounded-full px-2.5 text-[11px] bg-navy-900/60 border border-white/10 text-ink-muted hover:border-brand-purple/60 hover:text-ink transition-colors"
+                    className="inline-flex items-center h-7 rounded-full px-2.5 text-xs bg-navy-900/60 border border-white/10 text-ink-muted hover:border-brand-purple/60 hover:text-ink transition-colors"
                   >
                     + {s}
                   </button>
@@ -1486,12 +1486,12 @@ function InterestsPreviewPanel({ round }: PreviewPanelProps) {
             <Sparkles className="h-3.5 w-3.5" />
             Euer Mix für heute
           </div>
-          <p className="mt-1 text-[11px] text-ink-muted">
+          <p className="mt-1 text-xs text-ink-muted">
             Gemeinsame Interessen tragen die Blitzrunde (60%), individuelle bekommen 30%,
             Wildcards 10%.
           </p>
         </div>
-        <div className="text-[11px] uppercase tracking-[0.22em] text-ink-muted whitespace-nowrap">
+        <div className="text-xs uppercase tracking-[0.22em] text-ink-muted whitespace-nowrap">
           <span className="text-ink font-semibold tabular-nums">{playersWithInterests}</span>
           {' / '}
           <span className="tabular-nums">{round.players.length}</span> mit Präferenz
@@ -1500,7 +1500,7 @@ function InterestsPreviewPanel({ round }: PreviewPanelProps) {
 
       {shared.length > 0 && (
         <div className="mb-3">
-          <div className="text-[11px] uppercase tracking-[0.22em] text-brand-cyan-soft mb-1.5">
+          <div className="text-xs uppercase tracking-[0.22em] text-brand-cyan-soft mb-1.5">
             Gemeinsam
           </div>
           <div className="flex flex-wrap gap-1.5">
@@ -1518,7 +1518,7 @@ function InterestsPreviewPanel({ round }: PreviewPanelProps) {
 
       {individual.length > 0 && (
         <div>
-          <div className="text-[11px] uppercase tracking-[0.22em] text-ink-muted mb-1.5">
+          <div className="text-xs uppercase tracking-[0.22em] text-ink-muted mb-1.5">
             Von einzelnen
           </div>
           <div className="flex flex-wrap gap-1.5">
@@ -1552,7 +1552,7 @@ function ProfileTopicChip({ topicId, level, tone }: ProfileTopicChipProps) {
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1 h-7 rounded-full px-2.5 text-[11px] font-medium border',
+        'inline-flex items-center gap-1 h-7 rounded-full px-2.5 text-xs font-medium border',
         tint,
       )}
       title={level ? `${topic.label} · ${LEVEL_LABEL[level]}` : topic.label}
@@ -1617,7 +1617,7 @@ function AvatarEditor({ avatar, onChange, onClose }: AvatarEditorProps) {
             className={cn(
               'inline-flex items-center justify-center gap-1.5 h-8 rounded-lg px-3 cursor-pointer',
               'border border-brand-purple/40 bg-brand-purple/15 text-brand-purple-soft',
-              'text-[11px] uppercase tracking-[0.16em] font-semibold',
+              'text-xs uppercase tracking-[0.16em] font-semibold',
               'hover:bg-brand-purple/25 transition-colors',
               uploading && 'opacity-60 cursor-wait',
             )}
@@ -1641,7 +1641,7 @@ function AvatarEditor({ avatar, onChange, onClose }: AvatarEditorProps) {
             <button
               type="button"
               onClick={() => onChange({ ...avatar, photoDataUrl: null })}
-              className="inline-flex items-center gap-1 h-7 rounded-lg px-2 text-[11px] uppercase tracking-[0.16em] text-ink-muted hover:text-wrong transition-colors"
+              className="inline-flex items-center gap-1 h-7 rounded-lg px-2 text-xs uppercase tracking-[0.16em] text-ink-muted hover:text-wrong transition-colors"
             >
               <XIcon className="h-3 w-3" />
               Foto entfernen
@@ -1651,12 +1651,12 @@ function AvatarEditor({ avatar, onChange, onClose }: AvatarEditorProps) {
       </div>
 
       {error && (
-        <div className="mb-3 text-[11px] text-wrong bg-wrong/10 border border-wrong/30 rounded-md px-2 py-1.5">
+        <div className="mb-3 text-xs text-wrong bg-wrong/10 border border-wrong/30 rounded-md px-2 py-1.5">
           {error}
         </div>
       )}
 
-      <div className="mb-2 text-[10px] uppercase tracking-[0.22em] text-ink-faint">
+      <div className="mb-2 text-xs uppercase tracking-[0.22em] text-ink-faint">
         Farb-Ring
       </div>
       <div className="grid grid-cols-8 gap-1.5">
@@ -1715,7 +1715,7 @@ function PlayerLibraryPanel({ round, dispatch }: PlayerLibraryPanelProps) {
             <BookOpen className="h-3.5 w-3.5 text-brand-cyan-soft" />
             Bekannte Spieler
           </div>
-          <p className="mt-1 text-[11px] text-ink-muted">
+          <p className="mt-1 text-xs text-ink-muted">
             Profile aus vergangenen Abenden. Klick fügt sie zum Roster hinzu — Team-
             Zuordnung kommt im nächsten Schritt.
           </p>
@@ -1765,7 +1765,7 @@ function LibraryChip({ profile, onAdd, onForget }: LibraryChipProps) {
           {profile.name}
         </span>
         {profile.interests.length > 0 && (
-          <span className="text-[10px] text-ink-faint tabular-nums">
+          <span className="text-xs text-ink-faint tabular-nums">
             {profile.interests.length}★
           </span>
         )}
@@ -1775,7 +1775,7 @@ function LibraryChip({ profile, onAdd, onForget }: LibraryChipProps) {
           className="absolute top-full left-0 mt-1 z-20 rounded-card border border-white/10 bg-navy-800 p-2 shadow-neon-purple"
           role="dialog"
         >
-          <div className="text-[10px] uppercase tracking-[0.22em] text-ink-faint mb-2">
+          <div className="text-xs uppercase tracking-[0.22em] text-ink-faint mb-2">
             Aktion
           </div>
           <div className="flex flex-col gap-1 min-w-[160px]">

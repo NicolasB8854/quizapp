@@ -102,7 +102,7 @@ export function ModeCard({ mode, selected, onToggle }: Props) {
 
         {/* Chip oben links */}
         <span
-          className="absolute top-3 left-3 md:top-4 md:left-4 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 md:px-3 md:py-1 text-[10px] font-semibold uppercase tracking-[0.22em]"
+          className="absolute top-3 left-3 md:top-4 md:left-4 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 md:px-3 md:py-1 text-xs font-semibold uppercase tracking-[0.22em]"
           style={{
             borderColor: `${hex}66`,
             color: hex,
@@ -115,12 +115,12 @@ export function ModeCard({ mode, selected, onToggle }: Props) {
 
         {/* Status-Chip oben rechts */}
         {disabled ? (
-          <span className="absolute top-3 right-3 md:top-4 md:right-4 inline-flex items-center gap-1 rounded-full bg-white/5 border border-white/10 text-ink-muted text-[10px] font-semibold uppercase tracking-[0.2em] px-2 py-0.5 md:px-2.5 md:py-1">
+          <span className="absolute top-3 right-3 md:top-4 md:right-4 inline-flex items-center gap-1 rounded-full bg-white/5 border border-white/10 text-ink-muted text-xs font-semibold uppercase tracking-[0.2em] px-2 py-0.5 md:px-2.5 md:py-1">
             Bald
           </span>
         ) : selected ? (
           <span
-            className="absolute top-3 right-3 md:top-4 md:right-4 inline-flex items-center gap-1 rounded-full text-[10px] font-semibold uppercase tracking-[0.2em] px-2 py-0.5 md:px-2.5 md:py-1"
+            className="absolute top-3 right-3 md:top-4 md:right-4 inline-flex items-center gap-1 rounded-full text-xs font-semibold uppercase tracking-[0.2em] px-2 py-0.5 md:px-2.5 md:py-1"
             style={{
               background: `${hex}22`,
               color: hex,
@@ -162,7 +162,7 @@ export function ModeCard({ mode, selected, onToggle }: Props) {
         </p>
 
         <div className="mt-4 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.2em] text-ink-muted">
+          <div className="flex items-center gap-3 text-xs uppercase tracking-[0.2em] text-ink-muted">
             <span className="flex items-center gap-1.5">
               <Sparkles className="h-3 w-3" /> ~ {mode.estimatedMinutes} Min
             </span>

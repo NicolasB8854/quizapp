@@ -269,7 +269,7 @@ function RoleButton({
       )}
     >
       <div className="text-sm font-semibold text-white">{title}</div>
-      <div className="text-[11px] text-ink-muted">{subtitle}</div>
+      <div className="text-xs text-ink-muted">{subtitle}</div>
     </button>
   )
 }

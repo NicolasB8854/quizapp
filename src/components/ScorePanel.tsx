@@ -99,7 +99,7 @@ function TeamTile({ team, score, matchPoints, isActive, highlight }: TileProps) 
               {team.name}
             </div>
             {typeof matchPoints === 'number' && (
-              <div className="text-[11px] uppercase tracking-[0.16em] text-ink-muted">
+              <div className="text-xs uppercase tracking-[0.16em] text-ink-muted">
                 {matchPoints} Match-Punkt{matchPoints === 1 ? '' : 'e'}
               </div>
             )}
@@ -108,7 +108,7 @@ function TeamTile({ team, score, matchPoints, isActive, highlight }: TileProps) 
         {isActive && (
           <span
             className={cn(
-              'text-[10px] font-semibold uppercase tracking-[0.2em]',
+              'text-xs font-semibold uppercase tracking-[0.2em]',
               teamColorAccent[team.color],
             )}
           >

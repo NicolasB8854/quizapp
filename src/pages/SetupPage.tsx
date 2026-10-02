@@ -88,7 +88,7 @@ export default function SetupPage() {
                   onClick={() => dispatch({ type: 'ADD_TEAM' })}
                   className={cn(
                     'inline-flex items-center gap-1.5 rounded-full px-3 py-1.5',
-                    'text-[11px] font-semibold uppercase tracking-[0.16em]',
+                    'text-xs font-semibold uppercase tracking-[0.16em]',
                     'border border-brand-purple/40 bg-brand-purple/10 text-brand-purple-soft',
                     'hover:bg-brand-purple/20 hover:border-brand-purple/60 transition-colors',
                   )}

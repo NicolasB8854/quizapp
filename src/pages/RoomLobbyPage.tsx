@@ -65,6 +65,8 @@ import { useRoomSync } from '@/hooks/useRoomSync'
 import { useDeviceProfileSync } from '@/hooks/useDeviceProfileSync'
 import { useSoundEnabled } from '@/hooks/useSoundEnabled'
 import { playSound } from '@/lib/audio'
+import { haptic } from '@/lib/haptics'
+import { useWakeLock } from '@/hooks/useWakeLock'
 import { readRoomIdentity, saveRoomIdentity } from '@/lib/roomIdentity'
 import { cn } from '@/lib/classnames'
 
@@ -149,6 +151,9 @@ export default function RoomLobbyPage() {
     ? room.state?.round?.teams.find((t) => t.id === myPlayer.teamId) ?? null
     : null
   const myTeamColor = myTeam ? getTeamColorHex(myTeam.color) : null
+
+  // Bildschirm im Raum wach halten — 20-s-Timer ohne Berührung sonst = Display aus.
+  useWakeLock(room.status === 'joined' || room.status === 'reconnecting')
 
   // Geräte-Profil: Avatar/Titel übernehmen, eigene Antworten + Abende zählen.
   useDeviceProfileSync({ state: room.state ?? null, myPlayer, roomCode, canDispatch, send })
@@ -246,19 +251,23 @@ export default function RoomLobbyPage() {
     // 1. Score-Anstieg — passt für alle Modi.
     if (scoresSum > prev.scoresSum) {
       playSound('correct')
+      haptic('correct')
       return // ein Sound pro Snapshot reicht.
     }
     // 2. Reveal ohne Punktzuwachs — falsche Antwort.
     if (snapshot.phase === 'revealed' && prev.phase !== 'revealed') {
       playSound('wrong')
+      haptic('wrong')
       return
     }
     // 3. Buzzer klick.
     if (
-      (snapshot.phase === 'primary-answer' || snapshot.phase === 'steal-answer') &&
-      prev.phase === 'awaiting-buzz'
+      ((snapshot.phase === 'primary-answer' || snapshot.phase === 'steal-answer') &&
+        prev.phase === 'awaiting-buzz') ||
+      (snapshot.phase === 'rebound-answer' && prev.phase === 'rebound-buzz')
     ) {
       playSound('buzz')
+      haptic('buzz')
       return
     }
     // 4a. Sprinter-Timer abgelaufen.
@@ -413,7 +422,7 @@ export default function RoomLobbyPage() {
           >
             <div className="flex flex-wrap items-center gap-4">
               <div>
-                <div className="text-[10px] uppercase tracking-[0.32em] text-ink-muted">
+                <div className="text-xs uppercase tracking-[0.32em] text-ink-muted">
                   Room-Code
                 </div>
                 <button
@@ -426,7 +435,7 @@ export default function RoomLobbyPage() {
               </div>
               <div className="flex-1" />
               <div className="text-right">
-                <div className="text-[10px] uppercase tracking-[0.32em] text-ink-muted">
+                <div className="text-xs uppercase tracking-[0.32em] text-ink-muted">
                   {myTeam ? myTeam.name : 'Player'}
                 </div>
                 <div className="mt-1 flex items-center justify-end gap-2 font-semibold text-white">
@@ -471,18 +480,6 @@ export default function RoomLobbyPage() {
           />
         ) : null}
 
-        {/* Host-Steuerungs-Bar oben: nur für den mitspielenden Host, damit
-             er die aktuelle Show-Aktion immer griffbereit hat. */}
-        {isHost &&
-          !stageOnly &&
-          currentPhase === 'playing' &&
-          room.state && (
-            <HostActionBar
-              state={room.state}
-              canDispatch={canDispatch}
-              send={send}
-            />
-          )}
 
         {/* Teammates-Streifen: für alle mit Team im Playing (Player + mitspielender Host). */}
         {!stageOnly &&
@@ -516,6 +513,16 @@ export default function RoomLobbyPage() {
         ) : (
           <LoadingCard label="Warte auf Server …" />
         )}
+
+        {/* Host-Steuerung fest unten im Daumenbereich (mitspielender Host). */}
+        {isHost &&
+          !stageOnly &&
+          currentPhase === 'playing' &&
+          room.state && (
+            <div className="sticky bottom-0 z-30 -mx-4 bg-gradient-to-t from-navy-900 via-navy-900/95 to-transparent px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-4 md:-mx-6 md:px-6">
+              <HostActionBar state={room.state} canDispatch={canDispatch} send={send} />
+            </div>
+          )}
       </div>
     </ScreenLayout>
   )
@@ -547,7 +554,7 @@ function MasterHero({
     <Card className="border-brand-purple/40 bg-brand-purple/[0.06] p-4 md:p-6">
       <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:gap-6">
         <div className="min-w-0 space-y-3">
-          <div className="text-[10px] uppercase tracking-[0.32em] text-brand-purple-soft">
+          <div className="text-xs uppercase tracking-[0.32em] text-brand-purple-soft">
             Master-Screen · Handy scannen zum Beitreten
           </div>
           <button
@@ -577,7 +584,7 @@ function MasterHero({
               marginSize={0}
             />
           </div>
-          <div className="text-[10px] uppercase tracking-[0.22em] text-white/40">
+          <div className="text-xs uppercase tracking-[0.22em] text-white/40">
             scan me
           </div>
         </div>
@@ -626,7 +633,7 @@ function MasterCompactHeader({
   return (
     <Card className="border-brand-purple/30 bg-brand-purple/[0.04] p-3">
       <div className="flex items-center gap-3">
-        <div className="text-[10px] uppercase tracking-[0.32em] text-brand-purple-soft">
+        <div className="text-xs uppercase tracking-[0.32em] text-brand-purple-soft">
           Room
         </div>
         <button
@@ -816,7 +823,7 @@ function SetupPhaseView({
   if (!isHost) {
     return (
       <Card className="space-y-2 p-5 text-center">
-        <div className="text-[10px] uppercase tracking-[0.32em] text-brand-purple-soft">
+        <div className="text-xs uppercase tracking-[0.32em] text-brand-purple-soft">
           Setup
         </div>
         <div className="text-base font-semibold text-white">
@@ -852,7 +859,7 @@ function SetupPhaseView({
                 <div className="text-sm font-semibold text-white">
                   {mode.name}
                 </div>
-                <div className="text-[11px] text-ink-muted">
+                <div className="text-xs text-ink-muted">
                   {mode.tagline}
                 </div>
               </button>
@@ -1032,7 +1039,7 @@ function LobbyPhaseView({
           if (pool.length === 0) return null
           return (
             <div className="mt-2 rounded-lg border border-dashed border-white/10 p-2">
-              <div className="text-[11px] uppercase tracking-[0.22em] text-ink-muted">
+              <div className="text-xs uppercase tracking-[0.22em] text-ink-muted">
                 Noch ohne Team ({pool.length})
               </div>
               <div className="mt-2 space-y-1.5">
@@ -1096,12 +1103,12 @@ function RosterPlayerRow({ player, isMe }: { player: Player; isMe: boolean }) {
         {player.name || 'Namenlos'}
       </span>
       {player.avatar.title && (
-        <span className="rounded-full bg-amber-300/15 px-2 py-0.5 text-[10px] font-semibold text-amber-200">
+        <span className="rounded-full bg-amber-300/15 px-2 py-0.5 text-xs font-semibold text-amber-200">
           {player.avatar.title}
         </span>
       )}
       {isMe && (
-        <span className="text-[9px] uppercase tracking-[0.22em] text-brand-purple-soft">
+        <span className="text-xs uppercase tracking-[0.22em] text-brand-purple-soft">
           Du
         </span>
       )}
@@ -1160,7 +1167,7 @@ function LobbyModesPanel({
         <div className="text-xs uppercase tracking-[0.22em] text-ink-muted">
           Modi ({selected.length})
         </div>
-        <span className="text-[10px] uppercase tracking-[0.22em] text-brand-purple-soft">
+        <span className="text-xs uppercase tracking-[0.22em] text-brand-purple-soft">
           Host
         </span>
       </div>
@@ -1184,7 +1191,7 @@ function LobbyModesPanel({
                 <span
                   aria-hidden
                   className={cn(
-                    'flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full border text-[10px]',
+                    'flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full border text-xs',
                     isSelected
                       ? 'border-brand-purple bg-brand-purple/40 text-white'
                       : 'border-white/30 text-transparent',
@@ -1196,14 +1203,14 @@ function LobbyModesPanel({
                   {mode.name}
                 </span>
               </div>
-              <div className="mt-0.5 pl-6 text-[10px] text-ink-muted">
+              <div className="mt-0.5 pl-6 text-xs text-ink-muted">
                 {mode.tagline}
               </div>
             </button>
           )
         })}
       </div>
-      <p className="text-[10px] text-ink-muted">
+      <p className="text-xs text-ink-muted">
         Der Modus-Wechsel läuft ohne Roster-Reset — Player bleiben in ihren Teams.
       </p>
     </Card>
@@ -1228,7 +1235,7 @@ function InterestPill({
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-0.5 rounded-full border px-1.5 py-0.5 text-[10px]',
+        'inline-flex items-center gap-0.5 rounded-full border px-1.5 py-0.5 text-xs',
         tone,
       )}
       title={`Level ${level}${subCount > 0 ? ` · ${subCount} Sub-Tags` : ''}`}
@@ -1262,7 +1269,7 @@ function PlayerSelfCard({
   return (
     <Card className="space-y-3 border-brand-purple/40 bg-brand-purple/[0.06] p-4">
       <div className="flex items-center justify-between">
-        <div className="text-[10px] uppercase tracking-[0.32em] text-brand-purple-soft">
+        <div className="text-xs uppercase tracking-[0.32em] text-brand-purple-soft">
           Das bist du
         </div>
         {me.teamId ? (
@@ -1375,7 +1382,7 @@ function CategoryDuelRoomView({
       <Card className="p-3">
         <div className="flex flex-wrap items-center gap-3">
           <div>
-            <div className="text-[10px] uppercase tracking-[0.32em] text-brand-purple-soft">
+            <div className="text-xs uppercase tracking-[0.32em] text-brand-purple-soft">
               Themen-Battle
             </div>
             <div className="mt-0.5 flex items-center gap-2">
@@ -1521,7 +1528,7 @@ function CDPickTopicView({
               <span
                 className={cn(
                   'font-medium',
-                  isMaster ? 'text-base md:text-lg' : 'text-[11px]',
+                  isMaster ? 'text-base md:text-lg' : 'text-xs',
                 )}
               >
                 {topic.label}
@@ -1530,7 +1537,7 @@ function CDPickTopicView({
                 <span
                   className={cn(
                     'uppercase tracking-wider text-white/40',
-                    isMaster ? 'text-xs' : 'text-[9px]',
+                    'text-xs',
                   )}
                 >
                   gespielt
@@ -1753,7 +1760,7 @@ function CDRevealedView({
                 <span
                   className={cn(
                     'uppercase tracking-wider',
-                    isMaster ? 'text-sm font-bold' : 'text-[10px]',
+                    isMaster ? 'text-sm font-bold' : 'text-xs',
                   )}
                 >
                   richtig
@@ -1763,7 +1770,7 @@ function CDRevealedView({
                 <span
                   className={cn(
                     'uppercase tracking-wider',
-                    isMaster ? 'text-sm font-bold' : 'text-[10px]',
+                    isMaster ? 'text-sm font-bold' : 'text-xs',
                   )}
                 >
                   gewählt
@@ -1784,7 +1791,7 @@ function CDRevealedView({
           <div
             className={cn(
               'mb-1 uppercase tracking-[0.22em] text-ink-muted',
-              isMaster ? 'text-xs' : 'text-[10px]',
+              'text-xs',
             )}
           >
             Erklärung
@@ -1878,7 +1885,7 @@ function SpotlightRoomView({
       <Card className={cn('p-3', isMaster && 'p-4')}>
         <div className="flex flex-wrap items-center gap-3">
           <div>
-            <div className="text-[10px] uppercase tracking-[0.32em] text-brand-pink-soft">
+            <div className="text-xs uppercase tracking-[0.32em] text-brand-pink-soft">
               Spotlight
             </div>
             <div
@@ -2062,7 +2069,7 @@ function SpotlightPrimaryPanel({
   return (
     <>
       <Card className={cn('space-y-2', isMaster ? 'p-5' : 'p-3')}>
-        <div className="text-[10px] uppercase tracking-[0.32em] text-ink-muted">
+        <div className="text-xs uppercase tracking-[0.32em] text-ink-muted">
           {isMyTurn
             ? 'Du bist dran — tippe deine Antwort'
             : isTeamMate
@@ -2140,7 +2147,7 @@ function SpotlightStealPanel({
   return (
     <>
       <Card className={cn('space-y-2', isMaster ? 'p-5' : 'p-3')}>
-        <div className="text-[10px] uppercase tracking-[0.32em] text-brand-orange-soft">
+        <div className="text-xs uppercase tracking-[0.32em] text-brand-orange-soft">
           Steal — Gegenteam ist dran (halbe Punkte)
         </div>
       </Card>
@@ -2226,7 +2233,7 @@ function SpotlightRevealPanel({
                 {option}
               </span>
               {isCorrect && (
-                <span className={cn('uppercase tracking-wider', isMaster ? 'text-sm font-bold' : 'text-[10px]')}>
+                <span className={cn('uppercase tracking-wider', isMaster ? 'text-sm font-bold' : 'text-xs')}>
                   richtig
                 </span>
               )}
@@ -2245,7 +2252,7 @@ function SpotlightRevealPanel({
           <div
             className={cn(
               'mb-1 uppercase tracking-[0.22em] text-ink-muted',
-              isMaster ? 'text-xs' : 'text-[10px]',
+              'text-xs',
             )}
           >
             Erklärung
@@ -2311,7 +2318,7 @@ function AroundCornerRoomView({
       {/* Header */}
       <Card className={cn('p-3', isMaster && 'p-4')}>
         <div className="flex items-center gap-3">
-          <div className="text-[10px] uppercase tracking-[0.32em] text-brand-cyan-soft">
+          <div className="text-xs uppercase tracking-[0.32em] text-brand-cyan-soft">
             Klick!
           </div>
           <div className={cn('font-mono text-white', isMaster ? 'text-lg' : 'text-sm')}>
@@ -2380,7 +2387,7 @@ function AroundCornerRoomView({
             isMaster ? 'p-6' : 'p-4',
           )}
         >
-          <div className="text-[10px] uppercase tracking-[0.32em] text-correct">
+          <div className="text-xs uppercase tracking-[0.32em] text-correct">
             Lösung
           </div>
           <div
@@ -2477,7 +2484,7 @@ function FlashRoomView({
       <Card className={cn('p-3', isMaster && 'p-4')}>
         <div className="flex flex-wrap items-center gap-3">
           <div>
-            <div className="text-[10px] uppercase tracking-[0.32em] text-brand-cyan-soft">
+            <div className="text-xs uppercase tracking-[0.32em] text-brand-cyan-soft">
               Blitzrunde
             </div>
             <div
@@ -2556,7 +2563,7 @@ function FlashRoomView({
                 isMaster ? 'p-6' : 'p-3',
               )}
             >
-              <div className="text-[10px] uppercase tracking-[0.32em] text-white/50">
+              <div className="text-xs uppercase tracking-[0.32em] text-white/50">
                 Antwort
               </div>
               <div
@@ -2588,7 +2595,7 @@ function FlashRoomView({
       {/* Wahr/Falsch-Buttons f\u00fcr Player-am-Zug. Master klickt nicht selbst. */}
       {live.phase === 'answering' && myTeamId && !isMaster && (
         <Card className="space-y-2 p-4">
-          <div className="text-[10px] uppercase tracking-[0.32em] text-ink-muted">
+          <div className="text-xs uppercase tracking-[0.32em] text-ink-muted">
             Antwort für dein Team ·{' '}
             {state.round.teams.find((t) => t.id === myTeamId)?.name}
           </div>
@@ -2628,7 +2635,7 @@ function FlashRoomView({
         <div
           className={cn(
             'uppercase tracking-[0.32em] text-ink-muted',
-            isMaster ? 'text-xs' : 'text-[10px]',
+            'text-xs',
           )}
         >
           Team-Antworten
@@ -2820,7 +2827,7 @@ function LadderRoomView({
             <div
               className={cn(
                 'uppercase tracking-[0.32em] text-mode-ladder',
-                isMaster ? 'text-xs' : 'text-[10px]',
+                'text-xs',
               )}
             >
               Alles oder Nichts
@@ -2845,7 +2852,7 @@ function LadderRoomView({
             <div
               className={cn(
                 'uppercase tracking-[0.32em]',
-                isMaster ? 'text-[10px]' : 'text-[9px]',
+                'text-xs',
               )}
             >
               Einsatz
@@ -2997,7 +3004,7 @@ function SprinterRoomView({
     return (
       <div className="space-y-3">
         <Card className={cn('space-y-3 text-center', isMaster ? 'p-8' : 'p-5')}>
-          <div className="text-[10px] uppercase tracking-[0.32em] text-brand-orange-soft">
+          <div className="text-xs uppercase tracking-[0.32em] text-brand-orange-soft">
             Sprinter · Zwischenstand
           </div>
           <div className={cn('space-y-2', isMaster ? 'text-base' : 'text-sm')}>
@@ -3049,7 +3056,7 @@ function SprinterRoomView({
           <div
             className={cn(
               'uppercase tracking-[0.32em] text-brand-orange-soft',
-              isMaster ? 'text-xs' : 'text-[10px]',
+              'text-xs',
             )}
           >
             Sprinter
@@ -3076,7 +3083,7 @@ function SprinterRoomView({
           <div
             className={cn(
               'uppercase tracking-[0.22em] text-ink-muted',
-              isMaster ? 'text-xs' : 'text-[10px]',
+              'text-xs',
             )}
           >
             Verbleibend
@@ -3111,7 +3118,7 @@ function SprinterRoomView({
 
       {live.phase === 'rebound-buzz' && (
         <Card className={cn('space-y-2', isMaster ? 'p-5' : 'p-4')}>
-          <div className={cn('uppercase tracking-[0.32em] text-wrong', isMaster ? 'text-xs' : 'text-[10px]')}>
+          <div className={cn('uppercase tracking-[0.32em] text-wrong', 'text-xs')}>
             Falsch! Rebound — wer weiß es? Falsch = Minuspunkte
           </div>
           <div className={cn('grid gap-2', isMaster ? 'grid-cols-2' : 'grid-cols-1')}>
@@ -3267,7 +3274,7 @@ function EliminationRoomView({
     return (
       <div className="space-y-3">
         <Card className={cn('space-y-3 text-center', isMaster ? 'p-8' : 'p-5')}>
-          <div className="text-[10px] uppercase tracking-[0.32em] text-brand-pink-soft">
+          <div className="text-xs uppercase tracking-[0.32em] text-brand-pink-soft">
             Elimination
           </div>
           <div className={cn('font-bold text-white', isMaster ? 'text-4xl' : 'text-2xl')}>
@@ -3310,7 +3317,7 @@ function EliminationRoomView({
             <div
               className={cn(
                 'uppercase tracking-[0.32em] text-brand-pink-soft',
-                isMaster ? 'text-xs' : 'text-[10px]',
+                'text-xs',
               )}
             >
               Elimination
@@ -3389,7 +3396,7 @@ function EliminationRoomView({
           <div
             className={cn(
               'uppercase tracking-[0.32em] text-ink-muted',
-              isMaster ? 'text-xs' : 'text-[10px]',
+              'text-xs',
             )}
           >
             Ausgeschieden ({live.eliminatedIds.length})
@@ -3462,7 +3469,7 @@ function BoardRoomView({
             <div
               className={cn(
                 'uppercase tracking-[0.32em] text-mode-board',
-                isMaster ? 'text-xs' : 'text-[10px]',
+                'text-xs',
               )}
             >
               Punktejagd
@@ -3495,7 +3502,7 @@ function BoardRoomView({
                 key={topic}
                 className={cn(
                   'text-center uppercase tracking-wider text-white/70',
-                  isMaster ? 'text-sm md:text-base pb-1' : 'text-[10px]',
+                  isMaster ? 'text-sm md:text-base pb-1' : 'text-xs',
                 )}
               >
                 <div aria-hidden className={isMaster ? 'text-4xl md:text-5xl leading-none' : 'text-lg'}>
@@ -3541,7 +3548,7 @@ function BoardRoomView({
               <div
                 className={cn(
                   'uppercase tracking-[0.32em] text-ink-muted',
-                  isMaster ? 'text-xs' : 'text-[10px]',
+                  'text-xs',
                 )}
               >
                 Wer buzzert zuerst?
@@ -3719,7 +3726,7 @@ function DuelRoomView({
             <div
               className={cn(
                 'uppercase tracking-[0.32em] text-mode-duel',
-                isMaster ? 'text-xs' : 'text-[10px]',
+                'text-xs',
               )}
             >
               Duell 1:1
@@ -3746,7 +3753,7 @@ function DuelRoomView({
         <div
           className={cn(
             'uppercase tracking-[0.32em] text-ink-muted',
-            isMaster ? 'text-xs' : 'text-[10px]',
+            'text-xs',
           )}
         >
           Duellierende Teams
@@ -3844,7 +3851,7 @@ function DuelRoomView({
               <div
                 className={cn(
                   'uppercase tracking-[0.32em] text-ink-muted',
-                  isMaster ? 'text-xs' : 'text-[10px]',
+                  'text-xs',
                 )}
               >
                 Buzzer!
@@ -3997,7 +4004,7 @@ function ExpertsRoomView({
           <div
             className={cn(
               'uppercase tracking-[0.32em] text-mode-experts',
-              isMaster ? 'text-xs' : 'text-[10px]',
+              'text-xs',
             )}
           >
             Fachrunde · Setup
@@ -4031,7 +4038,7 @@ function ExpertsRoomView({
                     <span
                       className={cn(
                         'ml-2 text-brand-purple-soft uppercase tracking-wider',
-                        isMaster ? 'text-xs' : 'text-[10px]',
+                        'text-xs',
                       )}
                     >
                       du
@@ -4095,7 +4102,7 @@ function ExpertsRoomView({
             <div
               className={cn(
                 'uppercase tracking-[0.32em] text-mode-experts',
-                isMaster ? 'text-xs' : 'text-[10px]',
+                'text-xs',
               )}
             >
               Fachrunde
@@ -4114,7 +4121,7 @@ function ExpertsRoomView({
               <div
                 className={cn(
                   'uppercase tracking-[0.22em] text-ink-muted',
-                  isMaster ? 'text-xs' : 'text-[10px]',
+                  'text-xs',
                 )}
               >
                 Timer
@@ -4190,7 +4197,7 @@ function ExpertsRoomView({
           <div
             className={cn(
               'uppercase tracking-[0.32em] text-ink-muted',
-              isMaster ? 'text-xs' : 'text-[10px]',
+              'text-xs',
             )}
           >
             {isMyTurn ? 'Lies die Frage — dann Antworten aufdecken' : `${activePlayer?.name ?? 'Experte'} liest die Frage`}
@@ -4213,7 +4220,7 @@ function ExpertsRoomView({
             <div
               className={cn(
                 'uppercase tracking-[0.32em] text-ink-muted',
-                isMaster ? 'text-xs' : 'text-[10px]',
+                'text-xs',
               )}
             >
               {isMyTurn ? 'Du bist dran — tippe deine Antwort' : `${activePlayer?.name ?? 'Experte'} antwortet`}
@@ -4237,7 +4244,7 @@ function ExpertsRoomView({
             <div
               className={cn(
                 'uppercase tracking-[0.32em] text-brand-orange-soft',
-                isMaster ? 'text-xs' : 'text-[10px]',
+                'text-xs',
               )}
             >
               Steal — Gegenteam ist dran
@@ -4269,7 +4276,7 @@ function ExpertsRoomView({
           />
           {question?.explanation && (
             <Card className={cn('text-white/80', isMaster ? 'p-5 text-base md:text-lg' : 'p-3 text-sm')}>
-              <div className={cn('mb-1 uppercase tracking-[0.22em] text-ink-muted', isMaster ? 'text-xs' : 'text-[10px]')}>
+              <div className={cn('mb-1 uppercase tracking-[0.22em] text-ink-muted', 'text-xs')}>
                 Erklärung
               </div>
               {question.explanation}
@@ -4483,7 +4490,7 @@ function TeamScoreChip({
           key={delta}
           className={cn(
             'pointer-events-none absolute left-1/2 -top-3 rounded-full bg-correct/25 font-mono font-bold text-correct animate-score-pop',
-            isMaster ? 'px-2.5 py-0.5 text-base' : 'px-1.5 py-[1px] text-[11px]',
+            isMaster ? 'px-2.5 py-0.5 text-base' : 'px-1.5 py-[1px] text-xs',
           )}
           aria-hidden
         >
@@ -4506,7 +4513,7 @@ function TeamAnswersPanel({
 }) {
   return (
     <Card className={cn('space-y-2', isMaster ? 'p-5' : 'p-3')}>
-      <div className={cn('uppercase tracking-[0.32em] text-ink-muted', isMaster ? 'text-xs' : 'text-[10px]')}>
+      <div className={cn('uppercase tracking-[0.32em] text-ink-muted', 'text-xs')}>
         Team-Antworten
       </div>
       <div className={cn('grid gap-1.5', isMaster ? 'sm:grid-cols-2 lg:grid-cols-4' : 'sm:grid-cols-2')}>
@@ -4566,7 +4573,7 @@ function PlayingPhaseView({
         <div className="text-xs uppercase tracking-[0.22em] text-ink-muted">
           Live-State
         </div>
-        <details className="rounded bg-black/40 p-2 text-[11px] text-white/80">
+        <details className="rounded bg-black/40 p-2 text-xs text-white/80">
           <summary className="cursor-pointer">JSON</summary>
           <pre className="mt-2 overflow-x-auto">
             {JSON.stringify(state.live, null, 2)}
@@ -4584,7 +4591,7 @@ function PlayingPhaseView({
         Modus beenden
       </Button>
 
-      <p className="text-center text-[11px] text-ink-muted">
+      <p className="text-center text-xs text-ink-muted">
         Die vollen Spiel-UIs kommen im nächsten Release. Bis dahin:
         Master-Screen zum Anzeigen, Player-Handys zum Dispatchen.
       </p>

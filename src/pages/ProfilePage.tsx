@@ -239,7 +239,7 @@ export default function ProfilePage() {
 function Stat({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
     <Card className="p-3 text-center">
-      <div className="flex items-center justify-center gap-1 text-[10px] uppercase tracking-[0.2em] text-ink-muted">
+      <div className="flex items-center justify-center gap-1 text-xs uppercase tracking-[0.2em] text-ink-muted">
         {icon}
         {label}
       </div>

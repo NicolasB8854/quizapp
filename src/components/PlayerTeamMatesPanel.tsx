@@ -40,7 +40,7 @@ export function PlayerTeamMatesPanel({ team, myPlayer, teamPlayers }: Props) {
           aria-hidden
         />
         <div className="min-w-0">
-          <div className="text-[10px] uppercase tracking-[0.28em] text-ink-muted">
+          <div className="text-xs uppercase tracking-[0.28em] text-ink-muted">
             Dein Team
           </div>
           <div className="truncate text-sm font-semibold text-white">
@@ -57,7 +57,7 @@ export function PlayerTeamMatesPanel({ team, myPlayer, teamPlayers }: Props) {
               key={p.id}
               title={p.name || 'Namenlos'}
               className={cn(
-                'inline-flex h-7 min-w-[1.75rem] items-center justify-center rounded-full text-[11px] font-semibold',
+                'inline-flex h-7 min-w-[1.75rem] items-center justify-center rounded-full text-xs font-semibold',
                 isMe ? 'ring-2 ring-white/60' : 'ring-1 ring-white/10',
               )}
               style={{

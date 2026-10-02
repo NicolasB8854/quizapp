@@ -24,6 +24,8 @@ import { AnswerOption, type AnswerStatus } from '@/components/AnswerOption'
 import { readSoloStats, saveSoloRun, type SoloStats } from '@/lib/soloStats'
 import { primaryTitle } from '@/lib/titles'
 import { cn } from '@/lib/classnames'
+import { haptic } from '@/lib/haptics'
+import { useWakeLock } from '@/hooks/useWakeLock'
 
 const SEEN_KEY = 'quizapp:soloSeen'
 const LETTERS = ['A', 'B', 'C', 'D']
@@ -68,6 +70,7 @@ export default function SoloPage() {
   const [previousBest, setPreviousBest] = useState(0)
 
   const question = run[index] ?? null
+  useWakeLock(phase === 'question' || phase === 'feedback')
   const shuffle = useMemo(
     () => (question ? shuffleWithMapping(question.options, `solo:${index}:${question.id}`) : null),
     [question, index],
@@ -90,6 +93,7 @@ export default function SoloPage() {
   const answer = (rendered: number | null) => {
     if (phase !== 'question' || !question) return
     const correct = rendered === correctRendered
+    haptic(rendered === null ? 'timeUp' : correct ? 'correct' : 'wrong')
     setAnswers((prev) => [
       ...prev,
       {

@@ -112,7 +112,7 @@ function SettingsMenu() {
             'shadow-neon-purple p-2',
           )}
         >
-          <div className="px-2 py-1.5 text-[10px] uppercase tracking-[0.22em] text-ink-faint">
+          <div className="px-2 py-1.5 text-xs uppercase tracking-[0.22em] text-ink-faint">
             Prototyp-Tools
           </div>
           <MenuLink
@@ -150,7 +150,7 @@ function MenuLink({ to, icon, label, hint, onNavigate }: MenuLinkProps) {
           {label}
         </span>
         {hint && (
-          <span className="mt-0.5 block text-[11px] text-ink-muted leading-snug">
+          <span className="mt-0.5 block text-xs text-ink-muted leading-snug">
             {hint}
           </span>
         )}

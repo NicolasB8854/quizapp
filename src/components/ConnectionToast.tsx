@@ -69,7 +69,7 @@ export function ConnectionToast({
       ) : null}
       <div className="min-w-0 flex-1">
         {label && (
-          <div className="text-[10px] uppercase tracking-[0.28em] opacity-80">
+          <div className="text-xs uppercase tracking-[0.28em] opacity-80">
             {label}
           </div>
         )}

@@ -34,7 +34,7 @@ export default function ModesPage() {
           {modes.map((m) => (
             <Card key={m.id} className="space-y-2 p-4">
               <div className="flex items-center justify-between gap-2">
-                <span className="text-[10px] uppercase tracking-[0.28em] text-brand-purple-soft">{m.chipLabel}</span>
+                <span className="text-xs uppercase tracking-[0.28em] text-brand-purple-soft">{m.chipLabel}</span>
                 <span className="inline-flex items-center gap-1 text-xs text-ink-muted">
                   <Clock className="h-3.5 w-3.5" /> ~{m.estimatedMinutes} min
                 </span>

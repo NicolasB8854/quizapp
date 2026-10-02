@@ -310,7 +310,7 @@ function QuestionStage() {
             <div className="min-w-0">
               <div
                 className={cn(
-                  'text-[11px] font-bold uppercase tracking-[0.22em]',
+                  'text-xs font-bold uppercase tracking-[0.22em]',
                   wasCorrect ? 'text-correct' : 'text-wrong',
                 )}
               >
@@ -557,7 +557,7 @@ function FlashRevealPanel({ question, pointsPerCorrect, onNext }: FlashRevealPan
   return (
     <div className="mt-6 rounded-card border border-white/10 bg-navy-800/60 p-5 md:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
       <div className="min-w-0">
-        <div className="text-[11px] font-bold uppercase tracking-[0.22em] text-brand-purple-soft">
+        <div className="text-xs font-bold uppercase tracking-[0.22em] text-brand-purple-soft">
           Auflösung
         </div>
         <div className="mt-1 font-display font-bold text-xl md:text-2xl">
@@ -812,7 +812,7 @@ function SpotlightRevealPanel({
       <div className="min-w-0">
         <div
           className={cn(
-            'text-[11px] font-bold uppercase tracking-[0.22em]',
+            'text-xs font-bold uppercase tracking-[0.22em]',
             tone === 'positive' ? 'text-correct' : 'text-ink-muted',
           )}
         >
@@ -916,7 +916,7 @@ function AroundCornerStage() {
               className="rounded-lg border border-white/[0.08] bg-navy-800/60 p-4 flex items-start gap-3 animate-titleIn"
             >
               <span
-                className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[10px] font-bold uppercase tracking-widest"
+                className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold uppercase tracking-widest"
                 style={{
                   color: '#F4A261',
                   border: '1px solid rgba(244,162,97,0.5)',
@@ -971,7 +971,7 @@ function AroundCornerStage() {
             boxShadow: '0 0 24px -8px rgba(244,162,97,0.6)',
           }}
         >
-          <div className="text-[11px] font-bold uppercase tracking-[0.22em] mb-2" style={{ color: '#F4A261' }}>
+          <div className="text-xs font-bold uppercase tracking-[0.22em] mb-2" style={{ color: '#F4A261' }}>
             Auflösung
           </div>
           <p className="font-display font-semibold text-white text-lg md:text-xl leading-snug">
@@ -1397,7 +1397,7 @@ function LadderTeamPanel({
               <span
                 className={cn(
                   'inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full',
-                  'text-[10px] font-bold uppercase tracking-widest border',
+                  'text-xs font-bold uppercase tracking-widest border',
                   !revealed && isSelected
                     ? 'border-brand-purple/70 bg-brand-purple/25 text-white'
                     : 'border-white/15 text-ink-muted',
@@ -1450,7 +1450,7 @@ function LadderRevealPanel({
         boxShadow: '0 0 24px -8px rgba(233,196,106,0.6)',
       }}
     >
-      <div className="text-[11px] font-bold uppercase tracking-[0.22em] mb-2" style={{ color: '#E9C46A' }}>
+      <div className="text-xs font-bold uppercase tracking-[0.22em] mb-2" style={{ color: '#E9C46A' }}>
         Auflösung
       </div>
       <div className="text-sm mb-3">
@@ -1576,7 +1576,7 @@ function CategoryBoardStage() {
                   {t.emoji}
                 </div>
                 <div
-                  className="mt-0.5 text-[10px] md:text-xs font-display font-bold uppercase tracking-wider leading-tight"
+                  className="mt-0.5 text-xs md:text-xs font-display font-bold uppercase tracking-wider leading-tight"
                   style={{
                     color: '#FFE4A6',
                     textShadow: '0 0 8px rgba(240,178,58,0.8)',
@@ -1805,7 +1805,7 @@ function BoardRevealPanel({
       <div className="min-w-0">
         <div
           className={cn(
-            'text-[11px] font-bold uppercase tracking-[0.22em]',
+            'text-xs font-bold uppercase tracking-[0.22em]',
             tone === 'positive' ? 'text-correct' : 'text-ink-muted',
           )}
         >
@@ -2259,7 +2259,7 @@ function EliminationRing({
             <div
               key={pid}
               className={cn(
-                'inline-flex items-center gap-1.5 h-8 rounded-full px-3 text-[11px] font-medium border transition-all',
+                'inline-flex items-center gap-1.5 h-8 rounded-full px-3 text-xs font-medium border transition-all',
                 isEliminated
                   ? 'border-white/[0.06] bg-navy-900/50 text-ink-faint line-through opacity-60'
                   : 'text-ink',
@@ -2313,7 +2313,7 @@ function EliminationRevealPanel({
       <div className="min-w-0">
         <div
           className={cn(
-            'text-[11px] font-bold uppercase tracking-[0.22em]',
+            'text-xs font-bold uppercase tracking-[0.22em]',
             wasCorrect ? 'text-correct' : 'text-wrong',
           )}
         >
@@ -2443,7 +2443,7 @@ function ExpertsStage() {
                     <div className="font-display font-semibold text-ink">{name}</div>
                   </div>
                   {chosen && (
-                    <span className="text-[11px] uppercase tracking-[0.22em] text-brand-purple-soft whitespace-nowrap">
+                    <span className="text-xs uppercase tracking-[0.22em] text-brand-purple-soft whitespace-nowrap">
                       {TOPICS_BY_ID[chosen].label}
                     </span>
                   )}
@@ -2464,7 +2464,7 @@ function ExpertsStage() {
                         }
                         className={cn(
                           'inline-flex items-center gap-1 h-7 rounded-full px-2.5',
-                          'text-[11px] font-medium transition-all border',
+                          'text-xs font-medium transition-all border',
                           isOn
                             ? 'bg-mode-experts/25 border-mode-experts/80 text-mode-experts'
                             : 'bg-navy-800/70 border-white/10 text-ink-muted hover:border-white/25 hover:text-ink',
@@ -2787,7 +2787,7 @@ function TeamSidebarCard({ team, score, matchPoint, isLeader, isCurrent }: TeamC
           </div>
           <div className="min-w-0">
             <div
-              className="font-display font-bold uppercase tracking-[0.22em] text-[11px] leading-none"
+              className="font-display font-bold uppercase tracking-[0.22em] text-xs leading-none"
               style={{ color: hex, textShadow: `0 0 6px ${hex}80` }}
             >
               Team <span className="text-white">{tokens.label}</span>
@@ -2815,13 +2815,13 @@ function TeamSidebarCard({ team, score, matchPoint, isLeader, isCurrent }: TeamC
         {score.toLocaleString('de-DE')}
       </div>
       {matchPoint > 0 && (
-        <div className="mt-2 text-[10px] uppercase tracking-[0.22em] text-ink-muted">
+        <div className="mt-2 text-xs uppercase tracking-[0.22em] text-ink-muted">
           {matchPoint} Match-Punkt{matchPoint === 1 ? '' : 'e'}
         </div>
       )}
       {isCurrent && (
         <div
-          className="mt-2 text-[10px] font-bold uppercase tracking-[0.22em]"
+          className="mt-2 text-xs font-bold uppercase tracking-[0.22em]"
           style={{ color: hex, textShadow: `0 0 8px ${hex}` }}
         >
           Am Zug
