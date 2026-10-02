@@ -62,4 +62,14 @@ describe('authorizeAction', () => {
     expect(authorizeAction(spot, { type: 'SPOTLIGHT_STEAL_ANSWER', renderedIndex: 0 }, { playerId: 'p2' }).ok).toBe(true)
     expect(authorizeAction(spot, { type: 'SPOTLIGHT_STEAL_ANSWER', renderedIndex: 0 }, { playerId: 'p3' }).ok).toBe(false)
   })
+
+  it('Sprinter: Sprint nur aktives Team, Rebound nur das gebuzzte Team', () => {
+    const sprint = stateWith({ kind: 'sprinter', phase: 'answering', activeTeamId: 't1', reboundTeamId: null })
+    expect(authorizeAction(sprint, { type: 'SPRINTER_ANSWER', renderedIndex: 0 }, { playerId: 'p2' }).ok).toBe(false)
+    expect(authorizeAction(sprint, { type: 'SPRINTER_REBOUND_BUZZ', teamId: 't1' }, { playerId: 'p2' }).ok).toBe(false)
+    expect(authorizeAction(sprint, { type: 'SPRINTER_REBOUND_BUZZ', teamId: 't2' }, { playerId: 'p2' }).ok).toBe(true)
+    const rebound = stateWith({ kind: 'sprinter', phase: 'rebound-answer', activeTeamId: 't1', reboundTeamId: 't2' })
+    expect(authorizeAction(rebound, { type: 'SPRINTER_REBOUND_ANSWER', renderedIndex: 0 }, { playerId: 'p2' }).ok).toBe(true)
+    expect(authorizeAction(rebound, { type: 'SPRINTER_REBOUND_ANSWER', renderedIndex: 0 }, { playerId: 'p1' }).ok).toBe(false)
+  })
 })

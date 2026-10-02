@@ -184,7 +184,18 @@ export interface SprinterLive {
   activeQuestion: MultipleChoiceQuestion | null
   shuffledOptions: string[]
   correctRenderedIndex: number
-  phase: 'answering' | 'between-teams'
+  /**
+   * answering: Sprint-Team antwortet gegen die Uhr.
+   * rebound-buzz: Sprint-Team lag falsch — die anderen Teams dürfen buzzern (Uhr pausiert).
+   * rebound-answer: gebuzztes Team antwortet; richtig = Punkte, falsch = Minuspunkte.
+   */
+  phase: 'answering' | 'rebound-buzz' | 'rebound-answer' | 'between-teams'
+  /** Team, das beim Rebound gebuzzt hat. */
+  reboundTeamId?: string | null
+  /** Vom Sprint-Team falsch gewählte Option (für Rebound ausgegraut). */
+  wrongRenderedIndex?: number | null
+  /** Start der Rebound-Pause; beim Weiterlaufen wird sprintStartedAt um die Pause verschoben. */
+  reboundStartedAt?: number | null
   /** Zeitstempel des Sprint-Starts. UI berechnet remaining. */
   sprintStartedAt: number | null
   sprintDurationSeconds: number
@@ -417,6 +428,12 @@ export type GameAction =
   | { type: 'SPRINTER_SKIP' }
   | { type: 'SPRINTER_TIME_UP' }
   | { type: 'SPRINTER_START_NEXT_TEAM' }
+  /** Rebound: anderes Team buzzert nach falscher Sprint-Antwort. */
+  | { type: 'SPRINTER_REBOUND_BUZZ'; teamId: string }
+  /** Rebound-Antwort des gebuzzten Teams. */
+  | { type: 'SPRINTER_REBOUND_ANSWER'; renderedIndex: number }
+  /** Rebound: niemand buzzert — Sprint geht weiter. */
+  | { type: 'SPRINTER_REBOUND_PASS' }
   | { type: 'LADDER_SET_ANSWER'; teamId: string; renderedIndex: number }
   | { type: 'LADDER_REVEAL' }
   | { type: 'LADDER_NEXT' }
@@ -1144,6 +1161,19 @@ function initPointsLadder(teams: Team[], deps: ReducerDeps): PointsLadderLive {
   }
 }
 
+/** Beendet die Rebound-Pause: Sprint-Uhr um die Pausendauer nach hinten schieben. */
+function resumeSprint(live: SprinterLive): SprinterLive {
+  const paused = live.reboundStartedAt ? Date.now() - live.reboundStartedAt : 0
+  return {
+    ...live,
+    phase: 'answering',
+    sprintStartedAt: live.sprintStartedAt !== null ? live.sprintStartedAt + paused : null,
+    reboundTeamId: null,
+    wrongRenderedIndex: null,
+    reboundStartedAt: null,
+  }
+}
+
 function initSprinter(teams: Team[], deps: ReducerDeps): SprinterLive {
   const scores = Object.fromEntries(teams.map((t) => [t.id, 0]))
   const excluded = new Set<string>()
@@ -1265,6 +1295,46 @@ function initLiveFor(
  * Deps mit `localStorage`-Wrapper, Lambda mit DynamoDB.
  */
 export function createReducer(deps: ReducerDeps) {
+  /** Nächste Sprint-Frage fürs aktive Team ziehen (oder Sprint beenden, wenn der Pool leer ist). */
+  function advanceSprinter(
+    state: GameState,
+    live: SprinterLive,
+    scores: Record<string, number>,
+    reducer: (s: GameState, a: GameAction) => GameState,
+  ): GameState {
+    if (!live.activeQuestion) return state
+    const usedQuestionIds = [...live.usedQuestionIds, live.activeQuestion.id]
+    const excluded = new Set(usedQuestionIds)
+    for (const id of deps.getAskedQuestionIds()) excluded.add(id)
+    const nextQuestion = pickAnyMultipleChoice(excluded)
+    const base: SprinterLive = {
+      ...live,
+      phase: 'answering',
+      scores,
+      usedQuestionIds,
+      reboundTeamId: null,
+      wrongRenderedIndex: null,
+      reboundStartedAt: null,
+    }
+    if (!nextQuestion) {
+      // Pool leer — Sprint für dieses Team beenden.
+      return reducer({ ...state, live: base }, { type: 'SPRINTER_TIME_UP' })
+    }
+    const shuffle = shuffleWithMapping(
+      nextQuestion.options,
+      `sprinter:${live.activeTeamId}:${usedQuestionIds.length}:${nextQuestion.id}`,
+    )
+    return {
+      ...state,
+      live: {
+        ...base,
+        activeQuestion: nextQuestion,
+        shuffledOptions: shuffle.shuffled,
+        correctRenderedIndex: shuffle.renderedIndexOf(nextQuestion.correctIndex),
+      },
+    }
+  }
+
   return function reducer(state: GameState, action: GameAction): GameState {
     switch (action.type) {
     case 'SET_TEAM_NAME': {
@@ -2698,41 +2768,52 @@ export function createReducer(deps: ReducerDeps) {
         action.type === 'SPRINTER_ANSWER' &&
         action.renderedIndex === live.correctRenderedIndex
       const teamId = live.activeTeamId
+      if (action.type === 'SPRINTER_ANSWER' && !wasCorrect && live.teamOrder.length > 1) {
+        // Falsch → Rebound: die anderen Teams dürfen buzzern, Sprint-Uhr pausiert.
+        return {
+          ...state,
+          live: {
+            ...live,
+            phase: 'rebound-buzz',
+            reboundTeamId: null,
+            wrongRenderedIndex: action.renderedIndex,
+            reboundStartedAt: Date.now(),
+          },
+        }
+      }
       const nextScores = wasCorrect && teamId
         ? { ...live.scores, [teamId]: (live.scores[teamId] ?? 0) + live.pointsPerCorrect }
         : live.scores
+      return advanceSprinter(state, live, nextScores, reducer)
+    }
 
-      const usedQuestionIds = [...live.usedQuestionIds, live.activeQuestion.id]
-      const excluded = new Set(usedQuestionIds)
-      for (const id of deps.getAskedQuestionIds()) excluded.add(id)
-      const nextQuestion = pickAnyMultipleChoice(excluded)
+    case 'SPRINTER_REBOUND_BUZZ': {
+      if (!state.live || state.live.kind !== 'sprinter') return state
+      const live = state.live
+      if (live.phase !== 'rebound-buzz') return state
+      if (action.teamId === live.activeTeamId || !live.teamOrder.includes(action.teamId)) return state
+      return { ...state, live: { ...live, phase: 'rebound-answer', reboundTeamId: action.teamId } }
+    }
 
-      if (!nextQuestion) {
-        // Pool leer — Sprint für dieses Team beenden.
-        return reducer(
-          {
-            ...state,
-            live: { ...live, scores: nextScores, usedQuestionIds },
-          },
-          { type: 'SPRINTER_TIME_UP' },
-        )
+    case 'SPRINTER_REBOUND_ANSWER': {
+      if (!state.live || state.live.kind !== 'sprinter') return state
+      const live = state.live
+      if (live.phase !== 'rebound-answer' || !live.reboundTeamId) return state
+      if (action.renderedIndex === live.wrongRenderedIndex) return state
+      const delta =
+        action.renderedIndex === live.correctRenderedIndex ? live.pointsPerCorrect : -live.pointsPerCorrect
+      const scores = {
+        ...live.scores,
+        [live.reboundTeamId]: (live.scores[live.reboundTeamId] ?? 0) + delta,
       }
+      return advanceSprinter(state, resumeSprint(live), scores, reducer)
+    }
 
-      const shuffle = shuffleWithMapping(
-        nextQuestion.options,
-        `sprinter:${live.activeTeamId}:${usedQuestionIds.length}:${nextQuestion.id}`,
-      )
-      return {
-        ...state,
-        live: {
-          ...live,
-          scores: nextScores,
-          usedQuestionIds,
-          activeQuestion: nextQuestion,
-          shuffledOptions: shuffle.shuffled,
-          correctRenderedIndex: shuffle.renderedIndexOf(nextQuestion.correctIndex),
-        },
-      }
+    case 'SPRINTER_REBOUND_PASS': {
+      if (!state.live || state.live.kind !== 'sprinter') return state
+      const live = state.live
+      if (live.phase !== 'rebound-buzz') return state
+      return advanceSprinter(state, resumeSprint(live), live.scores, reducer)
     }
 
     case 'SPRINTER_TIME_UP': {

@@ -1127,15 +1127,49 @@ function SprinterStage() {
         </h2>
       </div>
 
+      {/* Rebound: anderes Team darf buzzern, falsch = Minuspunkte */}
+      {sprinter.phase === 'rebound-buzz' && (
+        <div className="mt-6 text-center">
+          <div className="eyebrow text-wrong">Falsch! Rebound — falsche Antwort kostet {sprinter.pointsPerCorrect} Punkte</div>
+          <div className="mt-3 flex flex-wrap justify-center gap-3">
+            {state.round.teams
+              .filter((t) => t.id !== sprinter.activeTeamId)
+              .map((t) => (
+                <Button
+                  key={t.id}
+                  variant="primary"
+                  size="lg"
+                  onClick={() => dispatch({ type: 'SPRINTER_REBOUND_BUZZ', teamId: t.id })}
+                >
+                  {t.name} buzzt
+                </Button>
+              ))}
+            <Button variant="ghost" size="lg" onClick={() => dispatch({ type: 'SPRINTER_REBOUND_PASS' })}>
+              Keiner — weiter
+            </Button>
+          </div>
+        </div>
+      )}
+      {sprinter.phase === 'rebound-answer' && (
+        <p className="mt-6 text-center text-sm text-ink-muted">
+          {state.round.teams.find((t) => t.id === sprinter.reboundTeamId)?.name} antwortet — richtig +
+          {sprinter.pointsPerCorrect}, falsch −{sprinter.pointsPerCorrect}
+        </p>
+      )}
+
       {/* Antworten */}
       <div className="mt-6 md:mt-8 grid md:grid-cols-2 gap-3 md:gap-4">
         {sprinter.shuffledOptions.map((option, idx) => (
           <AnswerOption
             key={`sprint-${sprinter.usedQuestionIds.length}-${idx}`}
             letter={LETTERS[idx]}
-            status="idle"
+            status={idx === sprinter.wrongRenderedIndex && sprinter.phase !== 'answering' ? 'wrong' : 'idle'}
             onClick={() =>
-              dispatch({ type: 'SPRINTER_ANSWER', renderedIndex: idx })
+              sprinter.phase === 'rebound-answer'
+                ? dispatch({ type: 'SPRINTER_REBOUND_ANSWER', renderedIndex: idx })
+                : sprinter.phase === 'answering'
+                  ? dispatch({ type: 'SPRINTER_ANSWER', renderedIndex: idx })
+                  : undefined
             }
           >
             {option}

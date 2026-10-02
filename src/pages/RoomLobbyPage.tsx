@@ -2961,6 +2961,11 @@ function SprinterRoomView({
   const isMyTeam = !!myPlayer && myPlayer.teamId === live.activeTeamId
   const canAnswer =
     live.phase === 'answering' && (isMaster || isMyTeam) && canDispatch
+  const reboundTeam = live.reboundTeamId
+    ? state.round.teams.find((t) => t.id === live.reboundTeamId) ?? null
+    : null
+  const isMyRebound = !!myPlayer && myPlayer.teamId === live.reboundTeamId
+  const inRebound = live.phase === 'rebound-buzz' || live.phase === 'rebound-answer'
 
   // Countdown-Timer im Frontend. Master oder der aktive Player dispatcht
   // SPRINTER_TIME_UP wenn die Zeit vorbei ist.
@@ -3071,7 +3076,9 @@ function SprinterRoomView({
               remainingSecs <= 10 ? 'text-wrong animate-timer-pulse' : 'text-white',
             )}
           >
-            {Math.max(0, Math.floor(remainingSecs))}s
+            {inRebound && live.sprintStartedAt && live.reboundStartedAt
+              ? `${Math.max(0, Math.floor(live.sprintDurationSeconds - (live.reboundStartedAt - live.sprintStartedAt) / 1000))}s ⏸`
+              : `${Math.max(0, Math.floor(remainingSecs))}s`}
           </div>
         </div>
         <div className="w-full">
@@ -3090,13 +3097,73 @@ function SprinterRoomView({
 
       <QuestionCard text={question.question} isMaster={isMaster} revealedTone={null} />
 
+      {live.phase === 'rebound-buzz' && (
+        <Card className={cn('space-y-2', isMaster ? 'p-5' : 'p-4')}>
+          <div className={cn('uppercase tracking-[0.32em] text-wrong', isMaster ? 'text-xs' : 'text-[10px]')}>
+            Falsch! Rebound — wer weiß es? Falsch = Minuspunkte
+          </div>
+          <div className={cn('grid gap-2', isMaster ? 'grid-cols-2' : 'grid-cols-1')}>
+            {state.round.teams
+              .filter((team) => team.id !== live.activeTeamId)
+              // Spieler sehen nur den Buzzer ihres eigenen Teams.
+              .filter((team) => isMaster || team.id === myPlayer?.teamId)
+              .map((team) => (
+                <button
+                  key={team.id}
+                  type="button"
+                  onClick={() => send({ type: 'SPRINTER_REBOUND_BUZZ', teamId: team.id })}
+                  disabled={!canDispatch}
+                  className={cn(
+                    'rounded-xl border py-3 text-center font-bold text-white transition-all disabled:opacity-40',
+                    isMaster ? 'h-20 text-2xl md:text-3xl' : 'h-14 text-base',
+                  )}
+                  style={{
+                    borderColor: getTeamColorHex(team.color),
+                    background: `${getTeamColorHex(team.color)}22`,
+                  }}
+                >
+                  {team.name} buzzt
+                </button>
+              ))}
+          </div>
+          {(isMaster || isHost || isMyTeam) && (
+            <Button
+              size="md"
+              variant="ghost"
+              onClick={() => send({ type: 'SPRINTER_REBOUND_PASS' })}
+              disabled={!canDispatch}
+              className="w-full"
+            >
+              Keiner buzzt — weiter sprinten
+            </Button>
+          )}
+        </Card>
+      )}
+
+      {live.phase === 'rebound-answer' && reboundTeam && (
+        <p className={cn('text-center text-ink-muted', isMaster ? 'text-base md:text-lg' : 'text-xs')}>
+          {reboundTeam.name} antwortet — richtig +{live.pointsPerCorrect}, falsch −{live.pointsPerCorrect}
+        </p>
+      )}
+
       <OptionsGrid
         options={live.shuffledOptions}
         correctIdx={null}
-        selectedIdxByTeam={{}}
+        selectedIdxByTeam={
+          inRebound && live.wrongRenderedIndex != null && activeTeam
+            ? { [live.wrongRenderedIndex]: [activeTeam.id] }
+            : {}
+        }
         teams={state.round.teams}
-        onSelect={(idx) => send({ type: 'SPRINTER_ANSWER', renderedIndex: idx })}
-        canClick={canAnswer}
+        onSelect={(idx) =>
+          live.phase === 'rebound-answer'
+            ? send({ type: 'SPRINTER_REBOUND_ANSWER', renderedIndex: idx })
+            : send({ type: 'SPRINTER_ANSWER', renderedIndex: idx })
+        }
+        canClick={
+          canAnswer ||
+          (live.phase === 'rebound-answer' && canDispatch && (isMaster || isMyRebound))
+        }
         isMaster={isMaster}
       />
 

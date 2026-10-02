@@ -1416,16 +1416,66 @@ describe('reducer — Sprinter (Session J)', () => {
     expect(s.live.phase).toBe('answering')
   })
 
-  it('SPRINTER_ANSWER falsch: kein Punkt, aber Frage wechselt', () => {
+  it('SPRINTER_ANSWER falsch: Rebound-Phase, Uhr pausiert, gleiche Frage', () => {
     let s = bootSprinter()
     if (s.live?.kind !== 'sprinter') throw new Error('unreachable')
     const firstQuestionId = s.live.activeQuestion!.id
-    const wrongIdx =
-      (s.live.correctRenderedIndex + 1) % s.live.shuffledOptions.length
+    const wrongIdx = (s.live.correctRenderedIndex + 1) % s.live.shuffledOptions.length
 
     s = reducer(s, { type: 'SPRINTER_ANSWER', renderedIndex: wrongIdx })
     if (s.live?.kind !== 'sprinter') throw new Error('unreachable')
+    expect(s.live.phase).toBe('rebound-buzz')
     expect(s.live.scores['team-a']).toBe(0)
+    expect(s.live.activeQuestion?.id).toBe(firstQuestionId)
+    expect(s.live.wrongRenderedIndex).toBe(wrongIdx)
+    expect(s.live.reboundStartedAt).not.toBeNull()
+    // Sprint-Team selbst darf nicht rebounden.
+    expect(reducer(s, { type: 'SPRINTER_REBOUND_BUZZ', teamId: 'team-a' })).toBe(s)
+  })
+
+  it('Rebound richtig: gebuzztes Team bekommt Punkte, Sprint läuft weiter', () => {
+    let s = bootSprinter()
+    if (s.live?.kind !== 'sprinter') throw new Error('unreachable')
+    const correct = s.live.correctRenderedIndex
+    const points = s.live.pointsPerCorrect
+    const firstQuestionId = s.live.activeQuestion!.id
+    s = reducer(s, { type: 'SPRINTER_ANSWER', renderedIndex: (correct + 1) % 4 })
+    s = reducer(s, { type: 'SPRINTER_REBOUND_BUZZ', teamId: 'team-b' })
+    if (s.live?.kind !== 'sprinter') throw new Error('unreachable')
+    expect(s.live.phase).toBe('rebound-answer')
+    s = reducer(s, { type: 'SPRINTER_REBOUND_ANSWER', renderedIndex: correct })
+    if (s.live?.kind !== 'sprinter') throw new Error('unreachable')
+    expect(s.live.scores['team-b']).toBe(points)
+    expect(s.live.phase).toBe('answering')
+    expect(s.live.activeTeamId).toBe('team-a')
+    expect(s.live.activeQuestion?.id).not.toBe(firstQuestionId)
+  })
+
+  it('Rebound falsch: Minuspunkte fürs gebuzzte Team', () => {
+    let s = bootSprinter()
+    if (s.live?.kind !== 'sprinter') throw new Error('unreachable')
+    const correct = s.live.correctRenderedIndex
+    const points = s.live.pointsPerCorrect
+    const firstWrong = (correct + 1) % 4
+    s = reducer(s, { type: 'SPRINTER_ANSWER', renderedIndex: firstWrong })
+    s = reducer(s, { type: 'SPRINTER_REBOUND_BUZZ', teamId: 'team-b' })
+    // Die bereits falsche Option ist gesperrt.
+    expect(reducer(s, { type: 'SPRINTER_REBOUND_ANSWER', renderedIndex: firstWrong })).toBe(s)
+    s = reducer(s, { type: 'SPRINTER_REBOUND_ANSWER', renderedIndex: (correct + 2) % 4 })
+    if (s.live?.kind !== 'sprinter') throw new Error('unreachable')
+    expect(s.live.scores['team-b']).toBe(-points)
+    expect(s.live.phase).toBe('answering')
+  })
+
+  it('Rebound-Pass: niemand buzzert, nächste Frage ohne Punkte', () => {
+    let s = bootSprinter()
+    if (s.live?.kind !== 'sprinter') throw new Error('unreachable')
+    const firstQuestionId = s.live.activeQuestion!.id
+    s = reducer(s, { type: 'SPRINTER_ANSWER', renderedIndex: (s.live.correctRenderedIndex + 1) % 4 })
+    s = reducer(s, { type: 'SPRINTER_REBOUND_PASS' })
+    if (s.live?.kind !== 'sprinter') throw new Error('unreachable')
+    expect(s.live.phase).toBe('answering')
+    expect(s.live.scores).toEqual({ 'team-a': 0, 'team-b': 0 })
     expect(s.live.activeQuestion?.id).not.toBe(firstQuestionId)
   })
 

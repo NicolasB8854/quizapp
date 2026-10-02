@@ -58,6 +58,7 @@ export function authorizeAction(
   switch (action.type) {
     case 'BOARD_BUZZER':
     case 'DUEL_BUZZER':
+    case 'SPRINTER_REBOUND_BUZZ':
     case 'FLASH_SET_ANSWER':
     case 'LADDER_SET_ANSWER':
       return action.teamId === myTeam
@@ -69,6 +70,14 @@ export function authorizeAction(
       return team !== null && team === myTeam
         ? OK
         : { ok: false, reason: 'Dein Team ist gerade nicht dran' }
+    }
+    case 'SPRINTER_ANSWER':
+    case 'SPRINTER_SKIP':
+    case 'SPRINTER_REBOUND_ANSWER': {
+      const live = state.live
+      if (!live || live.kind !== 'sprinter') return OK
+      const team = action.type === 'SPRINTER_REBOUND_ANSWER' ? live.reboundTeamId : live.activeTeamId
+      return team && team === myTeam ? OK : { ok: false, reason: 'Dein Team ist gerade nicht dran' }
     }
     case 'SPOTLIGHT_PRIMARY_ANSWER':
     case 'EXPERTS_PRIMARY_ANSWER': {
