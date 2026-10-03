@@ -22,13 +22,9 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: npm
-          cache-dependency-path: |
-            package-lock.json
-            server/package-lock.json
-      - name: Install
-        run: |
-          npm ci
-          npm --prefix server ci
+          cache-dependency-path: package-lock.json
+      - name: Install (Root-Workspaces inkl. server/ und packages/shared)
+        run: npm ci
       - name: Typecheck (App + Shared)
         run: npm run typecheck
       - name: Typecheck (Server)
