@@ -41,7 +41,7 @@ import type {
   SpotlightLive,
   SprinterLive,
 } from '@quizapp/shared'
-import type { GameModeId, Player, SkillLevel, Topic } from '@quizapp/shared'
+import type { GameModeId, Player, Topic } from '@quizapp/shared'
 import {
   answeringTeamId,
   MODES,
@@ -53,6 +53,7 @@ import {
 import { ScreenLayout } from '@/components/ScreenLayout'
 import { Card } from '@/components/Card'
 import { AvatarBadge } from '@/components/AvatarBadge'
+import { LobbySteps, ModeTile, PlayerLine, ShowPanel, StickyCta, TeamCard } from '@/components/show/LobbyBlocks'
 import { BuzzerButton, ShowAnswers, ShowQuestion, ShowStatus, ShowTimer } from '@/components/show/ShowBlocks'
 import { Button } from '@/components/Button'
 import { Badge } from '@/components/Badge'
@@ -819,111 +820,103 @@ function SetupPhaseView({
   send: (a: GameAction) => void
 }) {
   const readyModes = MODES.filter((m) => m.status === 'ready')
-  // Setup ist Show-Runner-Territorium — der Host konfiguriert Modi/Teams
-  // für alle. Player warten nur; sonst könnten sie z. B. Teams entfernen,
-  // während der Host schon konfiguriert.
+  const selectedCount = state.draft.selectedModes.length
+  const minutes = readyModes
+    .filter((m) => state.draft.selectedModes.includes(m.id))
+    .reduce((sum, m) => sum + m.estimatedMinutes, 0)
+  // Setup ist Show-Runner-Territorium — Player warten, bis der Host die Lobby öffnet.
   if (!isHost) {
     return (
-      <Card className="space-y-2 p-5 text-center">
-        <div className="text-xs uppercase tracking-[0.32em] text-brand-purple-soft">
-          Setup
-        </div>
-        <div className="text-base font-semibold text-white">
-          Warte auf den Host
-        </div>
-        <div className="text-xs text-ink-muted">
-          Der Host wählt die Modi und startet die Lobby. Gleich geht&apos;s los.
-        </div>
-      </Card>
+      <div className="space-y-4">
+        <LobbySteps current={0} />
+        <ShowPanel accent eyebrow="Gleich geht’s los" title="Der Host wählt die Spielmodi">
+          <p className="text-sm text-ink-muted">
+            Sobald die Lobby offen ist, wählst du dein Team und deine Interessen. Bis dahin kannst du
+            dein Profil anpassen.
+          </p>
+          <Link to="/profil" className="inline-flex text-sm font-semibold text-brand-cyan-soft hover:text-brand-cyan">
+            Avatar & Profil bearbeiten →
+          </Link>
+          <div className="flex justify-center gap-1.5 pt-2" aria-hidden>
+            {[0, 1, 2].map((i) => (
+              <span
+                key={i}
+                className="h-2 w-2 animate-pulse rounded-full bg-brand-purple"
+                style={{ animationDelay: `${i * 200}ms` }}
+              />
+            ))}
+          </div>
+        </ShowPanel>
+      </div>
     )
   }
   return (
-    <div className="space-y-3">
-      <Card className="space-y-3 p-4">
-        <div className="text-xs uppercase tracking-[0.22em] text-ink-muted">
-          Spielmodi
-        </div>
+    <div className="space-y-4">
+      <LobbySteps current={0} />
+      <ShowPanel
+        eyebrow="Schritt 1"
+        title="Welche Modi spielt ihr?"
+        action={<span className="text-xs text-ink-muted">{selectedCount} gewählt · ~{minutes} min</span>}
+      >
         <div className="grid gap-2 sm:grid-cols-2">
-          {readyModes.map((mode) => {
-            const selected = state.draft.selectedModes.includes(mode.id)
+          {readyModes.map((mode) => (
+            <ModeTile
+              key={mode.id}
+              mode={mode}
+              selected={state.draft.selectedModes.includes(mode.id)}
+              onToggle={() => send({ type: 'TOGGLE_MODE', modeId: mode.id })}
+              disabled={!canDispatch}
+            />
+          ))}
+        </div>
+      </ShowPanel>
+
+      <ShowPanel
+        eyebrow="Teams"
+        title={`${state.draft.teams.length} Teams`}
+        action={
+          <Button size="md" variant="secondary" onClick={() => send({ type: 'ADD_TEAM' })} disabled={!canDispatch}>
+            + Team
+          </Button>
+        }
+      >
+        <div className="flex flex-wrap gap-2">
+          {state.draft.teams.map((team) => {
+            const hex = getTeamColorHex(team.color)
             return (
-              <button
-                key={mode.id}
-                onClick={() => send({ type: 'TOGGLE_MODE', modeId: mode.id })}
-                disabled={!canDispatch}
-                className={cn(
-                  'rounded-lg border p-3 text-left transition-all disabled:opacity-40',
-                  selected
-                    ? 'border-brand-purple/60 bg-brand-purple/10'
-                    : 'border-white/10 bg-white/[0.03] hover:border-white/20',
-                )}
+              <span
+                key={team.id}
+                className="inline-flex items-center gap-2 rounded-full border-2 bg-navy-900/70 py-1 pl-3 pr-1"
+                style={{ borderColor: `${hex}99` }}
               >
-                <div className="text-sm font-semibold text-white">
-                  {mode.name}
-                </div>
-                <div className="text-xs text-ink-muted">
-                  {mode.tagline}
-                </div>
-              </button>
+                <span className="h-2.5 w-2.5 rounded-full" style={{ background: hex }} />
+                <span className="text-sm font-semibold text-white">{team.name}</span>
+                <button
+                  type="button"
+                  aria-label={`${team.name} entfernen`}
+                  onClick={() => send({ type: 'REMOVE_TEAM', teamId: team.id })}
+                  disabled={!canDispatch || state.draft.teams.length <= 2}
+                  className="flex h-7 w-7 items-center justify-center rounded-full text-ink-muted hover:bg-white/10 hover:text-white disabled:opacity-30"
+                >
+                  ×
+                </button>
+              </span>
             )
           })}
         </div>
-      </Card>
+      </ShowPanel>
 
-      <Card className="space-y-3 p-4">
-        <div className="flex items-center justify-between">
-          <div className="text-xs uppercase tracking-[0.22em] text-ink-muted">
-            Teams
-          </div>
-          <div className="flex gap-2">
-            <Button
-              size="md"
-              variant="secondary"
-              onClick={() => send({ type: 'ADD_TEAM' })}
-              disabled={!canDispatch}
-            >
-              + Team
-            </Button>
-          </div>
-        </div>
-        <div className="space-y-2">
-          {state.draft.teams.map((team) => (
-            <div
-              key={team.id}
-              className="flex items-center gap-2 rounded-lg bg-white/[0.03] px-3 py-2"
-            >
-              <span className="h-3 w-3 rounded-full" style={{ background: getTeamColorHex(team.color) }} />
-              <span className="flex-1 text-sm text-white">{team.name}</span>
-              <Button
-                size="md"
-                variant="ghost"
-                onClick={() =>
-                  send({ type: 'REMOVE_TEAM', teamId: team.id })
-                }
-                disabled={!canDispatch || state.draft.teams.length <= 2}
-              >
-                –
-              </Button>
-            </div>
-          ))}
-        </div>
-      </Card>
-
-      <Button
-        size="lg"
-        variant="primary"
-        onClick={() => send({ type: 'GO_TO_LOBBY' })}
-        disabled={!canDispatch || state.draft.selectedModes.length === 0}
-        className="w-full"
-      >
-        Weiter zur Lobby
-      </Button>
-
-      {!canDispatch && (
-        <p className="text-center text-xs text-ink-muted">
-          Verbindung wird aufgebaut …
-        </p>
-      )}
+      <StickyCta hint={!canDispatch ? 'Verbindung wird aufgebaut …' : selectedCount === 0 ? 'Wähle mindestens einen Modus' : undefined}>
+        <Button
+          size="lg"
+          variant="primary"
+          onClick={() => send({ type: 'GO_TO_LOBBY' })}
+          disabled={!canDispatch || selectedCount === 0}
+          className="w-full"
+        >
+          Lobby öffnen
+        </Button>
+      </StickyCta>
     </div>
   )
 }
@@ -944,201 +937,97 @@ function LobbyPhaseView({
   send: (a: GameAction) => void
 }) {
   if (!state.round) return <LoadingCard label="Lade Runde …" />
+  const round = state.round
   const isHost = role === 'host'
-  const readyToStart =
-    state.round.players.length > 0 &&
-    state.round.players.every((p) => p.teamId !== null)
-
-  // Eigener Player im State: alle die nicht Bühne sind haben einen.
+  const pool = round.players.filter((p) => p.teamId === null)
+  const readyToStart = round.players.length > 0 && pool.length === 0
   const myPlayer =
-    !stageOnly && playerId
-      ? state.round.players.find((p) => p.id === playerId) ?? null
-      : null
+    !stageOnly && playerId ? round.players.find((p) => p.id === playerId) ?? null : null
+  const modeNames = round.gameModes.map((id) => MODES_BY_ID[id]?.name).filter(Boolean)
 
   return (
-    <div className="space-y-3">
-      <Card className="p-4">
-        <div className="text-xs uppercase tracking-[0.22em] text-ink-muted">
-          Runde
-        </div>
-        <div className="mt-1 text-lg font-semibold text-white">
-          {state.round.name}
-        </div>
-        <div className="mt-1 text-xs text-ink-muted">
-          Best-of-{state.round.bestOf} · {state.round.players.length}{' '}
-          {state.round.players.length === 1 ? 'Spieler' : 'Spieler'} im Raum
-        </div>
-      </Card>
+    <div className="space-y-4">
+      <LobbySteps current={readyToStart ? 2 : 1} />
 
-      {/* Modi-Editor: Host darf noch in der Lobby Modi anpassen — ohne
-           BACK_TO_SETUP, damit die Player nicht rausfliegen. */}
-      {isHost && (
-        <LobbyModesPanel
-          selected={state.round.gameModes}
-          canDispatch={canDispatch}
-          send={send}
-        />
-      )}
+      <ShowPanel eyebrow={round.name} title={`${round.players.length} im Raum`}>
+        <div className="flex flex-wrap gap-1.5">
+          {modeNames.map((name) => (
+            <span key={name} className="rounded-full border border-brand-purple/40 bg-brand-purple/10 px-2.5 py-0.5 text-xs text-brand-purple-soft">
+              {name}
+            </span>
+          ))}
+        </div>
+      </ShowPanel>
 
-      {/* Eigene Player-Karte: nur wenn Player + im State registriert. */}
       {myPlayer && (
         <>
-          <PlayerSelfCard
-            state={state}
-            me={myPlayer}
-            canDispatch={canDispatch}
-            send={send}
-          />
-          {/* Interessen-Panel als eigene, prominent gestaltete Card.
-               Direkt unter dem PlayerSelfCard, damit der Player sofort
-               nach Namen/Team seine Interessen pflegt — vor dem Team-Roster. */}
-          <PlayerInterestsPanel
-            me={myPlayer}
-            send={send}
-            disabled={!canDispatch}
-            defaultCollapsed={false}
-          />
+          <PlayerSelfCard state={state} me={myPlayer} canDispatch={canDispatch} send={send} />
+          <PlayerInterestsPanel me={myPlayer} send={send} disabled={!canDispatch} defaultCollapsed={false} />
         </>
       )}
 
-      {/* Team-Roster für alle sichtbar. */}
-      <Card className="space-y-2 p-4">
-        <div className="text-xs uppercase tracking-[0.22em] text-ink-muted">
-          Teams
-        </div>
-        {state.round.teams.map((team) => {
-          const members = state.round!.players.filter((p) => p.teamId === team.id)
-          return (
-            <div key={team.id} className="rounded-lg bg-white/[0.03] p-2">
-              <div className="flex items-center gap-2">
-                <span
-                  className="h-3 w-3 rounded-full"
-                  style={{ background: getTeamColorHex(team.color) }}
-                />
-                <span className="text-sm font-semibold text-white">
-                  {team.name}
-                </span>
-                <span className="ml-auto text-xs text-ink-muted">
-                  {members.length} {members.length === 1 ? 'Spieler' : 'Spieler'}
-                </span>
-              </div>
-              {members.length > 0 && (
-                <div className="mt-2 space-y-1.5">
-                  {members.map((p) => (
-                    <RosterPlayerRow
-                      key={p.id}
-                      player={p}
-                      isMe={p.id === playerId}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          )
-        })}
-        {(() => {
-          const pool = state.round!.players.filter((p) => p.teamId === null)
-          if (pool.length === 0) return null
-          return (
-            <div className="mt-2 rounded-lg border border-dashed border-white/10 p-2">
-              <div className="text-xs uppercase tracking-[0.22em] text-ink-muted">
-                Noch ohne Team ({pool.length})
-              </div>
-              <div className="mt-2 space-y-1.5">
-                {pool.map((p) => (
-                  <RosterPlayerRow
-                    key={p.id}
-                    player={p}
-                    isMe={p.id === playerId}
-                  />
-                ))}
-              </div>
-            </div>
-          )
-        })()}
-      </Card>
-
-      <Button
-        size="lg"
-        variant="primary"
-        onClick={() => send({ type: 'START_PLAYING' })}
-        disabled={!canDispatch || !readyToStart || !isHost}
-        className="w-full"
-      >
-        {readyToStart
-          ? isHost
-            ? 'Runde starten'
-            : 'Wartet auf den Host'
-          : 'Wartet auf Team-Auswahl'}
-      </Button>
-
-      {stageOnly && (
-        <p className="text-center text-xs text-ink-muted">
-          Bühnen-Screen — Player tragen sich selbst ein, du kannst die Runde
-          starten wenn alle bereit sind.
-        </p>
-      )}
-    </div>
-  )
-}
-
-/**
- * Kompakte Zeile pro Player im Team-Roster: Name + kleine Interest-Emojis
- * mit Level-Farbe. Für alle Sessions sichtbar, damit man live sieht wer
- * schon welche Interessen gepflegt hat.
- */
-function RosterPlayerRow({ player, isMe }: { player: Player; isMe: boolean }) {
-  return (
-    <div
-      className={cn(
-        'flex flex-wrap items-center gap-2 rounded-md px-2 py-1',
-        isMe ? 'bg-brand-purple/10 ring-1 ring-brand-purple/30' : 'bg-white/[0.02]',
-      )}
-    >
-      <span
-        className={cn(
-          'text-sm',
-          isMe ? 'font-semibold text-white' : 'text-white/85',
-        )}
-      >
-        {player.avatar.emoji ? `${player.avatar.emoji} ` : ''}
-        {player.name || 'Namenlos'}
-      </span>
-      {player.avatar.title && (
-        <span className="rounded-full bg-amber-300/15 px-2 py-0.5 text-xs font-semibold text-amber-200">
-          {player.avatar.title}
-        </span>
-      )}
-      {isMe && (
-        <span className="text-xs uppercase tracking-[0.22em] text-brand-purple-soft">
-          Du
-        </span>
-      )}
-      <div className="ml-auto flex flex-wrap items-center gap-1">
-        {player.interests.map((interest) => {
-          const topicDef = TOPICS_BY_ID[interest.topic]
-          if (!topicDef) return null
-          return (
-            <InterestPill
-              key={interest.topic}
-              emoji={topicDef.emoji}
-              level={interest.level}
-              subCount={interest.tags?.length ?? 0}
+      <ShowPanel eyebrow="Teams" title={readyToStart ? 'Alle sind eingeteilt' : 'Wählt eure Teams'}>
+        <div className="grid gap-2 sm:grid-cols-2">
+          {round.teams.map((team) => (
+            <TeamCard
+              key={team.id}
+              team={team}
+              members={round.players.filter((p) => p.teamId === team.id)}
+              myPlayerId={playerId}
+              onJoin={
+                myPlayer
+                  ? () => send({ type: 'MOVE_PLAYER_TO_TEAM', playerId: myPlayer.id, teamId: team.id })
+                  : undefined
+              }
+              joinDisabled={!canDispatch}
             />
-          )
-        })}
-      </div>
+          ))}
+        </div>
+        {pool.length > 0 && (
+          <div className="rounded-2xl border-2 border-dashed border-white/15 p-3">
+            <div className="eyebrow mb-2 text-ink-muted">Noch ohne Team ({pool.length})</div>
+            <ul className="space-y-1.5">
+              {pool.map((p) => (
+                <PlayerLine key={p.id} player={p} isMe={p.id === playerId} />
+              ))}
+            </ul>
+          </div>
+        )}
+        {isHost && round.players.length > 1 && (
+          <Button variant="ghost" size="md" onClick={() => send({ type: 'SHUFFLE_PLAYERS' })} disabled={!canDispatch} className="w-full">
+            Teams zufällig auslosen
+          </Button>
+        )}
+      </ShowPanel>
+
+      {isHost && <LobbyModesPanel selected={round.gameModes} canDispatch={canDispatch} send={send} />}
+
+      <StickyCta
+        hint={
+          !readyToStart
+            ? `${pool.length} ${pool.length === 1 ? 'Spieler wählt' : 'Spieler wählen'} noch ein Team`
+            : !isHost
+              ? 'Alle bereit — der Host startet'
+              : stageOnly
+                ? 'Alle bereit — starte die Runde auf der Bühne'
+                : undefined
+        }
+      >
+        <Button
+          size="lg"
+          variant="primary"
+          onClick={() => send({ type: 'START_PLAYING' })}
+          disabled={!canDispatch || !readyToStart || !isHost}
+          className="w-full"
+        >
+          {isHost ? 'Runde starten' : readyToStart ? 'Wartet auf den Host' : 'Wartet auf Team-Auswahl'}
+        </Button>
+      </StickyCta>
     </div>
   )
 }
 
-/**
- * Host-only Modi-Editor in der Lobby. Der Host kann Modi ergänzen oder
- * entfernen, ohne dass Player aus der Runde fliegen — `SET_ROUND_MODES`
- * arbeitet in-place und behält Roster + Teams. Nutzt dieselbe Modi-Liste
- * wie der Setup-Screen, aber platzsparender (2-Spalten-Grid, kompakter
- * Text).
- */
+/** Host darf in der Lobby noch Modi anpassen — ohne Roster-Reset. */
 function LobbyModesPanel({
   selected,
   canDispatch,
@@ -1148,112 +1037,35 @@ function LobbyModesPanel({
   canDispatch: boolean
   send: (a: GameAction) => void
 }) {
-  const readyModes = useMemo(
-    () => MODES.filter((m) => m.status === 'ready'),
-    [],
-  )
+  const readyModes = useMemo(() => MODES.filter((m) => m.status === 'ready'), [])
   const selectedSet = useMemo(() => new Set(selected), [selected])
-
   const toggle = (id: GameModeId) => {
     if (!canDispatch) return
-    const next = selectedSet.has(id)
-      ? selected.filter((m) => m !== id)
-      : [...selected, id]
+    const next = selectedSet.has(id) ? selected.filter((m) => m !== id) : [...selected, id]
     if (next.length === 0) return // mindestens ein Modus
     send({ type: 'SET_ROUND_MODES', modes: next })
   }
-
   return (
-    <Card className="space-y-2 p-4">
-      <div className="flex items-center gap-2">
-        <div className="text-xs uppercase tracking-[0.22em] text-ink-muted">
-          Modi ({selected.length})
-        </div>
-        <span className="text-xs uppercase tracking-[0.22em] text-brand-purple-soft">
-          Host
-        </span>
+    <ShowPanel eyebrow="Host" title={`Modi (${selected.length})`}>
+      <div className="grid gap-2 sm:grid-cols-2">
+        {readyModes.map((mode) => (
+          <ModeTile
+            key={mode.id}
+            mode={mode}
+            compact
+            selected={selectedSet.has(mode.id)}
+            onToggle={() => toggle(mode.id)}
+            disabled={!canDispatch}
+          />
+        ))}
       </div>
-      <div className="grid gap-1.5 sm:grid-cols-2">
-        {readyModes.map((mode) => {
-          const isSelected = selectedSet.has(mode.id)
-          return (
-            <button
-              key={mode.id}
-              type="button"
-              onClick={() => toggle(mode.id)}
-              disabled={!canDispatch}
-              className={cn(
-                'rounded-lg border px-2.5 py-1.5 text-left transition-all disabled:opacity-40',
-                isSelected
-                  ? 'border-brand-purple/60 bg-brand-purple/10'
-                  : 'border-white/10 bg-white/[0.03] hover:border-white/20',
-              )}
-            >
-              <div className="flex items-center gap-1.5">
-                <span
-                  aria-hidden
-                  className={cn(
-                    'flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full border text-xs',
-                    isSelected
-                      ? 'border-brand-purple bg-brand-purple/40 text-white'
-                      : 'border-white/30 text-transparent',
-                  )}
-                >
-                  ✓
-                </span>
-                <span className="text-sm font-semibold text-white">
-                  {mode.name}
-                </span>
-              </div>
-              <div className="mt-0.5 pl-6 text-xs text-ink-muted">
-                {mode.tagline}
-              </div>
-            </button>
-          )
-        })}
-      </div>
-      <p className="text-xs text-ink-muted">
-        Der Modus-Wechsel läuft ohne Roster-Reset — Player bleiben in ihren Teams.
-      </p>
-    </Card>
-  )
-}
-
-function InterestPill({
-  emoji,
-  level,
-  subCount,
-}: {
-  emoji: string
-  level: SkillLevel
-  subCount: number
-}) {
-  const tone =
-    level === 5
-      ? 'bg-mode-ladder/15 text-mode-ladder border-mode-ladder/40'
-      : level === 3
-        ? 'bg-brand-purple/15 text-brand-purple-soft border-brand-purple/40'
-        : 'bg-brand-cyan/15 text-brand-cyan-soft border-brand-cyan/40'
-  return (
-    <span
-      className={cn(
-        'inline-flex items-center gap-0.5 rounded-full border px-1.5 py-0.5 text-xs',
-        tone,
-      )}
-      title={`Level ${level}${subCount > 0 ? ` · ${subCount} Sub-Tags` : ''}`}
-    >
-      <span>{emoji}</span>
-      {subCount > 0 && (
-        <span className="text-[8px] font-bold">{subCount}</span>
-      )}
-    </span>
+    </ShowPanel>
   )
 }
 
 /**
- * Karte für den eigenen Player: Name-Input + Team-Auswahl + Interessen.
- * Alle Änderungen werden über SET_PLAYER_NAME / MOVE_PLAYER_TO_TEAM /
- * SET_PLAYER_INTERESTS / SET_PLAYER_INTEREST_TAGS an den Server dispatched.
+ * Karte für den eigenen Player: Avatar, Name, Titel, aktuelles Team.
+ * Team-Wechsel läuft über „Beitreten" an den Team-Karten, Avatar über /profil.
  */
 function PlayerSelfCard({
   state,
@@ -1267,73 +1079,42 @@ function PlayerSelfCard({
   send: (a: GameAction) => void
 }) {
   if (!state.round) return null
-
+  const team = state.round.teams.find((t) => t.id === me.teamId) ?? null
+  const hex = team ? getTeamColorHex(team.color) : undefined
   return (
-    <Card className="space-y-3 border-brand-purple/40 bg-brand-purple/[0.06] p-4">
-      <div className="flex items-center justify-between">
-        <div className="text-xs uppercase tracking-[0.32em] text-brand-purple-soft">
-          Das bist du
-        </div>
-        {me.teamId ? (
-          <Badge tone="purple">
-            {state.round.teams.find((t) => t.id === me.teamId)?.name}
-          </Badge>
-        ) : (
-          <Badge tone="muted">kein Team</Badge>
-        )}
-      </div>
-
-      {/* Name */}
-      <label className="block">
-        <span className="text-xs text-white/70">Anzeige-Name</span>
-        <input
-          value={me.name}
-          onChange={(e) =>
-            send({ type: 'SET_PLAYER_NAME', playerId: me.id, name: e.target.value })
-          }
-          disabled={!canDispatch}
-          className="mt-1 w-full rounded bg-white/10 px-3 py-2 text-lg font-semibold text-white placeholder-white/30 disabled:opacity-50"
-          placeholder="z. B. Sara"
-          maxLength={40}
-        />
-      </label>
-
-      {/* Team-Auswahl */}
-      <div>
-        <span className="text-xs text-white/70">Team wählen</span>
-        <div className="mt-1 grid grid-cols-2 gap-2 sm:grid-cols-3">
-          {state.round.teams.map((team) => {
-            const active = me.teamId === team.id
-            return (
-              <button
-                key={team.id}
-                onClick={() =>
-                  send({
-                    type: 'MOVE_PLAYER_TO_TEAM',
-                    playerId: me.id,
-                    teamId: team.id,
-                  })
-                }
-                disabled={!canDispatch}
-                className={cn(
-                  'flex items-center gap-2 rounded-lg border px-3 py-2 text-left transition-all disabled:opacity-40',
-                  active
-                    ? 'border-brand-purple/70 bg-brand-purple/15'
-                    : 'border-white/10 bg-white/[0.03] hover:border-white/25',
-                )}
-              >
-                <span
-                  className="h-2.5 w-2.5 rounded-full"
-                  style={{ background: getTeamColorHex(team.color) }}
-                />
-                <span className="text-sm text-white">{team.name}</span>
-              </button>
-            )
-          })}
+    <ShowPanel accent eyebrow="Das bist du">
+      <div className="flex items-center gap-3">
+        <AvatarBadge avatar={me.avatar} size="lg" teamHex={hex} name={me.name} className="flex-shrink-0" />
+        <div className="min-w-0 flex-1 space-y-1">
+          <label className="block">
+            <span className="sr-only">Anzeige-Name</span>
+            <input
+              value={me.name}
+              onChange={(e) => send({ type: 'SET_PLAYER_NAME', playerId: me.id, name: e.target.value })}
+              disabled={!canDispatch}
+              className="w-full rounded-xl bg-white/10 px-3 py-2 text-lg font-semibold text-white placeholder-white/30 disabled:opacity-50"
+              placeholder="Dein Name"
+              maxLength={40}
+            />
+          </label>
+          <div className="flex flex-wrap items-center gap-2 text-xs">
+            {me.avatar.title && (
+              <span className="rounded-full bg-amber-300/15 px-2 py-0.5 font-semibold text-amber-200">{me.avatar.title}</span>
+            )}
+            {team ? (
+              <span className="font-semibold" style={{ color: hex }}>
+                {team.name}
+              </span>
+            ) : (
+              <span className="text-wrong">Noch kein Team — unten beitreten</span>
+            )}
+            <Link to="/profil" className="ml-auto text-brand-cyan-soft hover:text-brand-cyan">
+              Avatar ändern
+            </Link>
+          </div>
         </div>
       </div>
-
-    </Card>
+    </ShowPanel>
   )
 }
 
