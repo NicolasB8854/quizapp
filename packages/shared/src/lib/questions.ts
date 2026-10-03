@@ -152,13 +152,21 @@ export function getCatalogTagsByTopic(): Partial<Record<Topic, string[]>> {
 
 export function getMultipleChoiceByTopic(topic: Topic): MultipleChoiceQuestion[] {
   return ALL_QUESTIONS.filter(
-    (q): q is MultipleChoiceQuestion => q.type === 'multiple-choice' && q.topic === topic,
+    (q): q is MultipleChoiceQuestion => q.type === 'multiple-choice' && q.topic === topic && !q.image,
   )
 }
 
+/** Alle Text-MC-Fragen (Bild-Fragen gehören exklusiv dem Bilderrätsel). */
 export function getAllMultipleChoice(): MultipleChoiceQuestion[] {
   return ALL_QUESTIONS.filter(
-    (q): q is MultipleChoiceQuestion => q.type === 'multiple-choice',
+    (q): q is MultipleChoiceQuestion => q.type === 'multiple-choice' && !q.image,
+  )
+}
+
+/** Bild-Fragen für das Bilderrätsel. */
+export function getPictureQuestions(): MultipleChoiceQuestion[] {
+  return ALL_QUESTIONS.filter(
+    (q): q is MultipleChoiceQuestion => q.type === 'multiple-choice' && !!q.image,
   )
 }
 

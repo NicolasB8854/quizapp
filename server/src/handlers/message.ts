@@ -28,7 +28,7 @@ import {
   type ServerMessage,
 } from '@quizapp/shared'
 
-import { getRoom, getSession, putRoom, saveSession } from '../db'
+import { getRoom, getSession, listConnectionsInRoom, putRoom, saveSession } from '../db'
 import { broadcastToRoom, sendToConnection } from '../broadcast'
 
 /** Schickt eine ERROR-Message an den Absender. */
@@ -311,6 +311,14 @@ async function handleDispatch(
   let nextState: GameState
   try {
     nextState = reducer(room.state, msg.action)
+    // Setup → Lobby (z. B. nach „Modi neu wählen"): alle verbundenen Handys
+    // wieder ins Roster holen — sie haben ja schon beigetreten.
+    if (room.state.phase === 'setup' && nextState.phase === 'lobby') {
+      for (const s of await listConnectionsInRoom(session.roomCode)) {
+        if (s.stageOnly) continue
+        nextState = reducer(nextState, { type: 'ADD_PLAYER', teamId: null, playerId: s.playerId, playerName: s.playerName })
+      }
+    }
   } catch (err) {
     console.error(
       JSON.stringify({

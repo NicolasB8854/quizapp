@@ -148,11 +148,22 @@ for mode_id, motif in MODE_MOTIFS.items():
     PRESETS[f"mode-{mode_id}"] = {"aspect": "16:9", "prompt": motif + ", glossy reflective floor, volumetric spotlight beams through haze, premium TV production look"}
 
 
+# Bild-Fragen fürs Bilderrätsel: eigener, neutraler Foto-Stil (das Motiv muss eindeutig sein).
+PICTURE_STYLE = "professional photograph, sharp focus on the single subject, natural colors, clean uncluttered background"
+PICTURE_NEGATIVE = "text, letters, numbers, logo, watermark, labels, multiple subjects, people, hands, cartoon, illustration, blurry"
+_pq = ROOT / "scripts/picture-questions.json"
+if _pq.exists():
+    for _q in json.loads(_pq.read_text(encoding="utf-8")):
+        PRESETS[f"pic-{_q['slug']}"] = {"aspect": "4:3", "prompt": _q["prompt"], "picture": True,
+                                        "answer": _q["options"][_q["correct"]],
+                                        "distractors": [o for i, o in enumerate(_q["options"]) if i != _q["correct"]]}
+
+
 def generate(preset: str, model: str, seed: int) -> Path:
     cfg = PRESETS[preset]
     body = {
-        "prompt": f"{cfg['prompt']}. {STYLE}",
-        "negative_prompt": NEGATIVE,
+        "prompt": f"{cfg['prompt']}. {PICTURE_STYLE if cfg.get('picture') else STYLE}",
+        "negative_prompt": PICTURE_NEGATIVE if cfg.get("picture") else NEGATIVE,
         "aspect_ratio": cfg["aspect"],
         "output_format": "jpeg",
         "seed": seed,
@@ -178,7 +189,17 @@ def generate(preset: str, model: str, seed: int) -> Path:
 
 def review(image: Path, preset: str) -> str:
     """Bild-Review durch einen frischen kiro-cli-Lauf (kann Bilder lesen)."""
-    prompt = (
+    cfg = PRESETS[preset]
+    if cfg.get("picture"):
+        prompt = (
+            f"Lies das Bild {image} mit deinem Datei-Lesetool (Bildmodus). Es ist eine Quizfrage 'Was ist das?' mit den "
+            f"Antworten {[cfg['answer'], *cfg['distractors']]}. Richtig ist '{cfg['answer']}'. Prüfe streng: Ist das Motiv "
+            f"eindeutig und anatomisch/sachlich korrekt als '{cfg['answer']}' erkennbar und NICHT mit den anderen Optionen "
+            "verwechselbar? Gibt es Text, Wasserzeichen, Fehler? Antworte NUR mit: SCORE: <1-10> | PASST: <ja/nein> | "
+            "FEHLER: <...> | STIMMUNG: <1 Satz> | TIPP: <1 Satz>"
+        )
+    else:
+      prompt = (
         f"Lies das Bild {image} mit deinem Datei-Lesetool (Bildmodus). Kontext: Hintergrund/Artwork für eine Quiz-App "
         f"'QUIZO — spannender Quizabend mit Freunden', Art Direction: navy Nacht, Violett/Cyan-Show-Glow, warmes Amber, "
         f"keine Texte, keine erkennbaren Gesichter. Der Bildaufbau (wo UI-Text liegt) wird per CSS gelöst — bewerte die "

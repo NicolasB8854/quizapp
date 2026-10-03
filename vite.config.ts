@@ -35,6 +35,7 @@ export default defineConfig({
       'src/**/*.test.ts',
       'src/**/*.test.tsx',
       'packages/shared/src/**/*.test.ts',
+      'server/src/**/*.test.ts',
     ],
     globals: false,
     setupFiles: ['./vitest.setup.ts'],

@@ -23,11 +23,11 @@ export interface ActionActor {
  */
 export const HOST_ONLY_ACTIONS: ReadonlySet<GameAction['type']> = new Set<GameAction['type']>([
   'SET_TEAM_NAME', 'ADD_TEAM', 'REMOVE_TEAM', 'TOGGLE_MODE', 'SET_MODE_SELECTION', 'SET_ROUND_MODES',
-  'GO_TO_LOBBY', 'START_PLAYING', 'LOBBY_ADVANCE', 'LOBBY_BACK', 'SHUFFLE_PLAYERS',
+  'GO_TO_LOBBY', 'INIT_MULTIPLAYER_ROUND', 'START_PLAYING', 'LOBBY_ADVANCE', 'LOBBY_BACK', 'SHUFFLE_PLAYERS',
   'ADD_PLAYER', 'ADD_PLAYER_FROM_LIBRARY', 'REPLACE_PLAYER_FROM_LIBRARY',
   'FINISH_MODE', 'BACK_TO_SETUP', 'RESTART_MATCH',
   'CD_NEXT_TURN', 'FLASH_REVEAL', 'FLASH_NEXT', 'SPOTLIGHT_NEXT', 'AC_REVEAL_SOLUTION', 'AC_NEXT',
-  'SPRINTER_START_NEXT_TEAM', 'LADDER_REVEAL', 'LADDER_NEXT', 'BOARD_NEXT', 'DUEL_NEXT', 'ELIM_NEXT', 'EXPERTS_NEXT',
+  'SPRINTER_START_NEXT_TEAM', 'LADDER_REVEAL', 'LADDER_NEXT', 'PICTURE_REVEAL', 'PICTURE_NEXT', 'BOARD_NEXT', 'DUEL_NEXT', 'ELIM_NEXT', 'EXPERTS_NEXT',
 ])
 
 export type AuthorizeResult = { ok: true } | { ok: false; reason: string }
@@ -89,6 +89,7 @@ export function authorizeAction(
     case 'SPRINTER_REBOUND_BUZZ':
     case 'FLASH_SET_ANSWER':
     case 'LADDER_SET_ANSWER':
+    case 'PICTURE_SET_ANSWER':
       return action.teamId === myTeam
         ? OK
         : { ok: false, reason: 'Nur für das eigene Team erlaubt' }

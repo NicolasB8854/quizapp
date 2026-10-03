@@ -191,6 +191,11 @@ export interface MultipleChoiceQuestion extends BaseQuestion {
   type: 'multiple-choice'
   options: string[]
   correctIndex: number
+  /**
+   * Bild-Frage (Modus Bilderrätsel): Pfad unter /public, z. B. /img/pictures/okapi.jpg.
+   * Fragen mit Bild werden NUR im Bilderrätsel gezogen.
+   */
+  image?: string
 }
 
 export interface OpenQuestion extends BaseQuestion {

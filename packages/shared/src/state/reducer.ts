@@ -36,6 +36,7 @@ import { MODES, MODES_BY_ID } from '../data/modes'
 import { TOPICS, sortTopicsAlphabetically } from '../data/topics'
 import {
   getMultipleChoiceByTopic,
+  getPictureQuestions,
   clampDifficulty,
   pickAnyMultipleChoice,
   pickByTargetDifficulty,
@@ -348,7 +349,32 @@ export interface ExpertsLive {
   pointsPerCorrect: number
 }
 
+/**
+ * Bilderrätsel: ein Bild wird über ~10 s scharf, alle Teams tippen parallel.
+ * Frühe richtige Antwort = mehr Punkte (300 → 100). Host löst auf und schaltet weiter.
+ */
+export interface PictureLive {
+  kind: 'blindguess'
+  totalQuestions: number
+  currentIndex: number
+  activeQuestion: MultipleChoiceQuestion | null
+  shuffledOptions: string[]
+  correctRenderedIndex: number
+  /** teamId → gewählte Option (null = noch nicht getippt). */
+  teamAnswers: Record<string, number | null>
+  /** teamId → ms nach Bildstart, wann getippt wurde. */
+  answeredAfterMs: Record<string, number | null>
+  /** Zeitpunkt, ab dem das Bild scharf wird (ms since epoch). */
+  startedAt: number | null
+  phase: 'answering' | 'revealed' | 'empty'
+  scores: Record<string, number>
+  usedQuestionIds: string[]
+  /** Punkte, die jedes Team in dieser Runde bekommen hat (für die Auflösung). */
+  lastPoints: Record<string, number>
+}
+
 export type LiveGame =
+  | PictureLive
   | CategoryDuelLive
   | FlashLive
   | SpotlightLive
@@ -435,6 +461,9 @@ export type GameAction =
   /** Rebound: niemand buzzert — Sprint geht weiter. */
   | { type: 'SPRINTER_REBOUND_PASS' }
   | { type: 'LADDER_SET_ANSWER'; teamId: string; renderedIndex: number }
+  | { type: 'PICTURE_SET_ANSWER'; teamId: string; renderedIndex: number }
+  | { type: 'PICTURE_REVEAL' }
+  | { type: 'PICTURE_NEXT' }
   | { type: 'LADDER_REVEAL' }
   | { type: 'LADDER_NEXT' }
   | { type: 'BOARD_PICK_CELL'; topic: Topic; valueIndex: number }
@@ -1120,6 +1149,67 @@ function pickLadderQuestion(
   return pickByTargetDifficulty(usedIds, LADDER_DIFFICULTIES[index] ?? 3)
 }
 
+export const PICTURE_CURVE: readonly Difficulty[] = [1, 2, 2, 3, 4, 5]
+export const PICTURE_SHARPEN_MS = 10_000
+
+/** Punkte für eine richtige Bild-Antwort: 300 sofort, linear bis 100 nach 10 s. */
+export function picturePoints(answeredAfterMs: number): number {
+  const t = Math.min(1, Math.max(0, answeredAfterMs / PICTURE_SHARPEN_MS))
+  return Math.round((300 - 200 * t) / 10) * 10
+}
+
+function pickPictureQuestion(usedIds: ReadonlySet<string>, step: number): MultipleChoiceQuestion | null {
+  const pool = getPictureQuestions()
+  if (pool.length === 0) return null
+  const fresh = pool.filter((q) => !usedIds.has(q.id))
+  const candidates = fresh.length > 0 ? fresh : pool
+  const target = PICTURE_CURVE[step] ?? 3
+  for (let dist = 0; dist <= 4; dist++) {
+    for (const d of dist === 0 ? [target] : [target - dist, target + dist]) {
+      const bucket = candidates.filter((q) => q.difficulty === d)
+      if (bucket.length > 0) return bucket[Math.floor(Math.random() * bucket.length)]
+    }
+  }
+  return candidates[Math.floor(Math.random() * candidates.length)]
+}
+
+function loadPictureRound(base: PictureLive, teams: readonly Team[], index: number, used: Set<string>): PictureLive | null {
+  const q = pickPictureQuestion(used, index)
+  if (!q) return null
+  const shuffle = shuffleWithMapping(q.options, `picture:${index}:${q.id}`)
+  return {
+    ...base,
+    currentIndex: index,
+    activeQuestion: q,
+    shuffledOptions: shuffle.shuffled,
+    correctRenderedIndex: shuffle.renderedIndexOf(q.correctIndex),
+    teamAnswers: Object.fromEntries(teams.map((t) => [t.id, null])),
+    answeredAfterMs: Object.fromEntries(teams.map((t) => [t.id, null])),
+    lastPoints: {},
+    startedAt: Date.now(),
+    phase: 'answering',
+  }
+}
+
+function initPicture(teams: Team[], deps: ReducerDeps): PictureLive {
+  const base: PictureLive = {
+    kind: 'blindguess',
+    totalQuestions: PICTURE_CURVE.length,
+    currentIndex: 0,
+    activeQuestion: null,
+    shuffledOptions: [],
+    correctRenderedIndex: 0,
+    teamAnswers: Object.fromEntries(teams.map((t) => [t.id, null])),
+    answeredAfterMs: Object.fromEntries(teams.map((t) => [t.id, null])),
+    startedAt: null,
+    phase: 'empty',
+    scores: Object.fromEntries(teams.map((t) => [t.id, 0])),
+    usedQuestionIds: [],
+    lastPoints: {},
+  }
+  return loadPictureRound(base, teams, 0, new Set(deps.getAskedQuestionIds())) ?? base
+}
+
 function initPointsLadder(teams: Team[], deps: ReducerDeps): PointsLadderLive {
   const scores = Object.fromEntries(teams.map((t) => [t.id, 0]))
   const excluded = new Set<string>()
@@ -1274,6 +1364,8 @@ function initLiveFor(
       return initSprinter(teams, deps)
     case 'points-ladder':
       return initPointsLadder(teams, deps)
+    case 'blindguess':
+      return initPicture(teams, deps)
     case 'category-board':
       return initCategoryBoard(teams, players)
     case 'duel-1v1':
@@ -2683,6 +2775,54 @@ export function createReducer(deps: ReducerDeps) {
           },
         },
       }
+    }
+
+    case 'PICTURE_SET_ANSWER': {
+      if (!state.live || state.live.kind !== 'blindguess') return state
+      const live = state.live
+      if (live.phase !== 'answering' || !(action.teamId in live.teamAnswers)) return state
+      if (live.teamAnswers[action.teamId] !== null) return state // erste Antwort zählt
+      const after = live.startedAt ? Math.max(0, Date.now() - live.startedAt) : PICTURE_SHARPEN_MS
+      return {
+        ...state,
+        live: {
+          ...live,
+          teamAnswers: { ...live.teamAnswers, [action.teamId]: action.renderedIndex },
+          answeredAfterMs: { ...live.answeredAfterMs, [action.teamId]: after },
+        },
+      }
+    }
+
+    case 'PICTURE_REVEAL': {
+      if (!state.live || state.live.kind !== 'blindguess') return state
+      const live = state.live
+      if (live.phase !== 'answering') return state
+      const scores = { ...live.scores }
+      const lastPoints: Record<string, number> = {}
+      for (const [teamId, answer] of Object.entries(live.teamAnswers)) {
+        if (answer !== null && answer === live.correctRenderedIndex) {
+          const pts = picturePoints(live.answeredAfterMs[teamId] ?? PICTURE_SHARPEN_MS)
+          scores[teamId] = (scores[teamId] ?? 0) + pts
+          lastPoints[teamId] = pts
+        }
+      }
+      return { ...state, live: { ...live, phase: 'revealed', scores, lastPoints } }
+    }
+
+    case 'PICTURE_NEXT': {
+      if (!state.round || !state.live || state.live.kind !== 'blindguess') return state
+      const live = state.live
+      if (live.phase === 'empty') return reducer(state, { type: 'FINISH_MODE' })
+      if (live.phase !== 'revealed') return state
+      const usedQuestionIds = live.activeQuestion ? [...live.usedQuestionIds, live.activeQuestion.id] : live.usedQuestionIds
+      const nextIndex = live.currentIndex + 1
+      const base: PictureLive = { ...live, usedQuestionIds }
+      if (nextIndex >= live.totalQuestions) return reducer({ ...state, live: base }, { type: 'FINISH_MODE' })
+      const used = new Set(usedQuestionIds)
+      for (const id of deps.getAskedQuestionIds()) used.add(id)
+      const next = loadPictureRound(base, state.round.teams, nextIndex, used)
+      if (!next) return reducer({ ...state, live: base }, { type: 'FINISH_MODE' })
+      return { ...state, live: next }
     }
 
     case 'LADDER_REVEAL': {

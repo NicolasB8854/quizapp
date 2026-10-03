@@ -31,7 +31,7 @@ export type GameModeId =
   | 'pantomime'        // Activity-Style
 
 export type ModeAccent =
-  | 'duel' | 'corner' | 'board' | 'experts' | 'sprinter' | 'ladder' | 'flash' | 'spotlight'
+  | 'duel' | 'corner' | 'board' | 'experts' | 'sprinter' | 'ladder' | 'flash' | 'spotlight' | 'picture'
 
 export interface GameMode {
   id: GameModeId
