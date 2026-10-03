@@ -4,7 +4,7 @@ import { loadBundledCatalog } from '@quizapp/shared'
 import App from './App'
 // Fonts selbst gehostet (kein Google-Request, kein Render-Blocking, DSGVO).
 import '@fontsource-variable/inter/wght.css'
-import '@fontsource-variable/bricolage-grotesque/opsz.css'
+import '@fontsource-variable/montserrat/wght.css'
 import './index.css'
 
 createRoot(document.getElementById('root')!).render(

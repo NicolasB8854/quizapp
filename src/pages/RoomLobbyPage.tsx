@@ -328,7 +328,7 @@ export default function RoomLobbyPage() {
   }, [currentLiveKind, currentPhase, currentModeIndex, room.state?.round])
 
   return (
-    <ScreenLayout variant="dim">
+    <ScreenLayout variant="stage">
       {myTeamColor && (
         <div
           aria-hidden

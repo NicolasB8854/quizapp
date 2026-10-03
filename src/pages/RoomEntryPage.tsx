@@ -71,7 +71,7 @@ export default function RoomEntryPage() {
   }
 
   return (
-    <ScreenLayout variant="dim">
+    <ScreenLayout variant="home">
       <div className="mx-auto w-full max-w-xl space-y-5 px-4 py-4 md:py-8">
         <div className="flex items-center gap-3">
           <Button

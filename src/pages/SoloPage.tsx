@@ -135,7 +135,7 @@ export default function SoloPage() {
   }, [phase, startedAt])
 
   return (
-    <ScreenLayout variant="dim" hideNav>
+    <ScreenLayout variant="stage" hideNav>
       <div className="mx-auto w-full max-w-xl space-y-4 px-4 py-4 md:py-8">
         <div className="flex items-center justify-between">
           <Link to="/">

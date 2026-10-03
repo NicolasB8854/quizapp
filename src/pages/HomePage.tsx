@@ -41,7 +41,15 @@ export default function HomePage() {
     <ScreenLayout variant="home">
       <div className="mx-auto w-full max-w-xl space-y-6 px-4 pb-12 pt-2 md:max-w-5xl md:pt-8">
         {/* HERO */}
-        <section className="animate-titleIn">
+        <section className="relative animate-titleIn">
+          {/* Neon-Schriftzug aus dem Designkonzept — nur Desktop, rein dekorativ. */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute right-0 top-2 hidden select-none text-right font-display text-3xl font-black uppercase leading-tight tracking-wide lg:block xl:text-4xl"
+          >
+            <span className="neon-cyan block -rotate-3">Good Questions.</span>
+            <span className="neon-magenta block -rotate-3">Better People.</span>
+          </div>
           <h1
             className={cn(
               'font-display font-extrabold uppercase tracking-tight leading-[0.9]',
