@@ -19,6 +19,7 @@ import { useEffect } from 'react'
 import type { GameMode } from '@quizapp/shared'
 import { ACCENT_HEX } from '@quizapp/shared'
 import { cn } from '@/lib/classnames'
+import { modeImage } from '@/lib/modeImage'
 
 interface Props {
   mode: GameMode
@@ -60,7 +61,15 @@ export function ModeTransitionSplash({
       aria-live="polite"
       role="status"
     >
-      <div className="max-w-3xl px-6 text-center animate-splash-content">
+      {/* Studio-Motiv des Modus, stark abgedunkelt — Titel bleibt lesbar. */}
+      <img
+        src={modeImage(mode.id)}
+        alt=""
+        aria-hidden
+        className="absolute inset-0 h-full w-full object-cover opacity-60"
+      />
+      <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-navy-900/80 via-navy-900/55 to-navy-900/85" />
+      <div className="relative max-w-3xl px-6 text-center animate-splash-content">
         <div className="text-xs md:text-sm uppercase tracking-[0.32em] text-white/40">
           Modus {modeIndex + 1} / {totalModes}
         </div>

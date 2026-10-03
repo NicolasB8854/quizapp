@@ -1,7 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { INITIAL_STATE, reducer, type GameState } from './GameContext'
-import { getMultipleChoiceByTopic, getTrueFalsePool } from '@quizapp/shared'
-import type { SkillLevel } from '@quizapp/shared'
+import { createReducer, INITIAL_STATE, type GameState } from './reducer'
+import { getMultipleChoiceByTopic, getTrueFalsePool } from '../lib/questions'
+import type { SkillLevel } from '../types/round'
+
+// Reducer ohne Geräte-Historie: jede Runde zieht aus dem vollen Katalog.
+const reducer = createReducer({ getAskedQuestionIds: () => new Set<string>() })
 
 /**
  * Reducer-Tests. Der Reducer ist die zentrale Wahrheitsquelle für Spielzustand;
@@ -653,7 +656,7 @@ describe('reducer — Fachrunde (Session O)', () => {
     expect(s.live.expertise[pid]).toBe('medizin')
   })
 
-  it('EXPERTS_START_ROUND: mit ≥1 Fach → primary, Timer läuft, erste Frage im Fach', () => {
+  it('EXPERTS_START_ROUND: mit ≥1 Fach → question-shown ohne Timer, erste Frage im Fach', () => {
     let s = bootExperts()
     if (s.live?.kind !== 'experts') throw new Error('unreachable')
     const pid = s.live.playerOrder[0]
@@ -664,9 +667,15 @@ describe('reducer — Fachrunde (Session O)', () => {
     })
     s = reducer(s, { type: 'EXPERTS_START_ROUND' })
     if (s.live?.kind !== 'experts') throw new Error('unreachable')
-    expect(s.live.phase).toBe('primary')
+    expect(s.live.phase).toBe('question-shown')
     expect(s.live.activePlayerId).toBe(pid)
     expect(s.live.activeQuestion?.topic).toBe('medizin')
+    expect(s.live.soloStartedAt).toBeNull()
+    expect(s.live.soloDurationSeconds).toBe(20)
+    // „Antworten anzeigen" startet den Timer.
+    s = reducer(s, { type: 'EXPERTS_SHOW_OPTIONS' })
+    if (s.live?.kind !== 'experts') throw new Error('unreachable')
+    expect(s.live.phase).toBe('primary')
     expect(s.live.soloStartedAt).not.toBeNull()
     // playerOrder wurde auf die mit Fach reduziert.
     expect(s.live.playerOrder).toEqual([pid])
@@ -694,6 +703,7 @@ describe('reducer — Fachrunde (Session O)', () => {
     if (s.live?.kind !== 'experts') throw new Error('unreachable')
     const points = s.live.pointsPerCorrect
 
+    s = reducer(s, { type: 'EXPERTS_SHOW_OPTIONS' })
     s = reducer(s, { type: 'EXPERTS_MARK_PRIMARY', outcome: 'correct' })
     if (s.live?.kind !== 'experts') throw new Error('unreachable')
     expect(s.live.phase).toBe('revealed')
@@ -712,6 +722,7 @@ describe('reducer — Fachrunde (Session O)', () => {
       topic: 'medizin',
     })
     s = reducer(s, { type: 'EXPERTS_START_ROUND' })
+    s = reducer(s, { type: 'EXPERTS_SHOW_OPTIONS' })
     s = reducer(s, { type: 'EXPERTS_MARK_PRIMARY', outcome: 'wrong' })
     if (s.live?.kind !== 'experts') throw new Error('unreachable')
     expect(s.live.phase).toBe('steal-answer')
@@ -728,6 +739,7 @@ describe('reducer — Fachrunde (Session O)', () => {
       topic: 'medizin',
     })
     s = reducer(s, { type: 'EXPERTS_START_ROUND' })
+    s = reducer(s, { type: 'EXPERTS_SHOW_OPTIONS' })
     s = reducer(s, { type: 'EXPERTS_MARK_PRIMARY', outcome: 'timeout' })
     if (s.live?.kind !== 'experts') throw new Error('unreachable')
     expect(s.live.phase).toBe('steal-answer')
@@ -748,6 +760,7 @@ describe('reducer — Fachrunde (Session O)', () => {
     const halfPoints = Math.floor(s.live.pointsPerCorrect / 2)
     const correctIdx = s.live.correctRenderedIndex
 
+    s = reducer(s, { type: 'EXPERTS_SHOW_OPTIONS' })
     s = reducer(s, { type: 'EXPERTS_MARK_PRIMARY', outcome: 'wrong' })
     s = reducer(s, { type: 'EXPERTS_STEAL_ANSWER', renderedIndex: correctIdx })
     if (s.live?.kind !== 'experts') throw new Error('unreachable')
@@ -757,21 +770,48 @@ describe('reducer — Fachrunde (Session O)', () => {
     expect(s.live.scores['team-a']).toBe(0)
   })
 
-  it('Nach letztem Spieler: FINISH_MODE → scoreboard mit Match-Punkt', () => {
+  it('Fünf Fragen pro Experte: 100 → 500 Punkte, Schwierigkeit 1 → 5, danach scoreboard', () => {
     let s = bootExperts()
     if (s.live?.kind !== 'experts') throw new Error('unreachable')
     const teamAPlayer = s.round!.players.find((p) => p.teamId === 'team-a')!
-    // Nur ein Fach setzen → Order-Länge 1.
-    s = reducer(s, {
-      type: 'EXPERTS_SET_EXPERTISE',
-      playerId: teamAPlayer.id,
-      topic: 'medizin',
-    })
+    s = reducer(s, { type: 'EXPERTS_SET_EXPERTISE', playerId: teamAPlayer.id, topic: 'medizin' })
     s = reducer(s, { type: 'EXPERTS_START_ROUND' })
-    s = reducer(s, { type: 'EXPERTS_MARK_PRIMARY', outcome: 'correct' })
-    s = reducer(s, { type: 'EXPERTS_NEXT' })
+    const values: number[] = []
+    const diffs: number[] = []
+    for (let i = 0; i < 5; i++) {
+      if (s.live?.kind !== 'experts') throw new Error('unreachable')
+      values.push(s.live.pointsPerCorrect)
+      diffs.push(s.live.activeQuestion!.difficulty ?? 0)
+      expect(s.live.currentStep).toBe(i)
+      s = reducer(s, { type: 'EXPERTS_SHOW_OPTIONS' })
+      if (s.live?.kind !== 'experts') throw new Error('unreachable')
+      s = reducer(s, { type: 'EXPERTS_PRIMARY_ANSWER', renderedIndex: s.live.correctRenderedIndex })
+      s = reducer(s, { type: 'EXPERTS_NEXT' })
+    }
+    expect(values).toEqual([100, 200, 300, 400, 500])
+    // Katalog garantiert ≥ 4 Fragen je Stufe und Thema (catalog.test.ts) → exakt 1 bis 5.
+    expect(diffs).toEqual([1, 2, 3, 4, 5])
     expect(s.phase).toBe('scoreboard')
     expect(s.matchPoints['team-a']).toBe(1)
+  })
+
+  it('EXPERTS_PRIMARY_ANSWER wertet automatisch aus und merkt die Wahl', () => {
+    let s = bootExperts()
+    if (s.live?.kind !== 'experts') throw new Error('unreachable')
+    const pid = s.live.playerOrder[0]
+    s = reducer(s, { type: 'EXPERTS_SET_EXPERTISE', playerId: pid, topic: 'medizin' })
+    s = reducer(s, { type: 'EXPERTS_START_ROUND' })
+    // Ohne aufgedeckte Optionen keine Antwort möglich.
+    const before = s
+    s = reducer(s, { type: 'EXPERTS_PRIMARY_ANSWER', renderedIndex: 0 })
+    expect(s).toBe(before)
+    s = reducer(s, { type: 'EXPERTS_SHOW_OPTIONS' })
+    if (s.live?.kind !== 'experts') throw new Error('unreachable')
+    const wrong = (s.live.correctRenderedIndex + 1) % 4
+    s = reducer(s, { type: 'EXPERTS_PRIMARY_ANSWER', renderedIndex: wrong })
+    if (s.live?.kind !== 'experts') throw new Error('unreachable')
+    expect(s.live.phase).toBe('steal-answer')
+    expect(s.live.primaryRenderedIndex).toBe(wrong)
   })
 })
 
@@ -1378,16 +1418,66 @@ describe('reducer — Sprinter (Session J)', () => {
     expect(s.live.phase).toBe('answering')
   })
 
-  it('SPRINTER_ANSWER falsch: kein Punkt, aber Frage wechselt', () => {
+  it('SPRINTER_ANSWER falsch: Rebound-Phase, Uhr pausiert, gleiche Frage', () => {
     let s = bootSprinter()
     if (s.live?.kind !== 'sprinter') throw new Error('unreachable')
     const firstQuestionId = s.live.activeQuestion!.id
-    const wrongIdx =
-      (s.live.correctRenderedIndex + 1) % s.live.shuffledOptions.length
+    const wrongIdx = (s.live.correctRenderedIndex + 1) % s.live.shuffledOptions.length
 
     s = reducer(s, { type: 'SPRINTER_ANSWER', renderedIndex: wrongIdx })
     if (s.live?.kind !== 'sprinter') throw new Error('unreachable')
+    expect(s.live.phase).toBe('rebound-buzz')
     expect(s.live.scores['team-a']).toBe(0)
+    expect(s.live.activeQuestion?.id).toBe(firstQuestionId)
+    expect(s.live.wrongRenderedIndex).toBe(wrongIdx)
+    expect(s.live.reboundStartedAt).not.toBeNull()
+    // Sprint-Team selbst darf nicht rebounden.
+    expect(reducer(s, { type: 'SPRINTER_REBOUND_BUZZ', teamId: 'team-a' })).toBe(s)
+  })
+
+  it('Rebound richtig: gebuzztes Team bekommt Punkte, Sprint läuft weiter', () => {
+    let s = bootSprinter()
+    if (s.live?.kind !== 'sprinter') throw new Error('unreachable')
+    const correct = s.live.correctRenderedIndex
+    const points = s.live.pointsPerCorrect
+    const firstQuestionId = s.live.activeQuestion!.id
+    s = reducer(s, { type: 'SPRINTER_ANSWER', renderedIndex: (correct + 1) % 4 })
+    s = reducer(s, { type: 'SPRINTER_REBOUND_BUZZ', teamId: 'team-b' })
+    if (s.live?.kind !== 'sprinter') throw new Error('unreachable')
+    expect(s.live.phase).toBe('rebound-answer')
+    s = reducer(s, { type: 'SPRINTER_REBOUND_ANSWER', renderedIndex: correct })
+    if (s.live?.kind !== 'sprinter') throw new Error('unreachable')
+    expect(s.live.scores['team-b']).toBe(points)
+    expect(s.live.phase).toBe('answering')
+    expect(s.live.activeTeamId).toBe('team-a')
+    expect(s.live.activeQuestion?.id).not.toBe(firstQuestionId)
+  })
+
+  it('Rebound falsch: Minuspunkte fürs gebuzzte Team', () => {
+    let s = bootSprinter()
+    if (s.live?.kind !== 'sprinter') throw new Error('unreachable')
+    const correct = s.live.correctRenderedIndex
+    const points = s.live.pointsPerCorrect
+    const firstWrong = (correct + 1) % 4
+    s = reducer(s, { type: 'SPRINTER_ANSWER', renderedIndex: firstWrong })
+    s = reducer(s, { type: 'SPRINTER_REBOUND_BUZZ', teamId: 'team-b' })
+    // Die bereits falsche Option ist gesperrt.
+    expect(reducer(s, { type: 'SPRINTER_REBOUND_ANSWER', renderedIndex: firstWrong })).toBe(s)
+    s = reducer(s, { type: 'SPRINTER_REBOUND_ANSWER', renderedIndex: (correct + 2) % 4 })
+    if (s.live?.kind !== 'sprinter') throw new Error('unreachable')
+    expect(s.live.scores['team-b']).toBe(-points)
+    expect(s.live.phase).toBe('answering')
+  })
+
+  it('Rebound-Pass: niemand buzzert, nächste Frage ohne Punkte', () => {
+    let s = bootSprinter()
+    if (s.live?.kind !== 'sprinter') throw new Error('unreachable')
+    const firstQuestionId = s.live.activeQuestion!.id
+    s = reducer(s, { type: 'SPRINTER_ANSWER', renderedIndex: (s.live.correctRenderedIndex + 1) % 4 })
+    s = reducer(s, { type: 'SPRINTER_REBOUND_PASS' })
+    if (s.live?.kind !== 'sprinter') throw new Error('unreachable')
+    expect(s.live.phase).toBe('answering')
+    expect(s.live.scores).toEqual({ 'team-a': 0, 'team-b': 0 })
     expect(s.live.activeQuestion?.id).not.toBe(firstQuestionId)
   })
 
@@ -1688,6 +1778,24 @@ describe('reducer — Heimspiel / Player Spotlight (Session G)', () => {
     expect(s.live.primaryOutcome).toBe('correct')
     expect(s.live.scores['team-a']).toBe(before + points)
     expect(s.live.scores['team-b']).toBe(0)
+  })
+
+  it('PRIMARY_ANSWER: aktiver Spieler tippt, Auswertung ohne Master', () => {
+    let s = bootSpotlight()
+    const p = s.round!.players.find((p) => p.teamId === 'team-a')!
+    s = reducer(s, { type: 'SET_PLAYER_INTERESTS', playerId: p.id, interests: [gut('medizin')] })
+    s = reducer(s, { type: 'START_PLAYING' })
+    if (s.live?.kind !== 'player-spotlight') throw new Error('unreachable')
+    const points = s.live.pointsPerCorrect
+    const right = s.live.correctRenderedIndex
+    const correct = reducer(s, { type: 'SPOTLIGHT_PRIMARY_ANSWER', renderedIndex: right })
+    if (correct.live?.kind !== 'player-spotlight') throw new Error('unreachable')
+    expect(correct.live.phase).toBe('revealed')
+    expect(correct.live.scores['team-a']).toBe(points)
+    expect(correct.live.primaryRenderedIndex).toBe(right)
+    const wrong = reducer(s, { type: 'SPOTLIGHT_PRIMARY_ANSWER', renderedIndex: (right + 1) % 4 })
+    if (wrong.live?.kind !== 'player-spotlight') throw new Error('unreachable')
+    expect(wrong.live.phase).toBe('steal')
   })
 
   it('MARK_PRIMARY wrong: geht in steal-Phase, Punkte kommen erst nach STEAL_ANSWER', () => {

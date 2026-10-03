@@ -1,87 +1,65 @@
 /**
- * Marken-Logo: stilisiertes Kreis-Zeichen + Wortmarke „Quizo".
- *
- * Das Zeichen ist ein eigenständiges geometrisches Element (Kreis mit ausgesparter Ecke +
- * kleinem inneren Play-Dreieck) — nachempfunden dem stilisierten „Q" der PDF-Mockups. Die
- * Wortmarke steht in Bricolage-Grotesque-Uppercase daneben.
+ * Marken-Logo „QUIZO" nach Designkonzept v1 (Mockups):
+ * Das Q ist Teil der Wortmarke — violetter Verlaufsring mit weißem,
+ * diagonalem Schweif — gefolgt von „UIZO" in Montserrat Black, weiß.
  */
-
 import { cn } from '@/lib/classnames'
 
 interface Props {
-  size?: 'sm' | 'md' | 'lg'
-  showWordmark?: boolean
+  size?: 'sm' | 'md' | 'lg' | 'xl'
+  /** Nur das Q-Zeichen (z. B. für enge Header). */
+  markOnly?: boolean
   className?: string
 }
 
 const sizes = {
-  sm: { mark: 32, text: 'text-base' },
-  md: { mark: 44, text: 'text-lg md:text-xl' },
-  lg: { mark: 64, text: 'text-2xl md:text-3xl' },
+  sm: { mark: 22, text: 'text-xl' },
+  md: { mark: 28, text: 'text-2xl' },
+  lg: { mark: 40, text: 'text-4xl' },
+  xl: { mark: 64, text: 'text-6xl md:text-7xl' },
 } as const
 
-export function BrandLogo({ size = 'md', showWordmark = true, className }: Props) {
+export function BrandLogo({ size = 'md', markOnly = false, className }: Props) {
   const s = sizes[size]
   return (
-    <div className={cn('inline-flex items-center gap-3', className)}>
+    <span
+      role="img"
+      aria-label="QUIZO"
+      className={cn('inline-flex items-center gap-[0.06em] leading-none', s.text, className)}
+    >
       <BrandMark size={s.mark} />
-      {showWordmark && (
+      {!markOnly && (
         <span
-          className={cn(
-            'font-display font-bold uppercase tracking-[0.24em] text-white',
-            s.text,
-          )}
-          style={{
-            textShadow: '0 0 8px rgba(124,92,255,0.55), 0 0 22px rgba(124,92,255,0.35)',
-          }}
+          aria-hidden
+          className="font-display font-black uppercase tracking-[-0.01em] text-white"
+          style={{ textShadow: '0 0 18px rgba(139,61,255,0.45)' }}
         >
-          Quizo
+          UIZO
         </span>
       )}
-    </div>
+    </span>
   )
 }
 
-interface MarkProps {
-  size: number
-}
-
-function BrandMark({ size }: MarkProps) {
-  const strokeInner = size * 0.09
+/** Das Q: Verlaufsring + Schweif. Auch Grundlage für Favicon und App-Icon. */
+export function BrandMark({ size }: { size: number }) {
   return (
     <svg
       width={size}
       height={size}
-      viewBox="0 0 64 64"
-      role="img"
-      aria-label="Quizo Marke"
-      className="drop-shadow-[0_0_16px_rgba(124,92,255,0.75)]"
+      viewBox="0 0 100 100"
+      aria-hidden
+      className="drop-shadow-[0_0_12px_rgba(139,61,255,0.7)]"
     >
       <defs>
-        <linearGradient id="bg-fill" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#8B6DFF" />
-          <stop offset="55%" stopColor="#5A3EE0" />
-          <stop offset="100%" stopColor="#1E1E4E" />
-        </linearGradient>
-        <linearGradient id="bg-stroke" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#B7A2FF" />
-          <stop offset="100%" stopColor="#27D8FF" />
+        <linearGradient id="quizo-q" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#B565FF" />
+          <stop offset="50%" stopColor="#A24BFF" />
+          <stop offset="100%" stopColor="#7A2CFF" />
         </linearGradient>
       </defs>
-      {/* Grundkreis (Cutout unten-rechts wie ein „Q") */}
-      <path
-        d="M32 4 A28 28 0 1 1 55.6 46.4 L55.6 60 L46 60 L46 55.5 A28 28 0 0 1 32 4 Z"
-        fill="url(#bg-fill)"
-        stroke="url(#bg-stroke)"
-        strokeWidth={strokeInner}
-        strokeLinejoin="round"
-      />
-      {/* Inneres kleines Play-Dreieck, dezent — als Wiedererkennungsmerkmal */}
-      <path
-        d="M28 24 L44 32 L28 40 Z"
-        fill="#F5F1FF"
-        opacity="0.92"
-      />
+      <circle cx="46" cy="46" r="29.5" fill="none" stroke="url(#quizo-q)" strokeWidth="24" />
+      <line x1="64.4" y1="62.8" x2="83" y2="85" stroke="#F2EEFF" strokeWidth="18" strokeLinecap="round" />
     </svg>
   )
 }

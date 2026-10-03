@@ -9,6 +9,10 @@
   body {
     @apply antialiased bg-navy-900 text-ink font-sans;
     font-feature-settings: "ss01" on, "cv11" on;
+    /* iPhone-Notch / Home-Leiste: Inhalt bleibt im sichtbaren Bereich (viewport-fit=cover). */
+    padding-top: env(safe-area-inset-top);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
   }
   /* Fokus-Ring passend zur Marke – nutzt Cyan als Interaktions-Signal (siehe PDF). */
   :focus-visible {
@@ -149,12 +153,34 @@
   /* Rundes Show-Chip mit Neon-Border (für Kategorie-Anzeigen und Info-Chips). */
   .chip-neon {
     @apply inline-flex items-center gap-2 rounded-full border px-4 py-1.5
-           text-[11px] font-semibold uppercase tracking-[0.22em];
+           text-xs font-semibold uppercase tracking-[0.22em];
     border-color: rgba(124, 92, 255, 0.5);
     box-shadow:
       0 0 0 1px rgba(124, 92, 255, 0.35),
       0 0 22px -6px rgba(124, 92, 255, 0.65);
     color: #EDE8FF;
     background: rgba(124, 92, 255, 0.08);
+  }
+}
+
+/* Neon-Schriftzug (Designkonzept v1): weiße Röhre, farbiger Glow, sanftes Flackern. */
+@layer components {
+  .neon-cyan {
+    color: #E9FDFF;
+    text-shadow: 0 0 4px #fff, 0 0 12px #3FD0FF, 0 0 28px #3FD0FF, 0 0 52px #2F6BFF;
+  }
+  .neon-magenta {
+    color: #FFF0FB;
+    text-shadow: 0 0 4px #fff, 0 0 12px #E048FF, 0 0 28px #B26BFF, 0 0 52px #8B3DFF;
+    animation: neon-flicker 6s infinite;
+  }
+  @keyframes neon-flicker {
+    0%, 92%, 100% { opacity: 1; }
+    93% { opacity: 0.55; }
+    94% { opacity: 1; }
+    96% { opacity: 0.7; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .neon-magenta { animation: none; }
   }
 }

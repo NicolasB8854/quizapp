@@ -18,6 +18,7 @@ import type {
   APIGatewayProxyWebsocketEventV2,
 } from 'aws-lambda'
 import {
+  authorizeAction,
   parseClientMessage,
   createReducer,
   INITIAL_STATE,
@@ -269,6 +270,13 @@ async function handleDispatch(
   const room = await getRoom(session.roomCode)
   if (!room) {
     await replyError(event, connectionId, 'ROOM_NOT_FOUND', 'Room existiert nicht mehr')
+    return
+  }
+
+  // Team-Bindung prüfen: Spieler dürfen nur für ihr eigenes Team buzzern/antworten.
+  const auth = authorizeAction(room.state, msg.action, { playerId: session.playerId ?? null })
+  if (!auth.ok) {
+    await replyError(event, connectionId, 'FORBIDDEN', auth.reason)
     return
   }
 

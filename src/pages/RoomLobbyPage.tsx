@@ -25,6 +25,7 @@ import {
   RefreshCw,
   Volume2,
   VolumeX,
+  Crown,
 } from 'lucide-react'
 import type {
   AroundCornerLive,
@@ -40,16 +41,20 @@ import type {
   SpotlightLive,
   SprinterLive,
 } from '@quizapp/shared'
-import type { GameModeId, Player, SkillLevel, Topic } from '@quizapp/shared'
+import type { GameModeId, Player, Topic } from '@quizapp/shared'
 import {
+  answeringTeamId,
   MODES,
   MODES_BY_ID,
-  TOPICS,
+  TOPICS_ALPHABETICAL,
   TOPICS_BY_ID,
   getTeamColorHex,
 } from '@quizapp/shared'
 import { ScreenLayout } from '@/components/ScreenLayout'
 import { Card } from '@/components/Card'
+import { AvatarBadge } from '@/components/AvatarBadge'
+import { LobbySteps, ModeTile, PlayerLine, ShowPanel, StickyCta, TeamCard } from '@/components/show/LobbyBlocks'
+import { BuzzerButton, ShowAnswers, ShowQuestion, ShowStatus, ShowTimer } from '@/components/show/ShowBlocks'
 import { Button } from '@/components/Button'
 import { Badge } from '@/components/Badge'
 import { PlayerInterestsPanel } from '@/components/PlayerInterestsPanel'
@@ -58,9 +63,13 @@ import { ModeTransitionSplash } from '@/components/ModeTransitionSplash'
 import { ConnectionToast } from '@/components/ConnectionToast'
 import { PlayerTeamMatesPanel } from '@/components/PlayerTeamMatesPanel'
 import { HostActionBar } from '@/components/HostActionBar'
+import { findMatchWinner, WinnerHero } from '@/components/WinnerHero'
 import { useRoomSync } from '@/hooks/useRoomSync'
+import { useDeviceProfileSync } from '@/hooks/useDeviceProfileSync'
 import { useSoundEnabled } from '@/hooks/useSoundEnabled'
 import { playSound } from '@/lib/audio'
+import { haptic } from '@/lib/haptics'
+import { useWakeLock } from '@/hooks/useWakeLock'
 import { readRoomIdentity, saveRoomIdentity } from '@/lib/roomIdentity'
 import { cn } from '@/lib/classnames'
 
@@ -145,6 +154,12 @@ export default function RoomLobbyPage() {
     ? room.state?.round?.teams.find((t) => t.id === myPlayer.teamId) ?? null
     : null
   const myTeamColor = myTeam ? getTeamColorHex(myTeam.color) : null
+
+  // Bildschirm im Raum wach halten — 20-s-Timer ohne Berührung sonst = Display aus.
+  useWakeLock(room.status === 'joined' || room.status === 'reconnecting')
+
+  // Geräte-Profil: Avatar/Titel übernehmen, eigene Antworten + Abende zählen.
+  useDeviceProfileSync({ state: room.state ?? null, myPlayer, roomCode, canDispatch, send })
 
   // ---- Confetti-Feedback -----------------------------------------------
   // Kleiner Burst bei jedem Score-Anstieg im Playing (Team-Farbe der Punkte-
@@ -239,19 +254,23 @@ export default function RoomLobbyPage() {
     // 1. Score-Anstieg — passt für alle Modi.
     if (scoresSum > prev.scoresSum) {
       playSound('correct')
+      haptic('correct')
       return // ein Sound pro Snapshot reicht.
     }
     // 2. Reveal ohne Punktzuwachs — falsche Antwort.
     if (snapshot.phase === 'revealed' && prev.phase !== 'revealed') {
       playSound('wrong')
+      haptic('wrong')
       return
     }
     // 3. Buzzer klick.
     if (
-      (snapshot.phase === 'primary-answer' || snapshot.phase === 'steal-answer') &&
-      prev.phase === 'awaiting-buzz'
+      ((snapshot.phase === 'primary-answer' || snapshot.phase === 'steal-answer') &&
+        prev.phase === 'awaiting-buzz') ||
+      (snapshot.phase === 'rebound-answer' && prev.phase === 'rebound-buzz')
     ) {
       playSound('buzz')
+      haptic('buzz')
       return
     }
     // 4a. Sprinter-Timer abgelaufen.
@@ -309,7 +328,7 @@ export default function RoomLobbyPage() {
   }, [currentLiveKind, currentPhase, currentModeIndex, room.state?.round])
 
   return (
-    <ScreenLayout variant="dim">
+    <ScreenLayout variant="stage">
       {myTeamColor && (
         <div
           aria-hidden
@@ -387,6 +406,9 @@ export default function RoomLobbyPage() {
             playerCount={room.state?.round?.players.length ?? 0}
             onCopyCode={copyCode}
           />
+        ) : currentPhase === 'playing' ? (
+          // Während der Fragen: kein Room-Code — voller Fokus auf Frage und Antworten.
+          !stageOnly && <PlayerInGameStrip teamName={myTeam?.name ?? null} teamColor={myTeamColor} playerName={playerName} />
         ) : stageOnly ? (
           <MasterCompactHeader
             roomCode={roomCode}
@@ -403,7 +425,7 @@ export default function RoomLobbyPage() {
           >
             <div className="flex flex-wrap items-center gap-4">
               <div>
-                <div className="text-[10px] uppercase tracking-[0.32em] text-ink-muted">
+                <div className="text-xs uppercase tracking-[0.32em] text-ink-muted">
                   Room-Code
                 </div>
                 <button
@@ -416,7 +438,7 @@ export default function RoomLobbyPage() {
               </div>
               <div className="flex-1" />
               <div className="text-right">
-                <div className="text-[10px] uppercase tracking-[0.32em] text-ink-muted">
+                <div className="text-xs uppercase tracking-[0.32em] text-ink-muted">
                   {myTeam ? myTeam.name : 'Player'}
                 </div>
                 <div className="mt-1 flex items-center justify-end gap-2 font-semibold text-white">
@@ -461,18 +483,6 @@ export default function RoomLobbyPage() {
           />
         ) : null}
 
-        {/* Host-Steuerungs-Bar oben: nur für den mitspielenden Host, damit
-             er die aktuelle Show-Aktion immer griffbereit hat. */}
-        {isHost &&
-          !stageOnly &&
-          currentPhase === 'playing' &&
-          room.state && (
-            <HostActionBar
-              state={room.state}
-              canDispatch={canDispatch}
-              send={send}
-            />
-          )}
 
         {/* Teammates-Streifen: für alle mit Team im Playing (Player + mitspielender Host). */}
         {!stageOnly &&
@@ -506,6 +516,16 @@ export default function RoomLobbyPage() {
         ) : (
           <LoadingCard label="Warte auf Server …" />
         )}
+
+        {/* Host-Steuerung fest unten im Daumenbereich (mitspielender Host). */}
+        {isHost &&
+          !stageOnly &&
+          currentPhase === 'playing' &&
+          room.state && (
+            <div className="sticky bottom-0 z-30 -mx-4 bg-gradient-to-t from-navy-900 via-navy-900/95 to-transparent px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-4 md:-mx-6 md:px-6">
+              <HostActionBar state={room.state} canDispatch={canDispatch} send={send} />
+            </div>
+          )}
       </div>
     </ScreenLayout>
   )
@@ -537,7 +557,7 @@ function MasterHero({
     <Card className="border-brand-purple/40 bg-brand-purple/[0.06] p-4 md:p-6">
       <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:gap-6">
         <div className="min-w-0 space-y-3">
-          <div className="text-[10px] uppercase tracking-[0.32em] text-brand-purple-soft">
+          <div className="text-xs uppercase tracking-[0.32em] text-brand-purple-soft">
             Master-Screen · Handy scannen zum Beitreten
           </div>
           <button
@@ -567,7 +587,7 @@ function MasterHero({
               marginSize={0}
             />
           </div>
-          <div className="text-[10px] uppercase tracking-[0.22em] text-white/40">
+          <div className="text-xs uppercase tracking-[0.22em] text-white/40">
             scan me
           </div>
         </div>
@@ -581,6 +601,31 @@ function MasterHero({
  * damit spät-joinende Gäste ihn noch abtippen könnten. Der QR fliegt raus —
  * die Show soll dominieren.
  */
+/** Schmaler Identitäts-Streifen für Spieler während der Fragen (ohne Room-Code). */
+function PlayerInGameStrip({
+  teamName,
+  teamColor,
+  playerName,
+}: {
+  teamName: string | null
+  teamColor: string | null | undefined
+  playerName: string
+}) {
+  return (
+    <div className="flex items-center justify-end gap-2 px-1 text-sm font-semibold text-white">
+      {teamColor && (
+        <span
+          className="h-2.5 w-2.5 rounded-full"
+          style={{ background: teamColor, boxShadow: `0 0 8px ${teamColor}` }}
+          aria-hidden
+        />
+      )}
+      <span className="text-ink-muted">{teamName ?? 'Player'}</span>
+      <span>· {playerName}</span>
+    </div>
+  )
+}
+
 function MasterCompactHeader({
   roomCode,
   onCopyCode,
@@ -591,7 +636,7 @@ function MasterCompactHeader({
   return (
     <Card className="border-brand-purple/30 bg-brand-purple/[0.04] p-3">
       <div className="flex items-center gap-3">
-        <div className="text-[10px] uppercase tracking-[0.32em] text-brand-purple-soft">
+        <div className="text-xs uppercase tracking-[0.32em] text-brand-purple-soft">
           Room
         </div>
         <button
@@ -775,111 +820,103 @@ function SetupPhaseView({
   send: (a: GameAction) => void
 }) {
   const readyModes = MODES.filter((m) => m.status === 'ready')
-  // Setup ist Show-Runner-Territorium — der Host konfiguriert Modi/Teams
-  // für alle. Player warten nur; sonst könnten sie z. B. Teams entfernen,
-  // während der Host schon konfiguriert.
+  const selectedCount = state.draft.selectedModes.length
+  const minutes = readyModes
+    .filter((m) => state.draft.selectedModes.includes(m.id))
+    .reduce((sum, m) => sum + m.estimatedMinutes, 0)
+  // Setup ist Show-Runner-Territorium — Player warten, bis der Host die Lobby öffnet.
   if (!isHost) {
     return (
-      <Card className="space-y-2 p-5 text-center">
-        <div className="text-[10px] uppercase tracking-[0.32em] text-brand-purple-soft">
-          Setup
-        </div>
-        <div className="text-base font-semibold text-white">
-          Warte auf den Host
-        </div>
-        <div className="text-xs text-ink-muted">
-          Der Host wählt die Modi und startet die Lobby. Gleich geht&apos;s los.
-        </div>
-      </Card>
+      <div className="space-y-4">
+        <LobbySteps current={0} />
+        <ShowPanel accent eyebrow="Gleich geht’s los" title="Der Host wählt die Spielmodi">
+          <p className="text-sm text-ink-muted">
+            Sobald die Lobby offen ist, wählst du dein Team und deine Interessen. Bis dahin kannst du
+            dein Profil anpassen.
+          </p>
+          <Link to="/profil" className="inline-flex text-sm font-semibold text-brand-cyan-soft hover:text-brand-cyan">
+            Avatar & Profil bearbeiten →
+          </Link>
+          <div className="flex justify-center gap-1.5 pt-2" aria-hidden>
+            {[0, 1, 2].map((i) => (
+              <span
+                key={i}
+                className="h-2 w-2 animate-pulse rounded-full bg-brand-purple"
+                style={{ animationDelay: `${i * 200}ms` }}
+              />
+            ))}
+          </div>
+        </ShowPanel>
+      </div>
     )
   }
   return (
-    <div className="space-y-3">
-      <Card className="space-y-3 p-4">
-        <div className="text-xs uppercase tracking-[0.22em] text-ink-muted">
-          Spielmodi
-        </div>
+    <div className="space-y-4">
+      <LobbySteps current={0} />
+      <ShowPanel
+        eyebrow="Schritt 1"
+        title="Welche Modi spielt ihr?"
+        action={<span className="text-xs text-ink-muted">{selectedCount} gewählt · ~{minutes} min</span>}
+      >
         <div className="grid gap-2 sm:grid-cols-2">
-          {readyModes.map((mode) => {
-            const selected = state.draft.selectedModes.includes(mode.id)
+          {readyModes.map((mode) => (
+            <ModeTile
+              key={mode.id}
+              mode={mode}
+              selected={state.draft.selectedModes.includes(mode.id)}
+              onToggle={() => send({ type: 'TOGGLE_MODE', modeId: mode.id })}
+              disabled={!canDispatch}
+            />
+          ))}
+        </div>
+      </ShowPanel>
+
+      <ShowPanel
+        eyebrow="Teams"
+        title={`${state.draft.teams.length} Teams`}
+        action={
+          <Button size="md" variant="secondary" onClick={() => send({ type: 'ADD_TEAM' })} disabled={!canDispatch}>
+            + Team
+          </Button>
+        }
+      >
+        <div className="flex flex-wrap gap-2">
+          {state.draft.teams.map((team) => {
+            const hex = getTeamColorHex(team.color)
             return (
-              <button
-                key={mode.id}
-                onClick={() => send({ type: 'TOGGLE_MODE', modeId: mode.id })}
-                disabled={!canDispatch}
-                className={cn(
-                  'rounded-lg border p-3 text-left transition-all disabled:opacity-40',
-                  selected
-                    ? 'border-brand-purple/60 bg-brand-purple/10'
-                    : 'border-white/10 bg-white/[0.03] hover:border-white/20',
-                )}
+              <span
+                key={team.id}
+                className="inline-flex items-center gap-2 rounded-full border-2 bg-navy-900/70 py-1 pl-3 pr-1"
+                style={{ borderColor: `${hex}99` }}
               >
-                <div className="text-sm font-semibold text-white">
-                  {mode.name}
-                </div>
-                <div className="text-[11px] text-ink-muted">
-                  {mode.tagline}
-                </div>
-              </button>
+                <span className="h-2.5 w-2.5 rounded-full" style={{ background: hex }} />
+                <span className="text-sm font-semibold text-white">{team.name}</span>
+                <button
+                  type="button"
+                  aria-label={`${team.name} entfernen`}
+                  onClick={() => send({ type: 'REMOVE_TEAM', teamId: team.id })}
+                  disabled={!canDispatch || state.draft.teams.length <= 2}
+                  className="flex h-7 w-7 items-center justify-center rounded-full text-ink-muted hover:bg-white/10 hover:text-white disabled:opacity-30"
+                >
+                  ×
+                </button>
+              </span>
             )
           })}
         </div>
-      </Card>
+      </ShowPanel>
 
-      <Card className="space-y-3 p-4">
-        <div className="flex items-center justify-between">
-          <div className="text-xs uppercase tracking-[0.22em] text-ink-muted">
-            Teams
-          </div>
-          <div className="flex gap-2">
-            <Button
-              size="md"
-              variant="secondary"
-              onClick={() => send({ type: 'ADD_TEAM' })}
-              disabled={!canDispatch}
-            >
-              + Team
-            </Button>
-          </div>
-        </div>
-        <div className="space-y-2">
-          {state.draft.teams.map((team) => (
-            <div
-              key={team.id}
-              className="flex items-center gap-2 rounded-lg bg-white/[0.03] px-3 py-2"
-            >
-              <span className="h-3 w-3 rounded-full" style={{ background: getTeamColorHex(team.color) }} />
-              <span className="flex-1 text-sm text-white">{team.name}</span>
-              <Button
-                size="md"
-                variant="ghost"
-                onClick={() =>
-                  send({ type: 'REMOVE_TEAM', teamId: team.id })
-                }
-                disabled={!canDispatch || state.draft.teams.length <= 2}
-              >
-                –
-              </Button>
-            </div>
-          ))}
-        </div>
-      </Card>
-
-      <Button
-        size="lg"
-        variant="primary"
-        onClick={() => send({ type: 'GO_TO_LOBBY' })}
-        disabled={!canDispatch || state.draft.selectedModes.length === 0}
-        className="w-full"
-      >
-        Weiter zur Lobby
-      </Button>
-
-      {!canDispatch && (
-        <p className="text-center text-xs text-ink-muted">
-          Verbindung wird aufgebaut …
-        </p>
-      )}
+      <StickyCta hint={!canDispatch ? 'Verbindung wird aufgebaut …' : selectedCount === 0 ? 'Wähle mindestens einen Modus' : undefined}>
+        <Button
+          size="lg"
+          variant="primary"
+          onClick={() => send({ type: 'GO_TO_LOBBY' })}
+          disabled={!canDispatch || selectedCount === 0}
+          className="w-full"
+        >
+          Lobby öffnen
+        </Button>
+      </StickyCta>
     </div>
   )
 }
@@ -900,195 +937,97 @@ function LobbyPhaseView({
   send: (a: GameAction) => void
 }) {
   if (!state.round) return <LoadingCard label="Lade Runde …" />
+  const round = state.round
   const isHost = role === 'host'
-  const readyToStart =
-    state.round.players.length > 0 &&
-    state.round.players.every((p) => p.teamId !== null)
-
-  // Eigener Player im State: alle die nicht Bühne sind haben einen.
+  const pool = round.players.filter((p) => p.teamId === null)
+  const readyToStart = round.players.length > 0 && pool.length === 0
   const myPlayer =
-    !stageOnly && playerId
-      ? state.round.players.find((p) => p.id === playerId) ?? null
-      : null
+    !stageOnly && playerId ? round.players.find((p) => p.id === playerId) ?? null : null
+  const modeNames = round.gameModes.map((id) => MODES_BY_ID[id]?.name).filter(Boolean)
 
   return (
-    <div className="space-y-3">
-      <Card className="p-4">
-        <div className="text-xs uppercase tracking-[0.22em] text-ink-muted">
-          Runde
-        </div>
-        <div className="mt-1 text-lg font-semibold text-white">
-          {state.round.name}
-        </div>
-        <div className="mt-1 text-xs text-ink-muted">
-          Best-of-{state.round.bestOf} · {state.round.players.length}{' '}
-          {state.round.players.length === 1 ? 'Spieler' : 'Spieler'} im Raum
-        </div>
-      </Card>
+    <div className="space-y-4">
+      <LobbySteps current={readyToStart ? 2 : 1} />
 
-      {/* Modi-Editor: Host darf noch in der Lobby Modi anpassen — ohne
-           BACK_TO_SETUP, damit die Player nicht rausfliegen. */}
-      {isHost && (
-        <LobbyModesPanel
-          selected={state.round.gameModes}
-          canDispatch={canDispatch}
-          send={send}
-        />
-      )}
+      <ShowPanel eyebrow={round.name} title={`${round.players.length} im Raum`}>
+        <div className="flex flex-wrap gap-1.5">
+          {modeNames.map((name) => (
+            <span key={name} className="rounded-full border border-brand-purple/40 bg-brand-purple/10 px-2.5 py-0.5 text-xs text-brand-purple-soft">
+              {name}
+            </span>
+          ))}
+        </div>
+      </ShowPanel>
 
-      {/* Eigene Player-Karte: nur wenn Player + im State registriert. */}
       {myPlayer && (
         <>
-          <PlayerSelfCard
-            state={state}
-            me={myPlayer}
-            canDispatch={canDispatch}
-            send={send}
-          />
-          {/* Interessen-Panel als eigene, prominent gestaltete Card.
-               Direkt unter dem PlayerSelfCard, damit der Player sofort
-               nach Namen/Team seine Interessen pflegt — vor dem Team-Roster. */}
-          <PlayerInterestsPanel
-            me={myPlayer}
-            send={send}
-            disabled={!canDispatch}
-            defaultCollapsed={false}
-          />
+          <PlayerSelfCard state={state} me={myPlayer} canDispatch={canDispatch} send={send} />
+          <PlayerInterestsPanel me={myPlayer} send={send} disabled={!canDispatch} defaultCollapsed={false} />
         </>
       )}
 
-      {/* Team-Roster für alle sichtbar. */}
-      <Card className="space-y-2 p-4">
-        <div className="text-xs uppercase tracking-[0.22em] text-ink-muted">
-          Teams
-        </div>
-        {state.round.teams.map((team) => {
-          const members = state.round!.players.filter((p) => p.teamId === team.id)
-          return (
-            <div key={team.id} className="rounded-lg bg-white/[0.03] p-2">
-              <div className="flex items-center gap-2">
-                <span
-                  className="h-3 w-3 rounded-full"
-                  style={{ background: getTeamColorHex(team.color) }}
-                />
-                <span className="text-sm font-semibold text-white">
-                  {team.name}
-                </span>
-                <span className="ml-auto text-xs text-ink-muted">
-                  {members.length} {members.length === 1 ? 'Spieler' : 'Spieler'}
-                </span>
-              </div>
-              {members.length > 0 && (
-                <div className="mt-2 space-y-1.5">
-                  {members.map((p) => (
-                    <RosterPlayerRow
-                      key={p.id}
-                      player={p}
-                      isMe={p.id === playerId}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          )
-        })}
-        {(() => {
-          const pool = state.round!.players.filter((p) => p.teamId === null)
-          if (pool.length === 0) return null
-          return (
-            <div className="mt-2 rounded-lg border border-dashed border-white/10 p-2">
-              <div className="text-[11px] uppercase tracking-[0.22em] text-ink-muted">
-                Noch ohne Team ({pool.length})
-              </div>
-              <div className="mt-2 space-y-1.5">
-                {pool.map((p) => (
-                  <RosterPlayerRow
-                    key={p.id}
-                    player={p}
-                    isMe={p.id === playerId}
-                  />
-                ))}
-              </div>
-            </div>
-          )
-        })()}
-      </Card>
-
-      <Button
-        size="lg"
-        variant="primary"
-        onClick={() => send({ type: 'START_PLAYING' })}
-        disabled={!canDispatch || !readyToStart || !isHost}
-        className="w-full"
-      >
-        {readyToStart
-          ? isHost
-            ? 'Runde starten'
-            : 'Wartet auf den Host'
-          : 'Wartet auf Team-Auswahl'}
-      </Button>
-
-      {stageOnly && (
-        <p className="text-center text-xs text-ink-muted">
-          Bühnen-Screen — Player tragen sich selbst ein, du kannst die Runde
-          starten wenn alle bereit sind.
-        </p>
-      )}
-    </div>
-  )
-}
-
-/**
- * Kompakte Zeile pro Player im Team-Roster: Name + kleine Interest-Emojis
- * mit Level-Farbe. Für alle Sessions sichtbar, damit man live sieht wer
- * schon welche Interessen gepflegt hat.
- */
-function RosterPlayerRow({ player, isMe }: { player: Player; isMe: boolean }) {
-  return (
-    <div
-      className={cn(
-        'flex flex-wrap items-center gap-2 rounded-md px-2 py-1',
-        isMe ? 'bg-brand-purple/10 ring-1 ring-brand-purple/30' : 'bg-white/[0.02]',
-      )}
-    >
-      <span
-        className={cn(
-          'text-sm',
-          isMe ? 'font-semibold text-white' : 'text-white/85',
-        )}
-      >
-        {player.name || 'Namenlos'}
-      </span>
-      {isMe && (
-        <span className="text-[9px] uppercase tracking-[0.22em] text-brand-purple-soft">
-          Du
-        </span>
-      )}
-      <div className="ml-auto flex flex-wrap items-center gap-1">
-        {player.interests.map((interest) => {
-          const topicDef = TOPICS_BY_ID[interest.topic]
-          if (!topicDef) return null
-          return (
-            <InterestPill
-              key={interest.topic}
-              emoji={topicDef.emoji}
-              level={interest.level}
-              subCount={interest.tags?.length ?? 0}
+      <ShowPanel eyebrow="Teams" title={readyToStart ? 'Alle sind eingeteilt' : 'Wählt eure Teams'}>
+        <div className="grid gap-2 sm:grid-cols-2">
+          {round.teams.map((team) => (
+            <TeamCard
+              key={team.id}
+              team={team}
+              members={round.players.filter((p) => p.teamId === team.id)}
+              myPlayerId={playerId}
+              onJoin={
+                myPlayer
+                  ? () => send({ type: 'MOVE_PLAYER_TO_TEAM', playerId: myPlayer.id, teamId: team.id })
+                  : undefined
+              }
+              joinDisabled={!canDispatch}
             />
-          )
-        })}
-      </div>
+          ))}
+        </div>
+        {pool.length > 0 && (
+          <div className="rounded-2xl border-2 border-dashed border-white/15 p-3">
+            <div className="eyebrow mb-2 text-ink-muted">Noch ohne Team ({pool.length})</div>
+            <ul className="space-y-1.5">
+              {pool.map((p) => (
+                <PlayerLine key={p.id} player={p} isMe={p.id === playerId} />
+              ))}
+            </ul>
+          </div>
+        )}
+        {isHost && round.players.length > 1 && (
+          <Button variant="ghost" size="md" onClick={() => send({ type: 'SHUFFLE_PLAYERS' })} disabled={!canDispatch} className="w-full">
+            Teams zufällig auslosen
+          </Button>
+        )}
+      </ShowPanel>
+
+      {isHost && <LobbyModesPanel selected={round.gameModes} canDispatch={canDispatch} send={send} />}
+
+      <StickyCta
+        hint={
+          !readyToStart
+            ? `${pool.length} ${pool.length === 1 ? 'Spieler wählt' : 'Spieler wählen'} noch ein Team`
+            : !isHost
+              ? 'Alle bereit — der Host startet'
+              : stageOnly
+                ? 'Alle bereit — starte die Runde auf der Bühne'
+                : undefined
+        }
+      >
+        <Button
+          size="lg"
+          variant="primary"
+          onClick={() => send({ type: 'START_PLAYING' })}
+          disabled={!canDispatch || !readyToStart || !isHost}
+          className="w-full"
+        >
+          {isHost ? 'Runde starten' : readyToStart ? 'Wartet auf den Host' : 'Wartet auf Team-Auswahl'}
+        </Button>
+      </StickyCta>
     </div>
   )
 }
 
-/**
- * Host-only Modi-Editor in der Lobby. Der Host kann Modi ergänzen oder
- * entfernen, ohne dass Player aus der Runde fliegen — `SET_ROUND_MODES`
- * arbeitet in-place und behält Roster + Teams. Nutzt dieselbe Modi-Liste
- * wie der Setup-Screen, aber platzsparender (2-Spalten-Grid, kompakter
- * Text).
- */
+/** Host darf in der Lobby noch Modi anpassen — ohne Roster-Reset. */
 function LobbyModesPanel({
   selected,
   canDispatch,
@@ -1098,112 +1037,35 @@ function LobbyModesPanel({
   canDispatch: boolean
   send: (a: GameAction) => void
 }) {
-  const readyModes = useMemo(
-    () => MODES.filter((m) => m.status === 'ready'),
-    [],
-  )
+  const readyModes = useMemo(() => MODES.filter((m) => m.status === 'ready'), [])
   const selectedSet = useMemo(() => new Set(selected), [selected])
-
   const toggle = (id: GameModeId) => {
     if (!canDispatch) return
-    const next = selectedSet.has(id)
-      ? selected.filter((m) => m !== id)
-      : [...selected, id]
+    const next = selectedSet.has(id) ? selected.filter((m) => m !== id) : [...selected, id]
     if (next.length === 0) return // mindestens ein Modus
     send({ type: 'SET_ROUND_MODES', modes: next })
   }
-
   return (
-    <Card className="space-y-2 p-4">
-      <div className="flex items-center gap-2">
-        <div className="text-xs uppercase tracking-[0.22em] text-ink-muted">
-          Modi ({selected.length})
-        </div>
-        <span className="text-[10px] uppercase tracking-[0.22em] text-brand-purple-soft">
-          Host
-        </span>
+    <ShowPanel eyebrow="Host" title={`Modi (${selected.length})`}>
+      <div className="grid gap-2 sm:grid-cols-2">
+        {readyModes.map((mode) => (
+          <ModeTile
+            key={mode.id}
+            mode={mode}
+            compact
+            selected={selectedSet.has(mode.id)}
+            onToggle={() => toggle(mode.id)}
+            disabled={!canDispatch}
+          />
+        ))}
       </div>
-      <div className="grid gap-1.5 sm:grid-cols-2">
-        {readyModes.map((mode) => {
-          const isSelected = selectedSet.has(mode.id)
-          return (
-            <button
-              key={mode.id}
-              type="button"
-              onClick={() => toggle(mode.id)}
-              disabled={!canDispatch}
-              className={cn(
-                'rounded-lg border px-2.5 py-1.5 text-left transition-all disabled:opacity-40',
-                isSelected
-                  ? 'border-brand-purple/60 bg-brand-purple/10'
-                  : 'border-white/10 bg-white/[0.03] hover:border-white/20',
-              )}
-            >
-              <div className="flex items-center gap-1.5">
-                <span
-                  aria-hidden
-                  className={cn(
-                    'flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full border text-[10px]',
-                    isSelected
-                      ? 'border-brand-purple bg-brand-purple/40 text-white'
-                      : 'border-white/30 text-transparent',
-                  )}
-                >
-                  ✓
-                </span>
-                <span className="text-sm font-semibold text-white">
-                  {mode.name}
-                </span>
-              </div>
-              <div className="mt-0.5 pl-6 text-[10px] text-ink-muted">
-                {mode.tagline}
-              </div>
-            </button>
-          )
-        })}
-      </div>
-      <p className="text-[10px] text-ink-muted">
-        Der Modus-Wechsel läuft ohne Roster-Reset — Player bleiben in ihren Teams.
-      </p>
-    </Card>
-  )
-}
-
-function InterestPill({
-  emoji,
-  level,
-  subCount,
-}: {
-  emoji: string
-  level: SkillLevel
-  subCount: number
-}) {
-  const tone =
-    level === 5
-      ? 'bg-mode-ladder/15 text-mode-ladder border-mode-ladder/40'
-      : level === 3
-        ? 'bg-brand-purple/15 text-brand-purple-soft border-brand-purple/40'
-        : 'bg-brand-cyan/15 text-brand-cyan-soft border-brand-cyan/40'
-  return (
-    <span
-      className={cn(
-        'inline-flex items-center gap-0.5 rounded-full border px-1.5 py-0.5 text-[10px]',
-        tone,
-      )}
-      title={`Level ${level}${subCount > 0 ? ` · ${subCount} Sub-Tags` : ''}`}
-    >
-      <span>{emoji}</span>
-      {subCount > 0 && (
-        <span className="text-[8px] font-bold">{subCount}</span>
-      )}
-    </span>
+    </ShowPanel>
   )
 }
 
 /**
- * Karte für den eigenen Player: Name-Input + Team-Auswahl + Interessen.
- * Alle Änderungen werden über SET_PLAYER_NAME / MOVE_PLAYER_TO_TEAM /
- * SET_PLAYER_INTERESTS / SET_PLAYER_INTEREST_TAGS an den Server dispatched.
+ * Karte für den eigenen Player: Avatar, Name, Titel, aktuelles Team.
+ * Team-Wechsel läuft über „Beitreten" an den Team-Karten, Avatar über /profil.
  */
 function PlayerSelfCard({
   state,
@@ -1217,73 +1079,42 @@ function PlayerSelfCard({
   send: (a: GameAction) => void
 }) {
   if (!state.round) return null
-
+  const team = state.round.teams.find((t) => t.id === me.teamId) ?? null
+  const hex = team ? getTeamColorHex(team.color) : undefined
   return (
-    <Card className="space-y-3 border-brand-purple/40 bg-brand-purple/[0.06] p-4">
-      <div className="flex items-center justify-between">
-        <div className="text-[10px] uppercase tracking-[0.32em] text-brand-purple-soft">
-          Das bist du
-        </div>
-        {me.teamId ? (
-          <Badge tone="purple">
-            {state.round.teams.find((t) => t.id === me.teamId)?.name}
-          </Badge>
-        ) : (
-          <Badge tone="muted">kein Team</Badge>
-        )}
-      </div>
-
-      {/* Name */}
-      <label className="block">
-        <span className="text-xs text-white/70">Anzeige-Name</span>
-        <input
-          value={me.name}
-          onChange={(e) =>
-            send({ type: 'SET_PLAYER_NAME', playerId: me.id, name: e.target.value })
-          }
-          disabled={!canDispatch}
-          className="mt-1 w-full rounded bg-white/10 px-3 py-2 text-lg font-semibold text-white placeholder-white/30 disabled:opacity-50"
-          placeholder="z. B. Sara"
-          maxLength={40}
-        />
-      </label>
-
-      {/* Team-Auswahl */}
-      <div>
-        <span className="text-xs text-white/70">Team wählen</span>
-        <div className="mt-1 grid grid-cols-2 gap-2 sm:grid-cols-3">
-          {state.round.teams.map((team) => {
-            const active = me.teamId === team.id
-            return (
-              <button
-                key={team.id}
-                onClick={() =>
-                  send({
-                    type: 'MOVE_PLAYER_TO_TEAM',
-                    playerId: me.id,
-                    teamId: team.id,
-                  })
-                }
-                disabled={!canDispatch}
-                className={cn(
-                  'flex items-center gap-2 rounded-lg border px-3 py-2 text-left transition-all disabled:opacity-40',
-                  active
-                    ? 'border-brand-purple/70 bg-brand-purple/15'
-                    : 'border-white/10 bg-white/[0.03] hover:border-white/25',
-                )}
-              >
-                <span
-                  className="h-2.5 w-2.5 rounded-full"
-                  style={{ background: getTeamColorHex(team.color) }}
-                />
-                <span className="text-sm text-white">{team.name}</span>
-              </button>
-            )
-          })}
+    <ShowPanel accent eyebrow="Das bist du">
+      <div className="flex items-center gap-3">
+        <AvatarBadge avatar={me.avatar} size="lg" teamHex={hex} name={me.name} className="flex-shrink-0" />
+        <div className="min-w-0 flex-1 space-y-1">
+          <label className="block">
+            <span className="sr-only">Anzeige-Name</span>
+            <input
+              value={me.name}
+              onChange={(e) => send({ type: 'SET_PLAYER_NAME', playerId: me.id, name: e.target.value })}
+              disabled={!canDispatch}
+              className="w-full rounded-xl bg-white/10 px-3 py-2 text-lg font-semibold text-white placeholder-white/30 disabled:opacity-50"
+              placeholder="Dein Name"
+              maxLength={40}
+            />
+          </label>
+          <div className="flex flex-wrap items-center gap-2 text-xs">
+            {me.avatar.title && (
+              <span className="rounded-full bg-amber-300/15 px-2 py-0.5 font-semibold text-amber-200">{me.avatar.title}</span>
+            )}
+            {team ? (
+              <span className="font-semibold" style={{ color: hex }}>
+                {team.name}
+              </span>
+            ) : (
+              <span className="text-wrong">Noch kein Team — unten beitreten</span>
+            )}
+            <Link to="/profil" className="ml-auto text-brand-cyan-soft hover:text-brand-cyan">
+              Avatar ändern
+            </Link>
+          </div>
         </div>
       </div>
-
-    </Card>
+    </ShowPanel>
   )
 }
 
@@ -1334,7 +1165,7 @@ function CategoryDuelRoomView({
       <Card className="p-3">
         <div className="flex flex-wrap items-center gap-3">
           <div>
-            <div className="text-[10px] uppercase tracking-[0.32em] text-brand-purple-soft">
+            <div className="text-xs uppercase tracking-[0.32em] text-brand-purple-soft">
               Themen-Battle
             </div>
             <div className="mt-0.5 flex items-center gap-2">
@@ -1480,7 +1311,7 @@ function CDPickTopicView({
               <span
                 className={cn(
                   'font-medium',
-                  isMaster ? 'text-base md:text-lg' : 'text-[11px]',
+                  isMaster ? 'text-base md:text-lg' : 'text-xs',
                 )}
               >
                 {topic.label}
@@ -1489,7 +1320,7 @@ function CDPickTopicView({
                 <span
                   className={cn(
                     'uppercase tracking-wider text-white/40',
-                    isMaster ? 'text-xs' : 'text-[9px]',
+                    'text-xs',
                   )}
                 >
                   gespielt
@@ -1524,76 +1355,20 @@ function CDAnsweringView({
 
   return (
     <>
-      <Card
-        className={cn(
-          'space-y-3',
-          isMaster ? 'p-8 md:p-10' : 'p-4',
-        )}
-      >
-        {topicDef && (
-          <div
-            className={cn(
-              'flex items-center gap-2 uppercase tracking-[0.22em] text-brand-cyan-soft',
-              isMaster ? 'text-sm md:text-base' : 'text-xs',
-            )}
-          >
-            <span
-              aria-hidden
-              className={isMaster ? 'text-2xl md:text-3xl' : ''}
-            >
-              {topicDef.emoji}
-            </span>
-            {topicDef.label}
-          </div>
-        )}
-        <div
-          className={cn(
-            'font-semibold text-white',
-            isMaster
-              ? 'text-3xl leading-tight md:text-5xl md:leading-tight'
-              : 'text-lg md:text-xl',
-          )}
-        >
-          {question.question}
-        </div>
-      </Card>
+      <QuestionCard
+        text={question.question}
+        isMaster={isMaster}
+        revealedTone={null}
+        eyebrow={topicDef ? `${topicDef.emoji} ${topicDef.label}` : null}
+      />
 
-      <div className={cn('space-y-2', isMaster && 'md:grid md:grid-cols-2 md:gap-3 md:space-y-0')}>
-        {live.shuffledOptions.map((option, idx) => (
-          <button
-            key={idx}
-            type="button"
-            onClick={() =>
-              send({ type: 'CD_SELECT_ANSWER', renderedIndex: idx })
-            }
-            disabled={!canPlay}
-            className={cn(
-              'flex w-full items-center rounded-xl border text-left transition-all disabled:opacity-40',
-              isMaster ? 'gap-4 px-5 py-4' : 'gap-3 px-4 py-3',
-              canPlay
-                ? 'border-brand-purple/40 bg-white/[0.04] text-white hover:border-brand-purple/70 hover:bg-brand-purple/10'
-                : 'border-white/10 bg-white/[0.03] text-white/70',
-            )}
-          >
-            <span
-              className={cn(
-                'flex items-center justify-center rounded-full bg-white/10 font-mono font-bold',
-                isMaster ? 'h-11 w-11 text-lg' : 'h-8 w-8 text-sm',
-              )}
-            >
-              {String.fromCharCode(65 + idx)}
-            </span>
-            <span
-              className={cn(
-                'flex-1',
-                isMaster ? 'text-lg md:text-xl' : 'text-sm md:text-base',
-              )}
-            >
-              {option}
-            </span>
-          </button>
-        ))}
-      </div>
+      <ShowAnswers
+        options={live.shuffledOptions}
+        correctIdx={null}
+        onSelect={(idx) => send({ type: 'CD_SELECT_ANSWER', renderedIndex: idx })}
+        canClick={canPlay}
+        stage={isMaster}
+      />
 
       {!canPlay && (
         <p className="text-center text-xs text-ink-muted">
@@ -1633,124 +1408,22 @@ function CDRevealedView({
 
   return (
     <>
-      <Card
-        className={cn(
-          'space-y-3',
-          isMaster ? 'p-8 md:p-10' : 'p-4',
-          wasCorrect
-            ? 'border-correct/40 bg-correct/[0.06]'
-            : 'border-wrong/40 bg-wrong/[0.06]',
-        )}
-      >
-        {topicDef && (
-          <div
-            className={cn(
-              'flex items-center gap-2 uppercase tracking-[0.22em] text-white/70',
-              isMaster ? 'text-sm md:text-base' : 'text-xs',
-            )}
-          >
-            <span
-              aria-hidden
-              className={isMaster ? 'text-2xl md:text-3xl' : ''}
-            >
-              {topicDef.emoji}
-            </span>
-            {topicDef.label}
-          </div>
-        )}
-        <div
-          className={cn(
-            'font-semibold text-white',
-            isMaster
-              ? 'text-3xl leading-tight md:text-5xl md:leading-tight'
-              : 'text-lg md:text-xl',
-          )}
-        >
-          {question.question}
-        </div>
-      </Card>
+      <QuestionCard
+        text={question.question}
+        isMaster={isMaster}
+        revealedTone={wasCorrect ? 'correct' : 'wrong'}
+        explanation={question.explanation}
+        eyebrow={topicDef ? `${topicDef.emoji} ${topicDef.label}` : null}
+      />
 
-      <div className={cn('space-y-2', isMaster && 'md:grid md:grid-cols-2 md:gap-3 md:space-y-0')}>
-        {live.shuffledOptions.map((option, idx) => {
-          const isCorrect = idx === correctIdx
-          const isSelected = idx === selectedIdx
-          return (
-            <div
-              key={idx}
-              className={cn(
-                'flex items-center rounded-xl border',
-                isMaster ? 'gap-4 px-5 py-4' : 'gap-3 px-4 py-3',
-                isCorrect
-                  ? 'border-correct/60 bg-correct/15 text-correct'
-                  : isSelected
-                    ? 'border-wrong/60 bg-wrong/15 text-wrong'
-                    : 'border-white/10 bg-white/[0.02] text-white/60',
-              )}
-            >
-              <span
-                className={cn(
-                  'flex items-center justify-center rounded-full font-mono font-bold',
-                  isMaster ? 'h-11 w-11 text-lg' : 'h-8 w-8 text-sm',
-                  isCorrect
-                    ? 'bg-correct/25'
-                    : isSelected
-                      ? 'bg-wrong/25'
-                      : 'bg-white/10',
-                )}
-              >
-                {String.fromCharCode(65 + idx)}
-              </span>
-              <span
-                className={cn(
-                  'flex-1',
-                  isMaster ? 'text-lg md:text-xl' : 'text-sm md:text-base',
-                )}
-              >
-                {option}
-              </span>
-              {isCorrect && (
-                <span
-                  className={cn(
-                    'uppercase tracking-wider',
-                    isMaster ? 'text-sm font-bold' : 'text-[10px]',
-                  )}
-                >
-                  richtig
-                </span>
-              )}
-              {isSelected && !isCorrect && (
-                <span
-                  className={cn(
-                    'uppercase tracking-wider',
-                    isMaster ? 'text-sm font-bold' : 'text-[10px]',
-                  )}
-                >
-                  gewählt
-                </span>
-              )}
-            </div>
-          )
-        })}
-      </div>
-
-      {question.explanation && (
-        <Card
-          className={cn(
-            'text-white/80',
-            isMaster ? 'p-5 text-base md:text-lg' : 'p-3 text-sm',
-          )}
-        >
-          <div
-            className={cn(
-              'mb-1 uppercase tracking-[0.22em] text-ink-muted',
-              isMaster ? 'text-xs' : 'text-[10px]',
-            )}
-          >
-            Erklärung
-          </div>
-          {question.explanation}
-        </Card>
-      )}
+      <ShowAnswers
+        options={live.shuffledOptions}
+        correctIdx={correctIdx}
+        myPick={selectedIdx ?? undefined}
+        onSelect={() => {}}
+        canClick={false}
+        stage={isMaster}
+      />
 
       <Button
         size="lg"
@@ -1837,7 +1510,7 @@ function SpotlightRoomView({
       <Card className={cn('p-3', isMaster && 'p-4')}>
         <div className="flex flex-wrap items-center gap-3">
           <div>
-            <div className="text-[10px] uppercase tracking-[0.32em] text-brand-pink-soft">
+            <div className="text-xs uppercase tracking-[0.32em] text-brand-pink-soft">
               Spotlight
             </div>
             <div
@@ -1887,19 +1560,13 @@ function SpotlightRoomView({
             isMaster ? 'p-6' : 'p-3',
           )}
         >
-          <span
-            className={cn(
-              'flex flex-shrink-0 items-center justify-center rounded-full font-bold text-white',
-              isMaster ? 'h-16 w-16 text-2xl' : 'h-10 w-10 text-base',
-            )}
-            style={{
-              background: activeTeam
-                ? getTeamColorHex(activeTeam.color)
-                : 'rgba(255,255,255,0.1)',
-            }}
-          >
-            {(activePlayer.name || 'N').slice(0, 1).toUpperCase()}
-          </span>
+          <AvatarBadge
+            avatar={activePlayer.avatar}
+            size={isMaster ? 'xl' : 'lg'}
+            teamHex={activeTeam ? getTeamColorHex(activeTeam.color) : undefined}
+            name={activePlayer.name}
+            className="flex-shrink-0"
+          />
           <div className="min-w-0 flex-1">
             <div
               className={cn(
@@ -1908,6 +1575,11 @@ function SpotlightRoomView({
               )}
             >
               {activePlayer.name || 'Namenlos'}
+              {activePlayer.avatar.title && (
+                <span className="ml-2 rounded-full bg-amber-300/15 px-2 py-0.5 align-middle text-xs font-semibold text-amber-200">
+                  {activePlayer.avatar.title}
+                </span>
+              )}
             </div>
             <div className={cn('text-white/70', isMaster ? 'text-base' : 'text-xs')}>
               {activeTeam?.name}
@@ -1924,29 +1596,15 @@ function SpotlightRoomView({
 
       {/* Frage */}
       {question ? (
-        <Card
-          className={cn(
-            'space-y-3',
-            isMaster ? 'p-8 md:p-12' : 'p-4',
-            live.phase === 'revealed' &&
-              live.primaryOutcome === 'correct' &&
-              'border-correct/40 bg-correct/[0.06]',
-            live.phase === 'revealed' &&
-              live.primaryOutcome === 'wrong' &&
-              'border-wrong/40 bg-wrong/[0.06]',
-          )}
-        >
-          <div
-            className={cn(
-              'font-semibold text-white',
-              isMaster
-                ? 'text-3xl leading-tight md:text-5xl md:leading-tight'
-                : 'text-lg md:text-xl',
-            )}
-          >
-            {question.question}
-          </div>
-        </Card>
+        <QuestionCard
+          text={question.question}
+          isMaster={isMaster}
+          revealedTone={
+            live.phase === 'revealed' ? (live.primaryOutcome === 'correct' ? 'correct' : 'wrong') : null
+          }
+          explanation={question.explanation}
+          eyebrow={topicDef ? `${topicDef.emoji} ${topicDef.label}` : null}
+        />
       ) : (
         <LoadingCard label="Frage wird geladen …" />
       )}
@@ -1959,6 +1617,7 @@ function SpotlightRoomView({
           isTeamMate={isTeamMate}
           canDispatch={canDispatch}
           playerName={activePlayer?.name ?? ''}
+          shuffledOptions={live.shuffledOptions}
           send={send}
         />
       )}
@@ -2002,6 +1661,7 @@ function SpotlightPrimaryPanel({
   isTeamMate,
   canDispatch,
   playerName,
+  shuffledOptions,
   send,
 }: {
   isMaster: boolean
@@ -2009,46 +1669,38 @@ function SpotlightPrimaryPanel({
   isTeamMate: boolean
   canDispatch: boolean
   playerName: string
+  shuffledOptions: string[]
   send: (a: GameAction) => void
 }) {
-  // Primär-Phase: Frage wurde vorgelesen, Player antwortet mündlich.
-  // Master (oder der Player selbst) klickt „richtig" oder „falsch".
+  // Alle sehen die Optionen, der aktive Spieler tippt; die Bühne kann
+  // stellvertretend tippen oder eine mündliche Antwort bewerten.
   return (
-    <Card className={cn('space-y-3', isMaster ? 'p-5' : 'p-4')}>
-      <div className="text-[10px] uppercase tracking-[0.32em] text-ink-muted">
+    <div className="space-y-3">
+      <ShowStatus tone={isMyTurn ? 'active' : 'neutral'} stage={isMaster}>
         {isMyTurn
-          ? 'Sag deine Antwort — jemand markiert Richtig / Falsch'
+          ? 'Du bist dran — tippe deine Antwort'
           : isTeamMate
-            ? `${playerName} antwortet frei — kein Reinreden`
-            : `Master markiert die Antwort für ${playerName}`}
-      </div>
-      <div className="grid grid-cols-2 gap-2">
-        <button
-          type="button"
-          onClick={() => send({ type: 'SPOTLIGHT_MARK_PRIMARY', outcome: 'correct' })}
-          disabled={!canDispatch || isTeamMate}
-          className={cn(
-            'flex items-center justify-center rounded-xl border font-bold uppercase tracking-wider transition-all disabled:opacity-40',
-            isMaster ? 'h-20 text-2xl' : 'h-16 text-lg',
-            'border-correct/60 bg-correct/15 text-correct hover:bg-correct/25',
-          )}
-        >
-          Richtig!
-        </button>
-        <button
-          type="button"
-          onClick={() => send({ type: 'SPOTLIGHT_MARK_PRIMARY', outcome: 'wrong' })}
-          disabled={!canDispatch || isTeamMate}
-          className={cn(
-            'flex items-center justify-center rounded-xl border font-bold uppercase tracking-wider transition-all disabled:opacity-40',
-            isMaster ? 'h-20 text-2xl' : 'h-16 text-lg',
-            'border-wrong/60 bg-wrong/15 text-wrong hover:bg-wrong/25',
-          )}
-        >
-          Falsch
-        </button>
-      </div>
-    </Card>
+            ? `${playerName} antwortet — kein Reinreden`
+            : `${playerName} antwortet`}
+      </ShowStatus>
+      <ShowAnswers
+        options={shuffledOptions}
+        correctIdx={null}
+        onSelect={(idx) => send({ type: 'SPOTLIGHT_PRIMARY_ANSWER', renderedIndex: idx })}
+        canClick={canDispatch && (isMyTurn || isMaster)}
+        stage={isMaster}
+      />
+      {isMaster && (
+        <div className="grid grid-cols-2 gap-2">
+          <Button variant="secondary" onClick={() => send({ type: 'SPOTLIGHT_MARK_PRIMARY', outcome: 'correct' })} disabled={!canDispatch}>
+            Mündlich richtig
+          </Button>
+          <Button variant="secondary" onClick={() => send({ type: 'SPOTLIGHT_MARK_PRIMARY', outcome: 'wrong' })} disabled={!canDispatch}>
+            Mündlich falsch
+          </Button>
+        </div>
+      )}
+    </div>
   )
 }
 
@@ -2065,126 +1717,41 @@ function SpotlightStealPanel({
   shuffledOptions: string[]
   send: (a: GameAction) => void
 }) {
-  const canClick = canDispatch && (isMaster || isOpponent)
   return (
-    <>
-      <Card className={cn('space-y-2', isMaster ? 'p-5' : 'p-3')}>
-        <div className="text-[10px] uppercase tracking-[0.32em] text-brand-orange-soft">
-          Steal — Gegenteam ist dran (halbe Punkte)
-        </div>
-      </Card>
-      <div className={cn('space-y-2', isMaster && 'md:grid md:grid-cols-2 md:gap-3 md:space-y-0')}>
-        {shuffledOptions.map((option, idx) => (
-          <button
-            key={idx}
-            type="button"
-            onClick={() => send({ type: 'SPOTLIGHT_STEAL_ANSWER', renderedIndex: idx })}
-            disabled={!canClick}
-            className={cn(
-              'flex w-full items-center rounded-xl border text-left transition-all disabled:opacity-40',
-              isMaster ? 'gap-4 px-5 py-4' : 'gap-3 px-4 py-3',
-              canClick
-                ? 'border-brand-orange/40 bg-white/[0.04] text-white hover:border-brand-orange/70 hover:bg-brand-orange/10'
-                : 'border-white/10 bg-white/[0.03] text-white/70',
-            )}
-          >
-            <span
-              className={cn(
-                'flex items-center justify-center rounded-full bg-white/10 font-mono font-bold',
-                isMaster ? 'h-11 w-11 text-lg' : 'h-8 w-8 text-sm',
-              )}
-            >
-              {String.fromCharCode(65 + idx)}
-            </span>
-            <span className={cn('flex-1', isMaster ? 'text-lg md:text-xl' : 'text-sm md:text-base')}>
-              {option}
-            </span>
-          </button>
-        ))}
-      </div>
-    </>
+    <div className="space-y-3">
+      <ShowStatus tone={isOpponent ? 'active' : 'warn'} stage={isMaster}>
+        {isOpponent ? 'Steal! Ihr dürft antworten — halbe Punkte' : 'Falsch — das Gegenteam darf stealen'}
+      </ShowStatus>
+      <ShowAnswers
+        options={shuffledOptions}
+        correctIdx={null}
+        onSelect={(idx) => send({ type: 'SPOTLIGHT_STEAL_ANSWER', renderedIndex: idx })}
+        canClick={canDispatch && (isMaster || isOpponent)}
+        stage={isMaster}
+      />
+    </div>
   )
 }
 
-function SpotlightRevealPanel({
-  isMaster,
-  live,
-}: {
-  isMaster: boolean
-  live: SpotlightLive
-}) {
-  const question = live.activeQuestion!
-  const correctIdx = live.correctRenderedIndex
-  const stealIdx = live.stealRenderedIndex
+function SpotlightRevealPanel({ isMaster, live }: { isMaster: boolean; live: SpotlightLive }) {
+  const wrongPicks: Record<number, string[]> = {}
+  if (live.primaryRenderedIndex != null && live.primaryRenderedIndex !== live.correctRenderedIndex) {
+    wrongPicks[live.primaryRenderedIndex] = ['primary']
+  }
+  if (live.stealRenderedIndex != null && live.stealRenderedIndex !== live.correctRenderedIndex) {
+    wrongPicks[live.stealRenderedIndex] = [...(wrongPicks[live.stealRenderedIndex] ?? []), 'steal']
+  }
   return (
-    <>
-      <div className={cn('space-y-2', isMaster && 'md:grid md:grid-cols-2 md:gap-3 md:space-y-0')}>
-        {live.shuffledOptions.map((option, idx) => {
-          const isCorrect = idx === correctIdx
-          const isSteal = idx === stealIdx
-          return (
-            <div
-              key={idx}
-              className={cn(
-                'flex items-center rounded-xl border',
-                isMaster ? 'gap-4 px-5 py-4' : 'gap-3 px-4 py-3',
-                isCorrect
-                  ? 'border-correct/60 bg-correct/15 text-correct'
-                  : isSteal
-                    ? 'border-wrong/60 bg-wrong/15 text-wrong'
-                    : 'border-white/10 bg-white/[0.02] text-white/60',
-              )}
-            >
-              <span
-                className={cn(
-                  'flex items-center justify-center rounded-full font-mono font-bold',
-                  isMaster ? 'h-11 w-11 text-lg' : 'h-8 w-8 text-sm',
-                  isCorrect ? 'bg-correct/25' : isSteal ? 'bg-wrong/25' : 'bg-white/10',
-                )}
-              >
-                {String.fromCharCode(65 + idx)}
-              </span>
-              <span
-                className={cn(
-                  'flex-1',
-                  isMaster ? 'text-lg md:text-xl' : 'text-sm md:text-base',
-                )}
-              >
-                {option}
-              </span>
-              {isCorrect && (
-                <span className={cn('uppercase tracking-wider', isMaster ? 'text-sm font-bold' : 'text-[10px]')}>
-                  richtig
-                </span>
-              )}
-            </div>
-          )
-        })}
-      </div>
-
-      {question.explanation && (
-        <Card
-          className={cn(
-            'text-white/80',
-            isMaster ? 'p-5 text-base md:text-lg' : 'p-3 text-sm',
-          )}
-        >
-          <div
-            className={cn(
-              'mb-1 uppercase tracking-[0.22em] text-ink-muted',
-              isMaster ? 'text-xs' : 'text-[10px]',
-            )}
-          >
-            Erklärung
-          </div>
-          {question.explanation}
-        </Card>
-      )}
-    </>
+    <ShowAnswers
+      options={live.shuffledOptions}
+      correctIdx={live.correctRenderedIndex}
+      picksByIndex={wrongPicks}
+      onSelect={() => {}}
+      canClick={false}
+      stage={isMaster}
+    />
   )
 }
-
-// ---------- Klick! (Warm-Up-Rätsel) ----------------------------------------
 
 /**
  * Klick! / Around-Corner: fünf Rätsel-Fragen mit stufenweisen Hinweisen.
@@ -2238,7 +1805,7 @@ function AroundCornerRoomView({
       {/* Header */}
       <Card className={cn('p-3', isMaster && 'p-4')}>
         <div className="flex items-center gap-3">
-          <div className="text-[10px] uppercase tracking-[0.32em] text-brand-cyan-soft">
+          <div className="text-xs uppercase tracking-[0.32em] text-brand-cyan-soft">
             Klick!
           </div>
           <div className={cn('font-mono text-white', isMaster ? 'text-lg' : 'text-sm')}>
@@ -2248,24 +1815,11 @@ function AroundCornerRoomView({
       </Card>
 
       {/* Frage */}
-      <Card
-        className={cn(
-          'space-y-3',
-          isMaster ? 'p-8 md:p-12' : 'p-4',
-          live.phase === 'revealed' && 'border-correct/40 bg-correct/[0.05]',
-        )}
-      >
-        <div
-          className={cn(
-            'font-semibold text-white',
-            isMaster
-              ? 'text-3xl leading-tight md:text-5xl md:leading-tight'
-              : 'text-lg md:text-xl',
-          )}
-        >
-          {question.question}
-        </div>
-      </Card>
+      <QuestionCard
+        text={question.question}
+        isMaster={isMaster}
+        revealedTone={live.phase === 'revealed' ? 'correct' : null}
+      />
 
       {/* Hinweise (progressiv) */}
       {revealedHints.length > 0 && (
@@ -2307,7 +1861,7 @@ function AroundCornerRoomView({
             isMaster ? 'p-6' : 'p-4',
           )}
         >
-          <div className="text-[10px] uppercase tracking-[0.32em] text-correct">
+          <div className="text-xs uppercase tracking-[0.32em] text-correct">
             Lösung
           </div>
           <div
@@ -2404,7 +1958,7 @@ function FlashRoomView({
       <Card className={cn('p-3', isMaster && 'p-4')}>
         <div className="flex flex-wrap items-center gap-3">
           <div>
-            <div className="text-[10px] uppercase tracking-[0.32em] text-brand-cyan-soft">
+            <div className="text-xs uppercase tracking-[0.32em] text-brand-cyan-soft">
               Blitzrunde
             </div>
             <div
@@ -2456,58 +2010,13 @@ function FlashRoomView({
 
       {/* Frage — gr\u00f6\u00dfer im Master-Presenter-Mode */}
       {question ? (
-        <Card
-          className={cn(
-            'space-y-3',
-            isMaster ? 'p-8 md:p-12' : 'p-4',
-            live.phase === 'revealed' &&
-              (question.correctAnswer
-                ? 'border-correct/40 bg-correct/[0.05]'
-                : 'border-wrong/40 bg-wrong/[0.05]'),
-          )}
-        >
-          <div
-            className={cn(
-              'text-center font-semibold text-white',
-              isMaster
-                ? 'text-3xl leading-tight md:text-5xl md:leading-tight'
-                : 'text-lg md:text-xl',
-            )}
-          >
-            {question.question}
-          </div>
-          {live.phase === 'revealed' && (
-            <div
-              className={cn(
-                'rounded-lg bg-black/40 text-center',
-                isMaster ? 'p-6' : 'p-3',
-              )}
-            >
-              <div className="text-[10px] uppercase tracking-[0.32em] text-white/50">
-                Antwort
-              </div>
-              <div
-                className={cn(
-                  'mt-1 font-bold uppercase tracking-wide',
-                  isMaster ? 'text-5xl md:text-7xl' : 'text-2xl',
-                  question.correctAnswer ? 'text-correct' : 'text-wrong',
-                )}
-              >
-                {question.correctAnswer ? 'Stimmt' : 'Falsch'}
-              </div>
-              {question.explanation && (
-                <div
-                  className={cn(
-                    'mt-2 text-white/70',
-                    isMaster ? 'text-base md:text-lg' : 'text-xs',
-                  )}
-                >
-                  {question.explanation}
-                </div>
-              )}
-            </div>
-          )}
-        </Card>
+        <QuestionCard
+          text={question.question}
+          isMaster={isMaster}
+          revealedTone={live.phase === 'revealed' ? 'neutral' : null}
+          explanation={question.explanation}
+          eyebrow={live.phase === 'revealed' ? (question.correctAnswer ? 'Auflösung: Stimmt ✓' : 'Auflösung: Falsch ✗') : 'Wahr oder falsch?'}
+        />
       ) : (
         <LoadingCard label="Keine Frage geladen." />
       )}
@@ -2515,7 +2024,7 @@ function FlashRoomView({
       {/* Wahr/Falsch-Buttons f\u00fcr Player-am-Zug. Master klickt nicht selbst. */}
       {live.phase === 'answering' && myTeamId && !isMaster && (
         <Card className="space-y-2 p-4">
-          <div className="text-[10px] uppercase tracking-[0.32em] text-ink-muted">
+          <div className="text-xs uppercase tracking-[0.32em] text-ink-muted">
             Antwort für dein Team ·{' '}
             {state.round.teams.find((t) => t.id === myTeamId)?.name}
           </div>
@@ -2555,7 +2064,7 @@ function FlashRoomView({
         <div
           className={cn(
             'uppercase tracking-[0.32em] text-ink-muted',
-            isMaster ? 'text-xs' : 'text-[10px]',
+            'text-xs',
           )}
         >
           Team-Antworten
@@ -2747,7 +2256,7 @@ function LadderRoomView({
             <div
               className={cn(
                 'uppercase tracking-[0.32em] text-mode-ladder',
-                isMaster ? 'text-xs' : 'text-[10px]',
+                'text-xs',
               )}
             >
               Alles oder Nichts
@@ -2772,7 +2281,7 @@ function LadderRoomView({
             <div
               className={cn(
                 'uppercase tracking-[0.32em]',
-                isMaster ? 'text-[10px]' : 'text-[9px]',
+                'text-xs',
               )}
             >
               Einsatz
@@ -2796,6 +2305,7 @@ function LadderRoomView({
 
       {/* Frage */}
       <QuestionCard
+          explanation={question?.explanation}
         text={question.question}
         isMaster={isMaster}
         revealedTone={
@@ -2839,7 +2349,13 @@ function LadderRoomView({
       <TeamAnswersPanel
         teams={state.round.teams}
         teamAnswers={Object.fromEntries(
-          Object.entries(live.teamAnswers).map(([k, v]) => [k, v === null || v === undefined ? null : `Antwort ${String.fromCharCode(65 + (v as number))}`]),
+          Object.entries(live.teamAnswers).map(([k, v]) => {
+            if (v === null || v === undefined) return [k, null]
+            // Vor der Auflösung nur „eingeloggt" zeigen — sonst schaut man beim Gegner ab.
+            // Das eigene Team sieht seinen Buchstaben weiterhin.
+            if (live.phase !== 'revealed' && k !== myTeamId) return [k, '✓ eingeloggt']
+            return [k, `Antwort ${String.fromCharCode(65 + (v as number))}`]
+          }),
         )}
         isMaster={isMaster}
       />
@@ -2894,6 +2410,11 @@ function SprinterRoomView({
   const isMyTeam = !!myPlayer && myPlayer.teamId === live.activeTeamId
   const canAnswer =
     live.phase === 'answering' && (isMaster || isMyTeam) && canDispatch
+  const reboundTeam = live.reboundTeamId
+    ? state.round.teams.find((t) => t.id === live.reboundTeamId) ?? null
+    : null
+  const isMyRebound = !!myPlayer && myPlayer.teamId === live.reboundTeamId
+  const inRebound = live.phase === 'rebound-buzz' || live.phase === 'rebound-answer'
 
   // Countdown-Timer im Frontend. Master oder der aktive Player dispatcht
   // SPRINTER_TIME_UP wenn die Zeit vorbei ist.
@@ -2913,7 +2434,7 @@ function SprinterRoomView({
     return (
       <div className="space-y-3">
         <Card className={cn('space-y-3 text-center', isMaster ? 'p-8' : 'p-5')}>
-          <div className="text-[10px] uppercase tracking-[0.32em] text-brand-orange-soft">
+          <div className="text-xs uppercase tracking-[0.32em] text-brand-orange-soft">
             Sprinter · Zwischenstand
           </div>
           <div className={cn('space-y-2', isMaster ? 'text-base' : 'text-sm')}>
@@ -2965,7 +2486,7 @@ function SprinterRoomView({
           <div
             className={cn(
               'uppercase tracking-[0.32em] text-brand-orange-soft',
-              isMaster ? 'text-xs' : 'text-[10px]',
+              'text-xs',
             )}
           >
             Sprinter
@@ -2988,24 +2509,17 @@ function SprinterRoomView({
             </div>
           )}
         </div>
-        <div className="ml-auto text-right">
-          <div
-            className={cn(
-              'uppercase tracking-[0.22em] text-ink-muted',
-              isMaster ? 'text-xs' : 'text-[10px]',
-            )}
-          >
-            Verbleibend
-          </div>
-          <div
-            className={cn(
-              'font-mono font-bold tabular-nums',
-              isMaster ? 'text-6xl' : 'text-3xl',
-              remainingSecs <= 10 ? 'text-wrong animate-timer-pulse' : 'text-white',
-            )}
-          >
-            {Math.max(0, Math.floor(remainingSecs))}s
-          </div>
+        <div className="ml-auto">
+          <ShowTimer
+            stage={isMaster}
+            paused={inRebound}
+            critical={!inRebound && remainingSecs <= 10}
+            seconds={
+              inRebound && live.sprintStartedAt && live.reboundStartedAt
+                ? live.sprintDurationSeconds - (live.reboundStartedAt - live.sprintStartedAt) / 1000
+                : remainingSecs
+            }
+          />
         </div>
         <div className="w-full">
           <div className="flex flex-wrap gap-2">
@@ -3021,15 +2535,67 @@ function SprinterRoomView({
         </div>
       </Card>
 
-      <QuestionCard text={question.question} isMaster={isMaster} revealedTone={null} />
+      <QuestionCard
+          explanation={question?.explanation} text={question.question} isMaster={isMaster} revealedTone={null} />
+
+      {live.phase === 'rebound-buzz' && (
+        <Card className={cn('space-y-2', isMaster ? 'p-5' : 'p-4')}>
+          <div className={cn('uppercase tracking-[0.32em] text-wrong', 'text-xs')}>
+            Falsch! Rebound — wer weiß es? Falsch = Minuspunkte
+          </div>
+          <div className={cn('grid gap-2', isMaster ? 'grid-cols-2' : 'grid-cols-1')}>
+            {state.round.teams
+              .filter((team) => team.id !== live.activeTeamId)
+              // Spieler sehen nur den Buzzer ihres eigenen Teams.
+              .filter((team) => isMaster || team.id === myPlayer?.teamId)
+              .map((team) => (
+                <BuzzerButton
+                  key={team.id}
+                  team={team}
+                  onBuzz={() => send({ type: 'SPRINTER_REBOUND_BUZZ', teamId: team.id })}
+                  disabled={!canDispatch}
+                  stage={isMaster}
+                />
+              ))}
+          </div>
+          {(isMaster || isHost || isMyTeam) && (
+            <Button
+              size="md"
+              variant="ghost"
+              onClick={() => send({ type: 'SPRINTER_REBOUND_PASS' })}
+              disabled={!canDispatch}
+              className="w-full"
+            >
+              Keiner buzzt — weiter sprinten
+            </Button>
+          )}
+        </Card>
+      )}
+
+      {live.phase === 'rebound-answer' && reboundTeam && (
+        <p className={cn('text-center text-ink-muted', isMaster ? 'text-base md:text-lg' : 'text-xs')}>
+          {reboundTeam.name} antwortet — richtig +{live.pointsPerCorrect}, falsch −{live.pointsPerCorrect}
+        </p>
+      )}
 
       <OptionsGrid
         options={live.shuffledOptions}
         correctIdx={null}
-        selectedIdxByTeam={{}}
+        selectedIdxByTeam={
+          inRebound && live.wrongRenderedIndex != null && activeTeam
+            ? { [live.wrongRenderedIndex]: [activeTeam.id] }
+            : {}
+        }
         teams={state.round.teams}
-        onSelect={(idx) => send({ type: 'SPRINTER_ANSWER', renderedIndex: idx })}
-        canClick={canAnswer}
+        onSelect={(idx) =>
+          live.phase === 'rebound-answer'
+            ? send({ type: 'SPRINTER_REBOUND_ANSWER', renderedIndex: idx })
+            : send({ type: 'SPRINTER_ANSWER', renderedIndex: idx })
+        }
+        canClick={
+          canAnswer ||
+          (live.phase === 'rebound-answer' && canDispatch && (isMaster || isMyRebound))
+        }
         isMaster={isMaster}
       />
 
@@ -3121,7 +2687,7 @@ function EliminationRoomView({
     return (
       <div className="space-y-3">
         <Card className={cn('space-y-3 text-center', isMaster ? 'p-8' : 'p-5')}>
-          <div className="text-[10px] uppercase tracking-[0.32em] text-brand-pink-soft">
+          <div className="text-xs uppercase tracking-[0.32em] text-brand-pink-soft">
             Elimination
           </div>
           <div className={cn('font-bold text-white', isMaster ? 'text-4xl' : 'text-2xl')}>
@@ -3164,7 +2730,7 @@ function EliminationRoomView({
             <div
               className={cn(
                 'uppercase tracking-[0.32em] text-brand-pink-soft',
-                isMaster ? 'text-xs' : 'text-[10px]',
+                'text-xs',
               )}
             >
               Elimination
@@ -3195,18 +2761,21 @@ function EliminationRoomView({
             isMaster ? 'p-5' : 'p-3',
           )}
         >
-          <span
-            className={cn(
-              'flex flex-shrink-0 items-center justify-center rounded-full font-bold text-white',
-              isMaster ? 'h-14 w-14 text-xl' : 'h-9 w-9 text-sm',
-            )}
-            style={{ background: activeTeam ? getTeamColorHex(activeTeam.color) : 'rgba(255,255,255,0.1)' }}
-          >
-            {(activePlayer.name || 'N').slice(0, 1).toUpperCase()}
-          </span>
+          <AvatarBadge
+            avatar={activePlayer.avatar}
+            size={isMaster ? 'xl' : 'lg'}
+            teamHex={activeTeam ? getTeamColorHex(activeTeam.color) : undefined}
+            name={activePlayer.name}
+            className="flex-shrink-0"
+          />
           <div>
             <div className={cn('font-semibold text-white', isMaster ? 'text-2xl' : 'text-base')}>
               {activePlayer.name || 'Namenlos'}
+              {activePlayer.avatar.title && (
+                <span className="ml-2 rounded-full bg-amber-300/15 px-2 py-0.5 align-middle text-xs font-semibold text-amber-200">
+                  {activePlayer.avatar.title}
+                </span>
+              )}
             </div>
             <div className={cn('text-white/70', isMaster ? 'text-base' : 'text-xs')}>
               {activeTeam?.name}
@@ -3216,6 +2785,7 @@ function EliminationRoomView({
       )}
 
       <QuestionCard
+          explanation={question?.explanation}
         text={question.question}
         isMaster={isMaster}
         revealedTone={
@@ -3243,7 +2813,7 @@ function EliminationRoomView({
           <div
             className={cn(
               'uppercase tracking-[0.32em] text-ink-muted',
-              isMaster ? 'text-xs' : 'text-[10px]',
+              'text-xs',
             )}
           >
             Ausgeschieden ({live.eliminatedIds.length})
@@ -3305,7 +2875,7 @@ function BoardRoomView({
   const isMyPick = !!myPlayer && myPlayer.teamId === live.cellPickerTeamId
   const isMyBuzz = !!myPlayer && myPlayer.teamId === live.buzzingTeamId
   const isMySteal =
-    !!myPlayer && !!live.buzzingTeamId && myPlayer.teamId !== live.buzzingTeamId
+    !!myPlayer && live.phase === 'steal-answer' && answeringTeamId(state) === myPlayer.teamId
 
   return (
     <div className="space-y-3">
@@ -3316,7 +2886,7 @@ function BoardRoomView({
             <div
               className={cn(
                 'uppercase tracking-[0.32em] text-mode-board',
-                isMaster ? 'text-xs' : 'text-[10px]',
+                'text-xs',
               )}
             >
               Punktejagd
@@ -3349,7 +2919,7 @@ function BoardRoomView({
                 key={topic}
                 className={cn(
                   'text-center uppercase tracking-wider text-white/70',
-                  isMaster ? 'text-sm md:text-base pb-1' : 'text-[10px]',
+                  isMaster ? 'text-sm md:text-base pb-1' : 'text-xs',
                 )}
               >
                 <div aria-hidden className={isMaster ? 'text-4xl md:text-5xl leading-none' : 'text-lg'}>
@@ -3379,6 +2949,7 @@ function BoardRoomView({
       {live.phase !== 'pick-cell' && live.activeQuestion && (
         <>
           <QuestionCard
+          explanation={live.activeQuestion?.explanation}
             text={live.activeQuestion.question}
             isMaster={isMaster}
             revealedTone={
@@ -3395,29 +2966,23 @@ function BoardRoomView({
               <div
                 className={cn(
                   'uppercase tracking-[0.32em] text-ink-muted',
-                  isMaster ? 'text-xs' : 'text-[10px]',
+                  'text-xs',
                 )}
               >
                 Wer buzzert zuerst?
               </div>
-              <div className="grid grid-cols-2 gap-2">
-                {state.round.teams.map((team) => (
-                  <button
+              <div className={cn('grid gap-2', isMaster ? 'grid-cols-2' : 'grid-cols-1')}>
+                {state.round.teams
+                  // Spieler sehen nur den Buzzer ihres eigenen Teams.
+                  .filter((team) => isMaster || team.id === myPlayer?.teamId)
+                  .map((team) => (
+                  <BuzzerButton
                     key={team.id}
-                    type="button"
-                    onClick={() => send({ type: 'BOARD_BUZZER', teamId: team.id })}
+                    team={team}
+                    onBuzz={() => send({ type: 'BOARD_BUZZER', teamId: team.id })}
                     disabled={!canDispatch}
-                    className={cn(
-                      'rounded-xl border py-3 text-center font-bold text-white transition-all disabled:opacity-40',
-                      isMaster ? 'h-20 text-2xl md:text-3xl' : 'h-14 text-base',
-                    )}
-                    style={{
-                      borderColor: getTeamColorHex(team.color),
-                      background: `${getTeamColorHex(team.color)}22`,
-                    }}
-                  >
-                    {team.name} buzzt
-                  </button>
+                    stage={isMaster}
+                  />
                 ))}
               </div>
             </Card>
@@ -3570,7 +3135,7 @@ function DuelRoomView({
             <div
               className={cn(
                 'uppercase tracking-[0.32em] text-mode-duel',
-                isMaster ? 'text-xs' : 'text-[10px]',
+                'text-xs',
               )}
             >
               Duell 1:1
@@ -3597,7 +3162,7 @@ function DuelRoomView({
         <div
           className={cn(
             'uppercase tracking-[0.32em] text-ink-muted',
-            isMaster ? 'text-xs' : 'text-[10px]',
+            'text-xs',
           )}
         >
           Duellierende Teams
@@ -3679,6 +3244,7 @@ function DuelRoomView({
       {live.phase !== 'setup-duel' && live.activeQuestion && (
         <>
           <QuestionCard
+          explanation={live.activeQuestion?.explanation}
             text={live.activeQuestion.question}
             isMaster={isMaster}
             revealedTone={
@@ -3695,32 +3261,26 @@ function DuelRoomView({
               <div
                 className={cn(
                   'uppercase tracking-[0.32em] text-ink-muted',
-                  isMaster ? 'text-xs' : 'text-[10px]',
+                  'text-xs',
                 )}
               >
                 Buzzer!
               </div>
-              <div className="grid grid-cols-2 gap-2">
-                {live.duelingTeamIds.map((teamId) => {
+              <div className={cn('grid gap-2', isMaster ? 'grid-cols-2' : 'grid-cols-1')}>
+                {live.duelingTeamIds
+                  // Spieler sehen nur den Buzzer ihres eigenen Teams.
+                  .filter((teamId) => isMaster || teamId === myPlayer?.teamId)
+                  .map((teamId) => {
                   const team = state.round?.teams.find((t) => t.id === teamId)
                   if (!team) return null
                   return (
-                    <button
+                    <BuzzerButton
                       key={teamId}
-                      type="button"
-                      onClick={() => send({ type: 'DUEL_BUZZER', teamId })}
+                      team={team}
+                      onBuzz={() => send({ type: 'DUEL_BUZZER', teamId: teamId })}
                       disabled={!canDispatch}
-                      className={cn(
-                        'rounded-xl border py-3 text-center font-bold text-white transition-all disabled:opacity-40',
-                        isMaster ? 'h-20 text-2xl md:text-3xl' : 'h-14 text-base',
-                      )}
-                      style={{
-                        borderColor: getTeamColorHex(team.color),
-                        background: `${getTeamColorHex(team.color)}22`,
-                      }}
-                    >
-                      {team.name} buzzt
-                    </button>
+                      stage={isMaster}
+                    />
                   )
                 })}
               </div>
@@ -3814,7 +3374,9 @@ function ExpertsRoomView({
     live.phase === 'primary' ? live.soloStartedAt : null,
     live.soloDurationSeconds,
     () => {
-      if (isMaster || isMyTurn) send({ type: 'EXPERTS_MARK_PRIMARY', outcome: 'timeout' })
+      // Mehrfach-Dispatch ist harmlos (Reducer prüft die Phase) — so feuert der
+      // Timeout auch, wenn das Gerät des aktiven Spielers gerade weg ist.
+      if (isMaster || isMyTurn || isHost) send({ type: 'EXPERTS_MARK_PRIMARY', outcome: 'timeout' })
     },
   )
 
@@ -3843,7 +3405,7 @@ function ExpertsRoomView({
           <div
             className={cn(
               'uppercase tracking-[0.32em] text-mode-experts',
-              isMaster ? 'text-xs' : 'text-[10px]',
+              'text-xs',
             )}
           >
             Fachrunde · Setup
@@ -3877,38 +3439,40 @@ function ExpertsRoomView({
                     <span
                       className={cn(
                         'ml-2 text-brand-purple-soft uppercase tracking-wider',
-                        isMaster ? 'text-xs' : 'text-[10px]',
+                        'text-xs',
                       )}
                     >
                       du
                     </span>
                   )}
                 </div>
-                <div
-                  className={cn(
-                    'grid gap-1.5',
-                    isMaster ? 'grid-cols-6 gap-2' : 'grid-cols-4 gap-1 sm:grid-cols-6',
-                  )}
-                >
-                  {TOPICS.map((t) => (
-                    <button
-                      key={t.id}
-                      type="button"
-                      onClick={() => send({ type: 'EXPERTS_SET_EXPERTISE', playerId: id, topic: t.id })}
-                      disabled={!canEdit}
-                      title={t.label}
-                      className={cn(
-                        'rounded-lg border transition-all disabled:opacity-40',
-                        isMaster ? 'py-3 text-3xl md:text-4xl' : 'py-1 text-[10px]',
-                        chosen === t.id
-                          ? 'border-mode-experts/60 bg-mode-experts/15 text-mode-experts'
-                          : 'border-white/10 bg-white/[0.03] text-white/70 hover:border-mode-experts/40 hover:bg-mode-experts/[0.08]',
-                      )}
-                    >
-                      <span aria-hidden>{t.emoji}</span>
-                    </button>
-                  ))}
-                </div>
+                {canEdit ? (
+                  <select
+                    value={chosen ?? ''}
+                    onChange={(e) =>
+                      e.target.value &&
+                      send({ type: 'EXPERTS_SET_EXPERTISE', playerId: id, topic: e.target.value as Topic })
+                    }
+                    aria-label={`Fachgebiet für ${player.name || 'Spieler'}`}
+                    className={cn(
+                      'w-full rounded-lg border border-white/15 bg-white/[0.04] text-white focus:border-mode-experts/60 focus:outline-none',
+                      isMaster ? 'px-4 py-3 text-lg' : 'px-3 py-2.5 text-base',
+                    )}
+                  >
+                    <option value="" disabled>
+                      Fachgebiet wählen …
+                    </option>
+                    {TOPICS_ALPHABETICAL.map((t) => (
+                      <option key={t.id} value={t.id}>
+                        {t.emoji} {t.label}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <div className={cn('text-white/80', isMaster ? 'text-lg' : 'text-sm')}>
+                    {chosen ? `${TOPICS_BY_ID[chosen].emoji} ${TOPICS_BY_ID[chosen].label}` : 'wählt noch …'}
+                  </div>
+                )}
               </Card>
             )
           })}
@@ -3939,7 +3503,7 @@ function ExpertsRoomView({
             <div
               className={cn(
                 'uppercase tracking-[0.32em] text-mode-experts',
-                isMaster ? 'text-xs' : 'text-[10px]',
+                'text-xs',
               )}
             >
               Fachrunde
@@ -3950,28 +3514,12 @@ function ExpertsRoomView({
                 isMaster ? 'text-2xl md:text-3xl' : 'text-sm',
               )}
             >
-              Zug {live.currentIndex + 1} / {live.playerOrder.length}
+              Frage {live.currentStep + 1} / {live.questionsPerPlayer} · {live.pointsPerCorrect} Punkte
             </div>
           </div>
           {live.phase === 'primary' && (
-            <div className="ml-auto text-right">
-              <div
-                className={cn(
-                  'uppercase tracking-[0.22em] text-ink-muted',
-                  isMaster ? 'text-xs' : 'text-[10px]',
-                )}
-              >
-                Timer
-              </div>
-              <div
-                className={cn(
-                  'font-mono font-bold tabular-nums',
-                  isMaster ? 'text-5xl md:text-6xl' : 'text-2xl',
-                  remainingSecs <= 5 ? 'text-wrong animate-timer-pulse' : 'text-white',
-                )}
-              >
-                {Math.max(0, Math.floor(remainingSecs))}s
-              </div>
+            <div className="ml-auto">
+              <ShowTimer seconds={remainingSecs} stage={isMaster} />
             </div>
           )}
           <div className="w-full flex flex-wrap gap-2">
@@ -3989,18 +3537,21 @@ function ExpertsRoomView({
             isMaster ? 'p-5' : 'p-3',
           )}
         >
-          <span
-            className={cn(
-              'flex flex-shrink-0 items-center justify-center rounded-full font-bold text-white',
-              isMaster ? 'h-14 w-14 text-xl' : 'h-9 w-9 text-sm',
-            )}
-            style={{ background: activeTeam ? getTeamColorHex(activeTeam.color) : 'rgba(255,255,255,0.1)' }}
-          >
-            {(activePlayer.name || 'N').slice(0, 1).toUpperCase()}
-          </span>
+          <AvatarBadge
+            avatar={activePlayer.avatar}
+            size={isMaster ? 'xl' : 'lg'}
+            teamHex={activeTeam ? getTeamColorHex(activeTeam.color) : undefined}
+            name={activePlayer.name}
+            className="flex-shrink-0"
+          />
           <div className="min-w-0 flex-1">
             <div className={cn('font-semibold text-white', isMaster ? 'text-xl md:text-2xl' : 'text-base')}>
               {activePlayer.name || 'Namenlos'}
+              {activePlayer.avatar.title && (
+                <span className="ml-2 rounded-full bg-amber-300/15 px-2 py-0.5 align-middle text-xs font-semibold text-amber-200">
+                  {activePlayer.avatar.title}
+                </span>
+              )}
             </div>
             <div className={cn('text-white/70', isMaster ? 'text-base' : 'text-xs')}>
               {activeTeam?.name}
@@ -4017,6 +3568,7 @@ function ExpertsRoomView({
 
       {question && (
         <QuestionCard
+          explanation={question?.explanation}
           text={question.question}
           isMaster={isMaster}
           revealedTone={
@@ -4029,41 +3581,50 @@ function ExpertsRoomView({
         />
       )}
 
-      {live.phase === 'primary' && (
+      {live.phase === 'question-shown' && (
         <Card className={cn('space-y-3', isMaster ? 'p-5' : 'p-4')}>
           <div
             className={cn(
               'uppercase tracking-[0.32em] text-ink-muted',
-              isMaster ? 'text-xs' : 'text-[10px]',
+              'text-xs',
             )}
           >
-            Solo-Antwort (frei) · Master markiert
+            {isMyTurn ? 'Lies die Frage — dann Antworten aufdecken' : `${activePlayer?.name ?? 'Experte'} liest die Frage`}
           </div>
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              type="button"
-              onClick={() => send({ type: 'EXPERTS_MARK_PRIMARY', outcome: 'correct' })}
-              disabled={!canDispatch || !isHost}
-              className={cn(
-                'flex items-center justify-center rounded-xl border font-bold uppercase tracking-wider transition-all disabled:opacity-40 border-correct/60 bg-correct/15 text-correct',
-                isMaster ? 'h-20 text-2xl' : 'h-14 text-lg',
-              )}
-            >
-              Richtig
-            </button>
-            <button
-              type="button"
-              onClick={() => send({ type: 'EXPERTS_MARK_PRIMARY', outcome: 'wrong' })}
-              disabled={!canDispatch || !isHost}
-              className={cn(
-                'flex items-center justify-center rounded-xl border font-bold uppercase tracking-wider transition-all disabled:opacity-40 border-wrong/60 bg-wrong/15 text-wrong',
-                isMaster ? 'h-20 text-2xl' : 'h-14 text-lg',
-              )}
-            >
-              Falsch
-            </button>
-          </div>
+          <Button
+            size="lg"
+            variant="primary"
+            onClick={() => send({ type: 'EXPERTS_SHOW_OPTIONS' })}
+            disabled={!canDispatch || !(isMyTurn || isMaster || isHost)}
+            className={cn('w-full', isMaster && 'h-16 text-lg')}
+          >
+            Antworten anzeigen · {live.soloDurationSeconds}s
+          </Button>
         </Card>
+      )}
+
+      {live.phase === 'primary' && (
+        <>
+          <Card className={cn(isMaster ? 'p-5' : 'p-3')}>
+            <div
+              className={cn(
+                'uppercase tracking-[0.32em] text-ink-muted',
+                'text-xs',
+              )}
+            >
+              {isMyTurn ? 'Du bist dran — tippe deine Antwort' : `${activePlayer?.name ?? 'Experte'} antwortet`}
+            </div>
+          </Card>
+          <OptionsGrid
+            options={live.shuffledOptions}
+            correctIdx={null}
+            selectedIdxByTeam={{}}
+            teams={state.round.teams}
+            onSelect={(idx) => send({ type: 'EXPERTS_PRIMARY_ANSWER', renderedIndex: idx })}
+            canClick={canDispatch && (isMyTurn || isMaster)}
+            isMaster={isMaster}
+          />
+        </>
       )}
 
       {live.phase === 'steal-answer' && (
@@ -4072,7 +3633,7 @@ function ExpertsRoomView({
             <div
               className={cn(
                 'uppercase tracking-[0.32em] text-brand-orange-soft',
-                isMaster ? 'text-xs' : 'text-[10px]',
+                'text-xs',
               )}
             >
               Steal — Gegenteam ist dran
@@ -4100,15 +3661,18 @@ function ExpertsRoomView({
             onSelect={() => {}}
             canClick={false}
             isMaster={isMaster}
+            highlightMyPick={live.primaryRenderedIndex ?? undefined}
           />
           <Button
             size="lg"
             variant="primary"
             onClick={() => send({ type: 'EXPERTS_NEXT' })}
-            disabled={!canDispatch || !isHost}
+            disabled={!canDispatch || !(isHost || isMaster)}
             className={cn('w-full', isMaster && 'h-16 text-lg')}
           >
-            {live.currentIndex + 1 >= live.playerOrder.length ? 'Runde beenden' : 'Nächster Experte'}
+            {live.currentIndex + 1 >= live.playerOrder.length * live.questionsPerPlayer
+              ? 'Runde beenden'
+              : 'Nächste Frage'}
           </Button>
         </>
       )}
@@ -4126,36 +3690,23 @@ function QuestionCard({
   text,
   isMaster,
   revealedTone,
+  explanation,
+  eyebrow,
 }: {
   text: string
   isMaster: boolean
   revealedTone: 'correct' | 'wrong' | 'neutral' | null
+  explanation?: string | null
+  eyebrow?: string | null
 }) {
-  // `key` an revealedTone koppelt die Component-Instanz an den Tone-Wechsel:
-  // sobald sich `correct` / `wrong` ändert, wird der Card neu gemountet und
-  // die CSS-Animation läuft frisch. Ohne key würde ein Wiederholungs-Reveal
-  // die Animation nicht neu triggern.
   return (
-    <Card
-      key={revealedTone ?? 'neutral'}
-      className={cn(
-        'space-y-3',
-        isMaster ? 'p-8 md:p-12' : 'p-4',
-        revealedTone === 'correct' && 'border-correct/40 bg-correct/[0.06] animate-reveal-correct',
-        revealedTone === 'wrong' && 'border-wrong/40 bg-wrong/[0.06] animate-reveal-wrong',
-      )}
-    >
-      <div
-        className={cn(
-          'font-semibold text-white',
-          isMaster
-            ? 'text-3xl leading-tight md:text-5xl md:leading-tight'
-            : 'text-lg md:text-xl',
-        )}
-      >
-        {text}
-      </div>
-    </Card>
+    <ShowQuestion
+      text={text}
+      stage={isMaster}
+      tone={revealedTone}
+      explanation={explanation}
+      eyebrow={eyebrow ?? undefined}
+    />
   )
 }
 
@@ -4172,6 +3723,7 @@ function OptionsGrid({
   canClick,
   isMaster,
   highlightMyPick,
+  disabledIdx,
 }: {
   options: string[]
   correctIdx: number | null
@@ -4181,74 +3733,23 @@ function OptionsGrid({
   canClick: boolean
   isMaster: boolean
   highlightMyPick?: number
+  disabledIdx?: number | null
 }) {
   return (
-    <div className={cn('space-y-2', isMaster && 'md:grid md:grid-cols-2 md:gap-3 md:space-y-0')}>
-      {options.map((option, idx) => {
-        const isCorrect = correctIdx !== null && idx === correctIdx
-        const wrongPicks = selectedIdxByTeam[idx]?.filter(() => idx !== correctIdx) ?? []
-        const isMine = highlightMyPick === idx
-        return (
-          <button
-            key={idx}
-            type="button"
-            onClick={() => canClick && onSelect(idx)}
-            disabled={!canClick}
-            className={cn(
-              'flex w-full items-center rounded-xl border text-left transition-all disabled:cursor-default disabled:opacity-100',
-              isMaster ? 'gap-4 px-5 py-4' : 'gap-3 px-4 py-3',
-              isCorrect
-                ? 'border-correct/60 bg-correct/15 text-correct'
-                : wrongPicks.length > 0
-                  ? 'border-wrong/60 bg-wrong/15 text-wrong'
-                  : isMine
-                    ? 'border-brand-purple/60 bg-brand-purple/15 text-brand-purple-soft'
-                    : canClick
-                      ? 'border-brand-purple/40 bg-white/[0.04] text-white hover:border-brand-purple/70 hover:bg-brand-purple/10'
-                      : 'border-white/10 bg-white/[0.02] text-white/70',
-            )}
-          >
-            <span
-              className={cn(
-                'flex items-center justify-center rounded-full bg-white/10 font-mono font-bold',
-                isMaster ? 'h-11 w-11 text-lg' : 'h-8 w-8 text-sm',
-                isCorrect && 'bg-correct/25',
-                wrongPicks.length > 0 && !isCorrect && 'bg-wrong/25',
-              )}
-            >
-              {String.fromCharCode(65 + idx)}
-            </span>
-            <span className={cn('flex-1', isMaster ? 'text-lg md:text-xl' : 'text-sm md:text-base')}>
-              {option}
-            </span>
-            {selectedIdxByTeam[idx] && selectedIdxByTeam[idx].length > 0 && (
-              <span className="flex gap-1">
-                {selectedIdxByTeam[idx].map((teamId) => {
-                  const team = teams.find((t) => t.id === teamId)
-                  if (!team) return null
-                  return (
-                    <span
-                      key={teamId}
-                      className="h-2 w-2 rounded-full"
-                      style={{ background: getTeamColorHex(team.color) }}
-                    />
-                  )
-                })}
-              </span>
-            )}
-          </button>
-        )
-      })}
-    </div>
+    <ShowAnswers
+      options={options}
+      correctIdx={correctIdx}
+      picksByIndex={selectedIdxByTeam}
+      teams={teams}
+      onSelect={onSelect}
+      canClick={canClick}
+      stage={isMaster}
+      myPick={highlightMyPick}
+      disabledIdx={disabledIdx}
+    />
   )
 }
 
-/**
- * Trackt Änderungen an `score` und meldet für ~1.4s den positiven Delta.
- * Wird für die `+N`-Toast-Animation am TeamScoreChip verwendet. Negative
- * Deltas werden bewusst ignoriert — im Party-Kontext ist ein Punkt-Abzug
- * eher selten und würde sonst schnell irritieren.
- */
 function useScoreDelta(score: number): number | null {
   const previousRef = useRef(score)
   const [delta, setDelta] = useState<number | null>(null)
@@ -4282,22 +3783,24 @@ function TeamScoreChip({
   isMaster: boolean
 }) {
   const delta = useScoreDelta(score)
+  const hex = getTeamColorHex(team.color)
   return (
     <div
       className={cn(
-        'relative flex items-center gap-1.5 rounded-lg bg-white/[0.04]',
-        isMaster ? 'px-3 py-2' : 'px-2 py-1',
+        'relative flex items-center gap-2 rounded-full border-2 bg-navy-900/80',
+        isMaster ? 'px-4 py-2' : 'px-3 py-1',
       )}
+      style={{ borderColor: `${hex}99`, boxShadow: `0 0 18px -8px ${hex}` }}
     >
       <span
-        className={cn('rounded-full', isMaster ? 'h-3 w-3' : 'h-2 w-2')}
-        style={{ background: getTeamColorHex(team.color) }}
+        className={cn('rounded-full', isMaster ? 'h-3 w-3' : 'h-2.5 w-2.5')}
+        style={{ background: hex, boxShadow: `0 0 8px ${hex}` }}
       />
-      <span className={cn('text-white/80', isMaster ? 'text-sm' : 'text-xs')}>{team.name}</span>
+      <span className={cn('font-medium text-white/85', isMaster ? 'text-base' : 'text-sm')}>{team.name}</span>
       <span
         className={cn(
-          'font-mono font-bold text-white tabular-nums',
-          isMaster ? 'text-2xl' : 'text-sm',
+          'font-display font-extrabold text-white tabular-nums',
+          isMaster ? 'text-2xl' : 'text-base',
         )}
       >
         {score}
@@ -4307,7 +3810,7 @@ function TeamScoreChip({
           key={delta}
           className={cn(
             'pointer-events-none absolute left-1/2 -top-3 rounded-full bg-correct/25 font-mono font-bold text-correct animate-score-pop',
-            isMaster ? 'px-2.5 py-0.5 text-base' : 'px-1.5 py-[1px] text-[11px]',
+            isMaster ? 'px-2.5 py-0.5 text-base' : 'px-1.5 py-[1px] text-xs',
           )}
           aria-hidden
         >
@@ -4330,7 +3833,7 @@ function TeamAnswersPanel({
 }) {
   return (
     <Card className={cn('space-y-2', isMaster ? 'p-5' : 'p-3')}>
-      <div className={cn('uppercase tracking-[0.32em] text-ink-muted', isMaster ? 'text-xs' : 'text-[10px]')}>
+      <div className={cn('uppercase tracking-[0.32em] text-ink-muted', 'text-xs')}>
         Team-Antworten
       </div>
       <div className={cn('grid gap-1.5', isMaster ? 'sm:grid-cols-2 lg:grid-cols-4' : 'sm:grid-cols-2')}>
@@ -4390,7 +3893,7 @@ function PlayingPhaseView({
         <div className="text-xs uppercase tracking-[0.22em] text-ink-muted">
           Live-State
         </div>
-        <details className="rounded bg-black/40 p-2 text-[11px] text-white/80">
+        <details className="rounded bg-black/40 p-2 text-xs text-white/80">
           <summary className="cursor-pointer">JSON</summary>
           <pre className="mt-2 overflow-x-auto">
             {JSON.stringify(state.live, null, 2)}
@@ -4408,7 +3911,7 @@ function PlayingPhaseView({
         Modus beenden
       </Button>
 
-      <p className="text-center text-[11px] text-ink-muted">
+      <p className="text-center text-xs text-ink-muted">
         Die vollen Spiel-UIs kommen im nächsten Release. Bis dahin:
         Master-Screen zum Anzeigen, Player-Handys zum Dispatchen.
       </p>
@@ -4429,18 +3932,28 @@ function ScoreboardPhaseView({
 }) {
   // "Nochmal" und "Modi neu wählen" sind Show-Entscheidungen — nur der Host
   // darf das für alle triggern.
+  const winner = state.round ? findMatchWinner(state.round.teams, state.matchPoints) : null
+  const ranked = state.round
+    ? [...state.round.teams].sort((a, b) => (state.matchPoints[b.id] ?? 0) - (state.matchPoints[a.id] ?? 0))
+    : []
   return (
     <div className="space-y-3">
+      <Card className="p-6">
+        <WinnerHero winner={winner} players={state.round?.players ?? []} />
+      </Card>
       <Card className="space-y-3 p-4">
         <div className="text-xs uppercase tracking-[0.22em] text-ink-muted">
-          Endstand
+          Endstand · Match-Punkte
         </div>
         <div className="space-y-2">
-          {state.round?.teams.map((team) => (
+          {ranked.map((team) => (
             <div
               key={team.id}
               className="flex items-center gap-3 rounded-lg bg-white/[0.03] px-3 py-2"
             >
+              {winner?.id === team.id && (
+                <Crown aria-hidden className="h-4 w-4 text-amber-300" fill="currentColor" />
+              )}
               <span
                 className="h-3 w-3 rounded-full"
                 style={{ background: getTeamColorHex(team.color) }}

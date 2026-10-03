@@ -84,3 +84,15 @@ export const TOPICS: TopicDef[] = [
 export const TOPICS_BY_ID: Record<Topic, TopicDef> = Object.fromEntries(
   TOPICS.map((t) => [t.id, t]),
 ) as Record<Topic, TopicDef>
+
+/** Themen alphabetisch (deutsche Sortierung) — für alle Auswahllisten im UI. */
+export const TOPICS_ALPHABETICAL: TopicDef[] = [...TOPICS].sort((a, b) =>
+  a.label.localeCompare(b.label, 'de'),
+)
+
+/** Sortiert Topic-IDs alphabetisch nach Label (z. B. für Board-Spalten, Battle-Kacheln). */
+export function sortTopicsAlphabetically<T extends Topic>(ids: readonly T[]): T[] {
+  return [...ids].sort((a, b) =>
+    (TOPICS_BY_ID[a]?.label ?? a).localeCompare(TOPICS_BY_ID[b]?.label ?? b, 'de'),
+  )
+}

@@ -18,6 +18,7 @@
 
 import type {
   Avatar,
+  Difficulty,
   GameModeId,
   GameResult,
   MultipleChoiceQuestion,
@@ -32,10 +33,12 @@ import type {
   WarmupRiddleQuestion,
 } from '../types'
 import { MODES, MODES_BY_ID } from '../data/modes'
-import { TOPICS } from '../data/topics'
+import { TOPICS, sortTopicsAlphabetically } from '../data/topics'
 import {
   getMultipleChoiceByTopic,
+  clampDifficulty,
   pickAnyMultipleChoice,
+  pickByTargetDifficulty,
   pickQuestion,
   pickTrueFalse,
   pickWarmupRiddle,
@@ -137,6 +140,11 @@ export interface SpotlightLive {
   phase: 'primary' | 'steal' | 'revealed' | 'empty'
   /** Vom Gegenteam gewählter Rendered-Index in der Steal-Phase; null, wenn Steal nicht ausgelöst. */
   stealRenderedIndex: number | null
+  /**
+   * Vom aktiven Spieler auf dem eigenen Gerät getippte Option (Multi-Device).
+   * null bei mündlicher Antwort, die per SPOTLIGHT_MARK_PRIMARY bewertet wurde.
+   */
+  primaryRenderedIndex?: number | null
   primaryOutcome: 'correct' | 'wrong' | null
   stealOutcome: 'correct' | 'wrong' | null
   scores: Record<string, number>
@@ -176,7 +184,18 @@ export interface SprinterLive {
   activeQuestion: MultipleChoiceQuestion | null
   shuffledOptions: string[]
   correctRenderedIndex: number
-  phase: 'answering' | 'between-teams'
+  /**
+   * answering: Sprint-Team antwortet gegen die Uhr.
+   * rebound-buzz: Sprint-Team lag falsch — die anderen Teams dürfen buzzern (Uhr pausiert).
+   * rebound-answer: gebuzztes Team antwortet; richtig = Punkte, falsch = Minuspunkte.
+   */
+  phase: 'answering' | 'rebound-buzz' | 'rebound-answer' | 'between-teams'
+  /** Team, das beim Rebound gebuzzt hat. */
+  reboundTeamId?: string | null
+  /** Vom Sprint-Team falsch gewählte Option (für Rebound ausgegraut). */
+  wrongRenderedIndex?: number | null
+  /** Start der Rebound-Pause; beim Weiterlaufen wird sprintStartedAt um die Pause verschoben. */
+  reboundStartedAt?: number | null
   /** Zeitstempel des Sprint-Starts. UI berechnet remaining. */
   sprintStartedAt: number | null
   sprintDurationSeconds: number
@@ -304,7 +323,19 @@ export interface ExpertsLive {
   activeQuestion: MultipleChoiceQuestion | null
   shuffledOptions: string[]
   correctRenderedIndex: number
-  phase: 'setup-experts' | 'primary' | 'steal-answer' | 'revealed' | 'empty'
+  /**
+   * question-shown: Frage sichtbar, Optionen noch verdeckt, Timer läuft nicht.
+   * primary: Optionen sichtbar, 20-s-Timer läuft, aktiver Spieler tippt.
+   */
+  phase: 'setup-experts' | 'question-shown' | 'primary' | 'steal-answer' | 'revealed' | 'empty'
+  /** Stufe der aktuellen Frage (0-basiert): Schwierigkeit = currentStep + 1. */
+  currentStep: number
+  /** Fragen pro Spieler (aufsteigend schwer). */
+  questionsPerPlayer: number
+  /** Punktwert je Stufe, z. B. [100, 200, 300, 400, 500]. */
+  pointValues: number[]
+  /** Vom aktiven Spieler getippte Option; null bei Timeout/mündlicher Bewertung. */
+  primaryRenderedIndex: number | null
   /** Fach pro Spieler; `null` solange nicht gewählt. Persistiert im Setup. */
   expertise: Record<string, Topic | null>
   /** Timer-Anker für die Solo-Phase (ms since epoch). UI zeigt den Countdown. */
@@ -386,6 +417,8 @@ export type GameAction =
   | { type: 'FLASH_REVEAL' }
   | { type: 'FLASH_NEXT' }
   | { type: 'SPOTLIGHT_MARK_PRIMARY'; outcome: 'correct' | 'wrong' }
+  /** Multi-Device: aktiver Spieler tippt eine Option, Auswertung automatisch. */
+  | { type: 'SPOTLIGHT_PRIMARY_ANSWER'; renderedIndex: number }
   | { type: 'SPOTLIGHT_STEAL_ANSWER'; renderedIndex: number }
   | { type: 'SPOTLIGHT_NEXT' }
   | { type: 'AC_REVEAL_HINT' }
@@ -395,6 +428,12 @@ export type GameAction =
   | { type: 'SPRINTER_SKIP' }
   | { type: 'SPRINTER_TIME_UP' }
   | { type: 'SPRINTER_START_NEXT_TEAM' }
+  /** Rebound: anderes Team buzzert nach falscher Sprint-Antwort. */
+  | { type: 'SPRINTER_REBOUND_BUZZ'; teamId: string }
+  /** Rebound-Antwort des gebuzzten Teams. */
+  | { type: 'SPRINTER_REBOUND_ANSWER'; renderedIndex: number }
+  /** Rebound: niemand buzzert — Sprint geht weiter. */
+  | { type: 'SPRINTER_REBOUND_PASS' }
   | { type: 'LADDER_SET_ANSWER'; teamId: string; renderedIndex: number }
   | { type: 'LADDER_REVEAL' }
   | { type: 'LADDER_NEXT' }
@@ -411,6 +450,10 @@ export type GameAction =
   | { type: 'EXPERTS_SET_EXPERTISE'; playerId: string; topic: Topic }
   | { type: 'EXPERTS_START_ROUND' }
   | { type: 'EXPERTS_MARK_PRIMARY'; outcome: 'correct' | 'wrong' | 'timeout' }
+  /** Fachrunde: „Antworten anzeigen" — deckt Optionen auf und startet den Timer. */
+  | { type: 'EXPERTS_SHOW_OPTIONS' }
+  /** Fachrunde: aktiver Spieler tippt eine Option, Auswertung automatisch. */
+  | { type: 'EXPERTS_PRIMARY_ANSWER'; renderedIndex: number }
   | { type: 'EXPERTS_STEAL_ANSWER'; renderedIndex: number }
   | { type: 'EXPERTS_NEXT' }
   | { type: 'ADD_PLAYER'; teamId: string | null; playerId?: string; playerName?: string }
@@ -628,6 +671,7 @@ function initSpotlight(teams: Team[], players: readonly Player[], deps: ReducerD
       correctRenderedIndex: 0,
       phase: 'empty',
       stealRenderedIndex: null,
+      primaryRenderedIndex: null,
       primaryOutcome: null,
       stealOutcome: null,
       scores,
@@ -660,6 +704,7 @@ function initSpotlight(teams: Team[], players: readonly Player[], deps: ReducerD
       correctRenderedIndex: 0,
       phase: 'empty',
       stealRenderedIndex: null,
+      primaryRenderedIndex: null,
       primaryOutcome: null,
       stealOutcome: null,
       scores,
@@ -683,6 +728,7 @@ function initSpotlight(teams: Team[], players: readonly Player[], deps: ReducerD
     correctRenderedIndex: shuffle.renderedIndexOf(question.correctIndex),
     phase: 'primary',
     stealRenderedIndex: null,
+    primaryRenderedIndex: null,
     primaryOutcome: null,
     stealOutcome: null,
     scores,
@@ -694,8 +740,61 @@ function initSpotlight(teams: Team[], players: readonly Player[], deps: ReducerD
 /**
  * Fachrunde: Punkte, Timer, halbe Punkte beim Steal.
  */
-const EXPERTS_POINTS = 500
+export const EXPERTS_POINT_VALUES = [100, 200, 300, 400, 500] as const
+export const EXPERTS_QUESTIONS_PER_PLAYER = EXPERTS_POINT_VALUES.length
 const EXPERTS_TIMER_SECONDS = 20
+
+/**
+ * Fachrunde-Zugfolge: Runde für Runde durch alle Fach-Spieler, pro Runde eine
+ * Stufe schwerer. Zug i → Spieler playerOrder[i % n], Stufe floor(i / n).
+ * So steigt die Schwierigkeit für alle gleichzeitig (100 → 500).
+ */
+export function expertsTurn(index: number, playerCount: number): { playerIndex: number; step: number } {
+  const n = Math.max(1, playerCount)
+  return { playerIndex: index % n, step: Math.floor(index / n) }
+}
+
+/**
+ * Lädt den Zug `index` (oder den nächsten spielbaren danach). Gibt null zurück,
+ * wenn alle Züge gespielt sind.
+ */
+function loadExpertsTurn(
+  live: ExpertsLive,
+  index: number,
+  usedQuestionIds: readonly string[],
+  deps: ReducerDeps,
+): ExpertsLive | null {
+  const n = live.playerOrder.length
+  const total = n * live.questionsPerPlayer
+  const excluded = new Set(usedQuestionIds)
+  for (const id of deps.getAskedQuestionIds()) excluded.add(id)
+  for (let i = index; i < total; i++) {
+    const { playerIndex, step } = expertsTurn(i, n)
+    const playerId = live.playerOrder[playerIndex]
+    const topic = live.expertise[playerId]
+    if (!topic) continue
+    const question = pickByTargetDifficulty(excluded, clampDifficulty(step + 1), topic)
+    if (!question) continue
+    const shuffle = shuffleWithMapping(question.options, `experts:${playerId}:${question.id}`)
+    return {
+      ...live,
+      usedQuestionIds: [...usedQuestionIds],
+      currentIndex: i,
+      currentStep: step,
+      pointsPerCorrect: live.pointValues[step] ?? live.pointValues[live.pointValues.length - 1],
+      activePlayerId: playerId,
+      activeQuestion: question,
+      shuffledOptions: shuffle.shuffled,
+      correctRenderedIndex: shuffle.renderedIndexOf(question.correctIndex),
+      phase: 'question-shown',
+      soloStartedAt: null,
+      primaryOutcome: null,
+      stealOutcome: null,
+      primaryRenderedIndex: null,
+    }
+  }
+  return null
+}
 
 function initExperts(teams: Team[], players: readonly Player[]): ExpertsLive {
   const scores = Object.fromEntries(teams.map((t) => [t.id, 0]))
@@ -719,7 +818,11 @@ function initExperts(teams: Team[], players: readonly Player[]): ExpertsLive {
       stealOutcome: null,
       scores,
       usedQuestionIds: [],
-      pointsPerCorrect: EXPERTS_POINTS,
+      pointsPerCorrect: EXPERTS_POINT_VALUES[0],
+      currentStep: 0,
+      questionsPerPlayer: EXPERTS_QUESTIONS_PER_PLAYER,
+      pointValues: [...EXPERTS_POINT_VALUES],
+      primaryRenderedIndex: null,
     }
   }
   // Setup-Phase: alle Spieler bekommen expertise:null als Startwert.
@@ -739,7 +842,11 @@ function initExperts(teams: Team[], players: readonly Player[]): ExpertsLive {
     stealOutcome: null,
     scores,
     usedQuestionIds: [],
-    pointsPerCorrect: EXPERTS_POINTS,
+    pointsPerCorrect: EXPERTS_POINT_VALUES[0],
+    currentStep: 0,
+    questionsPerPlayer: EXPERTS_QUESTIONS_PER_PLAYER,
+    pointValues: [...EXPERTS_POINT_VALUES],
+    primaryRenderedIndex: null,
   }
 }
 
@@ -770,6 +877,15 @@ function buildEliminationOrder(
   return order
 }
 
+/**
+ * Elimination-Kurve: jede volle Runde durch die Startaufstellung hebt die
+ * Schwierigkeit um eine Stufe (Runde 1 → 1, Runde 2 → 2, … ab Runde 5 → 5).
+ * So bekommt innerhalb einer Runde jeder Spieler dieselbe Stufe.
+ */
+export function eliminationDifficulty(askedCount: number, playerCount: number): Difficulty {
+  return clampDifficulty(1 + Math.floor(askedCount / Math.max(1, playerCount)))
+}
+
 function initElimination(teams: Team[], players: readonly Player[], deps: ReducerDeps): EliminationLive {
   const scores = Object.fromEntries(teams.map((t) => [t.id, 0]))
   const playerOrder = buildEliminationOrder(teams, players)
@@ -796,7 +912,7 @@ function initElimination(teams: Team[], players: readonly Player[], deps: Reduce
   const firstPlayerId = playerOrder[0]
   const excluded = new Set<string>()
   for (const id of deps.getAskedQuestionIds()) excluded.add(id)
-  const question = pickAnyMultipleChoice(excluded)
+  const question = pickByTargetDifficulty(excluded, eliminationDifficulty(0, playerOrder.length))
   if (!question) {
     return {
       kind: 'elimination',
@@ -953,13 +1069,13 @@ const TOPICS_LIST: Topic[] = TOPICS.map((t) => t.id)
 
 /** Wählt die 5 Topics für das Board. */
 function pickBoardTopics(profile: ReturnType<typeof computeInterestProfile>): Topic[] {
-  return pickTopicsWeighted(profile, BOARD_COLUMNS)
+  return sortTopicsAlphabetically(pickTopicsWeighted(profile, BOARD_COLUMNS))
 }
 
 /** Wählt die 12 Topics für das Themen-Battle-Grid. */
 const BATTLE_TOPIC_COUNT = 12
 function pickBattleTopics(profile: ReturnType<typeof computeInterestProfile>): Topic[] {
-  return pickTopicsWeighted(profile, BATTLE_TOPIC_COUNT)
+  return sortTopicsAlphabetically(pickTopicsWeighted(profile, BATTLE_TOPIC_COUNT))
 }
 
 function initCategoryBoard(teams: Team[], players: readonly Player[]): CategoryBoardLive {
@@ -994,15 +1110,14 @@ const LADDER_VALUES = [200, 500, 1000, 2500, 5000] as const
  * Difficulty-Präferenz pro Ladder-Stufe. Frühe Fragen leicht, spätere schwer.
  * Nutzt DIFFICULTY_WEIGHTS aus Session H über `pickAnyMultipleChoice(_, level)`.
  */
-/** Level pro Ladder-Stufe (Session X: numerisch, 2=bisschen, 3=gut, 5=nerd). */
-const LADDER_LEVELS: PlayerInterest['level'][] = [2, 3, 3, 5, 5]
+/** Feste Schwierigkeit pro Ladder-Stufe: 1 → 5, wie beim Millionär. */
+export const LADDER_DIFFICULTIES: readonly Difficulty[] = [1, 2, 3, 4, 5]
 
 function pickLadderQuestion(
   usedIds: Set<string>,
   index: number,
 ): MultipleChoiceQuestion | null {
-  const level = LADDER_LEVELS[index] ?? 3
-  return pickAnyMultipleChoice(usedIds, level)
+  return pickByTargetDifficulty(usedIds, LADDER_DIFFICULTIES[index] ?? 3)
 }
 
 function initPointsLadder(teams: Team[], deps: ReducerDeps): PointsLadderLive {
@@ -1043,6 +1158,19 @@ function initPointsLadder(teams: Team[], deps: ReducerDeps): PointsLadderLive {
     phase: 'answering',
     scores,
     usedQuestionIds: [],
+  }
+}
+
+/** Beendet die Rebound-Pause: Sprint-Uhr um die Pausendauer nach hinten schieben. */
+function resumeSprint(live: SprinterLive): SprinterLive {
+  const paused = live.reboundStartedAt ? Date.now() - live.reboundStartedAt : 0
+  return {
+    ...live,
+    phase: 'answering',
+    sprintStartedAt: live.sprintStartedAt !== null ? live.sprintStartedAt + paused : null,
+    reboundTeamId: null,
+    wrongRenderedIndex: null,
+    reboundStartedAt: null,
   }
 }
 
@@ -1167,6 +1295,46 @@ function initLiveFor(
  * Deps mit `localStorage`-Wrapper, Lambda mit DynamoDB.
  */
 export function createReducer(deps: ReducerDeps) {
+  /** Nächste Sprint-Frage fürs aktive Team ziehen (oder Sprint beenden, wenn der Pool leer ist). */
+  function advanceSprinter(
+    state: GameState,
+    live: SprinterLive,
+    scores: Record<string, number>,
+    reducer: (s: GameState, a: GameAction) => GameState,
+  ): GameState {
+    if (!live.activeQuestion) return state
+    const usedQuestionIds = [...live.usedQuestionIds, live.activeQuestion.id]
+    const excluded = new Set(usedQuestionIds)
+    for (const id of deps.getAskedQuestionIds()) excluded.add(id)
+    const nextQuestion = pickAnyMultipleChoice(excluded)
+    const base: SprinterLive = {
+      ...live,
+      phase: 'answering',
+      scores,
+      usedQuestionIds,
+      reboundTeamId: null,
+      wrongRenderedIndex: null,
+      reboundStartedAt: null,
+    }
+    if (!nextQuestion) {
+      // Pool leer — Sprint für dieses Team beenden.
+      return reducer({ ...state, live: base }, { type: 'SPRINTER_TIME_UP' })
+    }
+    const shuffle = shuffleWithMapping(
+      nextQuestion.options,
+      `sprinter:${live.activeTeamId}:${usedQuestionIds.length}:${nextQuestion.id}`,
+    )
+    return {
+      ...state,
+      live: {
+        ...base,
+        activeQuestion: nextQuestion,
+        shuffledOptions: shuffle.shuffled,
+        correctRenderedIndex: shuffle.renderedIndexOf(nextQuestion.correctIndex),
+      },
+    }
+  }
+
   return function reducer(state: GameState, action: GameAction): GameState {
     switch (action.type) {
     case 'SET_TEAM_NAME': {
@@ -1743,6 +1911,15 @@ export function createReducer(deps: ReducerDeps) {
       }
     }
 
+    case 'SPOTLIGHT_PRIMARY_ANSWER': {
+      if (!state.live || state.live.kind !== 'player-spotlight') return state
+      if (state.live.phase !== 'primary') return state
+      const outcome = action.renderedIndex === state.live.correctRenderedIndex ? 'correct' : 'wrong'
+      const marked = reducer(state, { type: 'SPOTLIGHT_MARK_PRIMARY', outcome })
+      if (!marked.live || marked.live.kind !== 'player-spotlight') return marked
+      return { ...marked, live: { ...marked.live, primaryRenderedIndex: action.renderedIndex } }
+    }
+
     case 'SPOTLIGHT_STEAL_ANSWER': {
       if (!state.round || !state.live || state.live.kind !== 'player-spotlight') return state
       const live = state.live
@@ -1801,6 +1978,7 @@ export function createReducer(deps: ReducerDeps) {
         correctRenderedIndex: 0,
         phase: 'primary',
         stealRenderedIndex: null,
+        primaryRenderedIndex: null,
         primaryOutcome: null,
         stealOutcome: null,
       }
@@ -1925,54 +2103,33 @@ export function createReducer(deps: ReducerDeps) {
       if (live.phase !== 'setup-experts') return state
 
       const activeOrder = live.playerOrder.filter((id) => live.expertise[id] !== null)
-      if (activeOrder.length === 0) {
-        // Kein Spieler hat ein Fach → Modus überspringen.
-        return reducer(
-          {
-            ...state,
-            live: { ...live, phase: 'empty', playerOrder: [] },
-          },
-          { type: 'FINISH_MODE' },
-        )
-      }
-
-      const firstPlayerId = activeOrder[0]
-      const topic = live.expertise[firstPlayerId]!
-      const excluded = new Set<string>()
-      for (const id of deps.getAskedQuestionIds()) excluded.add(id)
-      const player = state.round.players.find((p) => p.id === firstPlayerId)
-      const level = player ? getPlayerLevelForTopic(player, topic) : undefined
-      const tags = player ? getPlayerTagsForTopic(player, topic) : undefined
-      const question = pickQuestion(topic, excluded, level, tags)
-
-      if (!question) {
-        // Kein Content für dieses Fach → weiterspringen.
+      const loaded =
+        activeOrder.length > 0
+          ? loadExpertsTurn({ ...live, playerOrder: activeOrder }, 0, live.usedQuestionIds, deps)
+          : null
+      if (!loaded) {
+        // Kein Spieler mit Fach oder kein Content → Modus überspringen.
         return reducer(
           { ...state, live: { ...live, phase: 'empty', playerOrder: activeOrder } },
           { type: 'FINISH_MODE' },
         )
       }
+      return { ...state, live: loaded }
+    }
 
-      const shuffle = shuffleWithMapping(
-        question.options,
-        `experts:${firstPlayerId}:${question.id}`,
-      )
-      return {
-        ...state,
-        live: {
-          ...live,
-          playerOrder: activeOrder,
-          currentIndex: 0,
-          activePlayerId: firstPlayerId,
-          activeQuestion: question,
-          shuffledOptions: shuffle.shuffled,
-          correctRenderedIndex: shuffle.renderedIndexOf(question.correctIndex),
-          phase: 'primary',
-          soloStartedAt: Date.now(),
-          primaryOutcome: null,
-          stealOutcome: null,
-        },
-      }
+    case 'EXPERTS_SHOW_OPTIONS': {
+      if (!state.live || state.live.kind !== 'experts') return state
+      if (state.live.phase !== 'question-shown') return state
+      return { ...state, live: { ...state.live, phase: 'primary', soloStartedAt: Date.now() } }
+    }
+
+    case 'EXPERTS_PRIMARY_ANSWER': {
+      if (!state.live || state.live.kind !== 'experts') return state
+      if (state.live.phase !== 'primary') return state
+      const outcome = action.renderedIndex === state.live.correctRenderedIndex ? 'correct' : 'wrong'
+      const marked = reducer(state, { type: 'EXPERTS_MARK_PRIMARY', outcome })
+      if (!marked.live || marked.live.kind !== 'experts') return marked
+      return { ...marked, live: { ...marked.live, primaryRenderedIndex: action.renderedIndex } }
     }
 
     case 'EXPERTS_MARK_PRIMARY': {
@@ -2049,58 +2206,24 @@ export function createReducer(deps: ReducerDeps) {
       const usedQuestionIds = live.activeQuestion
         ? [...live.usedQuestionIds, live.activeQuestion.id]
         : live.usedQuestionIds
-      const nextIndex = live.currentIndex + 1
-      const isModeDone = nextIndex >= live.playerOrder.length
-
-      const advancedBase: ExpertsLive = {
-        ...live,
-        usedQuestionIds,
-        currentIndex: nextIndex,
-        activePlayerId: null,
-        activeQuestion: null,
-        shuffledOptions: [],
-        correctRenderedIndex: 0,
-        phase: 'primary',
-        soloStartedAt: null,
-        primaryOutcome: null,
-        stealOutcome: null,
+      const loaded = loadExpertsTurn(live, live.currentIndex + 1, usedQuestionIds, deps)
+      if (!loaded) {
+        return reducer(
+          {
+            ...state,
+            live: {
+              ...live,
+              usedQuestionIds,
+              activePlayerId: null,
+              activeQuestion: null,
+              shuffledOptions: [],
+              soloStartedAt: null,
+            },
+          },
+          { type: 'FINISH_MODE' },
+        )
       }
-
-      if (isModeDone) {
-        return reducer({ ...state, live: advancedBase }, { type: 'FINISH_MODE' })
-      }
-
-      const nextPlayerId = live.playerOrder[nextIndex]
-      const topic = live.expertise[nextPlayerId]
-      const nextPlayer = state.round.players.find((p) => p.id === nextPlayerId)
-      if (!topic || !nextPlayer) {
-        return reducer({ ...state, live: advancedBase }, { type: 'EXPERTS_NEXT' })
-      }
-
-      const excluded = new Set(usedQuestionIds)
-      for (const id of deps.getAskedQuestionIds()) excluded.add(id)
-      const level = getPlayerLevelForTopic(nextPlayer, topic)
-      const tags = getPlayerTagsForTopic(nextPlayer, topic)
-      const nextQuestion = pickQuestion(topic, excluded, level, tags)
-      if (!nextQuestion) {
-        return reducer({ ...state, live: advancedBase }, { type: 'EXPERTS_NEXT' })
-      }
-
-      const shuffle = shuffleWithMapping(
-        nextQuestion.options,
-        `experts:${nextPlayerId}:${nextQuestion.id}`,
-      )
-      return {
-        ...state,
-        live: {
-          ...advancedBase,
-          activePlayerId: nextPlayerId,
-          activeQuestion: nextQuestion,
-          shuffledOptions: shuffle.shuffled,
-          correctRenderedIndex: shuffle.renderedIndexOf(nextQuestion.correctIndex),
-          soloStartedAt: Date.now(),
-        },
-      }
+      return { ...state, live: loaded }
     }
 
     case 'ELIM_ANSWER': {
@@ -2197,7 +2320,10 @@ export function createReducer(deps: ReducerDeps) {
       // Nächste Frage ziehen.
       const excluded = new Set(usedQuestionIds)
       for (const id of deps.getAskedQuestionIds()) excluded.add(id)
-      const nextQuestion = pickAnyMultipleChoice(excluded)
+      const nextQuestion = pickByTargetDifficulty(
+        excluded,
+        eliminationDifficulty(usedQuestionIds.length, live.playerOrder.length),
+      )
       if (!nextQuestion) {
         // Kein MC mehr → Modus mit aktuellem Stand beenden.
         const winnerTeamId = remainingTeams.size === 1 ? [...remainingTeams][0] : null
@@ -2642,41 +2768,52 @@ export function createReducer(deps: ReducerDeps) {
         action.type === 'SPRINTER_ANSWER' &&
         action.renderedIndex === live.correctRenderedIndex
       const teamId = live.activeTeamId
+      if (action.type === 'SPRINTER_ANSWER' && !wasCorrect && live.teamOrder.length > 1) {
+        // Falsch → Rebound: die anderen Teams dürfen buzzern, Sprint-Uhr pausiert.
+        return {
+          ...state,
+          live: {
+            ...live,
+            phase: 'rebound-buzz',
+            reboundTeamId: null,
+            wrongRenderedIndex: action.renderedIndex,
+            reboundStartedAt: Date.now(),
+          },
+        }
+      }
       const nextScores = wasCorrect && teamId
         ? { ...live.scores, [teamId]: (live.scores[teamId] ?? 0) + live.pointsPerCorrect }
         : live.scores
+      return advanceSprinter(state, live, nextScores, reducer)
+    }
 
-      const usedQuestionIds = [...live.usedQuestionIds, live.activeQuestion.id]
-      const excluded = new Set(usedQuestionIds)
-      for (const id of deps.getAskedQuestionIds()) excluded.add(id)
-      const nextQuestion = pickAnyMultipleChoice(excluded)
+    case 'SPRINTER_REBOUND_BUZZ': {
+      if (!state.live || state.live.kind !== 'sprinter') return state
+      const live = state.live
+      if (live.phase !== 'rebound-buzz') return state
+      if (action.teamId === live.activeTeamId || !live.teamOrder.includes(action.teamId)) return state
+      return { ...state, live: { ...live, phase: 'rebound-answer', reboundTeamId: action.teamId } }
+    }
 
-      if (!nextQuestion) {
-        // Pool leer — Sprint für dieses Team beenden.
-        return reducer(
-          {
-            ...state,
-            live: { ...live, scores: nextScores, usedQuestionIds },
-          },
-          { type: 'SPRINTER_TIME_UP' },
-        )
+    case 'SPRINTER_REBOUND_ANSWER': {
+      if (!state.live || state.live.kind !== 'sprinter') return state
+      const live = state.live
+      if (live.phase !== 'rebound-answer' || !live.reboundTeamId) return state
+      if (action.renderedIndex === live.wrongRenderedIndex) return state
+      const delta =
+        action.renderedIndex === live.correctRenderedIndex ? live.pointsPerCorrect : -live.pointsPerCorrect
+      const scores = {
+        ...live.scores,
+        [live.reboundTeamId]: (live.scores[live.reboundTeamId] ?? 0) + delta,
       }
+      return advanceSprinter(state, resumeSprint(live), scores, reducer)
+    }
 
-      const shuffle = shuffleWithMapping(
-        nextQuestion.options,
-        `sprinter:${live.activeTeamId}:${usedQuestionIds.length}:${nextQuestion.id}`,
-      )
-      return {
-        ...state,
-        live: {
-          ...live,
-          scores: nextScores,
-          usedQuestionIds,
-          activeQuestion: nextQuestion,
-          shuffledOptions: shuffle.shuffled,
-          correctRenderedIndex: shuffle.renderedIndexOf(nextQuestion.correctIndex),
-        },
-      }
+    case 'SPRINTER_REBOUND_PASS': {
+      if (!state.live || state.live.kind !== 'sprinter') return state
+      const live = state.live
+      if (live.phase !== 'rebound-buzz') return state
+      return advanceSprinter(state, resumeSprint(live), live.scores, reducer)
     }
 
     case 'SPRINTER_TIME_UP': {

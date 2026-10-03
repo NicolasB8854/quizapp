@@ -13,19 +13,18 @@
 import { lazy, Suspense } from 'react'
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
-import { GameProvider } from '@/context/GameContext'
 import HomePage from '@/pages/HomePage'
+import { CatalogGate } from '@/components/CatalogGate'
 
 // Alle anderen Routen werden lazy nachgeladen — jede bekommt einen eigenen
-// JS-Chunk. So enthält der Initial-Load nur Home + Provider + shared/Reducer.
-const SetupPage = lazy(() => import('@/pages/SetupPage'))
-const LobbyPage = lazy(() => import('@/pages/LobbyPage'))
-const GamePage = lazy(() => import('@/pages/GamePage'))
-const ScoreboardPage = lazy(() => import('@/pages/ScoreboardPage'))
+// JS-Chunk. So enthält der Initial-Load nur die Startseite.
 const ReviewPage = lazy(() => import('@/pages/ReviewPage'))
 const RoomEntryPage = lazy(() => import('@/pages/RoomEntryPage'))
 const RoomLobbyPage = lazy(() => import('@/pages/RoomLobbyPage'))
 const RoomDebugPage = lazy(() => import('@/pages/RoomDebugPage'))
+const SoloPage = lazy(() => import('@/pages/SoloPage'))
+const ModesPage = lazy(() => import('@/pages/ModesPage'))
+const ProfilePage = lazy(() => import('@/pages/ProfilePage'))
 
 function PageFallback() {
   return (
@@ -37,23 +36,20 @@ function PageFallback() {
 
 export default function App() {
   return (
-    <GameProvider>
-      <BrowserRouter>
-        <Suspense fallback={<PageFallback />}>
-          <Routes>
-            <Route path="/"           element={<HomePage />} />
-            <Route path="/setup"      element={<SetupPage />} />
-            <Route path="/lobby"      element={<LobbyPage />} />
-            <Route path="/game"       element={<GamePage />} />
-            <Route path="/scoreboard" element={<ScoreboardPage />} />
-            <Route path="/review"     element={<ReviewPage />} />
-            <Route path="/room"       element={<RoomEntryPage />} />
-            <Route path="/room/:code" element={<RoomLobbyPage />} />
-            <Route path="/room-debug" element={<RoomDebugPage />} />
-            <Route path="*"           element={<Navigate to="/" replace />} />
-          </Routes>
-        </Suspense>
-      </BrowserRouter>
-    </GameProvider>
+    <BrowserRouter>
+      <Suspense fallback={<PageFallback />}>
+        <Routes>
+          <Route path="/"           element={<HomePage />} />
+          <Route path="/review"     element={<CatalogGate><ReviewPage /></CatalogGate>} />
+          <Route path="/room"       element={<RoomEntryPage />} />
+          <Route path="/room/:code" element={<CatalogGate><RoomLobbyPage /></CatalogGate>} />
+          <Route path="/room-debug" element={<RoomDebugPage />} />
+          <Route path="/solo"       element={<CatalogGate><SoloPage /></CatalogGate>} />
+          <Route path="/modi"       element={<ModesPage />} />
+          <Route path="/profil"     element={<ProfilePage />} />
+          <Route path="*"           element={<Navigate to="/" replace />} />
+        </Routes>
+      </Suspense>
+    </BrowserRouter>
   )
 }

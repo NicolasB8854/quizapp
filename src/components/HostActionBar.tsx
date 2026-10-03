@@ -172,7 +172,7 @@ export function HostActionBar({ state, canDispatch, send }: Props) {
       <span aria-hidden className="text-lg">
         🎬
       </span>
-      <span className="text-[10px] uppercase tracking-[0.28em] text-brand-purple-soft">
+      <span className="text-xs uppercase tracking-[0.28em] text-brand-purple-soft">
         Host
       </span>
       <Button

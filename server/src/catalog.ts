@@ -19,6 +19,11 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient, ScanCommand } from '@aws-sdk/lib-dynamodb'
 import type { Question } from '@quizapp/shared'
 import { setQuestionCatalog } from '@quizapp/shared'
+import bundledQuestions from '@quizapp/shared/data/questions.json'
+
+// Inline-Fallback aktivieren, bevor irgendein Handler läuft (das Shared-Paket
+// lädt den Katalog nicht mehr selbst, siehe loadBundledCatalog).
+setQuestionCatalog(bundledQuestions as unknown as Question[])
 
 const raw = new DynamoDBClient({})
 const ddb = DynamoDBDocumentClient.from(raw)

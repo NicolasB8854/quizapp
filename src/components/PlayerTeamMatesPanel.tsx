@@ -16,6 +16,7 @@
 import type { Player, Team } from '@quizapp/shared'
 import { getTeamColorHex } from '@quizapp/shared'
 import { cn } from '@/lib/classnames'
+import { AvatarBadge } from '@/components/AvatarBadge'
 
 interface Props {
   team: Team
@@ -40,7 +41,7 @@ export function PlayerTeamMatesPanel({ team, myPlayer, teamPlayers }: Props) {
           aria-hidden
         />
         <div className="min-w-0">
-          <div className="text-[10px] uppercase tracking-[0.28em] text-ink-muted">
+          <div className="text-xs uppercase tracking-[0.28em] text-ink-muted">
             Dein Team
           </div>
           <div className="truncate text-sm font-semibold text-white">
@@ -51,25 +52,9 @@ export function PlayerTeamMatesPanel({ team, myPlayer, teamPlayers }: Props) {
       <div className="ml-auto flex flex-wrap items-center justify-end gap-1.5">
         {teamPlayers.map((p) => {
           const isMe = p.id === myPlayer.id
-          const initial = (p.name || '?').slice(0, 1).toUpperCase()
           return (
-            <span
-              key={p.id}
-              title={p.name || 'Namenlos'}
-              className={cn(
-                'inline-flex h-7 min-w-[1.75rem] items-center justify-center rounded-full text-[11px] font-semibold',
-                isMe ? 'ring-2 ring-white/60' : 'ring-1 ring-white/10',
-              )}
-              style={{
-                background: `${color}30`,
-                color: '#fff',
-              }}
-            >
-              {isMe ? (
-                <span className="px-1.5">Du</span>
-              ) : (
-                <span className="px-2">{initial}</span>
-              )}
+            <span key={p.id} title={isMe ? 'Du' : p.name || 'Namenlos'} className={cn('rounded-full', isMe && 'ring-2 ring-white/60')}>
+              <AvatarBadge avatar={p.avatar} size="md" teamHex={color} name={p.name} />
             </span>
           )
         })}

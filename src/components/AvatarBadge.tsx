@@ -29,7 +29,7 @@ interface Props {
 }
 
 const SIZE_CLASSES: Record<Size, string> = {
-  sm: 'h-7 w-7 text-[11px]',
+  sm: 'h-7 w-7 text-xs',
   md: 'h-10 w-10 text-sm',
   lg: 'h-14 w-14 md:h-16 md:w-16 text-lg md:text-xl',
   xl: 'h-20 w-20 md:h-24 md:w-24 text-2xl md:text-3xl',
@@ -100,7 +100,9 @@ export function AvatarBadge({
         boxShadow: shadow,
       }}
     >
-      {initials ? (
+      {avatar.emoji ? (
+        <span aria-hidden className="font-sans">{avatar.emoji}</span>
+      ) : initials ? (
         <span aria-hidden>{initials}</span>
       ) : (
         <User className={cn(ICON_SIZE[size], 'text-ink/70')} aria-hidden />

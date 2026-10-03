@@ -15,7 +15,7 @@ import type {
   QuestionType,
   Topic,
 } from '@quizapp/shared'
-import { TOPICS } from '@quizapp/shared'
+import { TOPICS_ALPHABETICAL } from '@quizapp/shared'
 import { Button } from './Button'
 import { Card } from './Card'
 import {
@@ -248,7 +248,7 @@ export function QuestionEditorModal({
         <Card className="space-y-4 p-5">
           <div className="flex items-start justify-between">
             <div>
-              <div className="text-[10px] uppercase tracking-[0.32em] text-brand-purple-soft">
+              <div className="text-xs uppercase tracking-[0.32em] text-brand-purple-soft">
                 {isNew ? 'Neue Frage anlegen' : 'Frage bearbeiten'}
               </div>
               {!isNew && (
@@ -279,7 +279,7 @@ export function QuestionEditorModal({
                 }
                 className="mt-1 w-full rounded bg-white/10 px-2 py-2 text-white"
               >
-                {TOPICS.map((t) => (
+                {TOPICS_ALPHABETICAL.map((t) => (
                   <option key={t.id} value={t.id}>
                     {t.emoji} {t.label}
                   </option>
@@ -328,7 +328,7 @@ export function QuestionEditorModal({
                 ))}
               </select>
               {!isNew && (
-                <div className="mt-1 text-[10px] text-ink-muted">
+                <div className="mt-1 text-xs text-ink-muted">
                   Typ nicht änderbar bei Bearbeitung
                 </div>
               )}

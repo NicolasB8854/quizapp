@@ -21,7 +21,7 @@ import type {
   Topic,
 } from '@quizapp/shared'
 import {
-  TOPICS,
+  TOPICS_ALPHABETICAL,
   TOPICS_BY_ID,
   getInterestSuggestionsForTopic,
   getCatalogTagsByTopic,
@@ -132,7 +132,7 @@ export function PlayerInterestsPanel({
         <div className="min-w-0 flex-1">
           <div
             className={cn(
-              'flex items-center gap-2 text-[10px] uppercase tracking-[0.32em]',
+              'flex items-center gap-2 text-xs uppercase tracking-[0.32em]',
               hasInterests ? 'text-brand-purple-soft' : 'text-brand-cyan-soft',
             )}
           >
@@ -196,7 +196,7 @@ export function PlayerInterestsPanel({
                 >
                   {topicDef.label}
                 </button>
-                <span className="rounded bg-white/20 px-1 text-[9px] font-bold uppercase tracking-wider">
+                <span className="rounded bg-white/20 px-1 text-xs font-bold uppercase tracking-wider">
                   {LEVEL_LABEL[interest.level].slice(0, 3)}
                 </span>
                 <button
@@ -208,7 +208,7 @@ export function PlayerInterestsPanel({
                   }
                   disabled={disabled}
                   title="Sub-Interessen"
-                  className="text-[10px] opacity-70 hover:opacity-100 disabled:opacity-40"
+                  className="text-xs opacity-70 hover:opacity-100 disabled:opacity-40"
                 >
                   {tagCount > 0 ? `+${tagCount}` : '+'}
                 </button>
@@ -234,11 +234,11 @@ export function PlayerInterestsPanel({
           bleiben aber greifbar. */}
       {!collapsed && (
         <div className="space-y-2">
-          <div className="text-[10px] uppercase tracking-[0.22em] text-ink-muted">
+          <div className="text-xs uppercase tracking-[0.22em] text-ink-muted">
             Kategorien direkt wählen
           </div>
           <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-4">
-            {TOPICS.map((topic) => {
+            {TOPICS_ALPHABETICAL.map((topic) => {
               const level = interestByTopic.get(topic.id)?.level
               const isActive = !!level
               const tone =
@@ -256,7 +256,7 @@ export function PlayerInterestsPanel({
                     level ? `${topic.label} · ${LEVEL_LABEL[level]}` : topic.label
                   }
                   className={cn(
-                    'flex w-full items-center gap-1 rounded-lg border px-2 py-1.5 text-left text-[11px] font-medium transition-all disabled:opacity-40',
+                    'flex w-full items-center gap-1 rounded-lg border px-2 py-1.5 text-left text-xs font-medium transition-all disabled:opacity-40',
                     tone,
                     isExpandedTopic && 'ring-1 ring-white/30',
                   )}
@@ -266,7 +266,7 @@ export function PlayerInterestsPanel({
                   </span>
                   <span className="min-w-0 flex-1 truncate">{topic.label}</span>
                   {isActive && (
-                    <span className="rounded-full bg-white/20 px-1 text-[9px] font-bold uppercase tracking-wider">
+                    <span className="rounded-full bg-white/20 px-1 text-xs font-bold uppercase tracking-wider">
                       {LEVEL_LABEL[level!].slice(0, 3)}
                     </span>
                   )}
@@ -383,7 +383,7 @@ function InterestSearchInput({
       {query.trim().length > 0 && (
         <div className="flex flex-wrap gap-1.5">
           {results.length === 0 ? (
-            <div className="rounded border border-dashed border-white/10 px-2 py-1.5 text-[11px] text-ink-muted">
+            <div className="rounded border border-dashed border-white/10 px-2 py-1.5 text-xs text-ink-muted">
               Kein passender Vorschlag. Öffne unten eine Kategorie, um freien
               Text als Sub-Interesse zu erfassen.
             </div>
@@ -465,7 +465,7 @@ function SubTagEditor({
   return (
     <Card className="space-y-2 border-white/15 bg-navy-800/60 p-3">
       <div className="flex items-center justify-between">
-        <div className="text-[11px] uppercase tracking-[0.22em] text-white/70">
+        <div className="text-xs uppercase tracking-[0.22em] text-white/70">
           Sub-Interessen · {topic}
         </div>
         <button
@@ -526,7 +526,7 @@ function SubTagEditor({
       {/* Vorschläge */}
       {filteredSuggestions.length > 0 && (
         <div>
-          <div className="text-[10px] uppercase tracking-[0.22em] text-white/50">
+          <div className="text-xs uppercase tracking-[0.22em] text-white/50">
             Vorschläge
           </div>
           <div className="mt-1 flex flex-wrap gap-1">

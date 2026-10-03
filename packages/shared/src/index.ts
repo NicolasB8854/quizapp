@@ -19,6 +19,7 @@ export type * from './types/playerProfile'
 
 // State (Reducer + Actions + State-Shape)
 export * from './state/reducer'
+export * from './state/authorize'
 
 // WebSocket-Messages (Multiplayer-Transport)
 export * from './messages'
@@ -29,6 +30,7 @@ export * from './lib/interestProfile'
 export * from './lib/interestSearch'
 export * from './lib/shuffle'
 export * from './lib/roomCode'
+export * from './lib/solo'
 
 // Data / Konstanten
 export * from './data/modes'

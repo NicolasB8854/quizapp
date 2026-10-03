@@ -397,7 +397,7 @@ function StatCard({ label, value, hint, accent }: StatCardProps) {
         {value}
       </div>
       {hint && (
-        <div className="mt-1 text-[10px] uppercase tracking-[0.22em] text-ink-faint">
+        <div className="mt-1 text-xs uppercase tracking-[0.22em] text-ink-faint">
           {hint}
         </div>
       )}
@@ -555,7 +555,7 @@ function FilterChip({ active, onClick, children }: FilterChipProps) {
       onClick={onClick}
       className={cn(
         'inline-flex items-center h-7 rounded-full px-3',
-        'text-[11px] font-medium border transition-all',
+        'text-xs font-medium border transition-all',
         active
           ? 'bg-brand-purple/25 border-brand-purple/70 text-white'
           : 'bg-navy-900/60 border-white/10 text-ink-muted hover:border-white/25 hover:text-ink',
@@ -599,12 +599,12 @@ function QuestionListCard({ question, onOpen }: QuestionListCardProps) {
               {topic?.label ?? question.topic}
             </span>
             <span className="text-ink-faint">·</span>
-            <span className="text-[11px] uppercase tracking-[0.22em] text-ink-muted">
+            <span className="text-xs uppercase tracking-[0.22em] text-ink-muted">
               {TYPE_SHORT[question.type]}
             </span>
             {diffBadge}
             <span className="text-ink-faint">·</span>
-            <span className="text-[10px] font-mono text-ink-faint">{question.id}</span>
+            <span className="text-xs font-mono text-ink-faint">{question.id}</span>
           </div>
           <div className="mt-1.5 font-display font-medium text-ink text-sm md:text-base leading-snug">
             {question.question}
@@ -617,14 +617,14 @@ function QuestionListCard({ question, onOpen }: QuestionListCardProps) {
               {question.tags.slice(0, 6).map((t) => (
                 <span
                   key={t}
-                  className="inline-flex items-center gap-1 h-5 rounded-full px-2 text-[10px] bg-white/[0.04] border border-white/10 text-ink-muted"
+                  className="inline-flex items-center gap-1 h-5 rounded-full px-2 text-xs bg-white/[0.04] border border-white/10 text-ink-muted"
                 >
                   <Tag className="h-2.5 w-2.5" />
                   {t}
                 </span>
               ))}
               {question.tags.length > 6 && (
-                <span className="text-[10px] text-ink-faint">
+                <span className="text-xs text-ink-faint">
                   +{question.tags.length - 6}
                 </span>
               )}
@@ -641,7 +641,7 @@ function QuestionAnswerLine({ question }: { question: Question }) {
   if (question.type === 'multiple-choice') {
     const ans = question.options[question.correctIndex]
     return (
-      <div className="mt-1.5 text-[11px] text-correct">
+      <div className="mt-1.5 text-xs text-correct">
         <Check className="inline-block h-3 w-3 mr-1" />
         <span className="font-medium">{ans}</span>
       </div>
@@ -649,7 +649,7 @@ function QuestionAnswerLine({ question }: { question: Question }) {
   }
   if (question.type === 'true-false') {
     return (
-      <div className="mt-1.5 text-[11px] text-correct">
+      <div className="mt-1.5 text-xs text-correct">
         <Check className="inline-block h-3 w-3 mr-1" />
         <span className="font-medium">
           {question.correctAnswer ? 'Wahr' : 'Falsch'}
@@ -659,7 +659,7 @@ function QuestionAnswerLine({ question }: { question: Question }) {
   }
   if (question.type === 'warmup-riddle') {
     return (
-      <div className="mt-1.5 text-[11px] text-ink-muted line-clamp-2">
+      <div className="mt-1.5 text-xs text-ink-muted line-clamp-2">
         <span className="text-brand-cyan-soft">Auflösung: </span>
         {question.solution}
       </div>
@@ -667,7 +667,7 @@ function QuestionAnswerLine({ question }: { question: Question }) {
   }
   if (question.type === 'open') {
     return (
-      <div className="mt-1.5 text-[11px] text-correct">
+      <div className="mt-1.5 text-xs text-correct">
         <Check className="inline-block h-3 w-3 mr-1" />
         <span className="font-medium">{question.answer}</span>
       </div>
@@ -681,7 +681,7 @@ function QuestionAnswerLine({ question }: { question: Question }) {
 function DifficultyBadge({ difficulty }: { difficulty: Difficulty }) {
   const tone = difficultyTone(difficulty)
   return (
-    <Badge tone={tone} className="!py-0.5 !px-2 !text-[10px]">
+    <Badge tone={tone} className="!py-0.5 !px-2 !text-xs">
       D{difficulty} · {DIFFICULTY_LABEL[difficulty]}
     </Badge>
   )
@@ -733,7 +733,7 @@ function QuestionDetail({ question, onClose, onEdit }: QuestionDetailProps) {
                   {topic?.label ?? question.topic}
                 </span>
                 <span className="text-ink-faint">·</span>
-                <span className="text-[11px] uppercase tracking-[0.22em] text-ink-muted">
+                <span className="text-xs uppercase tracking-[0.22em] text-ink-muted">
                   {TYPE_LABEL[question.type]}
                 </span>
                 {question.difficulty !== undefined && (
@@ -743,7 +743,7 @@ function QuestionDetail({ question, onClose, onEdit }: QuestionDetailProps) {
                   </>
                 )}
               </div>
-              <div className="mt-1 font-mono text-[10px] text-ink-faint break-all">
+              <div className="mt-1 font-mono text-xs text-ink-faint break-all">
                 {question.id}
               </div>
             </div>
@@ -799,7 +799,7 @@ function QuestionDetail({ question, onClose, onEdit }: QuestionDetailProps) {
               <div className="text-sm text-ink">
                 {question.status ?? '—'}
                 {question.aiGenerated && (
-                  <Badge tone="purple" className="ml-2 !py-0.5 !px-2 !text-[10px]">
+                  <Badge tone="purple" className="ml-2 !py-0.5 !px-2 !text-xs">
                     <Sparkles className="h-2.5 w-2.5 mr-1 inline-block" />
                     KI-generiert
                   </Badge>
@@ -818,7 +818,7 @@ function QuestionDetail({ question, onClose, onEdit }: QuestionDetailProps) {
                 {question.tags.map((t) => (
                   <span
                     key={t}
-                    className="inline-flex items-center gap-1 h-6 rounded-full px-2.5 text-[11px] bg-white/[0.05] border border-white/10 text-ink"
+                    className="inline-flex items-center gap-1 h-6 rounded-full px-2.5 text-xs bg-white/[0.05] border border-white/10 text-ink"
                   >
                     <Tag className="h-3 w-3 text-brand-purple-soft" />
                     {t}
@@ -842,7 +842,7 @@ function QuestionDetail({ question, onClose, onEdit }: QuestionDetailProps) {
                 {question.compatibleModes.map((m) => (
                   <span
                     key={m}
-                    className="inline-flex items-center h-6 rounded-full px-2.5 text-[11px] bg-navy-900/60 border border-white/10 text-ink-muted"
+                    className="inline-flex items-center h-6 rounded-full px-2.5 text-xs bg-navy-900/60 border border-white/10 text-ink-muted"
                   >
                     {m}
                   </span>
@@ -922,7 +922,7 @@ function QuestionDetail({ question, onClose, onEdit }: QuestionDetailProps) {
           )}
 
           {/* Audit */}
-          <section className="border-t border-white/5 pt-4 text-[10px] uppercase tracking-[0.22em] text-ink-faint">
+          <section className="border-t border-white/5 pt-4 text-xs uppercase tracking-[0.22em] text-ink-faint">
             {question.createdAt && (
               <span>Erstellt {question.createdAt.slice(0, 10)}</span>
             )}
@@ -958,7 +958,7 @@ function AnswerSection({ question }: { question: Question }) {
               >
                 <span
                   className={cn(
-                    'shrink-0 h-6 w-6 rounded-full flex items-center justify-center text-[11px] font-display font-bold',
+                    'shrink-0 h-6 w-6 rounded-full flex items-center justify-center text-xs font-display font-bold',
                     isCorrect
                       ? 'bg-correct/25 text-correct'
                       : 'bg-white/[0.06] text-ink-muted',
@@ -968,7 +968,7 @@ function AnswerSection({ question }: { question: Question }) {
                 </span>
                 <span className="min-w-0 flex-1 text-sm leading-snug">{opt}</span>
                 {isCorrect && (
-                  <span className="text-[10px] uppercase tracking-[0.22em] text-correct font-bold mt-1">
+                  <span className="text-xs uppercase tracking-[0.22em] text-correct font-bold mt-1">
                     Richtig
                   </span>
                 )}
@@ -1019,7 +1019,7 @@ function AnswerSection({ question }: { question: Question }) {
                 key={i}
                 className="flex gap-3 rounded-lg px-3 py-2 border border-white/10 bg-navy-900/40"
               >
-                <span className="shrink-0 h-6 w-6 rounded-full bg-brand-cyan/20 text-brand-cyan-soft flex items-center justify-center text-[11px] font-display font-bold">
+                <span className="shrink-0 h-6 w-6 rounded-full bg-brand-cyan/20 text-brand-cyan-soft flex items-center justify-center text-xs font-display font-bold">
                   {i + 1}
                 </span>
                 <span className="text-sm text-ink leading-snug">{h}</span>
