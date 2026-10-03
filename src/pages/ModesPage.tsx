@@ -8,6 +8,7 @@ import { MODES } from '@quizapp/shared'
 import { ScreenLayout } from '@/components/ScreenLayout'
 import { Button } from '@/components/Button'
 import { Card } from '@/components/Card'
+import { modeImage } from '@/lib/modeImage'
 
 export default function ModesPage() {
   const modes = MODES.filter((m) => m.status === 'ready')
@@ -32,7 +33,15 @@ export default function ModesPage() {
         </div>
         <div className="grid gap-3 md:grid-cols-2">
           {modes.map((m) => (
-            <Card key={m.id} className="space-y-2 p-4">
+            <Card key={m.id} className="space-y-2 overflow-hidden p-0">
+              <img
+                src={modeImage(m.id)}
+                alt=""
+                loading="lazy"
+                decoding="async"
+                className="aspect-[16/9] w-full object-cover"
+              />
+              <div className="space-y-2 p-4 pt-2">
               <div className="flex items-center justify-between gap-2">
                 <span className="text-xs uppercase tracking-[0.28em] text-brand-purple-soft">{m.chipLabel}</span>
                 <span className="inline-flex items-center gap-1 text-xs text-ink-muted">
@@ -43,6 +52,7 @@ export default function ModesPage() {
               <p className="text-sm font-medium text-white/85">{m.tagline}</p>
               <p className="text-sm text-ink-muted">{m.description}</p>
               {!m.scoresMatchPoint && <p className="text-xs text-ink-faint">Ohne Wertung — zum Aufwärmen.</p>}
+              </div>
             </Card>
           ))}
         </div>

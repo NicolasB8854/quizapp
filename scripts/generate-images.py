@@ -131,19 +131,20 @@ PRESETS: dict[str, dict] = {
 
 # Modus-Splash-Art (gleiche Art Direction, je ein Motiv-Fokus).
 MODE_MOTIFS = {
-    "category-duel": "two glowing tiles facing each other on a dark table, one violet one cyan, like a duel of categories",
-    "around-corner": "a single glowing light bulb hanging in a cozy dark room, warm amber glow, idea moment",
-    "category-board": "a grid of softly glowing square panels on a dark wall, game show board, gold accents",
-    "experts": "a lone armchair under a single spotlight in a dark living room, expert hot seat",
-    "elimination": "a circle of glowing floor lights with some switched off, dramatic last one standing",
-    "duel-1v1": "two hands hovering over two big glowing buzzer buttons, one violet one cyan, silhouettes",
-    "sprinter": "light streaks racing across a dark room with a glowing stopwatch shape, motion blur, speed",
-    "points-ladder": "a glowing staircase of light ascending into darkness, golden top step, rising tension",
-    "flash": "split lighting, one side cyan one side violet, a flash of light between them, fast decision",
-    "player-spotlight": "a single person silhouette on a sofa caught in a warm spotlight, friends blurred around in violet light",
+    # v2 — im freigegebenen Studio-/Arena-Look (wie stage-podiums-4000 / arena-hero-5000).
+    "category-duel": "a TV quiz show studio with a giant LED wall showing a grid of twelve glowing abstract category tiles without text, two contestant podiums facing it",
+    "around-corner": "a TV quiz show studio at night, one huge glowing light bulb shape on the LED wall, a curved contestant desk in front of it, empty, warm amber glow from the bulb, aha moment",
+    "category-board": "a TV quiz show studio with a classic game board on the LED wall made of glowing violet and gold square panels without text, three contestant podiums",
+    "experts": "a TV quiz show studio, a single contestant chair on a small round platform under one bright spotlight, hot seat, the rest of the studio dark",
+    "elimination": "a TV quiz show studio floor with a large circle of glowing floor panels, some panels switched off and dark, dramatic last one standing",
+    "duel-1v1": "close shot of two game show buzzer buttons, big round domed push buttons on top of two podiums facing each other, one glowing violet and one glowing cyan, a spotlight cone between them, dark TV studio",
+    "sprinter": "a TV quiz show studio with light streaks racing along the floor and walls, motion blur, a huge abstract circular countdown ring glowing on the LED wall, speed",
+    "points-ladder": "a TV quiz show studio with a glowing ladder of stacked light bars rising on the LED wall, the top bar golden, one contestant seat in a spotlight, rising tension",
+    "flash": "a TV quiz show stage lit in two strong halves, intense cyan light on the left side and intense magenta-violet light on the right side, a bright white lightning flash in the middle of the stage, fast decision",
+    "player-spotlight": "an empty TV quiz show stage with a single golden spotlight cone falling on one empty contestant podium in the center, the rest of the studio in violet and cyan light, anticipation",
 }
 for mode_id, motif in MODE_MOTIFS.items():
-    PRESETS[f"mode-{mode_id}"] = {"aspect": "1:1", "prompt": motif}
+    PRESETS[f"mode-{mode_id}"] = {"aspect": "16:9", "prompt": motif + ", glossy reflective floor, volumetric spotlight beams through haze, premium TV production look"}
 
 
 def generate(preset: str, model: str, seed: int) -> Path:
