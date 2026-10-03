@@ -1,7 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { INITIAL_STATE, reducer, type GameState } from './GameContext'
-import { getMultipleChoiceByTopic, getTrueFalsePool } from '@quizapp/shared'
-import type { SkillLevel } from '@quizapp/shared'
+import { createReducer, INITIAL_STATE, type GameState } from './reducer'
+import { getMultipleChoiceByTopic, getTrueFalsePool } from '../lib/questions'
+import type { SkillLevel } from '../types/round'
+
+// Reducer ohne Geräte-Historie: jede Runde zieht aus dem vollen Katalog.
+const reducer = createReducer({ getAskedQuestionIds: () => new Set<string>() })
 
 /**
  * Reducer-Tests. Der Reducer ist die zentrale Wahrheitsquelle für Spielzustand;
