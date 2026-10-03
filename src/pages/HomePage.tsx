@@ -40,30 +40,38 @@ export default function HomePage() {
   return (
     <ScreenLayout variant="home">
       <div className="mx-auto w-full max-w-xl space-y-6 px-4 pb-12 pt-2 md:max-w-5xl md:pt-8">
-        {/* HERO */}
-        <section className="relative animate-titleIn">
-          {/* Neon-Schriftzug aus dem Designkonzept — nur Desktop, rein dekorativ. */}
+        {/* HERO — auf großen Screens zwei Spalten: Headline links, Neon-Schriftzug
+             rechts in eigener Spalte, damit er die Headline nie überlagert. */}
+        <section className="animate-titleIn lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center lg:gap-10">
+          <div className="min-w-0">
+            <h1
+              className={cn(
+                'font-display font-extrabold uppercase tracking-tight leading-[0.9]',
+                'text-4xl sm:text-5xl md:text-7xl',
+              )}
+            >
+              <span
+                className="text-white lg:block"
+                style={{ textShadow: '0 0 22px rgba(124,92,255,0.35), 0 12px 40px rgba(0,0,0,0.65)' }}
+              >
+                Game Night,
+              </span>{' '}
+              <span className="lg:block" style={{ color: '#B7A2FF', textShadow: '0 0 14px rgba(124,92,255,0.55)' }}>
+                your way.
+              </span>
+            </h1>
+            <p className="mt-3 max-w-md text-base text-ink" style={{ textShadow: '0 2px 12px rgba(0,0,0,0.75)' }}>
+              Quizshow-Formate für euren Abend. Jede:r spielt auf dem eigenen Handy, ohne App.
+            </p>
+          </div>
+          {/* Neon-Schriftzug aus dem Designkonzept — nur große Screens, rein dekorativ. */}
           <div
             aria-hidden
-            className="pointer-events-none absolute right-0 top-2 hidden select-none text-right font-display text-3xl font-black uppercase leading-tight tracking-wide lg:block xl:text-4xl"
+            className="pointer-events-none hidden select-none pr-2 text-right font-display text-2xl font-black uppercase leading-tight tracking-wide lg:block xl:text-3xl"
           >
             <span className="neon-cyan block -rotate-3">Good Questions.</span>
             <span className="neon-magenta block -rotate-3">Better People.</span>
           </div>
-          <h1
-            className={cn(
-              'font-display font-extrabold uppercase tracking-tight leading-[0.9]',
-              'text-4xl sm:text-5xl md:text-7xl',
-            )}
-          >
-            <span className="text-white" style={{ textShadow: '0 0 22px rgba(124,92,255,0.35), 0 12px 40px rgba(0,0,0,0.65)' }}>
-              Game Night,
-            </span>{' '}
-            <span style={{ color: '#B7A2FF', textShadow: '0 0 14px rgba(124,92,255,0.55)' }}>your way.</span>
-          </h1>
-          <p className="mt-3 max-w-md text-base text-ink" style={{ textShadow: '0 2px 12px rgba(0,0,0,0.75)' }}>
-            Quizshow-Formate für euren Abend. Jede:r spielt auf dem eigenen Handy, ohne App.
-          </p>
         </section>
 
         {/* ZWEI WEGE */}
