@@ -789,9 +789,8 @@ describe('reducer — Fachrunde (Session O)', () => {
       s = reducer(s, { type: 'EXPERTS_NEXT' })
     }
     expect(values).toEqual([100, 200, 300, 400, 500])
-    // Exakte Stufen 1-5 sichert der Katalog-Validator (≥ 4 Fragen je Stufe und Thema);
-    // hier nur: es kommt immer eine Frage mit gültiger Stufe.
-    expect(diffs.every((d) => d >= 1 && d <= 5)).toBe(true)
+    // Katalog garantiert ≥ 4 Fragen je Stufe und Thema (catalog.test.ts) → exakt 1 bis 5.
+    expect(diffs).toEqual([1, 2, 3, 4, 5])
     expect(s.phase).toBe('scoreboard')
     expect(s.matchPoints['team-a']).toBe(1)
   })
