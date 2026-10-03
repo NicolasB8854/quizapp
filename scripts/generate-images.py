@@ -154,7 +154,7 @@ PICTURE_NEGATIVE = "text, letters, numbers, logo, watermark, labels, multiple su
 _pq = ROOT / "scripts/picture-questions.json"
 if _pq.exists():
     for _q in json.loads(_pq.read_text(encoding="utf-8")):
-        PRESETS[f"pic-{_q['slug']}"] = {"aspect": "4:3", "prompt": _q["prompt"], "picture": True,
+        PRESETS[f"pic-{_q['slug']}"] = {"aspect": "3:2", "prompt": _q["prompt"], "picture": True,
                                         "answer": _q["options"][_q["correct"]],
                                         "distractors": [o for i, o in enumerate(_q["options"]) if i != _q["correct"]]}
 
@@ -173,12 +173,14 @@ def generate(preset: str, model: str, seed: int) -> Path:
     with tempfile.TemporaryDirectory(dir=OUT) as tmp:
         req, resp = Path(tmp) / "req.json", Path(tmp) / "resp.json"
         req.write_text(json.dumps(body), encoding="utf-8")
-        subprocess.run(
+        proc = subprocess.run(
             ["aws", "bedrock-runtime", "invoke-model", "--region", REGION, "--profile", PROFILE,
              "--model-id", MODELS[model], "--body", f"fileb://{req}",
              "--content-type", "application/json", "--accept", "application/json", str(resp)],
-            check=True, capture_output=True,
+            capture_output=True, text=True,
         )
+        if proc.returncode != 0:
+            raise RuntimeError(f"{preset}: Bedrock-Fehler: {proc.stderr.strip()[-400:]}")
         data = json.loads(resp.read_text(encoding="utf-8"))
     reasons = data.get("finish_reasons") or [None]
     if reasons[0] not in (None, "SUCCESS"):
@@ -233,7 +235,11 @@ def main() -> None:
         if preset not in PRESETS:
             sys.exit(f"unbekanntes Preset: {preset}")
         for i in range(a.n):
-            img = generate(preset, a.model, a.seed + i)
+            try:
+                img = generate(preset, a.model, a.seed + i)
+            except RuntimeError as e:
+                print(f"FEHLER {e}", flush=True)
+                continue
             line = review(img, preset) if a.review else ""
             print(f"{img.name}  {line}", flush=True)
 
