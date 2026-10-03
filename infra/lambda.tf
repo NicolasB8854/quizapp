@@ -65,6 +65,7 @@ resource "aws_iam_role_policy" "ws_handler_ddb" {
         "${aws_dynamodb_table.players.arn}/index/*",
         aws_dynamodb_table.questions.arn,
         "${aws_dynamodb_table.questions.arn}/index/*",
+        aws_dynamodb_table.insights.arn,
       ]
     }]
   })
@@ -103,6 +104,8 @@ resource "aws_lambda_function" "ws_handler" {
       SESSIONS_TABLE  = aws_dynamodb_table.sessions.name
       PLAYERS_TABLE   = aws_dynamodb_table.players.name
       QUESTIONS_TABLE = aws_dynamodb_table.questions.name
+      INSIGHTS_TABLE  = aws_dynamodb_table.insights.name
+      ADMIN_TOKEN     = var.admin_token
       ROOM_TTL_HOURS  = tostring(var.room_ttl_hours)
       LOG_LEVEL       = var.environment == "prod" ? "info" : "debug"
     }

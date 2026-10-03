@@ -18,9 +18,9 @@ resource "aws_apigatewayv2_api" "http" {
   protocol_type = "HTTP"
 
   cors_configuration {
-    allow_origins = ["*"]
+    allow_origins = var.allowed_origins
     allow_methods = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
-    allow_headers = ["content-type", "authorization"]
+    allow_headers = ["content-type", "authorization", "x-admin-token"]
     max_age       = 300
   }
 }
@@ -63,6 +63,31 @@ resource "aws_apigatewayv2_route" "http_update_question" {
 resource "aws_apigatewayv2_route" "http_delete_question" {
   api_id    = aws_apigatewayv2_api.http.id
   route_key = "DELETE /questions/{id}"
+  target    = "integrations/${aws_apigatewayv2_integration.http_handler.id}"
+}
+
+# Frage melden, anonyme Kennzahlen, Admin-Auswertung (2026-10).
+resource "aws_apigatewayv2_route" "http_create_report" {
+  api_id    = aws_apigatewayv2_api.http.id
+  route_key = "POST /reports"
+  target    = "integrations/${aws_apigatewayv2_integration.http_handler.id}"
+}
+
+resource "aws_apigatewayv2_route" "http_list_reports" {
+  api_id    = aws_apigatewayv2_api.http.id
+  route_key = "GET /reports"
+  target    = "integrations/${aws_apigatewayv2_integration.http_handler.id}"
+}
+
+resource "aws_apigatewayv2_route" "http_track_event" {
+  api_id    = aws_apigatewayv2_api.http.id
+  route_key = "POST /events"
+  target    = "integrations/${aws_apigatewayv2_integration.http_handler.id}"
+}
+
+resource "aws_apigatewayv2_route" "http_metrics" {
+  api_id    = aws_apigatewayv2_api.http.id
+  route_key = "GET /metrics"
   target    = "integrations/${aws_apigatewayv2_integration.http_handler.id}"
 }
 

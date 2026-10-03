@@ -1,7 +1,7 @@
 /**
  * Full-Overlay-Splash für Modus-Übergänge.
  *
- * Wird ~1.6 s eingeblendet, sobald sich `state.live.kind` ändert
+ * Wird ~3 s eingeblendet (inkl. 3-2-1), sobald sich `state.live.kind` ändert
  * (nächster Modus im Match). Der Splash zeigt:
  *   - „Modus X / Y" als Fortschritts-Label
  *   - `chipLabel` (KLASSIKER / SPEED / …) in Accent-Farbe
@@ -15,7 +15,7 @@
  * gleiche Dauer aber ohne Bewegungs-Animation.
  */
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import type { GameMode } from '@quizapp/shared'
 import { ACCENT_HEX } from '@quizapp/shared'
 import { cn } from '@/lib/classnames'
@@ -32,9 +32,25 @@ interface Props {
    * Muss beim Trigger ein frischer Wert sein (z. B. Timestamp).
    */
   token: number
+  /** Zwischenstand (Match-Punkte) — ab dem zweiten Modus eingeblendet. */
+  standings?: Array<{ id: string; name: string; colorHex: string; points: number }>
 }
 
-const DURATION_MS = 1600
+/** Splash-Dauer inkl. 3-2-1-Countdown. */
+const DURATION_MS = 3000
+
+/** Moderations-Zeilen: ein Satz wie von einer Show-Moderation. */
+export function hostLine(modeIndex: number, totalModes: number, modeName: string): string {
+  if (totalModes > 1 && modeIndex === totalModes - 1) return `Das große Finale: ${modeName}! Jetzt zählt jeder Punkt.`
+  if (modeIndex === 0) return `Willkommen zum Spieleabend! Wir starten mit ${modeName}.`
+  const lines = [
+    `Weiter geht's mit ${modeName}. Wer holt sich den nächsten Punkt?`,
+    `Bühne frei für ${modeName}!`,
+    `Kurz durchatmen — gleich kommt ${modeName}.`,
+    `Noch ist alles drin. Auf zu ${modeName}!`,
+  ]
+  return lines[(modeIndex - 1) % lines.length]
+}
 
 export function ModeTransitionSplash({
   mode,
@@ -42,12 +58,21 @@ export function ModeTransitionSplash({
   totalModes,
   onDone,
   token,
+  standings,
 }: Props) {
+  const [count, setCount] = useState(3)
   useEffect(() => {
+    setCount(3)
     const t = window.setTimeout(onDone, DURATION_MS)
-    return () => window.clearTimeout(t)
+    // Countdown in der zweiten Hälfte: 3 … 2 … 1
+    const ticks = [900, 1600, 2300].map((ms, i) => window.setTimeout(() => setCount(2 - i), ms))
+    return () => {
+      window.clearTimeout(t)
+      ticks.forEach((x) => window.clearTimeout(x))
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token])
+  const leader = standings && standings.length > 1 ? [...standings].sort((a, b) => b.points - a.points) : null
 
   const accent = ACCENT_HEX[mode.accent] ?? '#7C5CFF'
 
@@ -85,8 +110,31 @@ export function ModeTransitionSplash({
         >
           {mode.name}
         </div>
-        <div className="mt-6 text-base md:text-xl text-white/70 italic">
-          {mode.tagline}
+        <div className="mt-6 text-base md:text-xl text-white/80">
+          {hostLine(modeIndex, totalModes, mode.name)}
+        </div>
+        <div className="mt-2 text-sm md:text-base text-white/55 italic">{mode.tagline}</div>
+        {leader && modeIndex > 0 && (
+          <div className="mt-6 flex flex-wrap justify-center gap-2">
+            {leader.map((t) => (
+              <span
+                key={t.id}
+                className="inline-flex items-center gap-2 rounded-full border-2 bg-navy-900/80 px-3 py-1 text-sm font-semibold text-white"
+                style={{ borderColor: `${t.colorHex}99` }}
+              >
+                <span className="h-2.5 w-2.5 rounded-full" style={{ background: t.colorHex }} />
+                {t.name} · {t.points}
+              </span>
+            ))}
+          </div>
+        )}
+        <div
+          key={count}
+          aria-hidden
+          className="mt-8 font-display text-6xl font-black text-white animate-titleIn"
+          style={{ textShadow: `0 0 30px ${accent}` }}
+        >
+          {count > 0 ? count : 'Los!'}
         </div>
       </div>
     </div>

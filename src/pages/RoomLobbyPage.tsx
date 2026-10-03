@@ -66,6 +66,8 @@ import { HostActionBar } from '@/components/HostActionBar'
 import { findMatchWinner, WinnerHero } from '@/components/WinnerHero'
 import { useRoomSync } from '@/hooks/useRoomSync'
 import { useDeviceProfileSync } from '@/hooks/useDeviceProfileSync'
+import { InviteButton } from '@/components/InviteButton'
+import { DirectorPanel } from '@/components/show/DirectorPanel'
 import { useSoundEnabled } from '@/hooks/useSoundEnabled'
 import { playSound } from '@/lib/audio'
 import { haptic } from '@/lib/haptics'
@@ -354,6 +356,12 @@ export default function RoomLobbyPage() {
           totalModes={splash.totalModes}
           token={splash.token}
           onDone={() => setSplash(null)}
+          standings={room.state?.round?.teams.map((t) => ({
+            id: t.id,
+            name: t.name,
+            colorHex: getTeamColorHex(t.color),
+            points: room.state?.matchPoints[t.id] ?? 0,
+          }))}
         />
       )}
       <div
@@ -808,6 +816,12 @@ function PhaseView({
   }
 }
 
+/** Room-Code aus der URL (/room/ABCD) — für Teilen-Links in Unterkomponenten. */
+function roomCodeFromPath(): string {
+  const m = window.location.pathname.match(/\/room\/([^/?#]+)/)
+  return m ? decodeURIComponent(m[1]).toUpperCase() : ''
+}
+
 function SetupPhaseView({
   state,
   isHost,
@@ -853,6 +867,14 @@ function SetupPhaseView({
   return (
     <div className="space-y-4">
       <LobbySteps current={0} />
+      <DirectorPanel
+        playerCount={6}
+        teamCount={state.draft.teams.length}
+        playersWithInterests={0}
+        disabled={!canDispatch}
+        onApply={(modes) => send({ type: 'SET_MODE_SELECTION', modeIds: modes })}
+        hint="Wähl die Dauer — in der Lobby kannst du mit den Interessen der Gruppe neu mischen."
+      />
       <ShowPanel
         eyebrow="Schritt 1"
         title="Welche Modi spielt ihr?"
@@ -950,6 +972,7 @@ function LobbyPhaseView({
       <LobbySteps current={readyToStart ? 2 : 1} />
 
       <ShowPanel eyebrow={round.name} title={`${round.players.length} im Raum`}>
+        <InviteButton roomCode={roomCodeFromPath()} />
         <div className="flex flex-wrap gap-1.5">
           {modeNames.map((name) => (
             <span key={name} className="rounded-full border border-brand-purple/40 bg-brand-purple/10 px-2.5 py-0.5 text-xs text-brand-purple-soft">
@@ -1000,6 +1023,16 @@ function LobbyPhaseView({
         )}
       </ShowPanel>
 
+      {isHost && (
+        <DirectorPanel
+          playerCount={round.players.length}
+          teamCount={round.teams.length}
+          playersWithInterests={round.players.filter((p) => p.interests.length > 0).length}
+          disabled={!canDispatch}
+          onApply={(modes) => send({ type: 'SET_ROUND_MODES', modes })}
+          hint="Mischt den Abend mit den Interessen eurer Gruppe neu."
+        />
+      )}
       {isHost && <LobbyModesPanel selected={round.gameModes} canDispatch={canDispatch} send={send} />}
 
       <StickyCta
@@ -1409,6 +1442,7 @@ function CDRevealedView({
   return (
     <>
       <QuestionCard
+          questionId={question?.id}
         text={question.question}
         isMaster={isMaster}
         revealedTone={wasCorrect ? 'correct' : 'wrong'}
@@ -1597,6 +1631,7 @@ function SpotlightRoomView({
       {/* Frage */}
       {question ? (
         <QuestionCard
+          questionId={question?.id}
           text={question.question}
           isMaster={isMaster}
           revealedTone={
@@ -2011,6 +2046,7 @@ function FlashRoomView({
       {/* Frage — gr\u00f6\u00dfer im Master-Presenter-Mode */}
       {question ? (
         <QuestionCard
+          questionId={question?.id}
           text={question.question}
           isMaster={isMaster}
           revealedTone={live.phase === 'revealed' ? 'neutral' : null}
@@ -2305,6 +2341,7 @@ function LadderRoomView({
 
       {/* Frage */}
       <QuestionCard
+          questionId={question?.id}
           explanation={question?.explanation}
         text={question.question}
         isMaster={isMaster}
@@ -2536,6 +2573,7 @@ function SprinterRoomView({
       </Card>
 
       <QuestionCard
+          questionId={question?.id}
           explanation={question?.explanation} text={question.question} isMaster={isMaster} revealedTone={null} />
 
       {live.phase === 'rebound-buzz' && (
@@ -2785,6 +2823,7 @@ function EliminationRoomView({
       )}
 
       <QuestionCard
+          questionId={question?.id}
           explanation={question?.explanation}
         text={question.question}
         isMaster={isMaster}
@@ -2949,6 +2988,7 @@ function BoardRoomView({
       {live.phase !== 'pick-cell' && live.activeQuestion && (
         <>
           <QuestionCard
+          questionId={live.activeQuestion?.id}
           explanation={live.activeQuestion?.explanation}
             text={live.activeQuestion.question}
             isMaster={isMaster}
@@ -3244,6 +3284,7 @@ function DuelRoomView({
       {live.phase !== 'setup-duel' && live.activeQuestion && (
         <>
           <QuestionCard
+          questionId={live.activeQuestion?.id}
           explanation={live.activeQuestion?.explanation}
             text={live.activeQuestion.question}
             isMaster={isMaster}
@@ -3568,6 +3609,7 @@ function ExpertsRoomView({
 
       {question && (
         <QuestionCard
+          questionId={question?.id}
           explanation={question?.explanation}
           text={question.question}
           isMaster={isMaster}
@@ -3692,12 +3734,14 @@ function QuestionCard({
   revealedTone,
   explanation,
   eyebrow,
+  questionId,
 }: {
   text: string
   isMaster: boolean
   revealedTone: 'correct' | 'wrong' | 'neutral' | null
   explanation?: string | null
   eyebrow?: string | null
+  questionId?: string
 }) {
   return (
     <ShowQuestion
@@ -3706,6 +3750,7 @@ function QuestionCard({
       tone={revealedTone}
       explanation={explanation}
       eyebrow={eyebrow ?? undefined}
+      questionId={questionId}
     />
   )
 }
@@ -3833,8 +3878,11 @@ function TeamAnswersPanel({
 }) {
   return (
     <Card className={cn('space-y-2', isMaster ? 'p-5' : 'p-3')}>
-      <div className={cn('uppercase tracking-[0.32em] text-ink-muted', 'text-xs')}>
-        Team-Antworten
+      <div className="flex items-center justify-between">
+        <div className="uppercase tracking-[0.32em] text-ink-muted text-xs">Team-Antworten</div>
+        <div className={cn('font-display font-extrabold text-white', isMaster ? 'text-2xl' : 'text-sm')}>
+          {Object.values(teamAnswers).filter((a) => a !== null).length} / {teams.length} eingeloggt
+        </div>
       </div>
       <div className={cn('grid gap-1.5', isMaster ? 'sm:grid-cols-2 lg:grid-cols-4' : 'sm:grid-cols-2')}>
         {teams.map((team) => {

@@ -37,3 +37,8 @@ output "lambda_function_name" {
   description = "Name der WS-Handler-Lambda (nützlich für `aws logs tail`)."
   value       = aws_lambda_function.ws_handler.function_name
 }
+
+output "insights_table" {
+  description = "DynamoDB-Tabelle für Reports, Kennzahlen und Gruppen-Historie."
+  value       = aws_dynamodb_table.insights.name
+}

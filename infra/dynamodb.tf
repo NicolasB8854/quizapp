@@ -145,3 +145,36 @@ resource "aws_dynamodb_table" "players" {
     enabled = true
   }
 }
+
+# Insights-Tabelle (2026-10): Single-Table für gemeldete Fragen, anonyme
+# Tageskennzahlen und die Fragen-Historie pro Gruppe (Host-Gerät).
+# Schlüssel: pk (z. B. REPORT, METRIC#2026-10-03, GROUP#<id>) + sk.
+resource "aws_dynamodb_table" "insights" {
+  name         = "${local.name_prefix}-insights"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "pk"
+  range_key    = "sk"
+
+  attribute {
+    name = "pk"
+    type = "S"
+  }
+
+  attribute {
+    name = "sk"
+    type = "S"
+  }
+
+  ttl {
+    attribute_name = "expiresAt"
+    enabled        = true
+  }
+
+  point_in_time_recovery {
+    enabled = var.environment == "prod"
+  }
+
+  server_side_encryption {
+    enabled = true
+  }
+}

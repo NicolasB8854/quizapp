@@ -14,6 +14,7 @@
  */
 
 import type { Question } from '@quizapp/shared'
+import { getAdminToken } from './adminToken'
 
 const BASE = import.meta.env.VITE_HTTP_URL
 
@@ -31,10 +32,13 @@ async function jsonRequest<T>(
   init: RequestInit = {},
 ): Promise<T> {
   const url = `${requireBase()}${path}`
+  const token = getAdminToken()
   const res = await fetch(url, {
     ...init,
     headers: {
       'content-type': 'application/json',
+      // Schreibende Routen verlangen das Admin-Token (Server prüft).
+      ...(token && init.method && init.method !== 'GET' ? { 'x-admin-token': token } : {}),
       ...init.headers,
     },
   })

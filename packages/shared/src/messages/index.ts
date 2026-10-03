@@ -46,6 +46,12 @@ export interface JoinRoomMessage {
    * Bei Rolle `player` ignoriert.
    */
   stageOnly?: boolean
+  /**
+   * Zufällige, auf dem Host-Gerät gespeicherte Gruppen-ID. Der Server merkt
+   * sich darunter die gestellten Fragen, damit sie sich über Abende nicht
+   * wiederholen. Nur beim Host relevant, sonst ignoriert.
+   */
+  groupId?: string
 }
 
 /**

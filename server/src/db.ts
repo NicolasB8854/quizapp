@@ -60,6 +60,8 @@ export interface RoomRecord {
    * disconnected und ein Neuer joint).
    */
   hostPlayerId?: string | null
+  /** Gruppen-ID des Host-Geräts (Fragen-Historie über Abende). */
+  groupId?: string | null
   updatedAt: string
   expiresAt: number
 }

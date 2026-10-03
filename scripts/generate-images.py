@@ -5,7 +5,7 @@ Alle Motive teilen EINE Art Direction (STYLE + NEGATIVE), damit Hintergründe,
 Modus-Bilder und Splash-Art zusammenpassen.
 
 Aufruf:
-  AWS_PROFILE=quizapp python3 scripts/generate-images.py <preset> [--n 2] [--model core|sd35|ultra] [--review]
+  python3 scripts/generate-images.py <preset> [--n 2] [--model core|sd35|ultra] [--review]
   python3 scripts/generate-images.py --list
 
 Ausgabe: .audit-work/brand/candidates/<preset>-<model>-<seed>.jpg (+ .review.txt)
@@ -25,7 +25,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / ".audit-work/brand/candidates"
 REGION = "us-west-2"
-PROFILE = os.environ.get("AWS_PROFILE", "quizapp")
+# Bildkosten laufen über einen separaten Account (Nicolas, 2026-10-03). Override per IMAGE_AWS_PROFILE.
+PROFILE = os.environ.get("IMAGE_AWS_PROFILE", "nicolas-alliance-account")
 MODELS = {
     "core": "stability.stable-image-core-v1:1",
     "sd35": "stability.sd3-5-large-v1:0",

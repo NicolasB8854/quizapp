@@ -11,6 +11,7 @@ import type { TeamColor } from '@quizapp/shared'
 import { getTeamColorHex } from '@quizapp/shared'
 import { AnswerOption, type AnswerStatus } from '@/components/AnswerOption'
 import { cn } from '@/lib/classnames'
+import { ReportQuestionButton } from '@/components/ReportQuestionButton'
 
 const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F']
 
@@ -22,6 +23,7 @@ export function ShowQuestion({
   eyebrow,
   tone = null,
   explanation,
+  questionId,
 }: {
   text: string
   stage?: boolean
@@ -30,6 +32,8 @@ export function ShowQuestion({
   tone?: 'correct' | 'wrong' | 'neutral' | null
   /** Wird angezeigt, sobald `tone` gesetzt ist (Auflösung). */
   explanation?: string | null
+  /** Gesetzt = „Frage melden" unter der Auflösung. */
+  questionId?: string
 }) {
   const glow =
     tone === 'correct'
@@ -60,6 +64,7 @@ export function ShowQuestion({
         </h2>
       </div>
       {tone && explanation && <ExplanationCard text={explanation} stage={stage} />}
+      {tone && questionId && !stage && <ReportQuestionButton questionId={questionId} source="room" />}
     </div>
   )
 }
