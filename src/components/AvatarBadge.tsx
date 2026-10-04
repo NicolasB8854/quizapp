@@ -1,11 +1,12 @@
 /**
  * AvatarBadge — rendert die Spieler-Identität (Session T).
  *
- * Zwei Zustände:
+ * Zustände (Vorrang von oben nach unten):
  *  - Foto vorhanden → runder <img> mit farbigem Ring (Team-Farbe oder
  *    Avatar-Farbe als Fallback). Look wie das Mockup: prominenter Portrait-
  *    Kreis, subtiler Glow bei größeren Sizes.
- *  - Kein Foto → farbiger Kreis mit Namens-Initiale. Ohne Namen wird ein
+ *  - Figur aus dem Avatar-Baukasten (`avatar.look`) → SVG-Brustbild.
+ *  - Sonst → farbiger Kreis mit Emoji bzw. Namens-Initiale. Ohne Namen wird ein
  *    generisches Person-Icon gezeigt.
  *
  * Die Farbe wirkt weiter — auch beim Foto als Ring-Farbe (`avatar.colorHex`),
@@ -15,6 +16,7 @@
 import { User } from 'lucide-react'
 import type { Avatar } from '@quizapp/shared'
 import { cn } from '@/lib/classnames'
+import { AvatarFigure } from '@/components/avatar/AvatarFigure'
 
 type Size = 'sm' | 'md' | 'lg' | 'xl'
 
@@ -76,6 +78,29 @@ export function AvatarBadge({
           alt=""
           className="h-full w-full object-cover"
           draggable={false}
+        />
+      </span>
+    )
+  }
+
+  // Gebaute Figur: SVG füllt den Kreis; klein auf das Gesicht gezoomt.
+  if (avatar.look) {
+    return (
+      <span
+        role="img"
+        aria-label={name ? `Avatar von ${name}` : 'Avatar'}
+        className={cn(
+          'inline-block rounded-full overflow-hidden border-2 select-none bg-navy-800',
+          SIZE_CLASSES[size],
+          className,
+        )}
+        style={{ borderColor: `${ringHex}CC`, boxShadow: shadow }}
+      >
+        <AvatarFigure
+          look={avatar.look}
+          accentHex={avatar.colorHex}
+          crop={isLarge ? 'bust' : 'face'}
+          className="h-full w-full"
         />
       </span>
     )

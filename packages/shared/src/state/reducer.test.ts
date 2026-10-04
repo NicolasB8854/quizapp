@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { createReducer, INITIAL_STATE, type GameState } from './reducer'
 import { getMultipleChoiceByTopic, getTrueFalsePool } from '../lib/questions'
 import type { SkillLevel } from '../types/round'
+import { DEFAULT_AVATAR_LOOK } from '../data/avatarLook'
 
 // Reducer ohne Geräte-Historie: jede Runde zieht aus dem vollen Katalog.
 const reducer = createReducer({ getAskedQuestionIds: () => new Set<string>() })
@@ -496,8 +497,21 @@ describe('reducer — Player-Ebene (Session D + E)', () => {
       playerId: p1.id,
       avatar: { colorHex: '#FF3D8B', photoDataUrl: null },
     })
-    expect(s.round?.players[0].avatar).toEqual({ colorHex: '#FF3D8B', photoDataUrl: null })
+    expect(s.round?.players[0].avatar).toEqual({ colorHex: '#FF3D8B', photoDataUrl: null, emoji: null, title: null, look: null })
     expect(s.round?.players[1].avatar).toEqual(originalAvatarP2)
+  })
+
+  it('SET_PLAYER_AVATAR übernimmt eine Figur, aber nur bereinigt', () => {
+    let s = reducer(INITIAL_STATE, { type: 'GO_TO_LOBBY' })
+    const [p1] = s.round!.players
+    s = reducer(s, {
+      type: 'SET_PLAYER_AVATAR',
+      playerId: p1.id,
+      avatar: { colorHex: 'javascript:', photoDataUrl: null, look: { ...DEFAULT_AVATAR_LOOK, hair: 'afro', skin: 1234 } },
+    })
+    const a = s.round!.players[0].avatar
+    expect(a.colorHex).toBe(p1.avatar.colorHex)
+    expect(a.look).toMatchObject({ hair: 'afro', skin: DEFAULT_AVATAR_LOOK.skin })
   })
 
   it('ADD_PLAYER_FROM_LIBRARY fügt Profil dem Team hinzu und übernimmt Interessen', () => {
