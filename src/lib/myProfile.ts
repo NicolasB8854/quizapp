@@ -35,6 +35,12 @@ export function readMyProfile(): MyProfile {
     const parsed = JSON.parse(raw) as Partial<MyProfile>
     const avatar = { ...fallback.avatar, look: null, ...(parsed.avatar ?? {}) }
     avatar.look = sanitizeAvatarLook(avatar.look)
+    // Profile von vor dem Avatar-Baukasten (kein `figure`-Feld) starten einmalig mit
+    // Figur statt Emoji/Initialen. Wer danach bewusst Emoji wählt, behält das.
+    if (!('figure' in parsed) && !avatar.look) {
+      avatar.look = look
+      avatar.emoji = null
+    }
     return {
       name: typeof parsed.name === 'string' ? parsed.name : fallbackName,
       avatar,
