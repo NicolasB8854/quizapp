@@ -1330,13 +1330,13 @@ function CDPickTopicView({
               onClick={() => send({ type: 'CD_PICK_TOPIC', topic: topic.id })}
               disabled={disabled}
               className={cn(
-                'flex flex-col items-center rounded-lg border text-center transition-all',
+                'flex flex-col items-center rounded-lg border-2 text-center transition-all backdrop-blur-sm',
                 isMaster ? 'gap-2 px-3 py-6' : 'gap-1 px-2 py-3',
                 isUsed
-                  ? 'border-white/5 bg-white/[0.02] opacity-30'
+                  ? 'border-white/10 bg-navy-900/80 opacity-40'
                   : canPlay
-                    ? 'border-brand-purple/40 bg-brand-purple/[0.08] text-white hover:border-brand-purple/70 hover:bg-brand-purple/15'
-                    : 'border-white/10 bg-white/[0.03] text-white/60',
+                    ? 'border-brand-purple/70 bg-navy-800/90 text-white shadow-[0_0_18px_-8px_#7C5CFF] hover:border-brand-purple-soft hover:bg-navy-700/95'
+                    : 'border-white/20 bg-navy-800/85 text-white/75',
               )}
             >
               <span
@@ -3826,6 +3826,15 @@ function useScoreDelta(score: number): number | null {
  * Bilderrätsel: Bild wird über 10 s scharf, alle Teams tippen parallel,
  * frühe richtige Antwort = mehr Punkte. Host löst auf und schaltet weiter.
  */
+/** Fester Zoom-Ausschnitt pro Frage (abseits der Bildmitte, damit das Motiv nicht sofort erkennbar ist). */
+function pictureFocus(id: string): string {
+  let h = 0
+  for (const ch of id) h = (h * 31 + ch.charCodeAt(0)) >>> 0
+  const x = 25 + (h % 51)
+  const y = 25 + ((h >>> 8) % 51)
+  return `${x}% ${y}%`
+}
+
 function PictureRoomView({
   state,
   live,
@@ -3864,7 +3873,12 @@ function PictureRoomView({
   }
   const elapsed = live.startedAt ? Math.max(0, now - live.startedAt) : 0
   const progress = live.phase === 'revealed' ? 1 : Math.min(1, elapsed / 10_000)
-  const blurPx = Math.round(22 * (1 - progress))
+  // Schwerer: Start stark herangezoomt auf einen Ausschnitt und unscharf; die Auflösung
+  // kommt verzögert (ease-in), damit frühes Raten wirklich Mut braucht.
+  const reveal = Math.pow(progress, 1.6)
+  const blurPx = Math.round(30 * (1 - reveal))
+  const zoom = 1 + 2.4 * (1 - reveal)
+  const focus = pictureFocus(q.id)
   const pointsNow = Math.round((300 - 200 * progress) / 10) * 10
   const myAnswer = myTeamId ? live.teamAnswers[myTeamId] : null
   const answered = Object.values(live.teamAnswers).filter((a) => a !== null).length
@@ -3901,8 +3915,8 @@ function PictureRoomView({
         <img
           src={q.image}
           alt={live.phase === 'revealed' ? q.options[q.correctIndex] : 'Unscharfes Rätselbild'}
-          className="aspect-[4/3] w-full object-cover transition-[filter] duration-200"
-          style={{ filter: `blur(${blurPx}px)` }}
+          className="aspect-[3/2] w-full object-cover transition-[filter,transform] duration-200"
+          style={{ filter: `blur(${blurPx}px)`, transform: `scale(${zoom})`, transformOrigin: focus }}
         />
       </div>
 

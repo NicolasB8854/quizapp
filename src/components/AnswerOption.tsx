@@ -82,7 +82,7 @@ export function AnswerOption({ letter, status = 'idle', className, children, ...
       >
         {letter}
       </span>
-      <span className="text-ink text-base md:text-lg leading-snug font-medium">
+      <span className="min-w-0 flex-1 text-ink text-base md:text-lg leading-snug font-medium hyphens-auto [overflow-wrap:anywhere]" lang="de">
         {children}
       </span>
     </button>
