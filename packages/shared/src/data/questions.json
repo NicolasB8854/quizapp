@@ -49766,482 +49766,6 @@
     ]
   },
   {
-    "id": "q-pic-zebra",
-    "type": "multiple-choice",
-    "status": "approved",
-    "category": "allgemeinbildung",
-    "topic": "natur",
-    "difficulty": 1,
-    "question": "Welches Tier ist das?",
-    "options": [
-      "Zebra",
-      "Okapi",
-      "Pferd",
-      "Esel"
-    ],
-    "correctIndex": 0,
-    "image": "/img/pictures/zebra.jpg",
-    "tags": [
-      "Bilderrätsel"
-    ],
-    "compatibleModes": [
-      "blindguess"
-    ],
-    "timeScope": "timeless",
-    "aiGenerated": true,
-    "createdAt": "2026-10-03T17:58:10Z",
-    "updatedAt": "2026-10-03T17:58:10Z",
-    "explanation": "Jedes Zebra hat ein einzigartiges Streifenmuster — wie ein Fingerabdruck."
-  },
-  {
-    "id": "q-pic-erdbeere",
-    "type": "multiple-choice",
-    "status": "approved",
-    "category": "alltag-lifestyle",
-    "topic": "essen",
-    "difficulty": 1,
-    "question": "Welche Frucht ist das?",
-    "options": [
-      "Erdbeere",
-      "Himbeere",
-      "Kirsche",
-      "Tomate"
-    ],
-    "correctIndex": 0,
-    "image": "/img/pictures/erdbeere.jpg",
-    "tags": [
-      "Bilderrätsel"
-    ],
-    "compatibleModes": [
-      "blindguess"
-    ],
-    "timeScope": "timeless",
-    "aiGenerated": true,
-    "createdAt": "2026-10-03T17:58:10Z",
-    "updatedAt": "2026-10-03T17:58:10Z",
-    "explanation": "Botanisch ist die Erdbeere eine Sammelnussfrucht — die kleinen Kerne außen sind die eigentlichen Früchte."
-  },
-  {
-    "id": "q-pic-pinguin",
-    "type": "multiple-choice",
-    "status": "approved",
-    "category": "allgemeinbildung",
-    "topic": "natur",
-    "difficulty": 1,
-    "question": "Welches Tier ist das?",
-    "options": [
-      "Pinguin",
-      "Papageitaucher",
-      "Albatros",
-      "Kormoran"
-    ],
-    "correctIndex": 0,
-    "image": "/img/pictures/pinguin.jpg",
-    "tags": [
-      "Bilderrätsel"
-    ],
-    "compatibleModes": [
-      "blindguess"
-    ],
-    "timeScope": "timeless",
-    "aiGenerated": true,
-    "createdAt": "2026-10-03T17:58:10Z",
-    "updatedAt": "2026-10-03T17:58:10Z",
-    "explanation": "Pinguine können nicht fliegen, „fliegen“ aber unter Wasser mit bis zu 35 km/h."
-  },
-  {
-    "id": "q-pic-brezel",
-    "type": "multiple-choice",
-    "status": "approved",
-    "category": "alltag-lifestyle",
-    "topic": "essen",
-    "difficulty": 2,
-    "question": "Welches Gebäck ist das?",
-    "options": [
-      "Brezel",
-      "Croissant",
-      "Bagel",
-      "Zimtschnecke"
-    ],
-    "correctIndex": 0,
-    "image": "/img/pictures/brezel.jpg",
-    "tags": [
-      "Bilderrätsel"
-    ],
-    "compatibleModes": [
-      "blindguess"
-    ],
-    "timeScope": "timeless",
-    "aiGenerated": true,
-    "createdAt": "2026-10-03T17:58:10Z",
-    "updatedAt": "2026-10-03T17:58:10Z",
-    "explanation": "Die Laugenbrezel bekommt ihre braune Kruste durch ein kurzes Bad in Natronlauge vor dem Backen."
-  },
-  {
-    "id": "q-pic-flamingo",
-    "type": "multiple-choice",
-    "status": "approved",
-    "category": "allgemeinbildung",
-    "topic": "natur",
-    "difficulty": 2,
-    "question": "Welcher Vogel ist das?",
-    "options": [
-      "Flamingo",
-      "Löffler",
-      "Ibis",
-      "Kranich"
-    ],
-    "correctIndex": 0,
-    "image": "/img/pictures/flamingo.jpg",
-    "tags": [
-      "Bilderrätsel"
-    ],
-    "compatibleModes": [
-      "blindguess"
-    ],
-    "timeScope": "timeless",
-    "aiGenerated": true,
-    "createdAt": "2026-10-03T17:58:10Z",
-    "updatedAt": "2026-10-03T17:58:10Z",
-    "explanation": "Flamingos sind nur rosa, weil sie Carotinoide aus Algen und Krebstierchen fressen."
-  },
-  {
-    "id": "q-pic-akkordeon",
-    "type": "multiple-choice",
-    "status": "approved",
-    "category": "popkultur",
-    "topic": "musik",
-    "difficulty": 2,
-    "question": "Welches Instrument ist das?",
-    "options": [
-      "Akkordeon",
-      "Bandoneon",
-      "Mundharmonika",
-      "Harmonium"
-    ],
-    "correctIndex": 0,
-    "image": "/img/pictures/akkordeon.jpg",
-    "tags": [
-      "Bilderrätsel"
-    ],
-    "compatibleModes": [
-      "blindguess"
-    ],
-    "timeScope": "timeless",
-    "aiGenerated": true,
-    "createdAt": "2026-10-03T17:58:10Z",
-    "updatedAt": "2026-10-03T17:58:10Z",
-    "explanation": "Beim Akkordeon erzeugen durchschlagende Metallzungen den Ton, angeblasen vom Balg."
-  },
-  {
-    "id": "q-pic-chamaeleon",
-    "type": "multiple-choice",
-    "status": "approved",
-    "category": "allgemeinbildung",
-    "topic": "natur",
-    "difficulty": 2,
-    "question": "Welches Tier ist das?",
-    "options": [
-      "Chamäleon",
-      "Leguan",
-      "Gecko",
-      "Waran"
-    ],
-    "correctIndex": 0,
-    "image": "/img/pictures/chamaeleon.jpg",
-    "tags": [
-      "Bilderrätsel"
-    ],
-    "compatibleModes": [
-      "blindguess"
-    ],
-    "timeScope": "timeless",
-    "aiGenerated": true,
-    "createdAt": "2026-10-03T17:58:10Z",
-    "updatedAt": "2026-10-03T17:58:10Z",
-    "explanation": "Chamäleons können ihre Augen unabhängig voneinander bewegen und so zwei Richtungen zugleich sehen."
-  },
-  {
-    "id": "q-pic-sushi",
-    "type": "multiple-choice",
-    "status": "approved",
-    "category": "alltag-lifestyle",
-    "topic": "essen",
-    "difficulty": 2,
-    "question": "Wie heißt diese Sushi-Art?",
-    "options": [
-      "Nigiri",
-      "Maki",
-      "Temaki",
-      "Sashimi"
-    ],
-    "correctIndex": 0,
-    "image": "/img/pictures/sushi.jpg",
-    "tags": [
-      "Bilderrätsel"
-    ],
-    "compatibleModes": [
-      "blindguess"
-    ],
-    "timeScope": "timeless",
-    "aiGenerated": true,
-    "createdAt": "2026-10-03T17:58:10Z",
-    "updatedAt": "2026-10-03T17:58:10Z",
-    "explanation": "Nigiri ist von Hand geformter Reis mit einer Scheibe Fisch obendrauf — „nigiru“ heißt „greifen“."
-  },
-  {
-    "id": "q-pic-kompass",
-    "type": "multiple-choice",
-    "status": "approved",
-    "category": "allgemeinbildung",
-    "topic": "geografie",
-    "difficulty": 2,
-    "question": "Was ist das?",
-    "options": [
-      "Kompass",
-      "Sextant",
-      "Barometer",
-      "Sonnenuhr"
-    ],
-    "correctIndex": 0,
-    "image": "/img/pictures/kompass.jpg",
-    "tags": [
-      "Bilderrätsel"
-    ],
-    "compatibleModes": [
-      "blindguess"
-    ],
-    "timeScope": "timeless",
-    "aiGenerated": true,
-    "createdAt": "2026-10-03T17:58:10Z",
-    "updatedAt": "2026-10-03T17:58:10Z",
-    "explanation": "Die Kompassnadel richtet sich am Erdmagnetfeld aus und zeigt zum magnetischen Nordpol."
-  },
-  {
-    "id": "q-pic-erdmaennchen",
-    "type": "multiple-choice",
-    "status": "approved",
-    "category": "allgemeinbildung",
-    "topic": "natur",
-    "difficulty": 3,
-    "question": "Welches Tier ist das?",
-    "options": [
-      "Erdmännchen",
-      "Präriehund",
-      "Mungo",
-      "Ziesel"
-    ],
-    "correctIndex": 0,
-    "image": "/img/pictures/erdmaennchen.jpg",
-    "tags": [
-      "Bilderrätsel"
-    ],
-    "compatibleModes": [
-      "blindguess"
-    ],
-    "timeScope": "timeless",
-    "aiGenerated": true,
-    "createdAt": "2026-10-03T17:58:10Z",
-    "updatedAt": "2026-10-03T17:58:10Z",
-    "explanation": "Erdmännchen leben in Gruppen; ein Wächter steht aufrecht Wache und warnt mit Rufen."
-  },
-  {
-    "id": "q-pic-artischocke",
-    "type": "multiple-choice",
-    "status": "approved",
-    "category": "allgemeinbildung",
-    "topic": "pflanzen",
-    "difficulty": 3,
-    "question": "Welches Gemüse ist das?",
-    "options": [
-      "Artischocke",
-      "Kohlrabi",
-      "Mangold",
-      "Fenchel"
-    ],
-    "correctIndex": 0,
-    "image": "/img/pictures/artischocke.jpg",
-    "tags": [
-      "Bilderrätsel"
-    ],
-    "compatibleModes": [
-      "blindguess"
-    ],
-    "timeScope": "timeless",
-    "aiGenerated": true,
-    "createdAt": "2026-10-03T17:58:10Z",
-    "updatedAt": "2026-10-03T17:58:10Z",
-    "explanation": "Die Artischocke ist eigentlich eine Blütenknospe — ungeerntet blüht sie violett auf."
-  },
-  {
-    "id": "q-pic-harfe",
-    "type": "multiple-choice",
-    "status": "approved",
-    "category": "popkultur",
-    "topic": "musik",
-    "difficulty": 3,
-    "question": "Welches Instrument ist das?",
-    "options": [
-      "Harfe",
-      "Leier",
-      "Zither",
-      "Hackbrett"
-    ],
-    "correctIndex": 0,
-    "image": "/img/pictures/harfe.jpg",
-    "tags": [
-      "Bilderrätsel"
-    ],
-    "compatibleModes": [
-      "blindguess"
-    ],
-    "timeScope": "timeless",
-    "aiGenerated": true,
-    "createdAt": "2026-10-03T17:58:10Z",
-    "updatedAt": "2026-10-03T17:58:10Z",
-    "explanation": "Eine Konzertharfe hat 47 Saiten und sieben Pedale, mit denen man die Tonart wechselt."
-  },
-  {
-    "id": "q-pic-kolibri",
-    "type": "multiple-choice",
-    "status": "approved",
-    "category": "allgemeinbildung",
-    "topic": "natur",
-    "difficulty": 3,
-    "question": "Welcher Vogel ist das?",
-    "options": [
-      "Kolibri",
-      "Eisvogel",
-      "Zaunkönig",
-      "Bienenfresser"
-    ],
-    "correctIndex": 0,
-    "image": "/img/pictures/kolibri.jpg",
-    "tags": [
-      "Bilderrätsel"
-    ],
-    "compatibleModes": [
-      "blindguess"
-    ],
-    "timeScope": "timeless",
-    "aiGenerated": true,
-    "createdAt": "2026-10-03T17:58:10Z",
-    "updatedAt": "2026-10-03T17:58:10Z",
-    "explanation": "Kolibris können als einzige Vögel auch rückwärts fliegen."
-  },
-  {
-    "id": "q-pic-lupe-mikroskop",
-    "type": "multiple-choice",
-    "status": "approved",
-    "category": "allgemeinbildung",
-    "topic": "technik",
-    "difficulty": 3,
-    "question": "Was ist das?",
-    "options": [
-      "Mikroskop",
-      "Teleskop",
-      "Periskop",
-      "Spektroskop"
-    ],
-    "correctIndex": 0,
-    "image": "/img/pictures/lupe-mikroskop.jpg",
-    "tags": [
-      "Bilderrätsel"
-    ],
-    "compatibleModes": [
-      "blindguess"
-    ],
-    "timeScope": "timeless",
-    "aiGenerated": true,
-    "createdAt": "2026-10-03T17:58:10Z",
-    "updatedAt": "2026-10-03T17:58:10Z",
-    "explanation": "Ein Lichtmikroskop vergrößert mit Objektiv und Okular bis etwa 1000-fach."
-  },
-  {
-    "id": "q-pic-drachenfrucht",
-    "type": "multiple-choice",
-    "status": "approved",
-    "category": "alltag-lifestyle",
-    "topic": "essen",
-    "difficulty": 3,
-    "question": "Welche Frucht ist das?",
-    "options": [
-      "Drachenfrucht",
-      "Litschi",
-      "Rambutan",
-      "Granatapfel"
-    ],
-    "correctIndex": 0,
-    "image": "/img/pictures/drachenfrucht.jpg",
-    "tags": [
-      "Bilderrätsel"
-    ],
-    "compatibleModes": [
-      "blindguess"
-    ],
-    "timeScope": "timeless",
-    "aiGenerated": true,
-    "createdAt": "2026-10-03T17:58:10Z",
-    "updatedAt": "2026-10-03T17:58:10Z",
-    "explanation": "Die Drachenfrucht (Pitaya) wächst an einem Kaktus."
-  },
-  {
-    "id": "q-pic-pangolin",
-    "type": "multiple-choice",
-    "status": "approved",
-    "category": "allgemeinbildung",
-    "topic": "natur",
-    "difficulty": 5,
-    "question": "Welches Tier ist das?",
-    "options": [
-      "Schuppentier",
-      "Gürteltier",
-      "Ameisenigel",
-      "Igel"
-    ],
-    "correctIndex": 0,
-    "image": "/img/pictures/pangolin.jpg",
-    "tags": [
-      "Bilderrätsel"
-    ],
-    "compatibleModes": [
-      "blindguess"
-    ],
-    "timeScope": "timeless",
-    "aiGenerated": true,
-    "createdAt": "2026-10-03T17:58:10Z",
-    "updatedAt": "2026-10-03T17:58:10Z",
-    "explanation": "Das Schuppentier (Pangolin) ist das einzige Säugetier mit Hornschuppen und rollt sich bei Gefahr ein."
-  },
-  {
-    "id": "q-pic-mangostan",
-    "type": "multiple-choice",
-    "status": "approved",
-    "category": "alltag-lifestyle",
-    "topic": "essen",
-    "difficulty": 5,
-    "question": "Welche Frucht ist das?",
-    "options": [
-      "Mangostan",
-      "Litschi",
-      "Longan",
-      "Rambutan"
-    ],
-    "correctIndex": 0,
-    "image": "/img/pictures/mangostan.jpg",
-    "tags": [
-      "Bilderrätsel"
-    ],
-    "compatibleModes": [
-      "blindguess"
-    ],
-    "timeScope": "timeless",
-    "aiGenerated": true,
-    "createdAt": "2026-10-03T17:58:10Z",
-    "updatedAt": "2026-10-03T17:58:10Z",
-    "explanation": "Die Mangostan hat eine dicke purpurne Schale und weißes, segmentiertes Fruchtfleisch."
-  },
-  {
     "id": "q-anime-tf-01",
     "type": "true-false",
     "category": "allgemeinbildung",
@@ -56001,5 +55525,369 @@
     "compatibleModes": [
       "around-corner"
     ]
+  },
+  {
+    "id": "q-pic-harfe",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "popkultur",
+    "topic": "musik",
+    "difficulty": 2,
+    "question": "Welches Instrument ist das?",
+    "options": [
+      "Harfe",
+      "Leier",
+      "Zither",
+      "Hackbrett"
+    ],
+    "correctIndex": 0,
+    "image": "/img/pictures/harfe.jpg",
+    "tags": [
+      "Bilderrätsel"
+    ],
+    "compatibleModes": [
+      "blindguess"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-10-04T18:17:59Z",
+    "updatedAt": "2026-10-04T18:17:59Z",
+    "explanation": "Eine Konzertharfe hat 47 Saiten und sieben Pedale, mit denen man die Tonart wechselt."
+  },
+  {
+    "id": "q-pic-erdmaennchen",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "allgemeinbildung",
+    "topic": "natur",
+    "difficulty": 2,
+    "question": "Welches Tier ist das?",
+    "options": [
+      "Erdmännchen",
+      "Präriehund",
+      "Mungo",
+      "Ziesel"
+    ],
+    "correctIndex": 0,
+    "image": "/img/pictures/erdmaennchen.jpg",
+    "tags": [
+      "Bilderrätsel"
+    ],
+    "compatibleModes": [
+      "blindguess"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-10-04T18:17:59Z",
+    "updatedAt": "2026-10-04T18:17:59Z",
+    "explanation": "Erdmännchen leben in Gruppen; ein Wächter steht aufrecht Wache und warnt mit Rufen."
+  },
+  {
+    "id": "q-pic-artischocke",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "allgemeinbildung",
+    "topic": "pflanzen",
+    "difficulty": 3,
+    "question": "Welches Gemüse ist das?",
+    "options": [
+      "Artischocke",
+      "Kohlrabi",
+      "Mangold",
+      "Fenchel"
+    ],
+    "correctIndex": 0,
+    "image": "/img/pictures/artischocke.jpg",
+    "tags": [
+      "Bilderrätsel"
+    ],
+    "compatibleModes": [
+      "blindguess"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-10-04T18:17:59Z",
+    "updatedAt": "2026-10-04T18:17:59Z",
+    "explanation": "Die Artischocke ist eigentlich eine Blütenknospe — ungeerntet blüht sie violett auf."
+  },
+  {
+    "id": "q-pic-drachenfrucht",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "alltag-lifestyle",
+    "topic": "essen",
+    "difficulty": 3,
+    "question": "Welche Frucht ist das?",
+    "options": [
+      "Drachenfrucht",
+      "Litschi",
+      "Rambutan",
+      "Granatapfel"
+    ],
+    "correctIndex": 0,
+    "image": "/img/pictures/drachenfrucht.jpg",
+    "tags": [
+      "Bilderrätsel"
+    ],
+    "compatibleModes": [
+      "blindguess"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-10-04T18:17:59Z",
+    "updatedAt": "2026-10-04T18:17:59Z",
+    "explanation": "Die Drachenfrucht (Pitaya) wächst an einem Kaktus."
+  },
+  {
+    "id": "q-pic-pangolin",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "allgemeinbildung",
+    "topic": "natur",
+    "difficulty": 4,
+    "question": "Welches Tier ist das?",
+    "options": [
+      "Schuppentier",
+      "Gürteltier",
+      "Ameisenigel",
+      "Igel"
+    ],
+    "correctIndex": 0,
+    "image": "/img/pictures/pangolin.jpg",
+    "tags": [
+      "Bilderrätsel"
+    ],
+    "compatibleModes": [
+      "blindguess"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-10-04T18:17:59Z",
+    "updatedAt": "2026-10-04T18:17:59Z",
+    "explanation": "Das Schuppentier (Pangolin) ist das einzige Säugetier mit Hornschuppen und rollt sich bei Gefahr ein."
+  },
+  {
+    "id": "q-pic-mangostan",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "alltag-lifestyle",
+    "topic": "essen",
+    "difficulty": 5,
+    "question": "Welche Frucht ist das?",
+    "options": [
+      "Mangostan",
+      "Litschi",
+      "Longan",
+      "Rambutan"
+    ],
+    "correctIndex": 0,
+    "image": "/img/pictures/mangostan.jpg",
+    "tags": [
+      "Bilderrätsel"
+    ],
+    "compatibleModes": [
+      "blindguess"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-10-04T18:17:59Z",
+    "updatedAt": "2026-10-04T18:17:59Z",
+    "explanation": "Die Mangostan hat eine dicke purpurne Schale und weißes, segmentiertes Fruchtfleisch."
+  },
+  {
+    "id": "q-pic-narwal",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "allgemeinbildung",
+    "topic": "natur",
+    "difficulty": 3,
+    "question": "Welches Tier ist das?",
+    "options": [
+      "Narwal",
+      "Beluga",
+      "Schwertwal",
+      "Pottwal"
+    ],
+    "correctIndex": 0,
+    "image": "/img/pictures/narwal.jpg",
+    "tags": [
+      "Bilderrätsel"
+    ],
+    "compatibleModes": [
+      "blindguess"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-10-04T18:17:59Z",
+    "updatedAt": "2026-10-04T18:17:59Z",
+    "explanation": "Der „Stoßzahn“ des Narwals ist ein bis zu drei Meter langer, spiralig gedrehter Eckzahn."
+  },
+  {
+    "id": "q-pic-quokka",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "allgemeinbildung",
+    "topic": "natur",
+    "difficulty": 3,
+    "question": "Welches Tier ist das?",
+    "options": [
+      "Quokka",
+      "Wallaby",
+      "Wombat",
+      "Opossum"
+    ],
+    "correctIndex": 0,
+    "image": "/img/pictures/quokka.jpg",
+    "tags": [
+      "Bilderrätsel"
+    ],
+    "compatibleModes": [
+      "blindguess"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-10-04T18:17:59Z",
+    "updatedAt": "2026-10-04T18:17:59Z",
+    "explanation": "Quokkas leben fast nur auf Rottnest Island vor Perth und gelten wegen ihres Gesichts als „glücklichstes Tier der Welt“."
+  },
+  {
+    "id": "q-pic-rambutan",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "alltag-lifestyle",
+    "topic": "essen",
+    "difficulty": 4,
+    "question": "Welche Frucht ist das?",
+    "options": [
+      "Rambutan",
+      "Litschi",
+      "Longan",
+      "Mangostan"
+    ],
+    "correctIndex": 0,
+    "image": "/img/pictures/rambutan.jpg",
+    "tags": [
+      "Bilderrätsel"
+    ],
+    "compatibleModes": [
+      "blindguess"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-10-04T18:17:59Z",
+    "updatedAt": "2026-10-04T18:17:59Z",
+    "explanation": "Rambutan heißt auf Malaiisch „haarig“ – unter der weichen Stachelschale liegt glasiges, süßes Fruchtfleisch."
+  },
+  {
+    "id": "q-pic-theodolit",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "allgemeinbildung",
+    "topic": "technik",
+    "difficulty": 5,
+    "question": "Was ist das?",
+    "options": [
+      "Theodolit",
+      "Teleskop",
+      "Nivelliergerät",
+      "Periskop"
+    ],
+    "correctIndex": 0,
+    "image": "/img/pictures/theodolit.jpg",
+    "tags": [
+      "Bilderrätsel"
+    ],
+    "compatibleModes": [
+      "blindguess"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-10-04T18:17:59Z",
+    "updatedAt": "2026-10-04T18:17:59Z",
+    "explanation": "Mit dem Theodolit messen Vermesser horizontale und vertikale Winkel – heute meist als elektronische Totalstation."
+  },
+  {
+    "id": "q-pic-stethoskop",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "allgemeinbildung",
+    "topic": "technik",
+    "difficulty": 2,
+    "question": "Was ist das?",
+    "options": [
+      "Stethoskop",
+      "Blutdruckmessgerät",
+      "Reflexhammer",
+      "Otoskop"
+    ],
+    "correctIndex": 0,
+    "image": "/img/pictures/stethoskop.jpg",
+    "tags": [
+      "Bilderrätsel"
+    ],
+    "compatibleModes": [
+      "blindguess"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-10-04T18:17:59Z",
+    "updatedAt": "2026-10-04T18:17:59Z",
+    "explanation": "Das Stethoskop erfand René Laënnec 1816 – zuerst als einfaches Holzrohr."
+  },
+  {
+    "id": "q-pic-seepferdchen",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "allgemeinbildung",
+    "topic": "natur",
+    "difficulty": 2,
+    "question": "Welches Tier ist das?",
+    "options": [
+      "Seepferdchen",
+      "Seenadel",
+      "Fetzenfisch",
+      "Seedrache"
+    ],
+    "correctIndex": 0,
+    "image": "/img/pictures/seepferdchen.jpg",
+    "tags": [
+      "Bilderrätsel"
+    ],
+    "compatibleModes": [
+      "blindguess"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-10-04T18:17:59Z",
+    "updatedAt": "2026-10-04T18:17:59Z",
+    "explanation": "Beim Seepferdchen trägt das Männchen den Nachwuchs in einer Bruttasche aus."
+  },
+  {
+    "id": "q-pic-ginkgo",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "allgemeinbildung",
+    "topic": "pflanzen",
+    "difficulty": 4,
+    "question": "Wessen Blätter sind das?",
+    "options": [
+      "Ginkgo",
+      "Ahorn",
+      "Birke",
+      "Linde"
+    ],
+    "correctIndex": 0,
+    "image": "/img/pictures/ginkgo.jpg",
+    "tags": [
+      "Bilderrätsel"
+    ],
+    "compatibleModes": [
+      "blindguess"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-10-04T18:17:59Z",
+    "updatedAt": "2026-10-04T18:17:59Z",
+    "explanation": "Der Ginkgo ist ein lebendes Fossil; seine fächerförmigen Blätter färben sich im Herbst leuchtend gelb."
   }
 ]

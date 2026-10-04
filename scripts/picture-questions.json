@@ -1,26 +1,482 @@
 [
-  {"slug": "zebra", "topic": "natur", "difficulty": 1, "question": "Welches Tier ist das?", "options": ["Zebra", "Okapi", "Pferd", "Esel"], "correct": 0, "explanation": "Jedes Zebra hat ein einzigartiges Streifenmuster — wie ein Fingerabdruck.", "prompt": "a single zebra standing in the savanna at golden hour, full body side view"},
-  {"slug": "erdbeere", "topic": "essen", "difficulty": 1, "question": "Welche Frucht ist das?", "options": ["Erdbeere", "Himbeere", "Kirsche", "Tomate"], "correct": 0, "explanation": "Botanisch ist die Erdbeere eine Sammelnussfrucht — die kleinen Kerne außen sind die eigentlichen Früchte.", "prompt": "close-up of one ripe red strawberry with green leaves on a dark slate surface"},
-  {"slug": "geige", "topic": "musik", "difficulty": 1, "question": "Welches Instrument ist das?", "options": ["Geige", "Gitarre", "Cello", "Mandoline"], "correct": 0, "explanation": "Die Geige ist das kleinste und höchste Instrument der Streicherfamilie.", "prompt": "a classic wooden violin with bow lying on dark velvet, studio product photo"},
-  {"slug": "pinguin", "topic": "natur", "difficulty": 1, "question": "Welches Tier ist das?", "options": ["Pinguin", "Papageitaucher", "Albatros", "Kormoran"], "correct": 0, "explanation": "Pinguine können nicht fliegen, „fliegen“ aber unter Wasser mit bis zu 35 km/h.", "prompt": "a single emperor penguin standing on ice, full body, soft light"},
-  {"slug": "brezel", "topic": "essen", "difficulty": 2, "question": "Welches Gebäck ist das?", "options": ["Brezel", "Croissant", "Bagel", "Zimtschnecke"], "correct": 0, "explanation": "Die Laugenbrezel bekommt ihre braune Kruste durch ein kurzes Bad in Natronlauge vor dem Backen.", "prompt": "one golden brown German pretzel with coarse salt on a wooden board, close-up"},
-  {"slug": "flamingo", "topic": "natur", "difficulty": 2, "question": "Welcher Vogel ist das?", "options": ["Flamingo", "Löffler", "Ibis", "Kranich"], "correct": 0, "explanation": "Flamingos sind nur rosa, weil sie Carotinoide aus Algen und Krebstierchen fressen.", "prompt": "a single pink flamingo standing on one leg in shallow water, full body"},
-  {"slug": "akkordeon", "topic": "musik", "difficulty": 2, "question": "Welches Instrument ist das?", "options": ["Akkordeon", "Bandoneon", "Mundharmonika", "Harmonium"], "correct": 0, "explanation": "Beim Akkordeon erzeugen durchschlagende Metallzungen den Ton, angeblasen vom Balg.", "prompt": "a red piano accordion with mother-of-pearl buttons on a dark background, studio photo"},
-  {"slug": "chamaeleon", "topic": "natur", "difficulty": 2, "question": "Welches Tier ist das?", "options": ["Chamäleon", "Leguan", "Gecko", "Waran"], "correct": 0, "explanation": "Chamäleons können ihre Augen unabhängig voneinander bewegen und so zwei Richtungen zugleich sehen.", "prompt": "a green chameleon on a branch, curled tail, side view, macro photo"},
-  {"slug": "sushi", "topic": "essen", "difficulty": 2, "question": "Wie heißt diese Sushi-Art?", "options": ["Nigiri", "Maki", "Temaki", "Sashimi"], "correct": 0, "explanation": "Nigiri ist von Hand geformter Reis mit einer Scheibe Fisch obendrauf — „nigiru“ heißt „greifen“.", "prompt": "three pieces of salmon nigiri sushi, hand-formed rice with a slice of raw salmon on top, on a black plate"},
-  {"slug": "kompass", "topic": "geografie", "difficulty": 2, "question": "Was ist das?", "options": ["Kompass", "Sextant", "Barometer", "Sonnenuhr"], "correct": 0, "explanation": "Die Kompassnadel richtet sich am Erdmagnetfeld aus und zeigt zum magnetischen Nordpol.", "prompt": "an old brass magnetic compass with a needle and compass rose, close-up on a wooden map table, no letters"},
-  {"slug": "erdmaennchen", "topic": "natur", "difficulty": 3, "question": "Welches Tier ist das?", "options": ["Erdmännchen", "Präriehund", "Mungo", "Ziesel"], "correct": 0, "explanation": "Erdmännchen leben in Gruppen; ein Wächter steht aufrecht Wache und warnt mit Rufen.", "prompt": "a meerkat standing upright on a sandy mound, alert, full body"},
-  {"slug": "artischocke", "topic": "pflanzen", "difficulty": 3, "question": "Welches Gemüse ist das?", "options": ["Artischocke", "Kohlrabi", "Mangold", "Fenchel"], "correct": 0, "explanation": "Die Artischocke ist eigentlich eine Blütenknospe — ungeerntet blüht sie violett auf.", "prompt": "one whole green artichoke on a dark kitchen counter, close-up"},
-  {"slug": "harfe", "topic": "musik", "difficulty": 3, "question": "Welches Instrument ist das?", "options": ["Harfe", "Leier", "Zither", "Hackbrett"], "correct": 0, "explanation": "Eine Konzertharfe hat 47 Saiten und sieben Pedale, mit denen man die Tonart wechselt.", "prompt": "a golden concert harp on a dark stage under a spotlight, full instrument"},
-  {"slug": "kolibri", "topic": "natur", "difficulty": 3, "question": "Welcher Vogel ist das?", "options": ["Kolibri", "Eisvogel", "Zaunkönig", "Bienenfresser"], "correct": 0, "explanation": "Kolibris können als einzige Vögel auch rückwärts fliegen.", "prompt": "a hummingbird hovering in front of a red flower, wings in motion, macro photo"},
-  {"slug": "lupe-mikroskop", "topic": "technik", "difficulty": 3, "question": "Was ist das?", "options": ["Mikroskop", "Teleskop", "Periskop", "Spektroskop"], "correct": 0, "explanation": "Ein Lichtmikroskop vergrößert mit Objektiv und Okular bis etwa 1000-fach.", "prompt": "a classic laboratory light microscope with objective lenses and stage, studio product photo"},
-  {"slug": "drachenfrucht", "topic": "essen", "difficulty": 3, "question": "Welche Frucht ist das?", "options": ["Drachenfrucht", "Litschi", "Rambutan", "Granatapfel"], "correct": 0, "explanation": "Die Drachenfrucht (Pitaya) wächst an einem Kaktus.", "prompt": "a halved dragon fruit showing white flesh with black seeds and pink skin, on a dark plate"},
-  {"slug": "okapi", "topic": "natur", "difficulty": 4, "question": "Welches Tier ist das?", "options": ["Okapi", "Zebra", "Tapir", "Bongo"], "correct": 0, "explanation": "Das Okapi sieht aus wie ein Zebra-Pferd, ist aber der einzige lebende Verwandte der Giraffe.", "prompt": "an okapi standing in a dense rainforest, full body side view, striped legs"},
-  {"slug": "theremin", "topic": "musik", "difficulty": 4, "question": "Welches Instrument ist das?", "options": ["Theremin", "Synthesizer", "Ondes Martenot", "Vocoder"], "correct": 0, "explanation": "Das Theremin spielt man berührungslos — die Hände verändern elektrische Felder an zwei Antennen.", "prompt": "a theremin electronic instrument, wooden box with one vertical antenna and one loop antenna, studio photo"},
-  {"slug": "axolotl", "topic": "natur", "difficulty": 4, "question": "Welches Tier ist das?", "options": ["Axolotl", "Olm", "Molch", "Salamander"], "correct": 0, "explanation": "Der Axolotl kann verlorene Gliedmaßen und sogar Teile des Herzens nachwachsen lassen.", "prompt": "a pink axolotl with feathery external gills in an aquarium, close-up"},
-  {"slug": "romanesco", "topic": "pflanzen", "difficulty": 4, "question": "Welches Gemüse ist das?", "options": ["Romanesco", "Brokkoli", "Blumenkohl", "Wirsing"], "correct": 0, "explanation": "Die Röschen des Romanesco bilden eine Fraktalstruktur entlang von Fibonacci-Spiralen.", "prompt": "one romanesco broccoli head with green fractal spirals, macro photo, dark background"},
-  {"slug": "sextant", "topic": "geografie", "difficulty": 4, "question": "Was ist das?", "options": ["Sextant", "Astrolabium", "Kompass", "Theodolit"], "correct": 0, "explanation": "Mit dem Sextanten misst man den Winkel eines Gestirns über dem Horizont, um die Position auf See zu bestimmen.", "prompt": "a brass nautical sextant with mirrors and arc scale on a dark wooden table, studio photo, no letters"},
-  {"slug": "pangolin", "topic": "natur", "difficulty": 5, "question": "Welches Tier ist das?", "options": ["Schuppentier", "Gürteltier", "Ameisenigel", "Igel"], "correct": 0, "explanation": "Das Schuppentier (Pangolin) ist das einzige Säugetier mit Hornschuppen und rollt sich bei Gefahr ein.", "prompt": "a pangolin walking on a forest floor, covered in overlapping scales, full body"},
-  {"slug": "mangostan", "topic": "essen", "difficulty": 5, "question": "Welche Frucht ist das?", "options": ["Mangostan", "Litschi", "Longan", "Rambutan"], "correct": 0, "explanation": "Die Mangostan hat eine dicke purpurne Schale und weißes, segmentiertes Fruchtfleisch.", "prompt": "a mangosteen fruit cut open showing white segments inside thick purple rind, on a dark plate"},
-  {"slug": "didgeridoo", "topic": "musik", "difficulty": 5, "question": "Welches Instrument ist das?", "options": ["Didgeridoo", "Alphorn", "Fujara", "Shakuhachi"], "correct": 0, "explanation": "Das Didgeridoo der Aborigines entsteht aus von Termiten ausgehöhlten Eukalyptusstämmen.", "prompt": "a didgeridoo, long wooden wind instrument with painted dot patterns, lying diagonally on red sand"}
+ {
+  "slug": "harfe",
+  "topic": "musik",
+  "difficulty": 2,
+  "question": "Welches Instrument ist das?",
+  "options": [
+   "Harfe",
+   "Leier",
+   "Zither",
+   "Hackbrett"
+  ],
+  "correct": 0,
+  "explanation": "Eine Konzertharfe hat 47 Saiten und sieben Pedale, mit denen man die Tonart wechselt.",
+  "prompt": "a golden concert harp on a dark stage under a spotlight, full instrument"
+ },
+ {
+  "slug": "erdmaennchen",
+  "topic": "natur",
+  "difficulty": 2,
+  "question": "Welches Tier ist das?",
+  "options": [
+   "Erdmännchen",
+   "Präriehund",
+   "Mungo",
+   "Ziesel"
+  ],
+  "correct": 0,
+  "explanation": "Erdmännchen leben in Gruppen; ein Wächter steht aufrecht Wache und warnt mit Rufen.",
+  "prompt": "a meerkat standing upright on a sandy mound, alert, full body"
+ },
+ {
+  "slug": "artischocke",
+  "topic": "pflanzen",
+  "difficulty": 3,
+  "question": "Welches Gemüse ist das?",
+  "options": [
+   "Artischocke",
+   "Kohlrabi",
+   "Mangold",
+   "Fenchel"
+  ],
+  "correct": 0,
+  "explanation": "Die Artischocke ist eigentlich eine Blütenknospe — ungeerntet blüht sie violett auf.",
+  "prompt": "one whole green artichoke on a dark kitchen counter, close-up"
+ },
+ {
+  "slug": "drachenfrucht",
+  "topic": "essen",
+  "difficulty": 3,
+  "question": "Welche Frucht ist das?",
+  "options": [
+   "Drachenfrucht",
+   "Litschi",
+   "Rambutan",
+   "Granatapfel"
+  ],
+  "correct": 0,
+  "explanation": "Die Drachenfrucht (Pitaya) wächst an einem Kaktus.",
+  "prompt": "a halved dragon fruit showing white flesh with black seeds and pink skin, on a dark plate"
+ },
+ {
+  "slug": "pangolin",
+  "topic": "natur",
+  "difficulty": 4,
+  "question": "Welches Tier ist das?",
+  "options": [
+   "Schuppentier",
+   "Gürteltier",
+   "Ameisenigel",
+   "Igel"
+  ],
+  "correct": 0,
+  "explanation": "Das Schuppentier (Pangolin) ist das einzige Säugetier mit Hornschuppen und rollt sich bei Gefahr ein.",
+  "prompt": "a pangolin walking on a forest floor, covered in overlapping scales, full body"
+ },
+ {
+  "slug": "mangostan",
+  "topic": "essen",
+  "difficulty": 5,
+  "question": "Welche Frucht ist das?",
+  "options": [
+   "Mangostan",
+   "Litschi",
+   "Longan",
+   "Rambutan"
+  ],
+  "correct": 0,
+  "explanation": "Die Mangostan hat eine dicke purpurne Schale und weißes, segmentiertes Fruchtfleisch.",
+  "prompt": "a mangosteen fruit cut open showing white segments inside thick purple rind, on a dark plate"
+ },
+ {
+  "slug": "tapir",
+  "topic": "natur",
+  "difficulty": 2,
+  "question": "Welches Tier ist das?",
+  "options": [
+   "Tapir",
+   "Ameisenbär",
+   "Wildschwein",
+   "Capybara"
+  ],
+  "correct": 0,
+  "explanation": "Tapire sind mit Pferden und Nashörnern verwandt – der kurze Rüssel ist eine verlängerte Oberlippe.",
+  "prompt": "a single lowland tapir walking through a tropical forest clearing, full body side view, short trunk clearly visible"
+ },
+ {
+  "slug": "narwal",
+  "topic": "natur",
+  "difficulty": 3,
+  "question": "Welches Tier ist das?",
+  "options": [
+   "Narwal",
+   "Beluga",
+   "Schwertwal",
+   "Pottwal"
+  ],
+  "correct": 0,
+  "explanation": "Der „Stoßzahn“ des Narwals ist ein bis zu drei Meter langer, spiralig gedrehter Eckzahn.",
+  "prompt": "a single narwhal swimming in dark arctic water under ice, its long spiral tusk clearly visible"
+ },
+ {
+  "slug": "schuhschnabel",
+  "topic": "natur",
+  "difficulty": 4,
+  "question": "Welcher Vogel ist das?",
+  "options": [
+   "Schuhschnabel",
+   "Marabu",
+   "Pelikan",
+   "Graureiher"
+  ],
+  "correct": 0,
+  "explanation": "Der Schuhschnabel lebt in ostafrikanischen Sümpfen und kann stundenlang regungslos auf Lungenfische lauern.",
+  "prompt": "a single shoebill stork standing in a papyrus swamp, huge shoe shaped bill, grey plumage, full body"
+ },
+ {
+  "slug": "quokka",
+  "topic": "natur",
+  "difficulty": 3,
+  "question": "Welches Tier ist das?",
+  "options": [
+   "Quokka",
+   "Wallaby",
+   "Wombat",
+   "Opossum"
+  ],
+  "correct": 0,
+  "explanation": "Quokkas leben fast nur auf Rottnest Island vor Perth und gelten wegen ihres Gesichts als „glücklichstes Tier der Welt“.",
+  "prompt": "a single quokka sitting on sandy ground among low shrubs, small round marsupial with smiling face, full body"
+ },
+ {
+  "slug": "kasuar",
+  "topic": "natur",
+  "difficulty": 4,
+  "question": "Welcher Vogel ist das?",
+  "options": [
+   "Kasuar",
+   "Emu",
+   "Strauß",
+   "Nandu"
+  ],
+  "correct": 0,
+  "explanation": "Der Kasuar trägt einen hornartigen Helm und gilt mit seinen dolchartigen Krallen als gefährlichster Vogel der Welt.",
+  "prompt": "a single southern cassowary standing in a rainforest, blue neck, red wattles, tall casque on its head, full body"
+ },
+ {
+  "slug": "okra",
+  "topic": "essen",
+  "difficulty": 3,
+  "question": "Welches Gemüse ist das?",
+  "options": [
+   "Okra",
+   "Zuckerschote",
+   "Peperoni",
+   "Grüne Bohne"
+  ],
+  "correct": 0,
+  "explanation": "Okra stammt vermutlich aus Afrika; aufgeschnitten zeigt die Schote einen fünfeckigen Querschnitt.",
+  "prompt": "a pile of fresh green okra pods on a wooden board, one pod cut in half showing the star shaped cross section with seeds"
+ },
+ {
+  "slug": "physalis",
+  "topic": "essen",
+  "difficulty": 2,
+  "question": "Welche Frucht ist das?",
+  "options": [
+   "Physalis",
+   "Kumquat",
+   "Mirabelle",
+   "Stachelbeere"
+  ],
+  "correct": 0,
+  "explanation": "Die Physalis steckt in einer papierartigen Hülle aus Kelchblättern – sie gehört zu den Nachtschattengewächsen.",
+  "prompt": "several physalis cape gooseberries, orange berries partly wrapped in dry papery beige husks, on a dark slate"
+ },
+ {
+  "slug": "kumquat",
+  "topic": "essen",
+  "difficulty": 4,
+  "question": "Welche Frucht ist das?",
+  "options": [
+   "Kumquat",
+   "Mandarine",
+   "Physalis",
+   "Mirabelle"
+  ],
+  "correct": 0,
+  "explanation": "Kumquats werden mitsamt der süßen Schale gegessen – das Fruchtfleisch ist dagegen sauer.",
+  "prompt": "a small bowl of whole oval kumquats with a few green leaves, one kumquat sliced in half, bright orange"
+ },
+ {
+  "slug": "kohlrabi",
+  "topic": "pflanzen",
+  "difficulty": 2,
+  "question": "Welches Gemüse ist das?",
+  "options": [
+   "Kohlrabi",
+   "Rote Bete",
+   "Steckrübe",
+   "Sellerie"
+  ],
+  "correct": 0,
+  "explanation": "Kohlrabi ist eine verdickte Sprossachse – international heißt er tatsächlich oft „German turnip“.",
+  "prompt": "a single purple kohlrabi bulb with its leaf stalks on a rustic kitchen table"
+ },
+ {
+  "slug": "pastinake",
+  "topic": "pflanzen",
+  "difficulty": 4,
+  "question": "Welches Gemüse ist das?",
+  "options": [
+   "Pastinake",
+   "Petersilienwurzel",
+   "Möhre",
+   "Schwarzwurzel"
+  ],
+  "correct": 0,
+  "explanation": "Die Pastinake war vor der Kartoffel ein Grundnahrungsmittel in Mitteleuropa; sie schmeckt süßlich-nussig.",
+  "prompt": "three whole parsnips, cream white tapered roots with a little green top, on a linen cloth"
+ },
+ {
+  "slug": "rambutan",
+  "topic": "essen",
+  "difficulty": 4,
+  "question": "Welche Frucht ist das?",
+  "options": [
+   "Rambutan",
+   "Litschi",
+   "Longan",
+   "Mangostan"
+  ],
+  "correct": 0,
+  "explanation": "Rambutan heißt auf Malaiisch „haarig“ – unter der weichen Stachelschale liegt glasiges, süßes Fruchtfleisch.",
+  "prompt": "a cluster of red hairy rambutan fruits, one peeled open showing white translucent flesh"
+ },
+ {
+  "slug": "sitar",
+  "topic": "musik",
+  "difficulty": 3,
+  "question": "Welches Instrument ist das?",
+  "options": [
+   "Sitar",
+   "Laute",
+   "Banjo",
+   "Oud"
+  ],
+  "correct": 0,
+  "explanation": "Die Sitar hat neben den Spielsaiten viele Resonanzsaiten; durch Ravi Shankar und die Beatles wurde sie im Westen bekannt.",
+  "prompt": "a single indian sitar lying on a dark carpet, long wooden neck with curved metal frets and a round gourd resonator"
+ },
+ {
+  "slug": "dudelsack",
+  "topic": "musik",
+  "difficulty": 2,
+  "question": "Welches Instrument ist das?",
+  "options": [
+   "Dudelsack",
+   "Schalmei",
+   "Drehleier",
+   "Akkordeon"
+  ],
+  "correct": 0,
+  "explanation": "Beim Dudelsack füllt der Spieler einen Luftsack, der die Pfeifen auch beim Atemholen weiter klingen lässt.",
+  "prompt": "a single scottish bagpipe with tartan bag and three drone pipes lying on a wooden table"
+ },
+ {
+  "slug": "drehleier",
+  "topic": "musik",
+  "difficulty": 5,
+  "question": "Welches Instrument ist das?",
+  "options": [
+   "Drehleier",
+   "Nyckelharpa",
+   "Hackbrett",
+   "Viola da Gamba"
+  ],
+  "correct": 0,
+  "explanation": "Bei der Drehleier streicht ein mit einer Kurbel gedrehtes Holzrad die Saiten – gespielt wird sie über Tasten.",
+  "prompt": "a single wooden hurdy gurdy instrument with crank handle and keybox, lying on dark velvet"
+ },
+ {
+  "slug": "steeldrum",
+  "topic": "musik",
+  "difficulty": 3,
+  "question": "Welches Instrument ist das?",
+  "options": [
+   "Steel Drum",
+   "Gong",
+   "Tabla",
+   "Handpan"
+  ],
+  "correct": 0,
+  "explanation": "Die Steel Pan stammt aus Trinidad und Tobago und wurde ursprünglich aus Ölfässern gebaut.",
+  "prompt": "a single chrome caribbean steel pan drum with hammered note areas, two rubber tipped sticks beside it"
+ },
+ {
+  "slug": "abakus",
+  "topic": "technik",
+  "difficulty": 2,
+  "question": "Was ist das?",
+  "options": [
+   "Abakus",
+   "Rechenschieber",
+   "Zählrahmen-Spielzeug",
+   "Webstuhl"
+  ],
+  "correct": 0,
+  "explanation": "Der Abakus ist eines der ältesten Rechenhilfsmittel; in Japan (Soroban) wird er bis heute gelehrt.",
+  "prompt": "a wooden chinese abacus with beads on vertical rods, on a desk, front view"
+ },
+ {
+  "slug": "rechenschieber",
+  "topic": "technik",
+  "difficulty": 4,
+  "question": "Was ist das?",
+  "options": [
+   "Rechenschieber",
+   "Lineal",
+   "Messschieber",
+   "Planimeter"
+  ],
+  "correct": 0,
+  "explanation": "Mit Rechenschiebern wurde noch die Mondlandung berechnet – bis der Taschenrechner sie in den 1970ern verdrängte.",
+  "prompt": "a vintage slide rule with sliding middle scale and transparent cursor, close shot on a drafting table"
+ },
+ {
+  "slug": "astrolabium",
+  "topic": "technik",
+  "difficulty": 5,
+  "question": "Was ist das?",
+  "options": [
+   "Astrolabium",
+   "Sextant",
+   "Armillarsphäre",
+   "Kompass"
+  ],
+  "correct": 0,
+  "explanation": "Das Astrolabium diente schon in der Antike zur Bestimmung von Sternpositionen und Uhrzeit.",
+  "prompt": "an antique brass astrolabe with engraved circular plates and a rotating pointer, on dark wood"
+ },
+ {
+  "slug": "theodolit",
+  "topic": "technik",
+  "difficulty": 5,
+  "question": "Was ist das?",
+  "options": [
+   "Theodolit",
+   "Teleskop",
+   "Nivelliergerät",
+   "Periskop"
+  ],
+  "correct": 0,
+  "explanation": "Mit dem Theodolit messen Vermesser horizontale und vertikale Winkel – heute meist als elektronische Totalstation.",
+  "prompt": "a surveying theodolite instrument mounted on a yellow tripod at a construction site"
+ },
+ {
+  "slug": "stethoskop",
+  "topic": "technik",
+  "difficulty": 2,
+  "question": "Was ist das?",
+  "options": [
+   "Stethoskop",
+   "Blutdruckmessgerät",
+   "Reflexhammer",
+   "Otoskop"
+  ],
+  "correct": 0,
+  "explanation": "Das Stethoskop erfand René Laënnec 1816 – zuerst als einfaches Holzrohr.",
+  "prompt": "a single medical stethoscope lying on a white surface, chest piece and ear tubes visible"
+ },
+ {
+  "slug": "mate",
+  "topic": "essen",
+  "difficulty": 4,
+  "question": "Was ist das?",
+  "options": [
+   "Mate-Becher mit Bombilla",
+   "Teekanne",
+   "Kaffeemühle",
+   "Gewürzmörser"
+  ],
+  "correct": 0,
+  "explanation": "Mate wird in Südamerika aus einem Kürbisgefäß durch ein Metallröhrchen mit Sieb, die Bombilla, getrunken.",
+  "prompt": "a traditional mate gourd cup filled with yerba mate leaves and a metal bombilla straw, on a wooden table"
+ },
+ {
+  "slug": "nautilus",
+  "topic": "natur",
+  "difficulty": 4,
+  "question": "Welches Tier ist das?",
+  "options": [
+   "Nautilus",
+   "Ammonit",
+   "Tintenfisch",
+   "Weinbergschnecke"
+  ],
+  "correct": 0,
+  "explanation": "Der Nautilus gilt als „lebendes Fossil“: seine Bauweise hat sich seit rund 500 Millionen Jahren kaum verändert.",
+  "prompt": "a single chambered nautilus swimming in deep blue water, striped spiral shell and tentacles"
+ },
+ {
+  "slug": "seepferdchen",
+  "topic": "natur",
+  "difficulty": 2,
+  "question": "Welches Tier ist das?",
+  "options": [
+   "Seepferdchen",
+   "Seenadel",
+   "Fetzenfisch",
+   "Seedrache"
+  ],
+  "correct": 0,
+  "explanation": "Beim Seepferdchen trägt das Männchen den Nachwuchs in einer Bruttasche aus.",
+  "prompt": "a single seahorse holding on to seagrass with its tail, side view, clear water"
+ },
+ {
+  "slug": "igelfisch",
+  "topic": "natur",
+  "difficulty": 3,
+  "question": "Welches Tier ist das?",
+  "options": [
+   "Igelfisch",
+   "Kugelfisch",
+   "Seeigel",
+   "Drachenkopf"
+  ],
+  "correct": 0,
+  "explanation": "Der Igelfisch pumpt sich bei Gefahr mit Wasser auf und stellt dabei seine Stacheln auf.",
+  "prompt": "a single inflated porcupinefish with spines raised, swimming over a coral reef"
+ },
+ {
+  "slug": "ginkgo",
+  "topic": "pflanzen",
+  "difficulty": 4,
+  "question": "Wessen Blätter sind das?",
+  "options": [
+   "Ginkgo",
+   "Ahorn",
+   "Birke",
+   "Linde"
+  ],
+  "correct": 0,
+  "explanation": "Der Ginkgo ist ein lebendes Fossil; seine fächerförmigen Blätter färben sich im Herbst leuchtend gelb.",
+  "prompt": "close up of several fan shaped ginkgo leaves on a branch, bright yellow autumn color"
+ },
+ {
+  "slug": "venusfliegenfalle",
+  "topic": "pflanzen",
+  "difficulty": 3,
+  "question": "Welche Pflanze ist das?",
+  "options": [
+   "Venusfliegenfalle",
+   "Sonnentau",
+   "Kannenpflanze",
+   "Aloe"
+  ],
+  "correct": 0,
+  "explanation": "Die Venusfliegenfalle schnappt zu, wenn ein Insekt innerhalb von etwa 20 Sekunden zweimal ihre Fühlborsten berührt.",
+  "prompt": "a venus flytrap plant in a pot, several open red traps with tooth like bristles, macro photo"
+ }
 ]
