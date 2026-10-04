@@ -37,6 +37,7 @@ import type {
   FlashLive,
   GameAction,
   GameState,
+  GeoLive,
   PictureLive,
   PointsLadderLive,
   SpotlightLive,
@@ -50,7 +51,9 @@ import {
   TOPICS_ALPHABETICAL,
   TOPICS_BY_ID,
   getTeamColorHex,
+  formatKm,
 } from '@quizapp/shared'
+import { WorldMap, type MapPin } from '@/components/geo/WorldMap'
 import { ScreenLayout } from '@/components/ScreenLayout'
 import { Card } from '@/components/Card'
 import { AvatarBadge } from '@/components/AvatarBadge'
@@ -802,6 +805,9 @@ function PhaseView({
       }
       if (live?.kind === 'experts') {
         return <ExpertsRoomView state={state} live={live} playerId={playerId} isHost={isHost} canDispatch={canDispatch} send={send} />
+      }
+      if (live?.kind === 'geoguess') {
+        return <GeoRoomView state={state} live={live} playerId={playerId} isHost={isHost} canDispatch={canDispatch} send={send} />
       }
       if (live?.kind === 'blindguess') {
         return <PictureRoomView state={state} live={live} playerId={playerId} isHost={isHost} canDispatch={canDispatch} send={send} />
@@ -3826,6 +3832,137 @@ function useScoreDelta(score: number): number | null {
  * Bilderrätsel: Bild wird über 10 s scharf, alle Teams tippen parallel,
  * frühe richtige Antwort = mehr Punkte. Host löst auf und schaltet weiter.
  */
+/**
+ * „Wo liegt das?": Ort ansagen, Teams setzen ihre Nadel auf dem Handy (verschiebbar
+ * bis zur Auflösung). Gegner-Nadeln bleiben bis dahin verborgen.
+ */
+function GeoRoomView({
+  state,
+  live,
+  playerId,
+  isHost,
+  canDispatch,
+  send,
+}: {
+  state: GameState
+  live: GeoLive
+  playerId: string | null
+  isHost: boolean
+  canDispatch: boolean
+  send: (a: GameAction) => void
+}) {
+  if (!state.round) return <LoadingCard label="Lade Runde …" />
+  const teams = state.round.teams
+  const myPlayer = playerId ? state.round.players.find((p) => p.id === playerId) : null
+  const isMaster = !myPlayer
+  const myTeamId = myPlayer?.teamId ?? null
+  const place = live.place
+  if (live.phase === 'empty' || !place) {
+    return (
+      <Card className="space-y-3 p-6 text-center">
+        <div className="text-white/80">Keine Orte im Katalog.</div>
+        <Button variant="primary" onClick={() => send({ type: 'FINISH_MODE' })} disabled={!canDispatch || !isHost} className="w-full">
+          Modus überspringen
+        </Button>
+      </Card>
+    )
+  }
+  const revealed = live.phase === 'revealed'
+  const placed = Object.values(live.pins).filter((p) => p !== null).length
+  const myPin = myTeamId ? live.pins[myTeamId] : null
+  const canPick = canDispatch && !revealed && !!myTeamId
+
+  const pins: MapPin[] = teams.flatMap((t) => {
+    const pin = live.pins[t.id]
+    if (!pin) return []
+    if (!revealed && t.id !== myTeamId) return []
+    return [{ id: t.id, lat: pin.lat, lon: pin.lon, color: getTeamColorHex(t.color), mine: t.id === myTeamId }]
+  })
+  const distances = revealed
+    ? Object.fromEntries(
+        teams.flatMap((t) => {
+          const r = live.lastResult[t.id]
+          return r ? [[t.id, formatKm(r.km)]] : []
+        }),
+      )
+    : undefined
+
+  return (
+    <div className="space-y-3">
+      <Card className={cn('flex flex-wrap items-center gap-3', isMaster ? 'p-5' : 'p-3')}>
+        <div className="min-w-0">
+          <div className="text-xs uppercase tracking-[0.32em] text-correct">Wo liegt das?</div>
+          <div className={cn('mt-1 font-mono text-white', isMaster ? 'text-2xl' : 'text-sm')}>
+            Ort {live.currentIndex + 1} / {live.totalRounds}
+          </div>
+        </div>
+        <div className="flex w-full flex-wrap gap-2 sm:ml-auto sm:w-auto">
+          {teams.map((team) => (
+            <TeamScoreChip key={team.id} team={team} score={live.scores[team.id] ?? 0} isMaster={isMaster} />
+          ))}
+        </div>
+      </Card>
+
+      <Card className={cn('text-center', isMaster ? 'p-6' : 'p-4')}>
+        <div className="text-xs uppercase tracking-[0.28em] text-ink-muted">Setz die Nadel</div>
+        <div className={cn('mt-1 font-display font-extrabold text-white', isMaster ? 'text-5xl' : 'text-3xl')}>
+          {place.name}
+        </div>
+        {revealed && <div className={cn('mt-1 text-ink-muted', isMaster ? 'text-lg' : 'text-sm')}>{place.country}</div>}
+      </Card>
+
+      <WorldMap
+        pins={pins}
+        target={revealed ? { lat: place.lat, lon: place.lon, name: place.name } : null}
+        distances={distances}
+        onPick={canPick ? (p) => myTeamId && send({ type: 'GEO_SET_PIN', teamId: myTeamId, lat: p.lat, lon: p.lon }) : undefined}
+        aspect={isMaster ? 2 : 4 / 3}
+      />
+
+      {revealed && (
+        <Card className={cn('space-y-2', isMaster ? 'p-5' : 'p-3')}>
+          {teams.map((t) => {
+            const r = live.lastResult[t.id]
+            const hex = getTeamColorHex(t.color)
+            return (
+              <div key={t.id} className={cn('flex items-center gap-2', isMaster ? 'text-lg' : 'text-sm')}>
+                <span className="h-2.5 w-2.5 rounded-full" style={{ background: hex, boxShadow: `0 0 8px ${hex}` }} />
+                <span className="flex-1 text-white/85">{t.name}</span>
+                <span className="font-mono text-white/70">{r ? formatKm(r.km) : 'keine Nadel'}</span>
+                {r?.closest && <span className="rounded-full bg-amber-300/15 px-2 text-xs font-semibold text-amber-200">am nächsten</span>}
+                <span className="w-14 text-right font-display font-extrabold text-correct">+{r?.points ?? 0}</span>
+              </div>
+            )
+          })}
+          <div className={cn('border-t border-white/10 pt-2 text-ink-muted', isMaster ? 'text-base' : 'text-sm')}>{place.fact}</div>
+        </Card>
+      )}
+
+      <ShowStatus stage={isMaster} tone={myPin && !revealed ? 'active' : 'neutral'}>
+        {revealed
+          ? 'Auflösung'
+          : myTeamId
+            ? myPin
+              ? `Nadel gesetzt — du kannst sie noch verschieben · ${placed} / ${teams.length} Teams`
+              : 'Tippe auf die Karte, um eure Nadel zu setzen (zoomen mit zwei Fingern)'
+            : `${placed} / ${teams.length} Teams haben ihre Nadel gesetzt`}
+      </ShowStatus>
+
+      {(isHost || isMaster) && (
+        <Button
+          size="lg"
+          variant="primary"
+          className={cn('w-full', isMaster && 'h-16 text-lg')}
+          disabled={!canDispatch}
+          onClick={() => send({ type: revealed ? 'GEO_NEXT' : 'GEO_REVEAL' })}
+        >
+          {!revealed ? 'Auflösen' : live.currentIndex + 1 >= live.totalRounds ? 'Runde beenden' : 'Nächster Ort'}
+        </Button>
+      )}
+    </div>
+  )
+}
+
 /** Fester Zoom-Ausschnitt pro Frage (abseits der Bildmitte, damit das Motiv nicht sofort erkennbar ist). */
 function pictureFocus(id: string): string {
   let h = 0

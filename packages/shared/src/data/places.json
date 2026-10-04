@@ -1,0 +1,893 @@
+[
+ {
+  "id": "geo-paris",
+  "name": "Paris",
+  "country": "Frankreich",
+  "lat": 48.857,
+  "lon": 2.352,
+  "difficulty": 1,
+  "fact": "Paris hat über 2 Millionen Einwohner, der Großraum mehr als 12 Millionen."
+ },
+ {
+  "id": "geo-new-york",
+  "name": "New York",
+  "country": "USA",
+  "lat": 40.713,
+  "lon": -74.006,
+  "difficulty": 1,
+  "fact": "New York war von 1785 bis 1790 Hauptstadt der USA."
+ },
+ {
+  "id": "geo-rom",
+  "name": "Rom",
+  "country": "Italien",
+  "lat": 41.903,
+  "lon": 12.496,
+  "difficulty": 1,
+  "fact": "Mitten in Rom liegt mit dem Vatikan der kleinste Staat der Welt."
+ },
+ {
+  "id": "geo-london",
+  "name": "London",
+  "country": "Vereinigtes Königreich",
+  "lat": 51.507,
+  "lon": -0.128,
+  "difficulty": 1,
+  "fact": "Die Londoner U-Bahn von 1863 ist die älteste der Welt."
+ },
+ {
+  "id": "geo-tokio",
+  "name": "Tokio",
+  "country": "Japan",
+  "lat": 35.68,
+  "lon": 139.769,
+  "difficulty": 1,
+  "fact": "Der Großraum Tokio ist mit rund 37 Millionen Menschen der größte der Welt."
+ },
+ {
+  "id": "geo-sydney",
+  "name": "Sydney",
+  "country": "Australien",
+  "lat": -33.869,
+  "lon": 151.209,
+  "difficulty": 1,
+  "fact": "Hauptstadt Australiens ist nicht Sydney, sondern Canberra."
+ },
+ {
+  "id": "geo-kairo",
+  "name": "Kairo",
+  "country": "Ägypten",
+  "lat": 30.044,
+  "lon": 31.236,
+  "difficulty": 1,
+  "fact": "Die Pyramiden von Gizeh liegen am Stadtrand von Kairo."
+ },
+ {
+  "id": "geo-rio",
+  "name": "Rio de Janeiro",
+  "country": "Brasilien",
+  "lat": -22.907,
+  "lon": -43.173,
+  "difficulty": 1,
+  "fact": "Rio war bis 1960 die Hauptstadt Brasiliens."
+ },
+ {
+  "id": "geo-moskau",
+  "name": "Moskau",
+  "country": "Russland",
+  "lat": 55.756,
+  "lon": 37.617,
+  "difficulty": 1,
+  "fact": "Moskau ist die nördlichste Millionenmetropole Europas außer Sankt Petersburg."
+ },
+ {
+  "id": "geo-madrid",
+  "name": "Madrid",
+  "country": "Spanien",
+  "lat": 40.417,
+  "lon": -3.704,
+  "difficulty": 1,
+  "fact": "Madrid ist mit rund 650 m die höchstgelegene Hauptstadt der EU."
+ },
+ {
+  "id": "geo-berlin",
+  "name": "Berlin",
+  "country": "Deutschland",
+  "lat": 52.52,
+  "lon": 13.405,
+  "difficulty": 1,
+  "fact": "Berlin hat mehr Brücken als Venedig."
+ },
+ {
+  "id": "geo-istanbul",
+  "name": "Istanbul",
+  "country": "Türkei",
+  "lat": 41.008,
+  "lon": 28.978,
+  "difficulty": 1,
+  "fact": "Istanbul liegt auf zwei Kontinenten, getrennt durch den Bosporus."
+ },
+ {
+  "id": "geo-los-angeles",
+  "name": "Los Angeles",
+  "country": "USA",
+  "lat": 34.052,
+  "lon": -118.244,
+  "difficulty": 1,
+  "fact": "Der volle Name der Gründung war „El Pueblo de Nuestra Señora la Reina de los Ángeles“."
+ },
+ {
+  "id": "geo-eiffelturm",
+  "name": "Eiffelturm",
+  "country": "Frankreich",
+  "lat": 48.858,
+  "lon": 2.294,
+  "difficulty": 1,
+  "fact": "Der Eiffelturm wurde zur Weltausstellung 1889 gebaut und sollte nur 20 Jahre stehen."
+ },
+ {
+  "id": "geo-lissabon",
+  "name": "Lissabon",
+  "country": "Portugal",
+  "lat": 38.722,
+  "lon": -9.139,
+  "difficulty": 2,
+  "fact": "Lissabon ist die westlichste Hauptstadt des europäischen Festlands."
+ },
+ {
+  "id": "geo-stockholm",
+  "name": "Stockholm",
+  "country": "Schweden",
+  "lat": 59.329,
+  "lon": 18.069,
+  "difficulty": 2,
+  "fact": "Stockholm ist auf 14 Inseln gebaut."
+ },
+ {
+  "id": "geo-athen",
+  "name": "Athen",
+  "country": "Griechenland",
+  "lat": 37.984,
+  "lon": 23.728,
+  "difficulty": 2,
+  "fact": "Athen gilt als eine der ältesten durchgehend bewohnten Städte Europas."
+ },
+ {
+  "id": "geo-dubai",
+  "name": "Dubai",
+  "country": "VAE",
+  "lat": 25.205,
+  "lon": 55.271,
+  "difficulty": 2,
+  "fact": "Der Burj Khalifa in Dubai ist mit 828 m das höchste Gebäude der Welt."
+ },
+ {
+  "id": "geo-mumbai",
+  "name": "Mumbai",
+  "country": "Indien",
+  "lat": 19.076,
+  "lon": 72.878,
+  "difficulty": 2,
+  "fact": "Mumbai ist das Zentrum von Bollywood."
+ },
+ {
+  "id": "geo-peking",
+  "name": "Peking",
+  "country": "China",
+  "lat": 39.904,
+  "lon": 116.407,
+  "difficulty": 2,
+  "fact": "Peking hieß bis 1949 zeitweise Peiping."
+ },
+ {
+  "id": "geo-buenos-aires",
+  "name": "Buenos Aires",
+  "country": "Argentinien",
+  "lat": -34.604,
+  "lon": -58.382,
+  "difficulty": 2,
+  "fact": "Buenos Aires gilt als Geburtsstadt des Tangos."
+ },
+ {
+  "id": "geo-kapstadt",
+  "name": "Kapstadt",
+  "country": "Südafrika",
+  "lat": -33.925,
+  "lon": 18.424,
+  "difficulty": 2,
+  "fact": "Über Kapstadt thront der Tafelberg."
+ },
+ {
+  "id": "geo-mexiko-stadt",
+  "name": "Mexiko-Stadt",
+  "country": "Mexiko",
+  "lat": 19.433,
+  "lon": -99.133,
+  "difficulty": 2,
+  "fact": "Mexiko-Stadt wurde auf einem trockengelegten See errichtet und sinkt jedes Jahr ein Stück."
+ },
+ {
+  "id": "geo-toronto",
+  "name": "Toronto",
+  "country": "Kanada",
+  "lat": 43.653,
+  "lon": -79.383,
+  "difficulty": 2,
+  "fact": "Toronto ist die größte Stadt Kanadas – Hauptstadt ist aber Ottawa."
+ },
+ {
+  "id": "geo-bangkok",
+  "name": "Bangkok",
+  "country": "Thailand",
+  "lat": 13.756,
+  "lon": 100.502,
+  "difficulty": 2,
+  "fact": "Der zeremonielle Name Bangkoks ist einer der längsten Ortsnamen der Welt."
+ },
+ {
+  "id": "geo-singapur",
+  "name": "Singapur",
+  "country": "Singapur",
+  "lat": 1.352,
+  "lon": 103.82,
+  "difficulty": 2,
+  "fact": "Singapur liegt nur rund 140 km nördlich des Äquators."
+ },
+ {
+  "id": "geo-wien",
+  "name": "Wien",
+  "country": "Österreich",
+  "lat": 48.208,
+  "lon": 16.373,
+  "difficulty": 2,
+  "fact": "In Wien steht das älteste noch betriebene Riesenrad mit Gondeln, das Wiener Riesenrad von 1897."
+ },
+ {
+  "id": "geo-chicago",
+  "name": "Chicago",
+  "country": "USA",
+  "lat": 41.878,
+  "lon": -87.63,
+  "difficulty": 2,
+  "fact": "In Chicago entstand 1885 das erste Hochhaus mit Stahlskelett."
+ },
+ {
+  "id": "geo-machu-picchu",
+  "name": "Machu Picchu",
+  "country": "Peru",
+  "lat": -13.163,
+  "lon": -72.545,
+  "difficulty": 2,
+  "fact": "Die Inka-Stadt Machu Picchu wurde erst 1911 international bekannt."
+ },
+ {
+  "id": "geo-taj-mahal",
+  "name": "Taj Mahal",
+  "country": "Indien",
+  "lat": 27.175,
+  "lon": 78.042,
+  "difficulty": 2,
+  "fact": "Das Taj Mahal ist ein Grabmal, das Shah Jahan für seine Frau Mumtaz Mahal bauen ließ."
+ },
+ {
+  "id": "geo-mount-everest",
+  "name": "Mount Everest",
+  "country": "Nepal/China",
+  "lat": 27.988,
+  "lon": 86.925,
+  "difficulty": 2,
+  "fact": "Der Everest wächst durch die Plattentektonik jedes Jahr um einige Millimeter."
+ },
+ {
+  "id": "geo-niagarafaelle",
+  "name": "Niagarafälle",
+  "country": "USA/Kanada",
+  "lat": 43.08,
+  "lon": -79.074,
+  "difficulty": 2,
+  "fact": "Über die Niagarafälle stürzen pro Sekunde rund 2800 Kubikmeter Wasser."
+ },
+ {
+  "id": "geo-san-francisco",
+  "name": "San Francisco",
+  "country": "USA",
+  "lat": 37.775,
+  "lon": -122.419,
+  "difficulty": 2,
+  "fact": "Die Golden Gate Bridge ist eigentlich orange („International Orange“)."
+ },
+ {
+  "id": "geo-venedig",
+  "name": "Venedig",
+  "country": "Italien",
+  "lat": 45.441,
+  "lon": 12.316,
+  "difficulty": 2,
+  "fact": "Venedig ist auf über 100 Inseln gebaut."
+ },
+ {
+  "id": "geo-hawaii-honolulu",
+  "name": "Honolulu",
+  "country": "USA (Hawaii)",
+  "lat": 21.307,
+  "lon": -157.858,
+  "difficulty": 2,
+  "fact": "Honolulu bedeutet auf Hawaiianisch „geschützte Bucht“."
+ },
+ {
+  "id": "geo-reykjavik",
+  "name": "Reykjavík",
+  "country": "Island",
+  "lat": 64.147,
+  "lon": -21.943,
+  "difficulty": 3,
+  "fact": "Reykjavík ist die nördlichste Hauptstadt eines souveränen Staates."
+ },
+ {
+  "id": "geo-nairobi",
+  "name": "Nairobi",
+  "country": "Kenia",
+  "lat": -1.292,
+  "lon": 36.822,
+  "difficulty": 3,
+  "fact": "Nairobi hat einen Nationalpark mit Löwen und Giraffen direkt am Stadtrand."
+ },
+ {
+  "id": "geo-lima",
+  "name": "Lima",
+  "country": "Peru",
+  "lat": -12.046,
+  "lon": -77.043,
+  "difficulty": 3,
+  "fact": "In Lima regnet es fast nie – die Stadt liegt in einer Küstenwüste."
+ },
+ {
+  "id": "geo-hanoi",
+  "name": "Hanoi",
+  "country": "Vietnam",
+  "lat": 21.028,
+  "lon": 105.854,
+  "difficulty": 3,
+  "fact": "Hanoi feierte 2010 sein 1000-jähriges Bestehen."
+ },
+ {
+  "id": "geo-havanna",
+  "name": "Havanna",
+  "country": "Kuba",
+  "lat": 23.113,
+  "lon": -82.366,
+  "difficulty": 3,
+  "fact": "In Havanna fahren noch viele US-Oldtimer aus den 1950ern."
+ },
+ {
+  "id": "geo-marrakesch",
+  "name": "Marrakesch",
+  "country": "Marokko",
+  "lat": 31.629,
+  "lon": -7.981,
+  "difficulty": 3,
+  "fact": "Marrakesch gab dem Land Marokko seinen Namen."
+ },
+ {
+  "id": "geo-vancouver",
+  "name": "Vancouver",
+  "country": "Kanada",
+  "lat": 49.283,
+  "lon": -123.121,
+  "difficulty": 3,
+  "fact": "Vancouver war 2010 Gastgeber der Olympischen Winterspiele."
+ },
+ {
+  "id": "geo-helsinki",
+  "name": "Helsinki",
+  "country": "Finnland",
+  "lat": 60.17,
+  "lon": 24.938,
+  "difficulty": 3,
+  "fact": "Helsinki liegt nur rund 80 km von Tallinn entfernt."
+ },
+ {
+  "id": "geo-seoul",
+  "name": "Seoul",
+  "country": "Südkorea",
+  "lat": 37.567,
+  "lon": 126.978,
+  "difficulty": 3,
+  "fact": "Seoul liegt nur etwa 50 km von der Grenze zu Nordkorea entfernt."
+ },
+ {
+  "id": "geo-teheran",
+  "name": "Teheran",
+  "country": "Iran",
+  "lat": 35.689,
+  "lon": 51.389,
+  "difficulty": 3,
+  "fact": "Teheran liegt am Fuß des Elburs-Gebirges, der höchste Gipfel ist über 5600 m hoch."
+ },
+ {
+  "id": "geo-santiago",
+  "name": "Santiago de Chile",
+  "country": "Chile",
+  "lat": -33.449,
+  "lon": -70.669,
+  "difficulty": 3,
+  "fact": "Von Santiago sieht man an klaren Tagen die schneebedeckten Anden."
+ },
+ {
+  "id": "geo-anchorage",
+  "name": "Anchorage",
+  "country": "USA (Alaska)",
+  "lat": 61.218,
+  "lon": -149.9,
+  "difficulty": 3,
+  "fact": "In Anchorage lebt fast die Hälfte aller Einwohner Alaskas."
+ },
+ {
+  "id": "geo-petra",
+  "name": "Petra",
+  "country": "Jordanien",
+  "lat": 30.329,
+  "lon": 35.444,
+  "difficulty": 3,
+  "fact": "Die Felsenstadt Petra war Kulisse in „Indiana Jones und der letzte Kreuzzug“."
+ },
+ {
+  "id": "geo-angkor-wat",
+  "name": "Angkor Wat",
+  "country": "Kambodscha",
+  "lat": 13.412,
+  "lon": 103.867,
+  "difficulty": 3,
+  "fact": "Angkor Wat ist das größte religiöse Bauwerk der Welt."
+ },
+ {
+  "id": "geo-uluru",
+  "name": "Uluru",
+  "country": "Australien",
+  "lat": -25.344,
+  "lon": 131.036,
+  "difficulty": 3,
+  "fact": "Der Uluru ragt rund 350 m aus der Ebene – unter der Erde reicht er noch kilometertief."
+ },
+ {
+  "id": "geo-victoriafaelle",
+  "name": "Victoriafälle",
+  "country": "Sambia/Simbabwe",
+  "lat": -17.925,
+  "lon": 25.857,
+  "difficulty": 3,
+  "fact": "Die Einheimischen nennen die Victoriafälle „Mosi-oa-Tunya“, donnernder Rauch."
+ },
+ {
+  "id": "geo-grand-canyon",
+  "name": "Grand Canyon",
+  "country": "USA",
+  "lat": 36.107,
+  "lon": -112.113,
+  "difficulty": 3,
+  "fact": "Der Colorado River hat den Grand Canyon bis zu 1800 m tief ausgewaschen."
+ },
+ {
+  "id": "geo-galapagos",
+  "name": "Galápagos-Inseln",
+  "country": "Ecuador",
+  "lat": -0.954,
+  "lon": -90.966,
+  "difficulty": 3,
+  "fact": "Auf Galápagos sammelte Charles Darwin Beobachtungen für seine Evolutionstheorie."
+ },
+ {
+  "id": "geo-kilimandscharo",
+  "name": "Kilimandscharo",
+  "country": "Tansania",
+  "lat": -3.067,
+  "lon": 37.356,
+  "difficulty": 3,
+  "fact": "Der Kilimandscharo ist mit 5895 m der höchste Berg Afrikas."
+ },
+ {
+  "id": "geo-chichen-itza",
+  "name": "Chichén Itzá",
+  "country": "Mexiko",
+  "lat": 20.684,
+  "lon": -88.568,
+  "difficulty": 3,
+  "fact": "Zur Tagundnachtgleiche kriecht an der Pyramide von Chichén Itzá eine Schattenschlange herab."
+ },
+ {
+  "id": "geo-dubrovnik",
+  "name": "Dubrovnik",
+  "country": "Kroatien",
+  "lat": 42.65,
+  "lon": 18.094,
+  "difficulty": 3,
+  "fact": "Dubrovnik war Drehort für Königsmund in „Game of Thrones“."
+ },
+ {
+  "id": "geo-edinburgh",
+  "name": "Edinburgh",
+  "country": "Schottland",
+  "lat": 55.953,
+  "lon": -3.188,
+  "difficulty": 3,
+  "fact": "Das Edinburgh Castle steht auf einem erloschenen Vulkan."
+ },
+ {
+  "id": "geo-timbuktu",
+  "name": "Timbuktu",
+  "country": "Mali",
+  "lat": 16.766,
+  "lon": -3.003,
+  "difficulty": 4,
+  "fact": "Timbuktu war im 15. und 16. Jahrhundert ein Zentrum islamischer Gelehrsamkeit."
+ },
+ {
+  "id": "geo-ulaanbaatar",
+  "name": "Ulaanbaatar",
+  "country": "Mongolei",
+  "lat": 47.886,
+  "lon": 106.906,
+  "difficulty": 4,
+  "fact": "Ulaanbaatar ist die kälteste Hauptstadt der Welt."
+ },
+ {
+  "id": "geo-la-paz",
+  "name": "La Paz",
+  "country": "Bolivien",
+  "lat": -16.5,
+  "lon": -68.15,
+  "difficulty": 4,
+  "fact": "La Paz ist mit rund 3600 m der höchstgelegene Regierungssitz der Welt."
+ },
+ {
+  "id": "geo-addis-abeba",
+  "name": "Addis Abeba",
+  "country": "Äthiopien",
+  "lat": 9.03,
+  "lon": 38.74,
+  "difficulty": 4,
+  "fact": "In Addis Abeba hat die Afrikanische Union ihren Sitz."
+ },
+ {
+  "id": "geo-almaty",
+  "name": "Almaty",
+  "country": "Kasachstan",
+  "lat": 43.222,
+  "lon": 76.851,
+  "difficulty": 4,
+  "fact": "Almaty heißt übersetzt etwa „Apfelreich“ – hier soll der Kulturapfel herkommen."
+ },
+ {
+  "id": "geo-kathmandu",
+  "name": "Kathmandu",
+  "country": "Nepal",
+  "lat": 27.717,
+  "lon": 85.324,
+  "difficulty": 4,
+  "fact": "Kathmandu ist für viele Everest-Expeditionen der Ausgangspunkt."
+ },
+ {
+  "id": "geo-perth",
+  "name": "Perth",
+  "country": "Australien",
+  "lat": -31.95,
+  "lon": 115.861,
+  "difficulty": 4,
+  "fact": "Perth gilt als die isolierteste Millionenstadt der Welt."
+ },
+ {
+  "id": "geo-tromso",
+  "name": "Tromsø",
+  "country": "Norwegen",
+  "lat": 69.649,
+  "lon": 18.955,
+  "difficulty": 4,
+  "fact": "In Tromsø geht im Winter etwa zwei Monate lang die Sonne nicht auf."
+ },
+ {
+  "id": "geo-samarkand",
+  "name": "Samarkand",
+  "country": "Usbekistan",
+  "lat": 39.654,
+  "lon": 66.976,
+  "difficulty": 4,
+  "fact": "Samarkand war ein Knotenpunkt der Seidenstraße."
+ },
+ {
+  "id": "geo-dakar",
+  "name": "Dakar",
+  "country": "Senegal",
+  "lat": 14.716,
+  "lon": -17.467,
+  "difficulty": 4,
+  "fact": "Dakar liegt auf der westlichsten Spitze des afrikanischen Festlands."
+ },
+ {
+  "id": "geo-manaus",
+  "name": "Manaus",
+  "country": "Brasilien",
+  "lat": -3.119,
+  "lon": -60.022,
+  "difficulty": 4,
+  "fact": "In Manaus mitten im Amazonas steht ein prunkvolles Opernhaus von 1896."
+ },
+ {
+  "id": "geo-ushuaia",
+  "name": "Ushuaia",
+  "country": "Argentinien",
+  "lat": -54.801,
+  "lon": -68.303,
+  "difficulty": 4,
+  "fact": "Ushuaia gilt als südlichste Stadt der Welt."
+ },
+ {
+  "id": "geo-baikalsee",
+  "name": "Baikalsee",
+  "country": "Russland",
+  "lat": 53.5,
+  "lon": 108.0,
+  "difficulty": 4,
+  "fact": "Der Baikalsee ist mit über 1600 m der tiefste See der Erde."
+ },
+ {
+  "id": "geo-osterinsel",
+  "name": "Osterinsel",
+  "country": "Chile",
+  "lat": -27.113,
+  "lon": -109.35,
+  "difficulty": 4,
+  "fact": "Auf der Osterinsel stehen fast 1000 Moai-Statuen."
+ },
+ {
+  "id": "geo-bora-bora",
+  "name": "Bora Bora",
+  "country": "Französisch-Polynesien",
+  "lat": -16.5,
+  "lon": -151.74,
+  "difficulty": 4,
+  "fact": "Bora Bora ist ein Atoll um einen erloschenen Vulkan."
+ },
+ {
+  "id": "geo-salar-de-uyuni",
+  "name": "Salar de Uyuni",
+  "country": "Bolivien",
+  "lat": -20.134,
+  "lon": -67.489,
+  "difficulty": 4,
+  "fact": "Der Salar de Uyuni ist der größte Salzsee der Welt – nach Regen ein riesiger Spiegel."
+ },
+ {
+  "id": "geo-tschernobyl",
+  "name": "Tschernobyl",
+  "country": "Ukraine",
+  "lat": 51.276,
+  "lon": 30.222,
+  "difficulty": 4,
+  "fact": "Das Kraftwerk Tschernobyl liegt rund 100 km nördlich von Kiew."
+ },
+ {
+  "id": "geo-woodstock",
+  "name": "Woodstock-Festival (Bethel)",
+  "country": "USA",
+  "lat": 41.701,
+  "lon": -74.88,
+  "difficulty": 4,
+  "fact": "Das Woodstock-Festival 1969 fand gar nicht in Woodstock statt, sondern im 70 km entfernten Bethel."
+ },
+ {
+  "id": "geo-ayers-alice-springs",
+  "name": "Alice Springs",
+  "country": "Australien",
+  "lat": -23.698,
+  "lon": 133.881,
+  "difficulty": 4,
+  "fact": "Alice Springs liegt fast genau in der Mitte Australiens."
+ },
+ {
+  "id": "geo-svalbard",
+  "name": "Longyearbyen",
+  "country": "Norwegen (Spitzbergen)",
+  "lat": 78.223,
+  "lon": 15.647,
+  "difficulty": 4,
+  "fact": "In Longyearbyen ist das Sterben quasi verboten – im Permafrost verwesen Leichen nicht."
+ },
+ {
+  "id": "geo-zanzibar",
+  "name": "Sansibar-Stadt",
+  "country": "Tansania",
+  "lat": -6.165,
+  "lon": 39.199,
+  "difficulty": 4,
+  "fact": "Freddie Mercury wurde 1946 auf Sansibar geboren."
+ },
+ {
+  "id": "geo-darjeeling",
+  "name": "Darjeeling",
+  "country": "Indien",
+  "lat": 27.036,
+  "lon": 88.263,
+  "difficulty": 4,
+  "fact": "Darjeeling gab einer der berühmtesten Teesorten den Namen."
+ },
+ {
+  "id": "geo-tristan-da-cunha",
+  "name": "Tristan da Cunha",
+  "country": "Brit. Überseegebiet",
+  "lat": -37.105,
+  "lon": -12.277,
+  "difficulty": 5,
+  "fact": "Tristan da Cunha ist die abgelegenste bewohnte Insel der Welt."
+ },
+ {
+  "id": "geo-ouagadougou",
+  "name": "Ouagadougou",
+  "country": "Burkina Faso",
+  "lat": 12.371,
+  "lon": -1.52,
+  "difficulty": 5,
+  "fact": "Ouagadougou ist Gastgeber des größten Filmfestivals Afrikas, des FESPACO."
+ },
+ {
+  "id": "geo-nuuk",
+  "name": "Nuuk",
+  "country": "Grönland",
+  "lat": 64.181,
+  "lon": -51.694,
+  "difficulty": 5,
+  "fact": "Nuuk ist mit rund 19.000 Einwohnern eine der kleinsten Hauptstädte der Welt."
+ },
+ {
+  "id": "geo-thimphu",
+  "name": "Thimphu",
+  "country": "Bhutan",
+  "lat": 27.472,
+  "lon": 89.639,
+  "difficulty": 5,
+  "fact": "Thimphu ist eine der wenigen Hauptstädte ganz ohne Ampel."
+ },
+ {
+  "id": "geo-tiflis",
+  "name": "Tiflis",
+  "country": "Georgien",
+  "lat": 41.715,
+  "lon": 44.827,
+  "difficulty": 5,
+  "fact": "Tiflis heißt auf Georgisch Tbilissi – „warmer Ort“, nach den heißen Quellen."
+ },
+ {
+  "id": "geo-asuncion",
+  "name": "Asunción",
+  "country": "Paraguay",
+  "lat": -25.264,
+  "lon": -57.576,
+  "difficulty": 5,
+  "fact": "Asunción ist eine der ältesten Städte Südamerikas, gegründet 1537."
+ },
+ {
+  "id": "geo-windhuk",
+  "name": "Windhuk",
+  "country": "Namibia",
+  "lat": -22.56,
+  "lon": 17.066,
+  "difficulty": 5,
+  "fact": "In Windhuk wird bis heute auch Deutsch gesprochen – Namibia war deutsche Kolonie."
+ },
+ {
+  "id": "geo-vladivostok",
+  "name": "Wladiwostok",
+  "country": "Russland",
+  "lat": 43.116,
+  "lon": 131.886,
+  "difficulty": 5,
+  "fact": "In Wladiwostok endet die Transsibirische Eisenbahn nach über 9000 km."
+ },
+ {
+  "id": "geo-socotra",
+  "name": "Sokotra",
+  "country": "Jemen",
+  "lat": 12.463,
+  "lon": 53.824,
+  "difficulty": 5,
+  "fact": "Auf Sokotra wachsen Drachenblutbäume, die es sonst nirgends gibt."
+ },
+ {
+  "id": "geo-mount-roraima",
+  "name": "Roraima-Tepui",
+  "country": "Venezuela/Brasilien/Guyana",
+  "lat": 5.143,
+  "lon": -60.762,
+  "difficulty": 5,
+  "fact": "Der Tafelberg Roraima inspirierte Arthur Conan Doyles „Die vergessene Welt“."
+ },
+ {
+  "id": "geo-darvaza",
+  "name": "Krater von Derweze",
+  "country": "Turkmenistan",
+  "lat": 40.253,
+  "lon": 58.44,
+  "difficulty": 5,
+  "fact": "Der Gaskrater von Derweze brennt seit den 1970ern – das „Tor zur Hölle“."
+ },
+ {
+  "id": "geo-pitcairn",
+  "name": "Pitcairninseln",
+  "country": "Brit. Überseegebiet",
+  "lat": -25.066,
+  "lon": -130.1,
+  "difficulty": 5,
+  "fact": "Auf Pitcairn leben die Nachfahren der Meuterer der „Bounty“ – keine 50 Menschen."
+ },
+ {
+  "id": "geo-nauru",
+  "name": "Nauru",
+  "country": "Nauru",
+  "lat": -0.523,
+  "lon": 166.932,
+  "difficulty": 5,
+  "fact": "Nauru ist die kleinste Republik der Welt und hat keine offizielle Hauptstadt."
+ },
+ {
+  "id": "geo-palau",
+  "name": "Palau",
+  "country": "Palau",
+  "lat": 7.515,
+  "lon": 134.582,
+  "difficulty": 5,
+  "fact": "In Palaus Quallensee schwimmen Millionen Quallen, die kaum noch nesseln."
+ },
+ {
+  "id": "geo-kamtschatka",
+  "name": "Petropawlowsk-Kamtschatski",
+  "country": "Russland",
+  "lat": 53.037,
+  "lon": 158.656,
+  "difficulty": 5,
+  "fact": "Petropawlowsk ist nur per Flugzeug oder Schiff erreichbar – es gibt keine Straße dorthin."
+ },
+ {
+  "id": "geo-lalibela",
+  "name": "Lalibela",
+  "country": "Äthiopien",
+  "lat": 12.032,
+  "lon": 39.047,
+  "difficulty": 5,
+  "fact": "In Lalibela wurden im 12. Jahrhundert elf Kirchen aus dem Fels gehauen."
+ },
+ {
+  "id": "geo-bagan",
+  "name": "Bagan",
+  "country": "Myanmar",
+  "lat": 21.172,
+  "lon": 94.86,
+  "difficulty": 5,
+  "fact": "In der Ebene von Bagan stehen über 2000 Tempel und Pagoden."
+ },
+ {
+  "id": "geo-ushguli",
+  "name": "Uschguli",
+  "country": "Georgien",
+  "lat": 42.917,
+  "lon": 43.016,
+  "difficulty": 5,
+  "fact": "Uschguli gilt als eine der höchstgelegenen dauerhaft bewohnten Siedlungen Europas."
+ },
+ {
+  "id": "geo-iquitos",
+  "name": "Iquitos",
+  "country": "Peru",
+  "lat": -3.749,
+  "lon": -73.254,
+  "difficulty": 5,
+  "fact": "Iquitos ist die größte Stadt der Welt, die nicht über eine Straße erreichbar ist."
+ },
+ {
+  "id": "geo-ittoqqortoormiit",
+  "name": "Ittoqqortoormiit",
+  "country": "Grönland",
+  "lat": 70.485,
+  "lon": -21.967,
+  "difficulty": 5,
+  "fact": "Ittoqqortoormiit ist einer der abgelegensten Orte der Nordhalbkugel."
+ }
+]

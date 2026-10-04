@@ -52,6 +52,8 @@ import { generateRoomCode } from '../lib/roomCode'
 import { shuffleWithMapping } from '../lib/shuffle'
 import { getDefaultAvatar } from '../data/avatars'
 import { sanitizeAvatar } from '../data/avatarLook'
+import { PLACES, type Place } from '../data/places'
+import { GEO_CLOSEST_BONUS, clampLatLon, distanceKm, geoPoints, isValidLatLon, type LatLon } from '../lib/geo'
 import {
   MAX_TEAMS,
   MIN_TEAMS,
@@ -374,7 +376,26 @@ export interface PictureLive {
   lastPoints: Record<string, number>
 }
 
+/**
+ * „Wo liegt das?": Ort wird genannt, jedes Team setzt eine Nadel (bis zur Auflösung
+ * verschiebbar). Punkte nach Entfernung, das nächste Team bekommt einen Bonus.
+ */
+export interface GeoLive {
+  kind: 'geoguess'
+  totalRounds: number
+  currentIndex: number
+  place: Place | null
+  /** teamId → gesetzte Nadel (null = noch keine). */
+  pins: Record<string, LatLon | null>
+  phase: 'answering' | 'revealed' | 'empty'
+  scores: Record<string, number>
+  usedQuestionIds: string[]
+  /** Auswertung der letzten Auflösung: Entfernung + Punkte (inkl. Bonus). */
+  lastResult: Record<string, { km: number; points: number; closest: boolean } | null>
+}
+
 export type LiveGame =
+  | GeoLive
   | PictureLive
   | CategoryDuelLive
   | FlashLive
@@ -465,6 +486,9 @@ export type GameAction =
   | { type: 'PICTURE_SET_ANSWER'; teamId: string; renderedIndex: number }
   | { type: 'PICTURE_REVEAL' }
   | { type: 'PICTURE_NEXT' }
+  | { type: 'GEO_SET_PIN'; teamId: string; lat: number; lon: number }
+  | { type: 'GEO_REVEAL' }
+  | { type: 'GEO_NEXT' }
   | { type: 'LADDER_REVEAL' }
   | { type: 'LADDER_NEXT' }
   | { type: 'BOARD_PICK_CELL'; topic: Topic; valueIndex: number }
@@ -1211,6 +1235,68 @@ function initPicture(teams: Team[], deps: ReducerDeps): PictureLive {
   return loadPictureRound(base, teams, 0, new Set(deps.getAskedQuestionIds())) ?? base
 }
 
+export const GEO_CURVE: readonly Difficulty[] = [1, 1, 2, 2, 3, 3, 4, 5]
+
+function pickPlace(used: ReadonlySet<string>, step: number): Place | null {
+  if (PLACES.length === 0) return null
+  const fresh = PLACES.filter((p) => !used.has(p.id))
+  const pool = fresh.length > 0 ? fresh : PLACES
+  const target = GEO_CURVE[step] ?? 3
+  for (let dist = 0; dist <= 4; dist++) {
+    for (const d of dist === 0 ? [target] : [target - dist, target + dist]) {
+      const bucket = pool.filter((p) => p.difficulty === d)
+      if (bucket.length > 0) return bucket[Math.floor(Math.random() * bucket.length)]
+    }
+  }
+  return pool[0]
+}
+
+function loadGeoRound(base: GeoLive, teams: readonly Team[], index: number, used: Set<string>): GeoLive | null {
+  const place = pickPlace(used, index)
+  if (!place) return null
+  return {
+    ...base,
+    currentIndex: index,
+    place,
+    pins: Object.fromEntries(teams.map((t) => [t.id, null])),
+    lastResult: Object.fromEntries(teams.map((t) => [t.id, null])),
+    phase: 'answering',
+  }
+}
+
+function initGeo(teams: Team[], deps: ReducerDeps): GeoLive {
+  const base: GeoLive = {
+    kind: 'geoguess',
+    totalRounds: GEO_CURVE.length,
+    currentIndex: 0,
+    place: null,
+    pins: Object.fromEntries(teams.map((t) => [t.id, null])),
+    phase: 'empty',
+    scores: Object.fromEntries(teams.map((t) => [t.id, 0])),
+    usedQuestionIds: [],
+    lastResult: Object.fromEntries(teams.map((t) => [t.id, null])),
+  }
+  return loadGeoRound(base, teams, 0, new Set(deps.getAskedQuestionIds())) ?? base
+}
+
+/** Wertet die Nadeln aus: Punkte nach Entfernung, Bonus fürs nächste Team (bei Gleichstand alle). */
+export function scoreGeo(place: LatLon, pins: Record<string, LatLon | null>): GeoLive['lastResult'] {
+  const kms: Record<string, number> = {}
+  for (const [teamId, pin] of Object.entries(pins)) if (pin) kms[teamId] = distanceKm(pin, place)
+  const best = Object.values(kms).length ? Math.min(...Object.values(kms)) : Infinity
+  const result: GeoLive['lastResult'] = {}
+  for (const teamId of Object.keys(pins)) {
+    const km = kms[teamId]
+    if (km === undefined) {
+      result[teamId] = null
+      continue
+    }
+    const closest = Object.keys(kms).length > 1 && Math.abs(km - best) < 0.5
+    result[teamId] = { km, closest, points: geoPoints(km) + (closest ? GEO_CLOSEST_BONUS : 0) }
+  }
+  return result
+}
+
 function initPointsLadder(teams: Team[], deps: ReducerDeps): PointsLadderLive {
   const scores = Object.fromEntries(teams.map((t) => [t.id, 0]))
   const excluded = new Set<string>()
@@ -1367,6 +1453,8 @@ function initLiveFor(
       return initPointsLadder(teams, deps)
     case 'blindguess':
       return initPicture(teams, deps)
+    case 'geoguess':
+      return initGeo(teams, deps)
     case 'category-board':
       return initCategoryBoard(teams, players)
     case 'duel-1v1':
@@ -2822,6 +2910,41 @@ export function createReducer(deps: ReducerDeps) {
       const used = new Set(usedQuestionIds)
       for (const id of deps.getAskedQuestionIds()) used.add(id)
       const next = loadPictureRound(base, state.round.teams, nextIndex, used)
+      if (!next) return reducer({ ...state, live: base }, { type: 'FINISH_MODE' })
+      return { ...state, live: next }
+    }
+
+    case 'GEO_SET_PIN': {
+      if (!state.live || state.live.kind !== 'geoguess') return state
+      const live = state.live
+      if (live.phase !== 'answering' || !(action.teamId in live.pins)) return state
+      const pin = { lat: action.lat, lon: action.lon }
+      if (!isValidLatLon(pin)) return state
+      return { ...state, live: { ...live, pins: { ...live.pins, [action.teamId]: clampLatLon(pin) } } }
+    }
+
+    case 'GEO_REVEAL': {
+      if (!state.live || state.live.kind !== 'geoguess') return state
+      const live = state.live
+      if (live.phase !== 'answering' || !live.place) return state
+      const lastResult = scoreGeo(live.place, live.pins)
+      const scores = { ...live.scores }
+      for (const [teamId, r] of Object.entries(lastResult)) if (r) scores[teamId] = (scores[teamId] ?? 0) + r.points
+      return { ...state, live: { ...live, phase: 'revealed', scores, lastResult } }
+    }
+
+    case 'GEO_NEXT': {
+      if (!state.round || !state.live || state.live.kind !== 'geoguess') return state
+      const live = state.live
+      if (live.phase === 'empty') return reducer(state, { type: 'FINISH_MODE' })
+      if (live.phase !== 'revealed') return state
+      const usedQuestionIds = live.place ? [...live.usedQuestionIds, live.place.id] : live.usedQuestionIds
+      const base: GeoLive = { ...live, usedQuestionIds }
+      const nextIndex = live.currentIndex + 1
+      if (nextIndex >= live.totalRounds) return reducer({ ...state, live: base }, { type: 'FINISH_MODE' })
+      const used = new Set(usedQuestionIds)
+      for (const id of deps.getAskedQuestionIds()) used.add(id)
+      const next = loadGeoRound(base, state.round.teams, nextIndex, used)
       if (!next) return reducer({ ...state, live: base }, { type: 'FINISH_MODE' })
       return { ...state, live: next }
     }
