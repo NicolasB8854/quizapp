@@ -102,7 +102,7 @@
   ],
   "correct": 0,
   "explanation": "Tapire sind mit Pferden und Nashörnern verwandt – der kurze Rüssel ist eine verlängerte Oberlippe.",
-  "prompt": "a single lowland tapir walking through a tropical forest clearing, full body side view, short trunk clearly visible"
+  "prompt": "a single malayan tapir with black front body and white saddle back, long flexible trunk-like snout, standing in a forest"
  },
  {
   "slug": "narwal",
@@ -120,21 +120,6 @@
   "prompt": "a single narwhal swimming in dark arctic water under ice, its long spiral tusk clearly visible"
  },
  {
-  "slug": "schuhschnabel",
-  "topic": "natur",
-  "difficulty": 4,
-  "question": "Welcher Vogel ist das?",
-  "options": [
-   "Schuhschnabel",
-   "Marabu",
-   "Pelikan",
-   "Graureiher"
-  ],
-  "correct": 0,
-  "explanation": "Der Schuhschnabel lebt in ostafrikanischen Sümpfen und kann stundenlang regungslos auf Lungenfische lauern.",
-  "prompt": "a single shoebill stork standing in a papyrus swamp, huge shoe shaped bill, grey plumage, full body"
- },
- {
   "slug": "quokka",
   "topic": "natur",
   "difficulty": 3,
@@ -150,21 +135,6 @@
   "prompt": "a single quokka sitting on sandy ground among low shrubs, small round marsupial with smiling face, full body"
  },
  {
-  "slug": "kasuar",
-  "topic": "natur",
-  "difficulty": 4,
-  "question": "Welcher Vogel ist das?",
-  "options": [
-   "Kasuar",
-   "Emu",
-   "Strauß",
-   "Nandu"
-  ],
-  "correct": 0,
-  "explanation": "Der Kasuar trägt einen hornartigen Helm und gilt mit seinen dolchartigen Krallen als gefährlichster Vogel der Welt.",
-  "prompt": "a single southern cassowary standing in a rainforest, blue neck, red wattles, tall casque on its head, full body"
- },
- {
   "slug": "okra",
   "topic": "essen",
   "difficulty": 3,
@@ -177,7 +147,7 @@
   ],
   "correct": 0,
   "explanation": "Okra stammt vermutlich aus Afrika; aufgeschnitten zeigt die Schote einen fünfeckigen Querschnitt.",
-  "prompt": "a pile of fresh green okra pods on a wooden board, one pod cut in half showing the star shaped cross section with seeds"
+  "prompt": "several fresh green okra pods lying on a wooden board, ridged five sided pods with pointed tips and short stems, close up"
  },
  {
   "slug": "physalis",
@@ -192,7 +162,7 @@
   ],
   "correct": 0,
   "explanation": "Die Physalis steckt in einer papierartigen Hülle aus Kelchblättern – sie gehört zu den Nachtschattengewächsen.",
-  "prompt": "several physalis cape gooseberries, orange berries partly wrapped in dry papery beige husks, on a dark slate"
+  "prompt": "a single physalis cape gooseberry, round orange berry with its dry papery beige husk opened and folded back like petals, macro"
  },
  {
   "slug": "kumquat",
@@ -207,7 +177,7 @@
   ],
   "correct": 0,
   "explanation": "Kumquats werden mitsamt der süßen Schale gegessen – das Fruchtfleisch ist dagegen sauer.",
-  "prompt": "a small bowl of whole oval kumquats with a few green leaves, one kumquat sliced in half, bright orange"
+  "prompt": "a handful of whole small oval orange kumquat fruits with two green leaves on a white plate, no cut fruit"
  },
  {
   "slug": "kohlrabi",
@@ -222,7 +192,7 @@
   ],
   "correct": 0,
   "explanation": "Kohlrabi ist eine verdickte Sprossachse – international heißt er tatsächlich oft „German turnip“.",
-  "prompt": "a single purple kohlrabi bulb with its leaf stalks on a rustic kitchen table"
+  "prompt": "a single purple kohlrabi, a round bulb with several long leaf stalks growing out of its sides and top, on a kitchen table"
  },
  {
   "slug": "pastinake",
@@ -237,7 +207,7 @@
   ],
   "correct": 0,
   "explanation": "Die Pastinake war vor der Kartoffel ein Grundnahrungsmittel in Mitteleuropa; sie schmeckt süßlich-nussig.",
-  "prompt": "three whole parsnips, cream white tapered roots with a little green top, on a linen cloth"
+  "prompt": "three whole parsnips with broad creamy white shoulders tapering to a point, short green leaf stalks, on a dark wooden table"
  },
  {
   "slug": "rambutan",
@@ -252,22 +222,7 @@
   ],
   "correct": 0,
   "explanation": "Rambutan heißt auf Malaiisch „haarig“ – unter der weichen Stachelschale liegt glasiges, süßes Fruchtfleisch.",
-  "prompt": "a cluster of red hairy rambutan fruits, one peeled open showing white translucent flesh"
- },
- {
-  "slug": "sitar",
-  "topic": "musik",
-  "difficulty": 3,
-  "question": "Welches Instrument ist das?",
-  "options": [
-   "Sitar",
-   "Laute",
-   "Banjo",
-   "Oud"
-  ],
-  "correct": 0,
-  "explanation": "Die Sitar hat neben den Spielsaiten viele Resonanzsaiten; durch Ravi Shankar und die Beatles wurde sie im Westen bekannt.",
-  "prompt": "a single indian sitar lying on a dark carpet, long wooden neck with curved metal frets and a round gourd resonator"
+  "prompt": "a pile of whole red rambutan fruits covered in soft green tipped hairy spines, no peeled fruit, close up"
  },
  {
   "slug": "dudelsack",
@@ -282,37 +237,7 @@
   ],
   "correct": 0,
   "explanation": "Beim Dudelsack füllt der Spieler einen Luftsack, der die Pfeifen auch beim Atemholen weiter klingen lässt.",
-  "prompt": "a single scottish bagpipe with tartan bag and three drone pipes lying on a wooden table"
- },
- {
-  "slug": "drehleier",
-  "topic": "musik",
-  "difficulty": 5,
-  "question": "Welches Instrument ist das?",
-  "options": [
-   "Drehleier",
-   "Nyckelharpa",
-   "Hackbrett",
-   "Viola da Gamba"
-  ],
-  "correct": 0,
-  "explanation": "Bei der Drehleier streicht ein mit einer Kurbel gedrehtes Holzrad die Saiten – gespielt wird sie über Tasten.",
-  "prompt": "a single wooden hurdy gurdy instrument with crank handle and keybox, lying on dark velvet"
- },
- {
-  "slug": "steeldrum",
-  "topic": "musik",
-  "difficulty": 3,
-  "question": "Welches Instrument ist das?",
-  "options": [
-   "Steel Drum",
-   "Gong",
-   "Tabla",
-   "Handpan"
-  ],
-  "correct": 0,
-  "explanation": "Die Steel Pan stammt aus Trinidad und Tobago und wurde ursprünglich aus Ölfässern gebaut.",
-  "prompt": "a single chrome caribbean steel pan drum with hammered note areas, two rubber tipped sticks beside it"
+  "prompt": "a scottish bagpipe with a tartan covered bag, three tall black drone pipes with silver rings and one chanter pipe, lying on a table"
  },
  {
   "slug": "abakus",
@@ -327,37 +252,7 @@
   ],
   "correct": 0,
   "explanation": "Der Abakus ist eines der ältesten Rechenhilfsmittel; in Japan (Soroban) wird er bis heute gelehrt.",
-  "prompt": "a wooden chinese abacus with beads on vertical rods, on a desk, front view"
- },
- {
-  "slug": "rechenschieber",
-  "topic": "technik",
-  "difficulty": 4,
-  "question": "Was ist das?",
-  "options": [
-   "Rechenschieber",
-   "Lineal",
-   "Messschieber",
-   "Planimeter"
-  ],
-  "correct": 0,
-  "explanation": "Mit Rechenschiebern wurde noch die Mondlandung berechnet – bis der Taschenrechner sie in den 1970ern verdrängte.",
-  "prompt": "a vintage slide rule with sliding middle scale and transparent cursor, close shot on a drafting table"
- },
- {
-  "slug": "astrolabium",
-  "topic": "technik",
-  "difficulty": 5,
-  "question": "Was ist das?",
-  "options": [
-   "Astrolabium",
-   "Sextant",
-   "Armillarsphäre",
-   "Kompass"
-  ],
-  "correct": 0,
-  "explanation": "Das Astrolabium diente schon in der Antike zur Bestimmung von Sternpositionen und Uhrzeit.",
-  "prompt": "an antique brass astrolabe with engraved circular plates and a rotating pointer, on dark wood"
+  "prompt": "a classic wooden school abacus with ten horizontal wires and ten colorful round beads on each wire, front view"
  },
  {
   "slug": "theodolit",
@@ -373,51 +268,6 @@
   "correct": 0,
   "explanation": "Mit dem Theodolit messen Vermesser horizontale und vertikale Winkel – heute meist als elektronische Totalstation.",
   "prompt": "a surveying theodolite instrument mounted on a yellow tripod at a construction site"
- },
- {
-  "slug": "stethoskop",
-  "topic": "technik",
-  "difficulty": 2,
-  "question": "Was ist das?",
-  "options": [
-   "Stethoskop",
-   "Blutdruckmessgerät",
-   "Reflexhammer",
-   "Otoskop"
-  ],
-  "correct": 0,
-  "explanation": "Das Stethoskop erfand René Laënnec 1816 – zuerst als einfaches Holzrohr.",
-  "prompt": "a single medical stethoscope lying on a white surface, chest piece and ear tubes visible"
- },
- {
-  "slug": "mate",
-  "topic": "essen",
-  "difficulty": 4,
-  "question": "Was ist das?",
-  "options": [
-   "Mate-Becher mit Bombilla",
-   "Teekanne",
-   "Kaffeemühle",
-   "Gewürzmörser"
-  ],
-  "correct": 0,
-  "explanation": "Mate wird in Südamerika aus einem Kürbisgefäß durch ein Metallröhrchen mit Sieb, die Bombilla, getrunken.",
-  "prompt": "a traditional mate gourd cup filled with yerba mate leaves and a metal bombilla straw, on a wooden table"
- },
- {
-  "slug": "nautilus",
-  "topic": "natur",
-  "difficulty": 4,
-  "question": "Welches Tier ist das?",
-  "options": [
-   "Nautilus",
-   "Ammonit",
-   "Tintenfisch",
-   "Weinbergschnecke"
-  ],
-  "correct": 0,
-  "explanation": "Der Nautilus gilt als „lebendes Fossil“: seine Bauweise hat sich seit rund 500 Millionen Jahren kaum verändert.",
-  "prompt": "a single chambered nautilus swimming in deep blue water, striped spiral shell and tentacles"
  },
  {
   "slug": "seepferdchen",
@@ -447,7 +297,7 @@
   ],
   "correct": 0,
   "explanation": "Der Igelfisch pumpt sich bei Gefahr mit Wasser auf und stellt dabei seine Stacheln auf.",
-  "prompt": "a single inflated porcupinefish with spines raised, swimming over a coral reef"
+  "prompt": "a single porcupinefish with big round eyes and short spines flat against its body, swimming over coral, side view"
  },
  {
   "slug": "ginkgo",
@@ -477,6 +327,231 @@
   ],
   "correct": 0,
   "explanation": "Die Venusfliegenfalle schnappt zu, wenn ein Insekt innerhalb von etwa 20 Sekunden zweimal ihre Fühlborsten berührt.",
-  "prompt": "a venus flytrap plant in a pot, several open red traps with tooth like bristles, macro photo"
+  "prompt": "a venus flytrap plant in a pot, several open red clam shaped leaf traps edged with long green teeth, macro photo"
+ },
+ {
+  "slug": "fennek",
+  "topic": "natur",
+  "difficulty": 3,
+  "question": "Welches Tier ist das?",
+  "options": [
+   "Fennek",
+   "Rotfuchs",
+   "Polarfuchs",
+   "Schakal"
+  ],
+  "correct": 0,
+  "explanation": "Der Fennek ist der kleinste Fuchs der Welt – seine riesigen Ohren geben in der Sahara Wärme ab.",
+  "prompt": "a single fennec fox sitting on desert sand, huge ears, sandy fur, full body"
+ },
+ {
+  "slug": "nasenaffe",
+  "topic": "natur",
+  "difficulty": 4,
+  "question": "Welches Tier ist das?",
+  "options": [
+   "Nasenaffe",
+   "Orang-Utan",
+   "Mandrill",
+   "Gibbon"
+  ],
+  "correct": 0,
+  "explanation": "Nasenaffen leben nur auf Borneo; die große Nase der Männchen verstärkt ihre Rufe.",
+  "prompt": "a single proboscis monkey sitting on a branch, very large long nose, reddish brown fur, mangrove forest"
+ },
+ {
+  "slug": "mandrill",
+  "topic": "natur",
+  "difficulty": 3,
+  "question": "Welches Tier ist das?",
+  "options": [
+   "Mandrill",
+   "Pavian",
+   "Gorilla",
+   "Nasenaffe"
+  ],
+  "correct": 0,
+  "explanation": "Der Mandrill ist der größte Affe Afrikas, der kein Menschenaffe ist – sein buntes Gesicht leuchtet rot und blau.",
+  "prompt": "close portrait of a mandrill monkey face, bright red nose with blue ridged cheeks, golden beard"
+ },
+ {
+  "slug": "rotfeuerfisch",
+  "topic": "natur",
+  "difficulty": 3,
+  "question": "Welches Tier ist das?",
+  "options": [
+   "Rotfeuerfisch",
+   "Skorpionfisch",
+   "Clownfisch",
+   "Kaiserfisch"
+  ],
+  "correct": 0,
+  "explanation": "Die prächtigen Flossenstrahlen des Rotfeuerfischs tragen Giftdrüsen.",
+  "prompt": "a single red lionfish with striped red and white body and long feathery fan fins, swimming near a reef"
+ },
+ {
+  "slug": "mantarochen",
+  "topic": "natur",
+  "difficulty": 2,
+  "question": "Welches Tier ist das?",
+  "options": [
+   "Mantarochen",
+   "Stachelrochen",
+   "Hammerhai",
+   "Flunder"
+  ],
+  "correct": 0,
+  "explanation": "Mantarochen haben eine Spannweite von bis zu sieben Metern und filtern Plankton aus dem Wasser.",
+  "prompt": "a single giant manta ray gliding in blue open ocean seen from below, wide wing like fins"
+ },
+ {
+  "slug": "guerteltier",
+  "topic": "natur",
+  "difficulty": 2,
+  "question": "Welches Tier ist das?",
+  "options": [
+   "Gürteltier",
+   "Schuppentier",
+   "Igel",
+   "Opossum"
+  ],
+  "correct": 0,
+  "explanation": "Nur das Kugelgürteltier kann sich ganz zu einer Kugel zusammenrollen.",
+  "prompt": "a single nine banded armadillo walking on dry ground, banded armored shell, long snout and tail, side view"
+ },
+ {
+  "slug": "sternfrucht",
+  "topic": "essen",
+  "difficulty": 3,
+  "question": "Welche Frucht ist das?",
+  "options": [
+   "Karambole",
+   "Kiwano",
+   "Pomelo",
+   "Quitte"
+  ],
+  "correct": 0,
+  "explanation": "Die Karambole heißt auch Sternfrucht, weil ihre Scheiben fünfzackige Sterne bilden.",
+  "prompt": "several yellow star fruit carambola slices shaped like five pointed stars on a white plate, one whole fruit behind"
+ },
+ {
+  "slug": "kiwano",
+  "topic": "essen",
+  "difficulty": 5,
+  "question": "Welche Frucht ist das?",
+  "options": [
+   "Kiwano",
+   "Rambutan",
+   "Durian",
+   "Drachenfrucht"
+  ],
+  "correct": 0,
+  "explanation": "Die Kiwano ist eine afrikanische Gurkenart mit Hörnern; innen ist sie grün und geleeartig.",
+  "prompt": "a single whole kiwano horned melon, bright orange oval fruit covered with short spiky horns, on a dark table"
+ },
+ {
+  "slug": "jackfrucht",
+  "topic": "essen",
+  "difficulty": 4,
+  "question": "Welche Frucht ist das?",
+  "options": [
+   "Jackfrucht",
+   "Durian",
+   "Melone",
+   "Brotfrucht"
+  ],
+  "correct": 0,
+  "explanation": "Die Jackfrucht ist die größte Baumfrucht der Welt und kann über 30 Kilogramm wiegen.",
+  "prompt": "a giant green jackfruit with bumpy skin hanging from the trunk of a tree in a tropical garden"
+ },
+ {
+  "slug": "feige",
+  "topic": "essen",
+  "difficulty": 2,
+  "question": "Welche Frucht ist das?",
+  "options": [
+   "Feige",
+   "Granatapfel",
+   "Passionsfrucht",
+   "Pflaume"
+  ],
+  "correct": 0,
+  "explanation": "Botanisch ist die Feige ein Fruchtstand – die Blüten sitzen innen.",
+  "prompt": "several fresh purple figs on a plate, one fig torn open showing pink red seeded flesh"
+ },
+ {
+  "slug": "protea",
+  "topic": "pflanzen",
+  "difficulty": 4,
+  "question": "Welche Pflanze ist das?",
+  "options": [
+   "Königsprotea",
+   "Artischocke",
+   "Distel",
+   "Seerose"
+  ],
+  "correct": 0,
+  "explanation": "Die Königsprotea ist die Nationalblume Südafrikas; ihre Blüte kann 30 Zentimeter groß werden.",
+  "prompt": "a single large king protea flower in bloom, pink pointed bracts around a fuzzy center, against a dark background"
+ },
+ {
+  "slug": "lotus",
+  "topic": "pflanzen",
+  "difficulty": 2,
+  "question": "Welche Pflanze ist das?",
+  "options": [
+   "Lotusblume",
+   "Seerose",
+   "Magnolie",
+   "Tulpe"
+  ],
+  "correct": 0,
+  "explanation": "Lotusblätter sind wasser- und schmutzabweisend – das Prinzip heißt Lotuseffekt.",
+  "prompt": "a single pink lotus flower rising above the water on a tall stem, large round leaves floating around it"
+ },
+ {
+  "slug": "grammophon",
+  "topic": "technik",
+  "difficulty": 2,
+  "question": "Was ist das?",
+  "options": [
+   "Grammophon",
+   "Plattenspieler",
+   "Megafon",
+   "Phonograph-Walze"
+  ],
+  "correct": 0,
+  "explanation": "Emil Berliner meldete das Grammophon 1887 zum Patent an – mit flachen Schallplatten statt Walzen.",
+  "prompt": "an antique gramophone with a large brass horn and a shellac record on a wooden base, studio light"
+ },
+ {
+  "slug": "metronom",
+  "topic": "technik",
+  "difficulty": 3,
+  "question": "Was ist das?",
+  "options": [
+   "Metronom",
+   "Stimmgerät",
+   "Taktstock",
+   "Eieruhr"
+  ],
+  "correct": 0,
+  "explanation": "Das mechanische Metronom ließ Johann Nepomuk Mälzel 1815 patentieren.",
+  "prompt": "a classic wooden pyramid shaped metronome with a swinging metal pendulum and sliding weight, on a piano"
+ },
+ {
+  "slug": "stimmgabel",
+  "topic": "technik",
+  "difficulty": 4,
+  "question": "Was ist das?",
+  "options": [
+   "Stimmgabel",
+   "Zirkel",
+   "Pinzette",
+   "Schraubenschlüssel"
+  ],
+  "correct": 0,
+  "explanation": "Eine Stimmgabel schwingt meist mit 440 Hertz – dem Kammerton a.",
+  "prompt": "a single shiny steel tuning fork standing on a wooden table, two long prongs and a handle, close up"
  }
 ]
