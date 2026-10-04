@@ -4,12 +4,13 @@
  */
 import { useMemo, useRef, useState, type ChangeEvent } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowLeft, Camera, Crown, Flame, Trophy, User, X } from 'lucide-react'
+import { ArrowLeft, Camera, Crown, Flame, Trophy, X } from 'lucide-react'
 import { AVATAR_COLORS, TOPICS_BY_ID, type Topic } from '@quizapp/shared'
 import { ScreenLayout } from '@/components/ScreenLayout'
 import { Button } from '@/components/Button'
 import { Card } from '@/components/Card'
 import { AvatarBadge } from '@/components/AvatarBadge'
+import { AvatarEditor } from '@/components/avatar/AvatarEditor'
 import { AVATAR_EMOJIS, readMyProfile, saveMyProfile, type MyProfile } from '@/lib/myProfile'
 import { readSoloStats } from '@/lib/soloStats'
 import { computeMetaTitles, computeTopicTitles, primaryTitle, TITLE_TIERS } from '@/lib/titles'
@@ -94,7 +95,7 @@ export default function ProfilePage() {
           </label>
 
           <div>
-            <span className="text-xs uppercase tracking-[0.22em] text-ink-muted">Farbe</span>
+            <span className="text-xs uppercase tracking-[0.22em] text-ink-muted">Deine Farbe</span>
             <div className="mt-2 flex flex-wrap gap-2">
               {AVATAR_COLORS.map((c) => (
                 <button
@@ -113,37 +114,12 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          <div>
-            <span className="text-xs uppercase tracking-[0.22em] text-ink-muted">Motiv</span>
-            <div className="mt-2 grid grid-cols-7 gap-1.5 sm:grid-cols-11">
-              <button
-                type="button"
-                aria-label="Initialen statt Emoji"
-                aria-pressed={!profile.avatar.emoji}
-                onClick={() => setAvatar({ emoji: null })}
-                className={cn(
-                  'flex h-10 items-center justify-center rounded-lg border text-sm',
-                  !profile.avatar.emoji ? 'border-brand-purple bg-brand-purple/20' : 'border-white/10 bg-white/[0.03]',
-                )}
-              >
-                <User className="h-4 w-4" />
-              </button>
-              {AVATAR_EMOJIS.map((e) => (
-                <button
-                  key={e}
-                  type="button"
-                  aria-pressed={profile.avatar.emoji === e}
-                  onClick={() => setAvatar({ emoji: e })}
-                  className={cn(
-                    'flex h-10 items-center justify-center rounded-lg border text-xl',
-                    profile.avatar.emoji === e ? 'border-brand-purple bg-brand-purple/20' : 'border-white/10 bg-white/[0.03]',
-                  )}
-                >
-                  {e}
-                </button>
-              ))}
-            </div>
-          </div>
+          <AvatarEditor
+            avatar={profile.avatar}
+            figure={profile.figure ?? null}
+            emojis={AVATAR_EMOJIS}
+            onChange={(avatar, figure) => update((p) => ({ ...p, avatar, figure }))}
+          />
 
           <div className="flex flex-wrap items-center gap-2">
             <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={onPhoto} />
@@ -155,7 +131,7 @@ export default function ProfilePage() {
                 Foto entfernen
               </Button>
             )}
-            <span className="text-xs text-ink-faint">Im Spieleabend wird Farbe + Motiv gezeigt, das Foto nur hier.</span>
+            <span className="text-xs text-ink-faint">Im Spieleabend siehst du Figur bzw. Emoji in deiner Farbe, das Foto nur hier.</span>
           </div>
         </Card>
 

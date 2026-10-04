@@ -2,7 +2,7 @@
  * Eigenes Spielerprofil dieses Geräts (localStorage, bleibt über Sessions).
  * Name + Avatar werden beim Beitreten in einen Raum automatisch übernommen.
  */
-import { AVATAR_COLORS, type Avatar } from '@quizapp/shared'
+import { AVATAR_COLORS, randomAvatarLook, sanitizeAvatarLook, type Avatar, type AvatarLook } from '@quizapp/shared'
 import { readRoomIdentity, saveRoomIdentity } from './roomIdentity'
 
 const STORAGE_KEY = 'quizapp:myProfile'
@@ -10,6 +10,8 @@ const STORAGE_KEY = 'quizapp:myProfile'
 export interface MyProfile {
   name: string
   avatar: Avatar
+  /** Zuletzt gebaute Figur — bleibt erhalten, wenn man kurz auf Emoji wechselt. */
+  figure?: AvatarLook | null
 }
 
 /** Kuratierte Emoji-Auswahl für den Avatar-Editor. */
@@ -20,17 +22,23 @@ export const AVATAR_EMOJIS: readonly string[] = [
 
 export function readMyProfile(): MyProfile {
   const fallbackName = readRoomIdentity().playerName ?? ''
+  // Neue Geräte starten mit einer zufälligen Figur, damit der Baukasten sichtbar ist.
+  const look = randomAvatarLook()
   const fallback: MyProfile = {
     name: fallbackName,
-    avatar: { colorHex: AVATAR_COLORS[0], photoDataUrl: null, emoji: null, title: null },
+    avatar: { colorHex: AVATAR_COLORS[0], photoDataUrl: null, emoji: null, title: null, look },
+    figure: look,
   }
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return fallback
     const parsed = JSON.parse(raw) as Partial<MyProfile>
+    const avatar = { ...fallback.avatar, look: null, ...(parsed.avatar ?? {}) }
+    avatar.look = sanitizeAvatarLook(avatar.look)
     return {
       name: typeof parsed.name === 'string' ? parsed.name : fallbackName,
-      avatar: { ...fallback.avatar, ...(parsed.avatar ?? {}) },
+      avatar,
+      figure: sanitizeAvatarLook(parsed.figure) ?? avatar.look,
     }
   } catch {
     return fallback
@@ -56,5 +64,6 @@ export function roomAvatar(profile: MyProfile, title: string | null): Avatar {
     photoDataUrl: null,
     emoji: profile.avatar.emoji ?? null,
     title,
+    look: profile.avatar.look ?? null,
   }
 }

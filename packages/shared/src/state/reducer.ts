@@ -51,6 +51,7 @@ import {
 import { generateRoomCode } from '../lib/roomCode'
 import { shuffleWithMapping } from '../lib/shuffle'
 import { getDefaultAvatar } from '../data/avatars'
+import { sanitizeAvatar } from '../data/avatarLook'
 import {
   MAX_TEAMS,
   MIN_TEAMS,
@@ -1761,7 +1762,7 @@ export function createReducer(deps: ReducerDeps) {
     case 'SET_PLAYER_AVATAR': {
       if (!state.round || state.phase !== 'lobby') return state
       const players = state.round.players.map((p) =>
-        p.id === action.playerId ? { ...p, avatar: action.avatar } : p,
+        p.id === action.playerId ? { ...p, avatar: sanitizeAvatar(action.avatar, p.avatar.colorHex) } : p,
       )
       return { ...state, round: { ...state.round, players } }
     }

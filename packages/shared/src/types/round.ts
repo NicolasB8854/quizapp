@@ -1,3 +1,4 @@
+import type { AvatarLook } from '../data/avatarLook'
 /**
  * Runden- und Spielabend-Struktur.
  *
@@ -107,6 +108,8 @@ export interface Avatar {
   emoji?: string | null
   /** Angezeigter Titel aus der Geräte-Statistik, z. B. „Chemie-Profi". */
   title?: string | null
+  /** Gebaute Figur (Avatar-Baukasten). Hat Vorrang vor Emoji/Initiale, nicht vor dem Foto. */
+  look?: AvatarLook | null
 }
 
 /**

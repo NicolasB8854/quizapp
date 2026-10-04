@@ -5,7 +5,7 @@
  *  3. Abgeschlossene Spieleabende zählen als gespielt/gewonnen.
  */
 import { useEffect, useRef } from 'react'
-import type { GameAction, GameState, Player, Topic } from '@quizapp/shared'
+import { sameAvatarLook, type GameAction, type GameState, type Player, type Topic } from '@quizapp/shared'
 import { findMatchWinner } from '@/components/WinnerHero'
 import { readMyProfile, roomAvatar } from '@/lib/myProfile'
 import { readSoloStats, saveNight, saveNightAnswers } from '@/lib/soloStats'
@@ -56,7 +56,8 @@ export function useDeviceProfileSync({
     if (
       cur.colorHex === desired.colorHex &&
       (cur.emoji ?? null) === desired.emoji &&
-      (cur.title ?? null) === desired.title
+      (cur.title ?? null) === desired.title &&
+      sameAvatarLook(cur.look, desired.look)
     ) {
       return
     }
