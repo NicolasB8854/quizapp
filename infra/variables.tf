@@ -37,3 +37,24 @@ variable "room_ttl_hours" {
   type        = number
   default     = 24
 }
+
+variable "admin_token" {
+  description = "Admin-Token für schreibende Fragen-API und Reports/Kennzahlen (Header x-admin-token). Mindestens 16 Zeichen. In infra/secrets.auto.tfvars setzen (gitignored)."
+  type        = string
+  sensitive   = true
+
+  validation {
+    condition     = length(var.admin_token) >= 16
+    error_message = "admin_token muss mindestens 16 Zeichen haben."
+  }
+}
+
+variable "allowed_origins" {
+  description = "Erlaubte Browser-Origins für die HTTP-API (CORS)."
+  type        = list(string)
+  default = [
+    "https://main.dkoiz5gy3rr2k.amplifyapp.com",
+    "http://localhost:5173",
+    "http://localhost:4173",
+  ]
+}

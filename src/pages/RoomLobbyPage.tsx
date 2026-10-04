@@ -37,6 +37,7 @@ import type {
   FlashLive,
   GameAction,
   GameState,
+  PictureLive,
   PointsLadderLive,
   SpotlightLive,
   SprinterLive,
@@ -66,6 +67,8 @@ import { HostActionBar } from '@/components/HostActionBar'
 import { findMatchWinner, WinnerHero } from '@/components/WinnerHero'
 import { useRoomSync } from '@/hooks/useRoomSync'
 import { useDeviceProfileSync } from '@/hooks/useDeviceProfileSync'
+import { InviteButton } from '@/components/InviteButton'
+import { DirectorPanel } from '@/components/show/DirectorPanel'
 import { useSoundEnabled } from '@/hooks/useSoundEnabled'
 import { playSound } from '@/lib/audio'
 import { haptic } from '@/lib/haptics'
@@ -354,6 +357,12 @@ export default function RoomLobbyPage() {
           totalModes={splash.totalModes}
           token={splash.token}
           onDone={() => setSplash(null)}
+          standings={room.state?.round?.teams.map((t) => ({
+            id: t.id,
+            name: t.name,
+            colorHex: getTeamColorHex(t.color),
+            points: room.state?.matchPoints[t.id] ?? 0,
+          }))}
         />
       )}
       <div
@@ -794,6 +803,9 @@ function PhaseView({
       if (live?.kind === 'experts') {
         return <ExpertsRoomView state={state} live={live} playerId={playerId} isHost={isHost} canDispatch={canDispatch} send={send} />
       }
+      if (live?.kind === 'blindguess') {
+        return <PictureRoomView state={state} live={live} playerId={playerId} isHost={isHost} canDispatch={canDispatch} send={send} />
+      }
       return <PlayingPhaseView state={state} canDispatch={canDispatch} send={send} />
     }
     case 'scoreboard':
@@ -806,6 +818,12 @@ function PhaseView({
         />
       )
   }
+}
+
+/** Room-Code aus der URL (/room/ABCD) — für Teilen-Links in Unterkomponenten. */
+function roomCodeFromPath(): string {
+  const m = window.location.pathname.match(/\/room\/([^/?#]+)/)
+  return m ? decodeURIComponent(m[1]).toUpperCase() : ''
 }
 
 function SetupPhaseView({
@@ -853,6 +871,14 @@ function SetupPhaseView({
   return (
     <div className="space-y-4">
       <LobbySteps current={0} />
+      <DirectorPanel
+        playerCount={6}
+        teamCount={state.draft.teams.length}
+        playersWithInterests={0}
+        disabled={!canDispatch}
+        onApply={(modes) => send({ type: 'SET_MODE_SELECTION', modeIds: modes })}
+        hint="Wähl die Dauer — in der Lobby kannst du mit den Interessen der Gruppe neu mischen."
+      />
       <ShowPanel
         eyebrow="Schritt 1"
         title="Welche Modi spielt ihr?"
@@ -910,7 +936,7 @@ function SetupPhaseView({
         <Button
           size="lg"
           variant="primary"
-          onClick={() => send({ type: 'GO_TO_LOBBY' })}
+          onClick={() => send({ type: 'INIT_MULTIPLAYER_ROUND' })}
           disabled={!canDispatch || selectedCount === 0}
           className="w-full"
         >
@@ -950,6 +976,7 @@ function LobbyPhaseView({
       <LobbySteps current={readyToStart ? 2 : 1} />
 
       <ShowPanel eyebrow={round.name} title={`${round.players.length} im Raum`}>
+        <InviteButton roomCode={roomCodeFromPath()} />
         <div className="flex flex-wrap gap-1.5">
           {modeNames.map((name) => (
             <span key={name} className="rounded-full border border-brand-purple/40 bg-brand-purple/10 px-2.5 py-0.5 text-xs text-brand-purple-soft">
@@ -1000,6 +1027,16 @@ function LobbyPhaseView({
         )}
       </ShowPanel>
 
+      {isHost && (
+        <DirectorPanel
+          playerCount={round.players.length}
+          teamCount={round.teams.length}
+          playersWithInterests={round.players.filter((p) => p.interests.length > 0).length}
+          disabled={!canDispatch}
+          onApply={(modes) => send({ type: 'SET_ROUND_MODES', modes })}
+          hint="Mischt den Abend mit den Interessen eurer Gruppe neu."
+        />
+      )}
       {isHost && <LobbyModesPanel selected={round.gameModes} canDispatch={canDispatch} send={send} />}
 
       <StickyCta
@@ -1409,6 +1446,7 @@ function CDRevealedView({
   return (
     <>
       <QuestionCard
+          questionId={question?.id}
         text={question.question}
         isMaster={isMaster}
         revealedTone={wasCorrect ? 'correct' : 'wrong'}
@@ -1597,6 +1635,7 @@ function SpotlightRoomView({
       {/* Frage */}
       {question ? (
         <QuestionCard
+          questionId={question?.id}
           text={question.question}
           isMaster={isMaster}
           revealedTone={
@@ -2011,6 +2050,7 @@ function FlashRoomView({
       {/* Frage — gr\u00f6\u00dfer im Master-Presenter-Mode */}
       {question ? (
         <QuestionCard
+          questionId={question?.id}
           text={question.question}
           isMaster={isMaster}
           revealedTone={live.phase === 'revealed' ? 'neutral' : null}
@@ -2305,6 +2345,7 @@ function LadderRoomView({
 
       {/* Frage */}
       <QuestionCard
+          questionId={question?.id}
           explanation={question?.explanation}
         text={question.question}
         isMaster={isMaster}
@@ -2536,6 +2577,7 @@ function SprinterRoomView({
       </Card>
 
       <QuestionCard
+          questionId={question?.id}
           explanation={question?.explanation} text={question.question} isMaster={isMaster} revealedTone={null} />
 
       {live.phase === 'rebound-buzz' && (
@@ -2785,6 +2827,7 @@ function EliminationRoomView({
       )}
 
       <QuestionCard
+          questionId={question?.id}
           explanation={question?.explanation}
         text={question.question}
         isMaster={isMaster}
@@ -2949,6 +2992,7 @@ function BoardRoomView({
       {live.phase !== 'pick-cell' && live.activeQuestion && (
         <>
           <QuestionCard
+          questionId={live.activeQuestion?.id}
           explanation={live.activeQuestion?.explanation}
             text={live.activeQuestion.question}
             isMaster={isMaster}
@@ -3244,6 +3288,7 @@ function DuelRoomView({
       {live.phase !== 'setup-duel' && live.activeQuestion && (
         <>
           <QuestionCard
+          questionId={live.activeQuestion?.id}
           explanation={live.activeQuestion?.explanation}
             text={live.activeQuestion.question}
             isMaster={isMaster}
@@ -3568,6 +3613,7 @@ function ExpertsRoomView({
 
       {question && (
         <QuestionCard
+          questionId={question?.id}
           explanation={question?.explanation}
           text={question.question}
           isMaster={isMaster}
@@ -3692,12 +3738,14 @@ function QuestionCard({
   revealedTone,
   explanation,
   eyebrow,
+  questionId,
 }: {
   text: string
   isMaster: boolean
   revealedTone: 'correct' | 'wrong' | 'neutral' | null
   explanation?: string | null
   eyebrow?: string | null
+  questionId?: string
 }) {
   return (
     <ShowQuestion
@@ -3706,6 +3754,7 @@ function QuestionCard({
       tone={revealedTone}
       explanation={explanation}
       eyebrow={eyebrow ?? undefined}
+      questionId={questionId}
     />
   )
 }
@@ -3773,6 +3822,138 @@ function useScoreDelta(score: number): number | null {
 }
 
 /** Team-Score-Chip: Farbdot + Name + Punkte, mit `+N`-Toast bei Punktzuwachs. */
+/**
+ * Bilderrätsel: Bild wird über 10 s scharf, alle Teams tippen parallel,
+ * frühe richtige Antwort = mehr Punkte. Host löst auf und schaltet weiter.
+ */
+function PictureRoomView({
+  state,
+  live,
+  playerId,
+  isHost,
+  canDispatch,
+  send,
+}: {
+  state: GameState
+  live: PictureLive
+  playerId: string | null
+  isHost: boolean
+  canDispatch: boolean
+  send: (a: GameAction) => void
+}) {
+  const [now, setNow] = useState(() => Date.now())
+  useEffect(() => {
+    if (live.phase !== 'answering') return
+    const id = window.setInterval(() => setNow(Date.now()), 200)
+    return () => window.clearInterval(id)
+  }, [live.phase, live.startedAt])
+  if (!state.round) return <LoadingCard label="Lade Runde …" />
+  const myPlayer = playerId ? state.round.players.find((p) => p.id === playerId) : null
+  const isMaster = !myPlayer
+  const myTeamId = myPlayer?.teamId ?? null
+  const q = live.activeQuestion
+  if (live.phase === 'empty' || !q) {
+    return (
+      <Card className="space-y-3 p-6 text-center">
+        <div className="text-white/80">Keine Bilder im Katalog.</div>
+        <Button variant="primary" onClick={() => send({ type: 'FINISH_MODE' })} disabled={!canDispatch || !isHost} className="w-full">
+          Modus überspringen
+        </Button>
+      </Card>
+    )
+  }
+  const elapsed = live.startedAt ? Math.max(0, now - live.startedAt) : 0
+  const progress = live.phase === 'revealed' ? 1 : Math.min(1, elapsed / 10_000)
+  const blurPx = Math.round(22 * (1 - progress))
+  const pointsNow = Math.round((300 - 200 * progress) / 10) * 10
+  const myAnswer = myTeamId ? live.teamAnswers[myTeamId] : null
+  const answered = Object.values(live.teamAnswers).filter((a) => a !== null).length
+  const picks: Record<number, string[]> = {}
+  if (live.phase === 'revealed') {
+    for (const [teamId, a] of Object.entries(live.teamAnswers)) {
+      if (a !== null) picks[a] = [...(picks[a] ?? []), teamId]
+    }
+  }
+
+  return (
+    <div className="space-y-3">
+      <Card className={cn('flex flex-wrap items-center gap-3', isMaster ? 'p-5' : 'p-3')}>
+        <div className="min-w-0">
+          <div className="text-xs uppercase tracking-[0.32em] text-brand-cyan-soft">Bilderrätsel</div>
+          <div className={cn('mt-1 font-mono text-white', isMaster ? 'text-2xl' : 'text-sm')}>
+            Bild {live.currentIndex + 1} / {live.totalQuestions}
+          </div>
+        </div>
+        <div className="ml-auto text-right">
+          <div className="text-xs text-ink-muted">{live.phase === 'answering' ? 'jetzt richtig =' : 'Auflösung'}</div>
+          <div className={cn('font-display font-extrabold text-amber-200', isMaster ? 'text-4xl' : 'text-2xl')}>
+            {live.phase === 'answering' ? `${pointsNow} P` : '✓'}
+          </div>
+        </div>
+        <div className="flex w-full flex-wrap gap-2">
+          {state.round.teams.map((team) => (
+            <TeamScoreChip key={team.id} team={team} score={live.scores[team.id] ?? 0} isMaster={isMaster} />
+          ))}
+        </div>
+      </Card>
+
+      <div className="overflow-hidden rounded-card border-2 border-brand-cyan/40 bg-navy-900 shadow-[0_0_32px_-8px_rgba(63,208,255,0.6)]">
+        <img
+          src={q.image}
+          alt={live.phase === 'revealed' ? q.options[q.correctIndex] : 'Unscharfes Rätselbild'}
+          className="aspect-[4/3] w-full object-cover transition-[filter] duration-200"
+          style={{ filter: `blur(${blurPx}px)` }}
+        />
+      </div>
+
+      <QuestionCard
+        text={q.question}
+        isMaster={isMaster}
+        revealedTone={live.phase === 'revealed' ? 'neutral' : null}
+        explanation={q.explanation}
+        questionId={q.id}
+      />
+
+      <OptionsGrid
+        options={live.shuffledOptions}
+        correctIdx={live.phase === 'revealed' ? live.correctRenderedIndex : null}
+        selectedIdxByTeam={picks}
+        teams={state.round.teams}
+        onSelect={(idx) => myTeamId && send({ type: 'PICTURE_SET_ANSWER', teamId: myTeamId, renderedIndex: idx })}
+        canClick={canDispatch && live.phase === 'answering' && !!myTeamId && myAnswer === null}
+        isMaster={isMaster}
+        highlightMyPick={myAnswer ?? undefined}
+      />
+
+      <ShowStatus stage={isMaster} tone={myAnswer !== null && live.phase === 'answering' ? 'active' : 'neutral'}>
+        {live.phase === 'revealed'
+          ? state.round.teams
+              .map((t) => `${t.name}: ${live.lastPoints[t.id] ? `+${live.lastPoints[t.id]}` : '0'}`)
+              .join(' · ')
+          : myAnswer !== null
+            ? `Eingeloggt — ${answered} / ${state.round.teams.length} Teams`
+            : `${answered} / ${state.round.teams.length} Teams eingeloggt — je früher, desto mehr Punkte`}
+      </ShowStatus>
+
+      {(isHost || isMaster) && (
+        <Button
+          size="lg"
+          variant="primary"
+          className={cn('w-full', isMaster && 'h-16 text-lg')}
+          disabled={!canDispatch}
+          onClick={() => send({ type: live.phase === 'answering' ? 'PICTURE_REVEAL' : 'PICTURE_NEXT' })}
+        >
+          {live.phase === 'answering'
+            ? 'Auflösen'
+            : live.currentIndex + 1 >= live.totalQuestions
+              ? 'Runde beenden'
+              : 'Nächstes Bild'}
+        </Button>
+      )}
+    </div>
+  )
+}
+
 function TeamScoreChip({
   team,
   score,
@@ -3833,8 +4014,11 @@ function TeamAnswersPanel({
 }) {
   return (
     <Card className={cn('space-y-2', isMaster ? 'p-5' : 'p-3')}>
-      <div className={cn('uppercase tracking-[0.32em] text-ink-muted', 'text-xs')}>
-        Team-Antworten
+      <div className="flex items-center justify-between">
+        <div className="uppercase tracking-[0.32em] text-ink-muted text-xs">Team-Antworten</div>
+        <div className={cn('font-display font-extrabold text-white', isMaster ? 'text-2xl' : 'text-sm')}>
+          {Object.values(teamAnswers).filter((a) => a !== null).length} / {teams.length} eingeloggt
+        </div>
       </div>
       <div className={cn('grid gap-1.5', isMaster ? 'sm:grid-cols-2 lg:grid-cols-4' : 'sm:grid-cols-2')}>
         {teams.map((team) => {

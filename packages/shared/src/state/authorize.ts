@@ -12,7 +12,23 @@ import { getNextTeamId } from '../data/teams'
 
 export interface ActionActor {
   playerId: string | null
+  /** Rolle der Session. Fehlt sie (ältere Aufrufer/Tests), gilt nur die Team-Bindung. */
+  role?: 'host' | 'player'
 }
+
+/**
+ * Show-Runner-Aktionen: Setup, Weiter/Auflösen, Modus beenden, Neustart.
+ * Nur der Host (mitspielend oder Bühne) darf sie auslösen — Spieler hätten
+ * sonst z. B. einfach die Frage weiterklicken können.
+ */
+export const HOST_ONLY_ACTIONS: ReadonlySet<GameAction['type']> = new Set<GameAction['type']>([
+  'SET_TEAM_NAME', 'ADD_TEAM', 'REMOVE_TEAM', 'TOGGLE_MODE', 'SET_MODE_SELECTION', 'SET_ROUND_MODES',
+  'GO_TO_LOBBY', 'INIT_MULTIPLAYER_ROUND', 'START_PLAYING', 'LOBBY_ADVANCE', 'LOBBY_BACK', 'SHUFFLE_PLAYERS',
+  'ADD_PLAYER', 'ADD_PLAYER_FROM_LIBRARY', 'REPLACE_PLAYER_FROM_LIBRARY',
+  'FINISH_MODE', 'BACK_TO_SETUP', 'RESTART_MATCH',
+  'CD_NEXT_TURN', 'FLASH_REVEAL', 'FLASH_NEXT', 'SPOTLIGHT_NEXT', 'AC_REVEAL_SOLUTION', 'AC_NEXT',
+  'SPRINTER_START_NEXT_TEAM', 'LADDER_REVEAL', 'LADDER_NEXT', 'PICTURE_REVEAL', 'PICTURE_NEXT', 'BOARD_NEXT', 'DUEL_NEXT', 'ELIM_NEXT', 'EXPERTS_NEXT',
+])
 
 export type AuthorizeResult = { ok: true } | { ok: false; reason: string }
 
@@ -48,11 +64,23 @@ export function authorizeAction(
   action: GameAction,
   actor: ActionActor,
 ): AuthorizeResult {
+  const isHost = actor.role === 'host'
+  if (actor.role === 'player') {
+    if (HOST_ONLY_ACTIONS.has(action.type)) return { ok: false, reason: 'Nur der Host darf das' }
+    if (action.type === 'REMOVE_PLAYER' && action.playerId !== actor.playerId) {
+      return { ok: false, reason: 'Nur der Host darf Spieler entfernen' }
+    }
+    if (action.type === 'MOVE_PLAYER_TO_TEAM' && action.playerId !== actor.playerId) {
+      return { ok: false, reason: 'Nur der Host darf andere Spieler verschieben' }
+    }
+  }
   const me = actor.playerId
     ? state.round?.players.find((p) => p.id === actor.playerId) ?? null
     : null
   // Reines Bühnen-/Master-Gerät: keine Team-Bindung.
   if (!me) return OK
+  // Host darf Show-Aktionen auch dann, wenn er mitspielt.
+  if (isHost && HOST_ONLY_ACTIONS.has(action.type)) return OK
   const myTeam = me.teamId ?? null
 
   switch (action.type) {
@@ -61,6 +89,7 @@ export function authorizeAction(
     case 'SPRINTER_REBOUND_BUZZ':
     case 'FLASH_SET_ANSWER':
     case 'LADDER_SET_ANSWER':
+    case 'PICTURE_SET_ANSWER':
       return action.teamId === myTeam
         ? OK
         : { ok: false, reason: 'Nur für das eigene Team erlaubt' }

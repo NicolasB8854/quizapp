@@ -4,6 +4,8 @@
  * fehl, ist das Absicht — erst Rubrik erfüllen, dann committen.
  */
 import { describe, it, expect } from 'vitest'
+import { existsSync } from 'node:fs'
+import { resolve } from 'node:path'
 import questions from './questions.json'
 import { TOPICS } from './topics'
 import type { Question } from '../types/question'
@@ -41,15 +43,25 @@ describe('Fragenkatalog', () => {
     const gaps: string[] = []
     for (const t of TOPICS) {
       for (const d of [1, 2, 3, 4, 5]) {
-        const n = all.filter((q) => q.type === 'multiple-choice' && q.topic === t.id && q.difficulty === d).length
+        const n = all.filter((q) => q.type === 'multiple-choice' && !q.image && q.topic === t.id && q.difficulty === d).length
         if (n < MIN_PER_LEVEL) gaps.push(`${t.id}:${d}=${n}`)
       }
     }
     expect(gaps).toEqual([])
   })
 
+  it('Bilderrätsel: jede Bild-Frage hat ein Bild in public/ und läuft nur dort', () => {
+    const pics = all.filter((q) => q.type === 'multiple-choice' && q.image)
+    expect(pics.length).toBeGreaterThanOrEqual(12)
+    for (const q of pics) {
+      if (q.type !== 'multiple-choice') continue
+      expect(existsSync(resolve(__dirname, '../../../../public', q.image!.slice(1)))).toBe(true)
+      expect(q.compatibleModes).toEqual(['blindguess'])
+    }
+  })
+
   it('genug Wahr/Falsch- und Klick!-Inhalte für mehrere Abende', () => {
-    expect(all.filter((q) => q.type === 'true-false').length).toBeGreaterThanOrEqual(40)
-    expect(all.filter((q) => q.type === 'warmup-riddle').length).toBeGreaterThanOrEqual(10)
+    expect(all.filter((q) => q.type === 'true-false').length).toBeGreaterThanOrEqual(200)
+    expect(all.filter((q) => q.type === 'warmup-riddle').length).toBeGreaterThanOrEqual(50)
   })
 })

@@ -31,6 +31,7 @@ export * from './lib/interestSearch'
 export * from './lib/shuffle'
 export * from './lib/roomCode'
 export * from './lib/solo'
+export * from './lib/director'
 
 // Data / Konstanten
 export * from './data/modes'

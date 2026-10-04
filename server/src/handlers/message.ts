@@ -17,6 +17,7 @@ import type {
   APIGatewayProxyResultV2,
   APIGatewayProxyWebsocketEventV2,
 } from 'aws-lambda'
+import { countMetric, getGroupHistory, isValidGroupId, saveGroupHistory } from '../insights'
 import {
   authorizeAction,
   parseClientMessage,
@@ -27,7 +28,7 @@ import {
   type ServerMessage,
 } from '@quizapp/shared'
 
-import { getRoom, getSession, putRoom, saveSession } from '../db'
+import { getRoom, getSession, listConnectionsInRoom, putRoom, saveSession } from '../db'
 import { broadcastToRoom, sendToConnection } from '../broadcast'
 
 /** Schickt eine ERROR-Message an den Absender. */
@@ -113,6 +114,7 @@ async function handleJoinRoom(
       askedQuestionIds: [],
       hostPlayerId: null,
     })
+    await countMetric('room_created')
   }
 
   const playerId = msg.playerId ?? newPlayerId()
@@ -195,14 +197,32 @@ async function handleJoinRoom(
     }
   }
 
-  // Room speichern, wenn State oder Host geändert.
+  // Gruppen-Historie: Der Host bringt die Fragen früherer Abende mit,
+  // damit der Reducer sie ausschließt.
+  let groupId = room.groupId ?? null
+  let askedQuestionIds = room.askedQuestionIds
+  let groupChanged = false
+  if (effectiveRole === 'host' && !groupId && isValidGroupId(msg.groupId)) {
+    groupId = msg.groupId
+    try {
+      const history = await getGroupHistory(groupId)
+      askedQuestionIds = mergeAskedIds(history, askedQuestionIds)
+    } catch (err) {
+      console.error(JSON.stringify({ level: 'warn', msg: 'group-history-load-failed', err: String(err) }))
+    }
+    groupChanged = true
+  }
+  if (stateChanged && shouldRegisterAsPlayer) await countMetric('player_joined')
+
+  // Room speichern, wenn State, Host oder Gruppe geändert.
   const hostChanged = (room.hostPlayerId ?? null) !== (nextHostPlayerId ?? null)
-  if (stateChanged || hostChanged) {
+  if (stateChanged || hostChanged || groupChanged) {
     await putRoom({
       roomCode,
       state: currentState,
-      askedQuestionIds: room.askedQuestionIds,
+      askedQuestionIds,
       hostPlayerId: nextHostPlayerId,
+      groupId,
     })
   }
 
@@ -274,7 +294,10 @@ async function handleDispatch(
   }
 
   // Team-Bindung prüfen: Spieler dürfen nur für ihr eigenes Team buzzern/antworten.
-  const auth = authorizeAction(room.state, msg.action, { playerId: session.playerId ?? null })
+  const auth = authorizeAction(room.state, msg.action, {
+    playerId: session.playerId ?? null,
+    role: session.role === 'host' ? 'host' : 'player',
+  })
   if (!auth.ok) {
     await replyError(event, connectionId, 'FORBIDDEN', auth.reason)
     return
@@ -288,6 +311,14 @@ async function handleDispatch(
   let nextState: GameState
   try {
     nextState = reducer(room.state, msg.action)
+    // Setup → Lobby (z. B. nach „Modi neu wählen"): alle verbundenen Handys
+    // wieder ins Roster holen — sie haben ja schon beigetreten.
+    if (room.state.phase === 'setup' && nextState.phase === 'lobby') {
+      for (const s of await listConnectionsInRoom(session.roomCode)) {
+        if (s.stageOnly) continue
+        nextState = reducer(nextState, { type: 'ADD_PLAYER', teamId: null, playerId: s.playerId, playerName: s.playerName })
+      }
+    }
   } catch (err) {
     console.error(
       JSON.stringify({
@@ -310,7 +341,26 @@ async function handleDispatch(
     state: nextState,
     askedQuestionIds,
     hostPlayerId: room.hostPlayerId ?? null,
+    groupId: room.groupId ?? null,
   })
+
+  // Fragen-Historie der Gruppe fortschreiben (nur wenn neue Fragen dazukamen).
+  if (room.groupId && askedQuestionIds.length !== room.askedQuestionIds.length) {
+    try {
+      await saveGroupHistory(room.groupId, askedQuestionIds)
+    } catch (err) {
+      console.error(JSON.stringify({ level: 'warn', msg: 'group-history-save-failed', err: String(err) }))
+    }
+  }
+
+  // Kennzahlen (anonym, Tageszähler).
+  if (room.state.phase !== 'playing' && nextState.phase === 'playing') {
+    await countMetric('night_started')
+    await countMetric('players_in_nights', nextState.round?.players.length ?? 0)
+  }
+  const modesDone = nextState.results.length - room.state.results.length
+  if (modesDone > 0) await countMetric('mode_played', modesDone)
+  if (room.state.phase !== 'scoreboard' && nextState.phase === 'scoreboard') await countMetric('night_finished')
 
   const { sent, gone } = await broadcastToRoom(event, session.roomCode, {
     type: 'STATE',

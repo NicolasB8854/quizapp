@@ -80,4 +80,25 @@ describe('authorizeAction', () => {
     expect(authorizeAction(lobby, { type: 'SET_PLAYER_AVATAR', playerId: 'p2', avatar }, { playerId: 'p1' }).ok).toBe(false)
     expect(authorizeAction(lobby, { type: 'SET_PLAYER_NAME', playerId: 'p2', name: 'x' }, { playerId: null }).ok).toBe(true)
   })
+
+  it('Host-Aktionen: Spieler abgelehnt, Host erlaubt (auch wenn er mitspielt)', () => {
+    const st = stateWith({ kind: 'flash' })
+    expect(authorizeAction(st, { type: 'FLASH_NEXT' }, { playerId: 'p2', role: 'player' }).ok).toBe(false)
+    expect(authorizeAction(st, { type: 'FINISH_MODE' }, { playerId: 'p2', role: 'player' }).ok).toBe(false)
+    expect(authorizeAction(st, { type: 'FLASH_NEXT' }, { playerId: 'p1', role: 'host' }).ok).toBe(true)
+    expect(authorizeAction(st, { type: 'RESTART_MATCH' }, { playerId: 'stage', role: 'host' }).ok).toBe(true)
+  })
+
+  it('Team-Wechsel und Entfernen nur für sich selbst, außer Host', () => {
+    const st = stateWith({ kind: 'flash' })
+    expect(authorizeAction(st, { type: 'MOVE_PLAYER_TO_TEAM', playerId: 'p2', teamId: 't1' }, { playerId: 'p2', role: 'player' }).ok).toBe(true)
+    expect(authorizeAction(st, { type: 'MOVE_PLAYER_TO_TEAM', playerId: 'p3', teamId: 't1' }, { playerId: 'p2', role: 'player' }).ok).toBe(false)
+    expect(authorizeAction(st, { type: 'REMOVE_PLAYER', playerId: 'p3' }, { playerId: 'p1', role: 'host' }).ok).toBe(true)
+  })
+
+  it('Spieler-Aktionen bleiben für Spieler erlaubt', () => {
+    const st = stateWith({ kind: 'experts', phase: 'question-shown', activePlayerId: 'p2' })
+    expect(authorizeAction(st, { type: 'EXPERTS_SHOW_OPTIONS' }, { playerId: 'p2', role: 'player' }).ok).toBe(true)
+    expect(authorizeAction(st, { type: 'SPRINTER_TIME_UP' }, { playerId: 'p2', role: 'player' }).ok).toBe(true)
+  })
 })

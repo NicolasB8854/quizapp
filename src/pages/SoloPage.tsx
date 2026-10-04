@@ -23,6 +23,8 @@ import { Card } from '@/components/Card'
 import { AnswerOption, type AnswerStatus } from '@/components/AnswerOption'
 import { readSoloStats, saveSoloRun, type SoloStats } from '@/lib/soloStats'
 import { primaryTitle } from '@/lib/titles'
+import { ReportQuestionButton } from '@/components/ReportQuestionButton'
+import { track } from '@/lib/insightsApi'
 import { cn } from '@/lib/classnames'
 import { haptic } from '@/lib/haptics'
 import { useWakeLock } from '@/hooks/useWakeLock'
@@ -112,6 +114,7 @@ export default function SoloPage() {
       const final = answers.reduce((s, a) => s + a.points, 0)
       markSeen(run.map((q) => q.id))
       setStats(saveSoloRun(answers.map((a) => ({ topic: a.question.topic, correct: a.correct })), final))
+      track('solo_finished')
       setPhase('done')
       return
     }
@@ -225,6 +228,7 @@ export default function SoloPage() {
                       : 'Leider falsch'}
                 </div>
                 {question.explanation && <p className="text-sm text-white/80">{question.explanation}</p>}
+                <ReportQuestionButton questionId={question.id} source="solo" />
                 <Button
                   variant="primary"
                   size="lg"

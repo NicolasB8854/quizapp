@@ -24,6 +24,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { GameAction, GameState, ServerMessage } from '@quizapp/shared'
+import { getGroupId } from '@/lib/groupId'
 import { WSClient } from '@/lib/wsClient'
 
 export interface UseRoomSyncOptions {
@@ -118,6 +119,7 @@ export function useRoomSync(opts: UseRoomSyncOptions): UseRoomSyncResult {
         role: roleRef.current,
         stageOnly: stageOnlyRef.current,
         ...(playerIdRef.current ? { playerId: playerIdRef.current } : {}),
+        ...(roleRef.current === 'host' ? { groupId: getGroupId() } : {}),
       })
     })
 
@@ -138,6 +140,13 @@ export function useRoomSync(opts: UseRoomSyncOptions): UseRoomSyncResult {
           setStatus('joined')
           break
         case 'ERROR':
+          // Abgelehnte Einzelaktion (z. B. zwei Teams buzzern gleichzeitig):
+          // kurz anzeigen, aber die Verbindung bleibt nutzbar.
+          if (msg.code === 'FORBIDDEN' || msg.code === 'REDUCER_REJECTED') {
+            setLastError(msg.message)
+            window.setTimeout(() => setLastError((cur) => (cur === msg.message ? null : cur)), 3000)
+            break
+          }
           setLastError(`${msg.code}: ${msg.message}`)
           setStatus('error')
           break
@@ -159,11 +168,23 @@ export function useRoomSync(opts: UseRoomSyncOptions): UseRoomSyncResult {
       /* no-op */
     })
 
+    // Wiedereinstieg: Handy entsperrt, Tab wieder sichtbar, Netz zurück →
+    // sofort neu verbinden statt auf den Backoff zu warten.
+    const wake = () => {
+      if (document.visibilityState === 'visible') client.reconnectNow()
+    }
+    document.addEventListener('visibilitychange', wake)
+    window.addEventListener('online', wake)
+    window.addEventListener('pageshow', wake)
+
     // Status auf 'connecting' setzen, sobald der Aufbau startet.
     setStatus('connecting')
     client.connect()
 
     return () => {
+      document.removeEventListener('visibilitychange', wake)
+      window.removeEventListener('online', wake)
+      window.removeEventListener('pageshow', wake)
       unsubOpen()
       unsubMessage()
       unsubClose()

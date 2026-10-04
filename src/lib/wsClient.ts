@@ -5,7 +5,10 @@
  *   - Öffnet eine Verbindung gegen `VITE_WS_URL` (siehe .env.example)
  *   - Serialisiert alle ausgehenden `ClientMessage` als JSON
  *   - Parst eingehende Frames zu `ServerMessage` und verteilt an Subscriber
- *   - Auto-Reconnect mit exponential backoff (1s → 2s → 4s → 8s → 16s → 30s cap)
+ *   - Auto-Reconnect mit exponential backoff (0,5s → 1s → 2s → 4s → 8s cap — Party-tauglich)
+ *   - Heartbeat: PING alle 15 s; kommt 8 s lang nichts zurück, gilt die Verbindung
+ *     als tot (z. B. iOS hat sie im Hintergrund eingefroren) und wird neu aufgebaut
+ *   - Beim Wieder-Öffnen zuerst JOIN (Open-Handler), dann nur frische (< 5 s) Aktionen nachsenden
  *   - Bewusst `close()` bricht Reconnect ab (User-initiiert = final)
  *
  * Keine externen Deps: Browser-natives `WebSocket` genügt. In Tests wird
@@ -18,6 +21,10 @@ type OpenHandler = () => void
 type MessageHandler = (msg: ServerMessage) => void
 type CloseHandler = (event: CloseEvent) => void
 type ErrorHandler = (event: Event) => void
+
+const HEARTBEAT_MS = 15_000
+const DEAD_MS = 8_000
+const STALE_MS = 5_000
 
 export type WSStatus = 'idle' | 'connecting' | 'open' | 'closed' | 'reconnecting'
 
@@ -44,8 +51,10 @@ export class WSClient {
   private status: WSStatus = 'idle'
   private reconnectAttempt = 0
   private reconnectTimer: number | null = null
-  /** Gepuffert bis die Verbindung `open` ist. Simple FIFO-Queue. */
-  private outbox: ClientMessage[] = []
+  /** Gepuffert bis die Verbindung `open` ist. FIFO mit Zeitstempel. */
+  private outbox: Array<{ msg: ClientMessage; at: number }> = []
+  private heartbeatTimer: number | null = null
+  private lastSeen = 0
   /** Bei explizitem close() wird Reconnect deaktiviert. */
   private disposed = false
 
@@ -57,8 +66,8 @@ export class WSClient {
   constructor(url: string, opts: WSClientOptions = {}) {
     this.url = url
     this.autoReconnect = opts.autoReconnect ?? true
-    this.maxReconnectDelayMs = opts.maxReconnectDelayMs ?? 30_000
-    this.initialReconnectDelayMs = opts.initialReconnectDelayMs ?? 1_000
+    this.maxReconnectDelayMs = opts.maxReconnectDelayMs ?? 8_000
+    this.initialReconnectDelayMs = opts.initialReconnectDelayMs ?? 500
   }
 
   getStatus(): WSStatus {
@@ -81,12 +90,18 @@ export class WSClient {
     socket.addEventListener('open', () => {
       if (this.ws !== socket) return
       this.reconnectAttempt = 0
+      this.lastSeen = Date.now()
       this.setStatus('open')
-      // Gepufferte Nachrichten flushen.
+      // Erst JOIN (Open-Handler), dann gepufferte Aktionen — aber nur frische:
+      // ein Buzzer-Klick von vor 20 s soll nach dem Reconnect nicht nachfeuern.
+      for (const h of this.openHandlers) h()
       const pending = this.outbox
       this.outbox = []
-      for (const msg of pending) this.rawSend(msg)
-      for (const h of this.openHandlers) h()
+      const cutoff = Date.now() - STALE_MS
+      for (const item of pending) {
+        if (item.msg.type !== 'DISPATCH' || item.at >= cutoff) this.rawSend(item.msg)
+      }
+      this.startHeartbeat()
     })
 
     socket.addEventListener('message', (event: MessageEvent) => {
@@ -99,12 +114,14 @@ export class WSClient {
         return
       }
       if (!parsed || typeof parsed !== 'object' || !('type' in parsed)) return
+      this.lastSeen = Date.now()
       for (const h of this.messageHandlers) h(parsed)
     })
 
     socket.addEventListener('close', (event: CloseEvent) => {
       if (this.ws !== socket) return
       this.ws = null
+      this.stopHeartbeat()
       this.setStatus('closed')
       for (const h of this.closeHandlers) h(event)
       if (!this.disposed && this.autoReconnect) this.scheduleReconnect()
@@ -125,8 +142,63 @@ export class WSClient {
     if (this.ws && this.ws.readyState === WebSocket.OPEN) {
       return this.rawSend(msg)
     }
-    this.outbox.push(msg)
+    this.outbox.push({ msg, at: Date.now() })
     return false
+  }
+
+  /**
+   * Sofort neu verbinden (z. B. App kommt aus dem Hintergrund, Netz ist
+   * wieder da). Setzt den Backoff zurück. Eine offene, lebendige Verbindung
+   * bleibt unangetastet — dann wird nur ein PING zur Prüfung geschickt.
+   */
+  reconnectNow(): void {
+    if (this.disposed) return
+    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+      if (Date.now() - this.lastSeen > HEARTBEAT_MS + DEAD_MS) this.dropDeadSocket()
+      else this.rawSend({ type: 'PING' })
+      return
+    }
+    if (this.reconnectTimer !== null) {
+      clearTimeout(this.reconnectTimer)
+      this.reconnectTimer = null
+    }
+    this.reconnectAttempt = 0
+    if (this.status !== 'connecting') this.connect()
+  }
+
+  private startHeartbeat(): void {
+    this.stopHeartbeat()
+    this.heartbeatTimer = window.setInterval(() => {
+      if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return
+      if (Date.now() - this.lastSeen > HEARTBEAT_MS + DEAD_MS) {
+        this.dropDeadSocket()
+        return
+      }
+      this.rawSend({ type: 'PING' })
+    }, HEARTBEAT_MS)
+  }
+
+  private stopHeartbeat(): void {
+    if (this.heartbeatTimer !== null) {
+      clearInterval(this.heartbeatTimer)
+      this.heartbeatTimer = null
+    }
+  }
+
+  /** Verbindung, die nicht mehr antwortet: verwerfen und neu aufbauen. */
+  private dropDeadSocket(): void {
+    const socket = this.ws
+    this.ws = null
+    this.stopHeartbeat()
+    try {
+      socket?.close(4000, 'heartbeat-timeout')
+    } catch {
+      /* ignore */
+    }
+    this.setStatus('closed')
+    for (const h of this.closeHandlers) h(new CloseEvent('close', { code: 4000, reason: 'heartbeat-timeout' }))
+    this.reconnectAttempt = 0
+    this.connect()
   }
 
   private rawSend(msg: ClientMessage): boolean {
@@ -162,6 +234,7 @@ export class WSClient {
   /** Beendet die Verbindung final. Kein Reconnect mehr, auch nicht auto. */
   close(): void {
     this.disposed = true
+    this.stopHeartbeat()
     if (this.reconnectTimer !== null) {
       clearTimeout(this.reconnectTimer)
       this.reconnectTimer = null

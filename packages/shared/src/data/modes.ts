@@ -132,6 +132,18 @@ export const MODES: GameMode[] = [
     accent: 'spotlight',
     status: 'ready',
   },
+  {
+    id: 'blindguess',
+    name: 'Bilderrätsel',
+    chipLabel: 'Bilder',
+    tagline: 'Erkennst du, was du siehst?',
+    description:
+      'Ein Bild wird langsam scharf — alle Teams tippen gleichzeitig. Wer früh richtig liegt, kassiert mehr Punkte. Sechs Bilder, von leicht bis knifflig.',
+    estimatedMinutes: 10,
+    scoresMatchPoint: true,
+    accent: 'picture',
+    status: 'ready',
+  },
 ]
 
 export const MODES_BY_ID: Record<string, GameMode> = Object.fromEntries(
@@ -148,4 +160,5 @@ export const ACCENT_HEX: Record<GameMode['accent'], string> = {
   experts:   '#B78BFF',
   flash:     '#FF3D8B',
   spotlight: '#FFB84D',
+  picture:   '#3FD0FF',
 }

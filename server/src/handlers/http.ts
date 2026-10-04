@@ -15,8 +15,12 @@
  * Nach jedem Write ruft der Handler `invalidateCatalog()`, damit die
  * WS-Handler-Aufrufe direkt den aktualisierten Katalog nutzen.
  *
- * ⚠ Noch kein Auth-Layer. Für den Prototyp okay, für Prod muss ein
- * Bearer-Token oder Cognito-JWT-Check dazwischen.
+ * Schreibende Routen (POST/PUT/DELETE /questions) sowie GET /reports und
+ * GET /metrics verlangen den Header `x-admin-token` (Lambda-Env ADMIN_TOKEN).
+ * Ist kein Token konfiguriert, sind sie gesperrt (sicherer Default).
+ *
+ * Öffentlich: GET /questions, POST /reports (Frage melden), POST /events
+ * (Kennzahlen aus einer Allowlist, keine personenbezogenen Daten).
  */
 
 import type {
@@ -32,7 +36,18 @@ import {
   ScanCommand,
 } from '@aws-sdk/lib-dynamodb'
 import type { Question, Topic } from '@quizapp/shared'
+import { timingSafeEqual } from 'node:crypto'
 import { invalidateCatalog } from '../catalog'
+import {
+  countMetric,
+  listReports,
+  METRIC_EVENTS,
+  readMetrics,
+  REPORT_REASONS,
+  saveReport,
+  type MetricEvent,
+  type QuestionReport,
+} from '../insights'
 
 const raw = new DynamoDBClient({})
 const ddb = DynamoDBDocumentClient.from(raw, {
@@ -52,6 +67,59 @@ function json(statusCode: number, body: unknown): APIGatewayProxyResultV2 {
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify(body),
   }
+}
+
+// ---------- Auth -----------------------------------------------------------
+
+function isAdmin(event: APIGatewayProxyEventV2): boolean {
+  const expected = process.env.ADMIN_TOKEN ?? ''
+  const given = event.headers?.['x-admin-token'] ?? ''
+  if (expected.length < 16 || given.length !== expected.length) return false
+  return timingSafeEqual(Buffer.from(given), Buffer.from(expected))
+}
+
+const FORBIDDEN = json(403, { error: 'admin token required' })
+
+// ---------- Reports & Events -----------------------------------------------
+
+function parseBody(body: string | undefined, maxBytes = 2000): Record<string, unknown> | null {
+  if (!body || body.length > maxBytes) return null
+  try {
+    const parsed: unknown = JSON.parse(body)
+    return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? (parsed as Record<string, unknown>) : null
+  } catch {
+    return null
+  }
+}
+
+async function createReport(body: string | undefined): Promise<APIGatewayProxyResultV2> {
+  const b = parseBody(body)
+  const questionId = typeof b?.questionId === 'string' ? b.questionId.slice(0, 80) : ''
+  const reason = b?.reason as QuestionReport['reason']
+  if (!questionId || !(REPORT_REASONS as readonly string[]).includes(reason)) {
+    return json(400, { error: 'questionId und gültiger reason nötig' })
+  }
+  await saveReport({
+    questionId,
+    reason,
+    note: typeof b?.note === 'string' ? b.note : undefined,
+    source: b?.source === 'solo' ? 'solo' : 'room',
+  })
+  await countMetric('question_reported')
+  return json(201, { ok: true })
+}
+
+/** Nur Client-seitige Ereignisse; Spielabend-Kennzahlen zählt der WS-Handler selbst. */
+const CLIENT_EVENTS: ReadonlySet<MetricEvent> = new Set<MetricEvent>(['solo_finished', 'invite_shared', 'director_used'])
+
+async function trackEvent(body: string | undefined): Promise<APIGatewayProxyResultV2> {
+  const b = parseBody(body, 300)
+  const name = b?.event as MetricEvent
+  if (!(METRIC_EVENTS as readonly string[]).includes(name) || !CLIENT_EVENTS.has(name)) {
+    return json(400, { error: 'unknown event' })
+  }
+  await countMetric(name)
+  return json(202, { ok: true })
 }
 
 // ---------- ID-Generator ----------------------------------------------------
@@ -230,15 +298,28 @@ export async function handleHttp(
           ? await getQuestion(pathParameters.id)
           : json(400, { error: 'id missing in path' })
       case 'POST /questions':
+        if (!isAdmin(event)) return FORBIDDEN
         return await createQuestion(event.body)
       case 'PUT /questions/{id}':
+        if (!isAdmin(event)) return FORBIDDEN
         return pathParameters?.id
           ? await updateQuestion(pathParameters.id, event.body)
           : json(400, { error: 'id missing in path' })
       case 'DELETE /questions/{id}':
+        if (!isAdmin(event)) return FORBIDDEN
         return pathParameters?.id
           ? await deleteQuestion(pathParameters.id)
           : json(400, { error: 'id missing in path' })
+      case 'POST /reports':
+        return await createReport(event.body)
+      case 'GET /reports':
+        if (!isAdmin(event)) return FORBIDDEN
+        return json(200, { reports: await listReports() })
+      case 'POST /events':
+        return await trackEvent(event.body)
+      case 'GET /metrics':
+        if (!isAdmin(event)) return FORBIDDEN
+        return json(200, { metrics: await readMetrics(30) })
       default:
         return json(404, { error: 'route not found', routeKey })
     }

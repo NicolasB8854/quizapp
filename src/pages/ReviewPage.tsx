@@ -17,6 +17,7 @@ import {
   ArrowLeft, Search, X as XIcon, Check, Tag, Calendar, ExternalLink, Sparkles,
   Pencil, Plus, Loader2, WifiOff,
 } from 'lucide-react'
+import { AdminInsightsPanel } from '@/components/AdminInsightsPanel'
 import { ScreenLayout } from '@/components/ScreenLayout'
 import { Button } from '@/components/Button'
 import { Card } from '@/components/Card'
@@ -185,6 +186,8 @@ export default function ReviewPage() {
       headerMeta="Prototyp-Tools · Fragen-Review"
     >
       <div className="mx-auto max-w-6xl pt-2 md:pt-6 pb-14 animate-titleIn">
+        <AdminInsightsPanel onSelectQuestion={(id) => setDetailId(id)} />
+
         {/* Kopfzeile */}
         <div>
           <div className="eyebrow">Fragen-Katalog</div>
