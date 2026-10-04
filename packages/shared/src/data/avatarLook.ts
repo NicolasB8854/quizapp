@@ -110,7 +110,14 @@ export function randomAvatarLook(seed: number = Math.floor(Math.random() * 2 ** 
   const idx = (n: number) => Math.floor(r() * n)
   const naturalHair = HAIR_COLORS.length - 3
   const hair = r() < 0.06 ? 'bald' : pick(AVATAR_PARTS.hair.filter((h) => h !== 'bald'))
-  const hairColor = r() < 0.1 ? naturalHair + idx(3) : idx(naturalHair)
+  // Natürliche Haarfarben gewichtet (Grau/Weiß selten), Neon in 8 % der Fälle.
+  const HAIR_WEIGHTS = [3, 3, 3, 2, 2, 1.2, 0.8, 0.5]
+  const weighted = (w: readonly number[]) => {
+    let x = r() * w.reduce((a, b) => a + b, 0)
+    for (let i = 0; i < w.length; i++) if ((x -= w[i]) < 0) return i
+    return w.length - 1
+  }
+  const hairColor = r() < 0.08 ? naturalHair + idx(3) : weighted(HAIR_WEIGHTS)
 
   // Höchstens zwei Extras, meist keins oder eins — das Gesicht bleibt frei.
   const extras = r() < 0.4 ? 0 : r() < 0.85 ? 1 : 2

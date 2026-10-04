@@ -291,15 +291,15 @@ function Brow({ kind, color }: { kind: AvatarLook['brows']; color: string }) {
   const common = { stroke: color, fill: 'none', strokeLinecap: 'round' as const }
   switch (kind) {
     case 'natural':
-      return <path d="M77 85 Q85 79 93 83" strokeWidth={3.6} {...common} />
+      return <path d="M77 85 Q85 79 93 83" strokeWidth={4.2} {...common} />
     case 'thick':
       return <path d="M76 85 Q85 78 94 83" strokeWidth={5.6} {...common} />
     case 'raised':
-      return <path d="M77 81 Q85 73 93 79" strokeWidth={3.2} {...common} />
+      return <path d="M77 81 Q85 73 93 79" strokeWidth={4} {...common} />
     case 'angry':
       return <path d="M77 80 L93 86" strokeWidth={3.8} {...common} />
     case 'worried':
-      return <path d="M77 85 Q85 83 93 78" strokeWidth={3.2} {...common} />
+      return <path d="M77 85 Q85 83 93 78" strokeWidth={4} {...common} />
   }
 }
 
@@ -321,7 +321,7 @@ function Nose({ kind, skin }: { kind: AvatarLook['nose']; skin: string }) {
 }
 
 function Mouth({ kind }: { kind: AvatarLook['mouth'] }) {
-  const line = { stroke: LIP, strokeWidth: 3, fill: 'none', strokeLinecap: 'round' as const }
+  const line = { stroke: LIP, strokeWidth: 3.6, fill: 'none', strokeLinecap: 'round' as const }
   switch (kind) {
     case 'smile':
       return <path d="M87 119 Q100 132 113 119" {...line} />
@@ -353,7 +353,7 @@ const LOWER_FACE =
   'M60 100 C60 132 80 146 100 146 C120 146 140 132 140 100 C134 116 124 112 116 114 C110 112 104 112 100 113 C96 112 90 112 84 114 C76 112 66 116 60 100 Z'
 const FULL_BEARD =
   'M61 102 C60 136 80 152 100 152 C120 152 140 136 139 102 C134 116 124 114 116 115 C110 113 104 113 100 114 C96 113 90 113 84 115 C76 114 66 116 61 102 Z'
-const MUSTACHE = 'M86 118 C90 111 97 112 100 115 C103 112 110 111 114 118 C108 117 104 118 100 118.5 C96 118 92 117 86 118 Z'
+const MUSTACHE = 'M88 116 C91 110 97 111 100 113.5 C103 111 109 110 112 116 C107 115 104 116 100 116.5 C96 116 93 115 88 116 Z'
 
 // ---------------------------------------------------------------------------
 // Outfit
@@ -541,6 +541,7 @@ export function AvatarFigure({ look, accentHex = '#7C5CFF', crop = 'bust', class
     head: `av-head-${uid}`,
     shades: `av-sh-${uid}`,
     visor: `av-vi-${uid}`,
+    below: `av-bl-${uid}`,
   }
   const skin = SKIN_TONES[look.skin] ?? SKIN_TONES[2]
   const skinShade = shade(skin, 0.14)
@@ -570,6 +571,9 @@ export function AvatarFigure({ look, accentHex = '#7C5CFF', crop = 'bust', class
         <clipPath id={ids.clip}>
           <circle cx={100} cy={100} r={100} />
         </clipPath>
+        <clipPath id={ids.below}>
+          <rect x={0} y={78} width={200} height={122} />
+        </clipPath>
         <clipPath id={ids.head}>
           <path d={head.d} />
         </clipPath>
@@ -585,7 +589,9 @@ export function AvatarFigure({ look, accentHex = '#7C5CFF', crop = 'bust', class
       <g clipPath={`url(#${ids.clip})`}>
         <rect width={200} height={200} fill={`url(#${ids.bg})`} />
 
-        <g stroke={hairLine} strokeWidth={1.6}>{hairP.back}</g>
+        <g stroke={hairLine} strokeWidth={1.6} clipPath={HAT.has(look.accessory) ? `url(#${ids.below})` : undefined}>
+          {hairP.back}
+        </g>
 
         {/* Hals */}
         <path d="M88 124 L112 124 L114 156 Q100 163 86 156 Z" fill={skin} stroke={skinLine} strokeWidth={1.6} />
