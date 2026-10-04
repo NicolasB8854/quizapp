@@ -142,6 +142,7 @@ MODE_MOTIFS = {
     "sprinter": "a TV quiz show studio with light streaks racing along the floor and walls, motion blur, a huge abstract circular countdown ring glowing on the LED wall, speed",
     "points-ladder": "a TV quiz show studio with a glowing ladder of stacked light bars rising on the LED wall, the top bar golden, one contestant seat in a spotlight, rising tension",
     "flash": "a TV quiz show stage lit in two strong halves, intense cyan light on the left side and intense magenta-violet light on the right side, a bright white lightning flash in the middle of the stage, fast decision",
+    "blindguess": "a TV quiz show studio with a huge LED wall showing one heavily blurred abstract photograph slowly coming into focus, two contestant podiums with glowing answer pads, cyan light",
     "player-spotlight": "an empty TV quiz show stage with a single golden spotlight cone falling on one empty contestant podium in the center, the rest of the studio in violet and cyan light, anticipation",
 }
 for mode_id, motif in MODE_MOTIFS.items():
