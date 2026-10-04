@@ -12,6 +12,7 @@
  */
 
 import { useId, type ReactNode } from 'react'
+import { buildHair } from './hair'
 import {
   EYE_COLORS,
   HAIR_COLORS,
@@ -74,11 +75,8 @@ const HEADS: Record<AvatarLook['head'], Head> = {
   long: { d: 'M65 88 C65 57 81 43 100 43 C119 43 135 57 135 88 C135 122 120 143 100 143 C80 143 65 122 65 88 Z', earX: 66, sx: 0.9, sy: 1.06 },
 }
 
-/** Frisuren, die die Ohren verdecken. */
-const COVERS_EARS = new Set<AvatarLook['hair']>(['long', 'bob', 'locs', 'afro'])
-/** Mit Cap/Mütze ersetzt der Hut das Deckhaar; kurze Schnitte zeigen nur Koteletten. */
+/** Mit Cap/Mütze ist nur das Haar unterhalb der Hutkante sichtbar. */
 const HAT = new Set<AvatarLook['accessory']>(['cap', 'beanie'])
-const SHORT_UNDER_HAT = new Set<AvatarLook['hair']>(['short', 'quiff', 'spiky', 'buzz', 'curly', 'mohawk'])
 
 const EYE_Y = 96
 const EYE_X = 85 // linkes Auge; rechtes = gespiegelt
@@ -99,166 +97,6 @@ function Both({ children }: { children: ReactNode }) {
 
 // ---------------------------------------------------------------------------
 // Haare
-
-interface HairParts {
-  back?: ReactNode
-  sides?: ReactNode
-  front?: ReactNode
-}
-
-function curlRow(cx: number, cy: number, rx: number, ry: number, from: number, to: number, n: number, r: number, fill: string) {
-  return Array.from({ length: n }, (_, i) => {
-    const a = ((from + ((to - from) * i) / (n - 1)) * Math.PI) / 180
-    return <circle key={i} cx={cx + rx * Math.cos(a)} cy={cy + ry * Math.sin(a)} r={r} fill={fill} />
-  })
-}
-
-/** Koteletten: verbinden kurze Frisuren mit dem Kopf (kein „Helm"). */
-function Sideburns({ c }: { c: string }) {
-  return (
-    <Both>
-      <path d="M61 78 L71 80 Q69 92 66.5 103 Q63 96 61 78 Z" fill={c} />
-    </Both>
-  )
-}
-
-function hairParts(style: AvatarLook['hair'], c: string, cs: string, headClip: string, skin: string): HairParts {
-  /** Rasierte Partie: deckend, Hautton mit Haarfarbe gemischt (kein Transparenz-Schleier). */
-  const shaved = mix(skin, c, 0.6)
-  const slick = 'M62 88 C61 56 80 39 100 39 C120 39 139 56 138 88 C135 70 124 61 110 60 Q104 60 100 64 Q96 60 90 60 C76 61 65 70 62 88 Z'
-  switch (style) {
-    case 'short':
-      return {
-        front: (
-          <>
-            <Sideburns c={c} />
-            <path d="M61 92 C56 62 75 41 101 41 C127 41 145 60 139 92 C137 81 134 74 130 69 C118 75 94 75 77 65 C69 73 64 81 61 92 Z" fill={c} />
-            <path d="M90 44 Q85 54 78 62" stroke={cs} strokeWidth={2} fill="none" strokeLinecap="round" />
-          </>
-        ),
-      }
-    case 'quiff':
-      return {
-        front: (
-          <>
-            <Sideburns c={c} />
-            <path d="M60 90 C56 62 70 46 86 42 C90 28 112 22 130 32 C144 42 146 64 140 90 C136 76 130 68 124 64 C110 68 90 70 74 64 C68 72 62 80 60 90 Z" fill={c} />
-            <path d="M92 40 C100 30 116 28 126 36" stroke={tint(c, 0.25)} strokeWidth={2.5} fill="none" strokeLinecap="round" opacity={0.7} />
-          </>
-        ),
-      }
-    case 'spiky':
-      return {
-        front: (
-          <>
-            <Sideburns c={c} />
-            <path d="M60 90 L57 66 L68 69 L67 50 L80 56 L85 38 L96 49 L104 33 L112 49 L123 38 L125 56 L137 50 L134 69 L143 66 L140 90 C134 74 120 66 100 66 C80 66 66 74 60 90 Z" fill={c} />
-          </>
-        ),
-      }
-    case 'buzz':
-      return {
-        front: (
-          <g clipPath={`url(#${headClip})`}>
-            <path d="M40 30 L160 30 L160 86 C142 70 124 64 110 64 Q104 64 100 67 Q96 64 90 64 C76 64 58 70 40 86 Z" fill={mix(skin, c, 0.9)} />
-          </g>
-        ),
-      }
-    case 'curly':
-      return {
-        back: <ellipse cx={100} cy={78} rx={44} ry={38} fill={cs} />,
-        front: (
-          <>
-            <path d="M60 90 C58 56 78 40 100 40 C122 40 142 56 140 90 C134 76 120 70 100 70 C80 70 66 76 60 90 Z" fill={c} />
-            {curlRow(100, 84, 39, 40, 188, 352, 11, 10, c)}
-            {curlRow(100, 72, 28, 8, 200, 340, 6, 8, c)}
-          </>
-        ),
-      }
-    case 'afro':
-      return {
-        back: (
-          <>
-            <circle cx={100} cy={76} r={52} fill={cs} />
-            {curlRow(100, 76, 50, 50, 150, 390, 14, 11, cs)}
-          </>
-        ),
-        front: (
-          <>
-            <path d="M60 84 C62 64 80 58 100 58 C120 58 138 64 140 84 C142 56 124 40 100 40 C76 40 58 56 60 84 Z" fill={c} />
-            {curlRow(100, 66, 36, 8, 195, 345, 7, 6.5, c)}
-          </>
-        ),
-      }
-    case 'mohawk':
-      return {
-        front: (
-          <>
-            <g clipPath={`url(#${headClip})`}>
-              <path d="M40 30 L160 30 L160 84 C140 68 122 63 100 63 C78 63 60 68 40 84 Z" fill={shaved} />
-            </g>
-            <path d="M76 72 C70 52 80 34 100 30 C120 34 130 52 124 72 C112 64 88 64 76 72 Z" fill={c} />
-            <path d="M100 30 C95 40 94 52 96 64" stroke={tint(c, 0.25)} strokeWidth={2} fill="none" opacity={0.5} />
-          </>
-        ),
-      }
-    case 'bob':
-      return {
-        back: <path d="M54 92 C52 54 76 34 100 34 C124 34 148 54 146 92 L148 132 C140 138 130 136 126 130 L74 130 C70 136 60 138 52 132 Z" fill={cs} />,
-        front: <path d="M58 92 C56 56 78 38 100 38 C122 38 144 56 142 92 C136 84 132 76 130 70 C112 74 88 74 70 70 C68 78 64 86 58 92 Z" fill={c} />,
-      }
-    case 'long':
-      return {
-        back: <path d="M62 88 C60 56 79 41 100 41 C121 41 140 56 138 88 C146 108 150 134 147 158 C130 166 70 166 53 158 C50 134 54 108 61 88 Z" fill={cs} />,
-        sides: (
-          <Both>
-            <path d="M62 82 C55 102 55 122 59 138 Q63 141 66 136 C64 120 64 102 68 90 Z" fill={c} />
-          </Both>
-        ),
-        front: <path d="M60 98 C55 58 78 38 100 38 C122 38 145 58 140 98 C135 80 126 68 110 62 Q103 59 100 54 Q97 59 90 62 C74 68 65 80 60 98 Z" fill={c} />,
-      }
-    case 'ponytail':
-      return {
-        back: (
-          <>
-            <path d="M122 52 C148 48 166 72 163 102 C161 120 154 134 145 142 C149 124 150 108 145 94 C141 84 136 75 126 68 Z" fill={c} />
-            <ellipse cx={135} cy={60} rx={6} ry={8.5} fill={shade(c, 0.45)} transform="rotate(-35 135 60)" />
-          </>
-        ),
-        front: <path d={slick} fill={c} />,
-      }
-    case 'bun':
-      return {
-        front: (
-          <>
-            <circle cx={100} cy={37} r={14} fill={cs} />
-            <path d="M89 46 Q100 50 111 46" stroke={shade(c, 0.45)} strokeWidth={3} fill="none" />
-            <path d={slick} fill={c} />
-            <path d="M84 46 C92 41 108 41 116 46" stroke={tint(c, 0.25)} strokeWidth={2} fill="none" opacity={0.6} />
-          </>
-        ),
-      }
-    case 'locs':
-      return {
-        back: (
-          <>
-            <ellipse cx={100} cy={72} rx={47} ry={36} fill={cs} />
-            <Both>
-              <path d="M62 76 C52 100 50 130 56 156 Q62 160 66 154 C62 130 64 104 70 84 Z" fill={cs} />
-              <path d="M70 84 C64 108 64 134 70 158 Q76 161 79 155 C74 132 74 108 78 92 Z" fill={c} />
-            </Both>
-          </>
-        ),
-        front: (
-          <>
-            <path d="M60 88 C58 56 78 40 100 40 C122 40 142 56 140 88 C134 70 120 62 100 62 C80 62 66 70 60 88 Z" fill={c} />
-          </>
-        ),
-      }
-    case 'bald':
-      return { front: <ellipse cx={86} cy={60} rx={10} ry={5} fill="#ffffff" opacity={0.12} transform="rotate(-20 86 60)" stroke="none" /> }
-  }
-}
 
 // ---------------------------------------------------------------------------
 // Gesicht
@@ -333,8 +171,8 @@ function Nose({ kind, skin }: { kind: AvatarLook['nose']; skin: string }) {
   }
 }
 
-function Mouth({ kind }: { kind: AvatarLook['mouth'] }) {
-  const line = { stroke: LIP, strokeWidth: 3.6, fill: 'none', strokeLinecap: 'round' as const }
+function Mouth({ kind, lip = LIP }: { kind: AvatarLook['mouth']; lip?: string }) {
+  const line = { stroke: lip, strokeWidth: 3.6, fill: 'none', strokeLinecap: 'round' as const }
   switch (kind) {
     case 'smile':
       return <path d="M87 119 Q100 132 113 119" {...line} />
@@ -495,42 +333,41 @@ function Accessory({ kind, earX, outfit, accent }: { kind: AvatarLook['accessory
           <path d="M57 98 C52 36 148 36 143 98" stroke="#1E2238" strokeWidth={9} fill="none" strokeLinecap="round" />
           <path d="M59 84 C58 46 142 46 141 84" stroke={tint(accent, 0.3)} strokeWidth={2} fill="none" opacity={0.85} />
           <Both>
-            <rect x={earX - 14} y={86} width={18} height={28} rx={8} fill="#1E2238" />
-            <rect x={earX - 11} y={89} width={9} height={22} rx={4.5} fill={accent} />
+            <rect x={earX - 12} y={85} width={15} height={23} rx={7} fill="#1E2238" />
+            <rect x={earX - 9.5} y={88} width={8} height={17} rx={4} fill={accent} />
           </Both>
         </>
       )
     case 'cap':
       return (
         <>
-          <path d="M60 80 C60 50 80 40 100 40 C120 40 140 50 140 80 Z" fill={outfit} />
-          <path d="M58 80 C76 72 124 72 142 80 C138 90 62 90 58 80 Z" fill={os} />
-          <path d="M100 41 L100 78" stroke={os} strokeWidth={1.4} opacity={0.6} />
-          <circle cx={100} cy={41} r={3.2} fill={os} />
+          <path d="M56 80 C56 48 78 38 100 38 C122 38 144 48 144 80 Z" fill={outfit} />
+          <path d="M55 79 Q100 69 145 79 Q147 86 141 88 Q100 80 59 88 Q53 86 55 79 Z" fill={os} />
+          <path d="M100 39 L100 76" stroke={os} strokeWidth={1.4} opacity={0.6} />
+          <circle cx={100} cy={39} r={3.2} fill={os} />
         </>
       )
     case 'beanie':
       return (
         <>
-          <path d="M58 82 C56 50 78 38 100 38 C122 38 144 50 142 82 Z" fill={outfit} />
-          <path d="M57 72 L143 72 L144 85 Q100 80 56 85 Z" fill={os} />
+          <path d="M57 80 C55 48 78 36 100 36 C122 36 145 48 143 80 Z" fill={outfit} />
+          <path d="M57 69 Q100 65 143 69 Q146 76 144 82 Q100 87 56 82 Q54 76 57 69 Z" fill={os} />
           {[66, 78, 90, 102, 114, 126, 136].map((x) => (
-            <path key={x} d={`M${x} 73 L${x} 83`} stroke={shade(outfit, 0.4)} strokeWidth={1.4} opacity={0.5} />
+            <path key={x} d={`M${x} 70 L${x} 81`} stroke={shade(outfit, 0.4)} strokeWidth={1.4} opacity={0.5} />
           ))}
-          <circle cx={100} cy={36} r={8} fill={tint(outfit, 0.35)} />
+          <circle cx={100} cy={34} r={8} fill={tint(outfit, 0.35)} />
         </>
       )
     case 'earrings':
       return (
         <Both>
-          <circle cx={earX - 1} cy={113} r={5} fill="none" stroke="#F0C04A" strokeWidth={2.4} />
-          <circle cx={earX - 1} cy={108.4} r={1.6} fill="#F0C04A" />
+          <circle cx={earX + 1} cy={112} r={4.6} fill="none" stroke="#F0C04A" strokeWidth={2.8} />
+          <circle cx={earX + 1} cy={107.6} r={2.2} fill="#F0C04A" />
         </Both>
       )
     case 'partyhat':
       return (
-        <g transform="rotate(12 100 58) translate(0 6)">
-          <path d="M82 56 L74 132" stroke="#ffffff" strokeWidth={1} opacity={0.45} />
+        <g transform="rotate(10 100 50) translate(100 50) scale(0.72) translate(-100 -56)">
           <path d="M100 16 L120 56 Q100 63 80 56 Z" fill={accent} />
           <path d="M80 56 Q100 63 120 56" stroke={shade(accent, 0.3)} strokeWidth={2.5} fill="none" />
           <path d="M91 36 L109 36 M86 46 L114 46" stroke="#FFFFFF" strokeWidth={2.6} opacity={0.65} />
@@ -568,8 +405,18 @@ export function AvatarFigure({ look, accentHex = '#7C5CFF', crop = 'bust', class
   // Hut/Mütze im Kontrast zum Oberteil (nächste Palettenfarbe ≠ Spielerfarbe).
   const hatColor = [1, 2, 3, 4].map((k) => OUTFIT_COLORS[(look.outfitColor + k) % OUTFIT_COLORS.length]).find((c) => c.toLowerCase() !== accentHex.toLowerCase()) ?? outfit
   const head = HEADS[look.head] ?? HEADS.oval
-  const hairP = hairParts(look.hair, hair, hairBack, ids.head, skin)
   const fit = head.sx === 1 && head.sy === 1 ? undefined : `translate(100 93) scale(${head.sx} ${head.sy}) translate(-100 -93)`
+  const hairL = buildHair(look.hair, {
+    headD: head.d,
+    fit,
+    uid: `av-hr-${uid}`,
+    c: hair,
+    cs: hairBack,
+    line: hairLine,
+    shaved: mix(skin, hair, 0.75),
+    buzz: mix(skin, hair, 0.85),
+  })
+  const underHat = HAT.has(look.accessory) ? `url(#${ids.below})` : undefined
   const viewBox = crop === 'face' ? '31 17 138 138' : '16 10 168 168'
 
   return (
@@ -609,9 +456,7 @@ export function AvatarFigure({ look, accentHex = '#7C5CFF', crop = 'bust', class
       <g clipPath={`url(#${ids.clip})`}>
         <rect width={200} height={200} fill={`url(#${ids.bg})`} />
 
-        <g stroke={hairLine} strokeWidth={1.6} clipPath={HAT.has(look.accessory) ? `url(#${ids.below})` : undefined}>
-          <g transform={fit}>{hairP.back}</g>
-        </g>
+        <g clipPath={underHat}>{hairL.back}</g>
 
         {/* Hals */}
         <path d="M88 124 L112 124 L114 156 Q100 163 86 156 Z" fill={skin} stroke={skinLine} strokeWidth={1.6} />
@@ -621,7 +466,7 @@ export function AvatarFigure({ look, accentHex = '#7C5CFF', crop = 'bust', class
         <path d={SHOULDER_EDGE} stroke={accentHex} strokeWidth={2.5} fill="none" opacity={0.75} />
 
         {/* Ohren (bei Frisuren, die sie verdecken, weggelassen) */}
-        {!COVERS_EARS.has(look.hair) && (
+        {!hairL.coversEars && (
         <Both>
           <g transform={`translate(${head.earX - 63} 0)`}>
             <ellipse cx={63} cy={97} rx={8} ry={11.5} fill={skin} stroke={skinLine} strokeWidth={1.6} />
@@ -636,7 +481,6 @@ export function AvatarFigure({ look, accentHex = '#7C5CFF', crop = 'bust', class
           <ellipse cx={100} cy={146} rx={34} ry={12} fill={skinShade} />
         </g>
 
-        <g stroke={hairLine} strokeWidth={1.6} transform={fit}>{hairP.sides}</g>
 
         {look.cheeks === 'blush' && (
           <Both>
@@ -671,7 +515,7 @@ export function AvatarFigure({ look, accentHex = '#7C5CFF', crop = 'bust', class
         )}
 
         <Nose kind={look.nose} skin={skin} />
-        <Mouth kind={look.mouth} />
+        <Mouth kind={look.mouth} lip={luma(skin) < 0.3 ? '#2A0E18' : LIP} />
         {(look.beard === 'mustache' || look.beard === 'goatee' || look.beard === 'full') && (
           <path d={MUSTACHE} fill={beardColor} stroke={hairLine} strokeWidth={1} transform={`translate(100 115) scale(${1.3 * head.sx} 1.3) translate(-100 -115)`} />
         )}
@@ -692,10 +536,8 @@ export function AvatarFigure({ look, accentHex = '#7C5CFF', crop = 'bust', class
           </Both>
         </g>
 
-        <g stroke={hairLine} strokeWidth={1.6}>
-          <g transform={fit}>{HAT.has(look.accessory) ? SHORT_UNDER_HAT.has(look.hair) && <Sideburns c={hair} /> : hairP.front}</g>
-        </g>
         <Glasses kind={look.glasses} accent={accentHex} ids={ids} earX={head.earX} />
+        <g clipPath={underHat}>{hairL.front}</g>
         <g transform={fit}>
           <Accessory kind={look.accessory} earX={63} outfit={hatColor} accent={accentHex} />
         </g>
