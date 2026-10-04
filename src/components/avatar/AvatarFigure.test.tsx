@@ -21,7 +21,7 @@ describe('AvatarFigure', () => {
   })
 
   it('Crop face zoomt auf den Kopf', () => {
-    expect(renderToStaticMarkup(<AvatarFigure look={DEFAULT_AVATAR_LOOK} crop="face" />)).toContain('viewBox="31 20 138 138"')
+    expect(renderToStaticMarkup(<AvatarFigure look={DEFAULT_AVATAR_LOOK} crop="face" />)).toContain('viewBox="31 17 138 138"')
   })
 })
 

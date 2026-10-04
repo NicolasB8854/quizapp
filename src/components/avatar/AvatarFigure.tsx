@@ -40,6 +40,16 @@ function mix(hex: string, target: string, amount: number): string {
   return '#' + a.map((v, i) => Math.round(v + (b[i] - v) * amount).toString(16).padStart(2, '0')).join('')
 }
 const shade = (hex: string, amt: number) => mix(hex, '#000000', amt)
+function luma(hex: string): number {
+  const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b
+}
+/** Haar-/Bartfarbe, die sich sichtbar von der Haut abhebt (ΔL ≥ ~0.16). */
+function against(color: string, skin: string): string {
+  const d = luma(color) - luma(skin)
+  if (Math.abs(d) >= 0.16) return color
+  return luma(skin) > 0.3 ? shade(color, 0.5) : mix(color, '#ffffff', 0.22)
+}
 const tint = (hex: string, amt: number) => mix(hex, '#ffffff', amt)
 
 const INK = '#1A1420'
@@ -52,13 +62,16 @@ const MOUTH = '#3B1626'
 interface Head {
   d: string
   earX: number
+  /** Skalierung der Haar-/Hut-Ebenen relativ zum Oval (um 100/93), damit sie auf dem Schädel sitzen. */
+  sx: number
+  sy: number
 }
 
 const HEADS: Record<AvatarLook['head'], Head> = {
-  oval: { d: 'M62 90 C62 60 79 46 100 46 C121 46 138 60 138 90 C138 120 122 140 100 140 C78 140 62 120 62 90 Z', earX: 63 },
-  round: { d: 'M59 92 C59 63 77 48 100 48 C123 48 141 63 141 92 C141 120 124 137 100 137 C76 137 59 120 59 92 Z', earX: 60 },
-  square: { d: 'M62 84 C62 58 79 46 100 46 C121 46 138 58 138 84 L138 110 C138 128 122 140 100 140 C78 140 62 128 62 110 Z', earX: 63 },
-  long: { d: 'M65 88 C65 57 81 43 100 43 C119 43 135 57 135 88 C135 122 120 143 100 143 C80 143 65 122 65 88 Z', earX: 66 },
+  oval: { d: 'M62 90 C62 60 79 46 100 46 C121 46 138 60 138 90 C138 120 122 140 100 140 C78 140 62 120 62 90 Z', earX: 63, sx: 1, sy: 1 },
+  round: { d: 'M59 92 C59 63 77 48 100 48 C123 48 141 63 141 92 C141 120 124 137 100 137 C76 137 59 120 59 92 Z', earX: 60, sx: 1.1, sy: 0.96 },
+  square: { d: 'M62 84 C62 58 79 46 100 46 C121 46 138 58 138 84 L138 110 C138 128 122 140 100 140 C78 140 62 128 62 110 Z', earX: 63, sx: 1.01, sy: 1 },
+  long: { d: 'M65 88 C65 57 81 43 100 43 C119 43 135 57 135 88 C135 122 120 143 100 143 C80 143 65 122 65 88 Z', earX: 66, sx: 0.9, sy: 1.06 },
 }
 
 /** Frisuren, die die Ohren verdecken. */
@@ -111,7 +124,7 @@ function Sideburns({ c }: { c: string }) {
 
 function hairParts(style: AvatarLook['hair'], c: string, cs: string, headClip: string, skin: string): HairParts {
   /** Rasierte Partie: deckend, Hautton mit Haarfarbe gemischt (kein Transparenz-Schleier). */
-  const shaved = mix(skin, c, 0.45)
+  const shaved = mix(skin, c, 0.6)
   const slick = 'M62 88 C61 56 80 39 100 39 C120 39 139 56 138 88 C135 70 124 61 110 60 Q104 60 100 64 Q96 60 90 60 C76 61 65 70 62 88 Z'
   switch (style) {
     case 'short':
@@ -119,7 +132,7 @@ function hairParts(style: AvatarLook['hair'], c: string, cs: string, headClip: s
         front: (
           <>
             <Sideburns c={c} />
-            <path d="M60 92 C54 60 74 38 102 38 C128 38 146 58 140 92 C138 80 134 72 130 68 C118 74 94 74 76 64 C68 72 63 80 60 92 Z" fill={c} />
+            <path d="M61 92 C56 62 75 41 101 41 C127 41 145 60 139 92 C137 81 134 74 130 69 C118 75 94 75 77 65 C69 73 64 81 61 92 Z" fill={c} />
             <path d="M90 44 Q85 54 78 62" stroke={cs} strokeWidth={2} fill="none" strokeLinecap="round" />
           </>
         ),
@@ -147,7 +160,7 @@ function hairParts(style: AvatarLook['hair'], c: string, cs: string, headClip: s
       return {
         front: (
           <g clipPath={`url(#${headClip})`}>
-            <path d="M40 30 L160 30 L160 86 C142 70 124 64 110 64 Q104 64 100 67 Q96 64 90 64 C76 64 58 70 40 86 Z" fill={mix(skin, c, 0.75)} />
+            <path d="M40 30 L160 30 L160 86 C142 70 124 64 110 64 Q104 64 100 67 Q96 64 90 64 C76 64 58 70 40 86 Z" fill={mix(skin, c, 0.9)} />
           </g>
         ),
       }
@@ -196,10 +209,10 @@ function hairParts(style: AvatarLook['hair'], c: string, cs: string, headClip: s
       }
     case 'long':
       return {
-        back: <path d="M58 90 C56 54 78 36 100 36 C122 36 144 54 142 90 L146 158 C130 166 70 166 54 158 Z" fill={cs} />,
+        back: <path d="M62 88 C60 56 79 41 100 41 C121 41 140 56 138 88 C146 108 150 134 147 158 C130 166 70 166 53 158 C50 134 54 108 61 88 Z" fill={cs} />,
         sides: (
           <Both>
-            <path d="M61 80 C52 106 48 136 54 160 Q64 170 76 162 C70 148 68 134 67 120 C66 106 66 96 68 88 Z" fill={c} />
+            <path d="M62 82 C55 102 55 122 59 138 Q63 141 66 136 C64 120 64 102 68 90 Z" fill={c} />
           </Both>
         ),
         front: <path d="M60 98 C55 58 78 38 100 38 C122 38 145 58 140 98 C135 80 126 68 110 62 Q103 59 100 54 Q97 59 90 62 C74 68 65 80 60 98 Z" fill={c} />,
@@ -218,8 +231,8 @@ function hairParts(style: AvatarLook['hair'], c: string, cs: string, headClip: s
       return {
         front: (
           <>
-            <circle cx={100} cy={33} r={15} fill={cs} />
-            <path d="M88 40 Q100 44 112 40" stroke={shade(c, 0.4)} strokeWidth={2.5} fill="none" />
+            <circle cx={100} cy={37} r={14} fill={cs} />
+            <path d="M89 46 Q100 50 111 46" stroke={shade(c, 0.45)} strokeWidth={3} fill="none" />
             <path d={slick} fill={c} />
             <path d="M84 46 C92 41 108 41 116 46" stroke={tint(c, 0.25)} strokeWidth={2} fill="none" opacity={0.6} />
           </>
@@ -349,10 +362,6 @@ function Mouth({ kind }: { kind: AvatarLook['mouth'] }) {
   }
 }
 
-const LOWER_FACE =
-  'M60 100 C60 132 80 146 100 146 C120 146 140 132 140 100 C134 116 124 112 116 114 C110 112 104 112 100 113 C96 112 90 112 84 114 C76 112 66 116 60 100 Z'
-const FULL_BEARD =
-  'M61 102 C60 136 80 152 100 152 C120 152 140 136 139 102 C134 116 124 114 116 115 C110 113 104 113 100 114 C96 113 90 113 84 115 C76 114 66 116 61 102 Z'
 const MUSTACHE = 'M88 116 C91 110 97 111 100 113.5 C103 111 109 110 112 116 C107 115 104 116 100 116.5 C96 116 93 115 88 116 Z'
 
 // ---------------------------------------------------------------------------
@@ -542,12 +551,15 @@ export function AvatarFigure({ look, accentHex = '#7C5CFF', crop = 'bust', class
     shades: `av-sh-${uid}`,
     visor: `av-vi-${uid}`,
     below: `av-bl-${uid}`,
+    beard: `av-bd-${uid}`,
+    stubble: `av-st-${uid}`,
   }
   const skin = SKIN_TONES[look.skin] ?? SKIN_TONES[2]
   const skinShade = shade(skin, 0.14)
   // Konturen: halten Haar/Haut auch klein und bei ähnlichen Tönen auseinander.
   const skinLine = shade(skin, 0.38)
-  const hair = HAIR_COLORS[look.hairColor] ?? HAIR_COLORS[2]
+  const hair = against(HAIR_COLORS[look.hairColor] ?? HAIR_COLORS[2], SKIN_TONES[look.skin] ?? SKIN_TONES[2])
+  const beardColor = shade(hair, 0.12)
   const hairBack = shade(hair, 0.1)
   const hairLine = look.hairColor >= 6 && look.hairColor <= 7 ? shade(hair, 0.45) : shade(hair, 0.5)
   const brow = look.hairColor >= 6 && look.hairColor <= 7 ? shade(hair, 0.35) : shade(hair, 0.15)
@@ -557,7 +569,8 @@ export function AvatarFigure({ look, accentHex = '#7C5CFF', crop = 'bust', class
   const hatColor = [1, 2, 3, 4].map((k) => OUTFIT_COLORS[(look.outfitColor + k) % OUTFIT_COLORS.length]).find((c) => c.toLowerCase() !== accentHex.toLowerCase()) ?? outfit
   const head = HEADS[look.head] ?? HEADS.oval
   const hairP = hairParts(look.hair, hair, hairBack, ids.head, skin)
-  const viewBox = crop === 'face' ? '31 20 138 138' : '16 14 168 168'
+  const fit = head.sx === 1 && head.sy === 1 ? undefined : `translate(100 93) scale(${head.sx} ${head.sy}) translate(-100 -93)`
+  const viewBox = crop === 'face' ? '31 17 138 138' : '16 10 168 168'
 
   return (
     <svg viewBox={viewBox} xmlns="http://www.w3.org/2000/svg" className={className} role={title ? 'img' : undefined} aria-hidden={title ? undefined : true}>
@@ -570,6 +583,13 @@ export function AvatarFigure({ look, accentHex = '#7C5CFF', crop = 'bust', class
         </radialGradient>
         <clipPath id={ids.clip}>
           <circle cx={100} cy={100} r={100} />
+        </clipPath>
+        {/* Bartzone: Wangen ab Ohrhöhe, Bogen über der Oberlippe */}
+        <clipPath id={ids.beard}>
+          <path d="M30 104 C58 114 80 116 100 115 C120 116 142 114 170 104 L170 200 L30 200 Z" />
+        </clipPath>
+        <clipPath id={ids.stubble}>
+          <path d="M40 106 L66 104 Q78 116 88 122 Q100 126 112 122 Q122 116 134 104 L160 106 L170 200 L30 200 Z" />
         </clipPath>
         <clipPath id={ids.below}>
           <rect x={0} y={78} width={200} height={122} />
@@ -590,7 +610,7 @@ export function AvatarFigure({ look, accentHex = '#7C5CFF', crop = 'bust', class
         <rect width={200} height={200} fill={`url(#${ids.bg})`} />
 
         <g stroke={hairLine} strokeWidth={1.6} clipPath={HAT.has(look.accessory) ? `url(#${ids.below})` : undefined}>
-          {hairP.back}
+          <g transform={fit}>{hairP.back}</g>
         </g>
 
         {/* Hals */}
@@ -616,7 +636,7 @@ export function AvatarFigure({ look, accentHex = '#7C5CFF', crop = 'bust', class
           <ellipse cx={100} cy={146} rx={34} ry={12} fill={skinShade} />
         </g>
 
-        <g stroke={hairLine} strokeWidth={1.6}>{hairP.sides}</g>
+        <g stroke={hairLine} strokeWidth={1.6} transform={fit}>{hairP.sides}</g>
 
         {look.cheeks === 'blush' && (
           <Both>
@@ -637,21 +657,29 @@ export function AvatarFigure({ look, accentHex = '#7C5CFF', crop = 'bust', class
         )}
 
         {look.beard === 'stubble' && (
-          <g clipPath={`url(#${ids.head})`}>
-            <path d={LOWER_FACE} fill={hair} opacity={0.28} />
+          <g clipPath={`url(#${ids.stubble})`}>
+            <path d={head.d} fill={mix(beardColor, '#5A6485', 0.3)} opacity={0.38} />
           </g>
         )}
         {look.beard === 'full' && (
           <>
-            <path d={FULL_BEARD} fill={hair} />
-            <ellipse cx={100} cy={123} rx={14} ry={7} fill={skin} />
+            <g clipPath={`url(#${ids.beard})`}>
+              <path d={head.d} fill={beardColor} stroke={hairLine} strokeWidth={1.6} transform="translate(100 96) scale(1 1.16) translate(-100 -96)" />
+            </g>
+            <ellipse cx={100} cy={123} rx={13} ry={7} fill={skin} />
           </>
         )}
 
         <Nose kind={look.nose} skin={skin} />
         <Mouth kind={look.mouth} />
-        {(look.beard === 'mustache' || look.beard === 'goatee' || look.beard === 'full') && <path d={MUSTACHE} fill={hair} />}
-        {look.beard === 'goatee' && <path d="M92 131 C92 141 108 141 108 131 C104 133.5 96 133.5 92 131 Z" fill={hair} />}
+        {(look.beard === 'mustache' || look.beard === 'goatee' || look.beard === 'full') && (
+          <path d={MUSTACHE} fill={beardColor} stroke={hairLine} strokeWidth={1} transform={`translate(100 115) scale(${1.3 * head.sx} 1.3) translate(-100 -115)`} />
+        )}
+        {look.beard === 'goatee' && (
+          <g clipPath={`url(#${ids.head})`}>
+            <path d="M89 130 C89 146 111 146 111 130 C105 134 95 134 89 130 Z" fill={beardColor} stroke={hairLine} strokeWidth={1.2} />
+          </g>
+        )}
 
         {/* Augen + Brauen */}
         <Eye kind={look.eyes === 'wink' ? 'round' : look.eyes} iris={iris} lid={skinShade} />
@@ -665,10 +693,12 @@ export function AvatarFigure({ look, accentHex = '#7C5CFF', crop = 'bust', class
         </g>
 
         <g stroke={hairLine} strokeWidth={1.6}>
-          {HAT.has(look.accessory) ? SHORT_UNDER_HAT.has(look.hair) && <Sideburns c={hair} /> : hairP.front}
+          <g transform={fit}>{HAT.has(look.accessory) ? SHORT_UNDER_HAT.has(look.hair) && <Sideburns c={hair} /> : hairP.front}</g>
         </g>
         <Glasses kind={look.glasses} accent={accentHex} ids={ids} earX={head.earX} />
-        <Accessory kind={look.accessory} earX={head.earX} outfit={hatColor} accent={accentHex} />
+        <g transform={fit}>
+          <Accessory kind={look.accessory} earX={63} outfit={hatColor} accent={accentHex} />
+        </g>
       </g>
     </svg>
   )

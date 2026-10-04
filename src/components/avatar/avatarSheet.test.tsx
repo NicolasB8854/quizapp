@@ -51,6 +51,17 @@ describe.skipIf(!OUT)('Avatar-Kontaktbogen', () => {
     writeFileSync(join(OUT!, 'sheet-small.svg'), sheet([...random.map((c) => ({ ...c, crop: 'face' as const }))], 8, 48))
     writeFileSync(join(OUT!, 'sheet-medium.svg'), sheet(random, 8, 96))
 
+    // Passform: jede Frisur bzw. jeder Bart auf jeder Kopfform (Zeilen = Köpfe).
+    for (const key of ['hair', 'beard'] as const) {
+      const cells = AVATAR_PARTS.head.flatMap((head, r) =>
+        (AVATAR_PARTS[key] as readonly string[]).map((id, i) => ({
+          look: { ...DEFAULT_AVATAR_LOOK, head, skin: (i + r) % 8, hairColor: (i + 2 * r) % 6, [key]: id, ...(key === 'beard' ? { hair: 'short' } : {}) } as AvatarLook,
+          accent: AVATAR_COLORS[(i + r) % AVATAR_COLORS.length],
+        })),
+      )
+      writeFileSync(join(OUT!, `sheet-fit-${key}.svg`), sheet(cells, AVATAR_PARTS[key].length, 150))
+    }
+
     const keys: AvatarPartKey[] = ['hair', 'eyes', 'mouth', 'beard', 'glasses', 'accessory', 'outfit', 'head', 'brows', 'nose']
     for (const key of keys) {
       const cells = (AVATAR_PARTS[key] as readonly string[]).map((id, i) => ({
