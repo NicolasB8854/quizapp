@@ -55550,8 +55550,8 @@
     ],
     "timeScope": "timeless",
     "aiGenerated": true,
-    "createdAt": "2026-10-04T18:17:59Z",
-    "updatedAt": "2026-10-04T18:17:59Z",
+    "createdAt": "2026-10-04T19:38:20Z",
+    "updatedAt": "2026-10-04T19:38:20Z",
     "explanation": "Eine Konzertharfe hat 47 Saiten und sieben Pedale, mit denen man die Tonart wechselt."
   },
   {
@@ -55578,8 +55578,8 @@
     ],
     "timeScope": "timeless",
     "aiGenerated": true,
-    "createdAt": "2026-10-04T18:17:59Z",
-    "updatedAt": "2026-10-04T18:17:59Z",
+    "createdAt": "2026-10-04T19:38:20Z",
+    "updatedAt": "2026-10-04T19:38:20Z",
     "explanation": "Erdmännchen leben in Gruppen; ein Wächter steht aufrecht Wache und warnt mit Rufen."
   },
   {
@@ -55606,8 +55606,8 @@
     ],
     "timeScope": "timeless",
     "aiGenerated": true,
-    "createdAt": "2026-10-04T18:17:59Z",
-    "updatedAt": "2026-10-04T18:17:59Z",
+    "createdAt": "2026-10-04T19:38:20Z",
+    "updatedAt": "2026-10-04T19:38:20Z",
     "explanation": "Die Artischocke ist eigentlich eine Blütenknospe — ungeerntet blüht sie violett auf."
   },
   {
@@ -55634,8 +55634,8 @@
     ],
     "timeScope": "timeless",
     "aiGenerated": true,
-    "createdAt": "2026-10-04T18:17:59Z",
-    "updatedAt": "2026-10-04T18:17:59Z",
+    "createdAt": "2026-10-04T19:38:20Z",
+    "updatedAt": "2026-10-04T19:38:20Z",
     "explanation": "Die Drachenfrucht (Pitaya) wächst an einem Kaktus."
   },
   {
@@ -55662,8 +55662,8 @@
     ],
     "timeScope": "timeless",
     "aiGenerated": true,
-    "createdAt": "2026-10-04T18:17:59Z",
-    "updatedAt": "2026-10-04T18:17:59Z",
+    "createdAt": "2026-10-04T19:38:20Z",
+    "updatedAt": "2026-10-04T19:38:20Z",
     "explanation": "Das Schuppentier (Pangolin) ist das einzige Säugetier mit Hornschuppen und rollt sich bei Gefahr ein."
   },
   {
@@ -55690,8 +55690,8 @@
     ],
     "timeScope": "timeless",
     "aiGenerated": true,
-    "createdAt": "2026-10-04T18:17:59Z",
-    "updatedAt": "2026-10-04T18:17:59Z",
+    "createdAt": "2026-10-04T19:38:20Z",
+    "updatedAt": "2026-10-04T19:38:20Z",
     "explanation": "Die Mangostan hat eine dicke purpurne Schale und weißes, segmentiertes Fruchtfleisch."
   },
   {
@@ -55718,8 +55718,8 @@
     ],
     "timeScope": "timeless",
     "aiGenerated": true,
-    "createdAt": "2026-10-04T18:17:59Z",
-    "updatedAt": "2026-10-04T18:17:59Z",
+    "createdAt": "2026-10-04T19:38:20Z",
+    "updatedAt": "2026-10-04T19:38:20Z",
     "explanation": "Der „Stoßzahn“ des Narwals ist ein bis zu drei Meter langer, spiralig gedrehter Eckzahn."
   },
   {
@@ -55746,9 +55746,65 @@
     ],
     "timeScope": "timeless",
     "aiGenerated": true,
-    "createdAt": "2026-10-04T18:17:59Z",
-    "updatedAt": "2026-10-04T18:17:59Z",
+    "createdAt": "2026-10-04T19:38:20Z",
+    "updatedAt": "2026-10-04T19:38:20Z",
     "explanation": "Quokkas leben fast nur auf Rottnest Island vor Perth und gelten wegen ihres Gesichts als „glücklichstes Tier der Welt“."
+  },
+  {
+    "id": "q-pic-physalis",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "alltag-lifestyle",
+    "topic": "essen",
+    "difficulty": 2,
+    "question": "Welche Frucht ist das?",
+    "options": [
+      "Physalis",
+      "Kumquat",
+      "Mirabelle",
+      "Stachelbeere"
+    ],
+    "correctIndex": 0,
+    "image": "/img/pictures/physalis.jpg",
+    "tags": [
+      "Bilderrätsel"
+    ],
+    "compatibleModes": [
+      "blindguess"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-10-04T19:38:20Z",
+    "updatedAt": "2026-10-04T19:38:20Z",
+    "explanation": "Die Physalis steckt in einer papierartigen Hülle aus Kelchblättern – sie gehört zu den Nachtschattengewächsen."
+  },
+  {
+    "id": "q-pic-kumquat",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "alltag-lifestyle",
+    "topic": "essen",
+    "difficulty": 4,
+    "question": "Welche Frucht ist das?",
+    "options": [
+      "Kumquat",
+      "Mandarine",
+      "Physalis",
+      "Mirabelle"
+    ],
+    "correctIndex": 0,
+    "image": "/img/pictures/kumquat.jpg",
+    "tags": [
+      "Bilderrätsel"
+    ],
+    "compatibleModes": [
+      "blindguess"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-10-04T19:38:20Z",
+    "updatedAt": "2026-10-04T19:38:20Z",
+    "explanation": "Kumquats werden mitsamt der süßen Schale gegessen – das Fruchtfleisch ist dagegen sauer."
   },
   {
     "id": "q-pic-rambutan",
@@ -55774,8 +55830,8 @@
     ],
     "timeScope": "timeless",
     "aiGenerated": true,
-    "createdAt": "2026-10-04T18:17:59Z",
-    "updatedAt": "2026-10-04T18:17:59Z",
+    "createdAt": "2026-10-04T19:38:20Z",
+    "updatedAt": "2026-10-04T19:38:20Z",
     "explanation": "Rambutan heißt auf Malaiisch „haarig“ – unter der weichen Stachelschale liegt glasiges, süßes Fruchtfleisch."
   },
   {
@@ -55802,37 +55858,9 @@
     ],
     "timeScope": "timeless",
     "aiGenerated": true,
-    "createdAt": "2026-10-04T18:17:59Z",
-    "updatedAt": "2026-10-04T18:17:59Z",
+    "createdAt": "2026-10-04T19:38:20Z",
+    "updatedAt": "2026-10-04T19:38:20Z",
     "explanation": "Mit dem Theodolit messen Vermesser horizontale und vertikale Winkel – heute meist als elektronische Totalstation."
-  },
-  {
-    "id": "q-pic-stethoskop",
-    "type": "multiple-choice",
-    "status": "approved",
-    "category": "allgemeinbildung",
-    "topic": "technik",
-    "difficulty": 2,
-    "question": "Was ist das?",
-    "options": [
-      "Stethoskop",
-      "Blutdruckmessgerät",
-      "Reflexhammer",
-      "Otoskop"
-    ],
-    "correctIndex": 0,
-    "image": "/img/pictures/stethoskop.jpg",
-    "tags": [
-      "Bilderrätsel"
-    ],
-    "compatibleModes": [
-      "blindguess"
-    ],
-    "timeScope": "timeless",
-    "aiGenerated": true,
-    "createdAt": "2026-10-04T18:17:59Z",
-    "updatedAt": "2026-10-04T18:17:59Z",
-    "explanation": "Das Stethoskop erfand René Laënnec 1816 – zuerst als einfaches Holzrohr."
   },
   {
     "id": "q-pic-seepferdchen",
@@ -55858,8 +55886,8 @@
     ],
     "timeScope": "timeless",
     "aiGenerated": true,
-    "createdAt": "2026-10-04T18:17:59Z",
-    "updatedAt": "2026-10-04T18:17:59Z",
+    "createdAt": "2026-10-04T19:38:20Z",
+    "updatedAt": "2026-10-04T19:38:20Z",
     "explanation": "Beim Seepferdchen trägt das Männchen den Nachwuchs in einer Bruttasche aus."
   },
   {
@@ -55886,8 +55914,288 @@
     ],
     "timeScope": "timeless",
     "aiGenerated": true,
-    "createdAt": "2026-10-04T18:17:59Z",
-    "updatedAt": "2026-10-04T18:17:59Z",
+    "createdAt": "2026-10-04T19:38:20Z",
+    "updatedAt": "2026-10-04T19:38:20Z",
     "explanation": "Der Ginkgo ist ein lebendes Fossil; seine fächerförmigen Blätter färben sich im Herbst leuchtend gelb."
+  },
+  {
+    "id": "q-pic-fennek",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "allgemeinbildung",
+    "topic": "natur",
+    "difficulty": 3,
+    "question": "Welches Tier ist das?",
+    "options": [
+      "Fennek",
+      "Rotfuchs",
+      "Polarfuchs",
+      "Schakal"
+    ],
+    "correctIndex": 0,
+    "image": "/img/pictures/fennek.jpg",
+    "tags": [
+      "Bilderrätsel"
+    ],
+    "compatibleModes": [
+      "blindguess"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-10-04T19:38:20Z",
+    "updatedAt": "2026-10-04T19:38:20Z",
+    "explanation": "Der Fennek ist der kleinste Fuchs der Welt – seine riesigen Ohren geben in der Sahara Wärme ab."
+  },
+  {
+    "id": "q-pic-rotfeuerfisch",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "allgemeinbildung",
+    "topic": "natur",
+    "difficulty": 3,
+    "question": "Welches Tier ist das?",
+    "options": [
+      "Rotfeuerfisch",
+      "Skorpionfisch",
+      "Clownfisch",
+      "Kaiserfisch"
+    ],
+    "correctIndex": 0,
+    "image": "/img/pictures/rotfeuerfisch.jpg",
+    "tags": [
+      "Bilderrätsel"
+    ],
+    "compatibleModes": [
+      "blindguess"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-10-04T19:38:20Z",
+    "updatedAt": "2026-10-04T19:38:20Z",
+    "explanation": "Die prächtigen Flossenstrahlen des Rotfeuerfischs tragen Giftdrüsen."
+  },
+  {
+    "id": "q-pic-mantarochen",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "allgemeinbildung",
+    "topic": "natur",
+    "difficulty": 2,
+    "question": "Welches Tier ist das?",
+    "options": [
+      "Mantarochen",
+      "Stachelrochen",
+      "Hammerhai",
+      "Flunder"
+    ],
+    "correctIndex": 0,
+    "image": "/img/pictures/mantarochen.jpg",
+    "tags": [
+      "Bilderrätsel"
+    ],
+    "compatibleModes": [
+      "blindguess"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-10-04T19:38:20Z",
+    "updatedAt": "2026-10-04T19:38:20Z",
+    "explanation": "Mantarochen haben eine Spannweite von bis zu sieben Metern und filtern Plankton aus dem Wasser."
+  },
+  {
+    "id": "q-pic-guerteltier",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "allgemeinbildung",
+    "topic": "natur",
+    "difficulty": 2,
+    "question": "Welches Tier ist das?",
+    "options": [
+      "Gürteltier",
+      "Schuppentier",
+      "Igel",
+      "Opossum"
+    ],
+    "correctIndex": 0,
+    "image": "/img/pictures/guerteltier.jpg",
+    "tags": [
+      "Bilderrätsel"
+    ],
+    "compatibleModes": [
+      "blindguess"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-10-04T19:38:20Z",
+    "updatedAt": "2026-10-04T19:38:20Z",
+    "explanation": "Nur das Kugelgürteltier kann sich ganz zu einer Kugel zusammenrollen."
+  },
+  {
+    "id": "q-pic-kiwano",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "alltag-lifestyle",
+    "topic": "essen",
+    "difficulty": 5,
+    "question": "Welche Frucht ist das?",
+    "options": [
+      "Kiwano",
+      "Rambutan",
+      "Durian",
+      "Drachenfrucht"
+    ],
+    "correctIndex": 0,
+    "image": "/img/pictures/kiwano.jpg",
+    "tags": [
+      "Bilderrätsel"
+    ],
+    "compatibleModes": [
+      "blindguess"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-10-04T19:38:20Z",
+    "updatedAt": "2026-10-04T19:38:20Z",
+    "explanation": "Die Kiwano ist eine afrikanische Gurkenart mit Hörnern; innen ist sie grün und geleeartig."
+  },
+  {
+    "id": "q-pic-jackfrucht",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "alltag-lifestyle",
+    "topic": "essen",
+    "difficulty": 4,
+    "question": "Welche Frucht ist das?",
+    "options": [
+      "Jackfrucht",
+      "Durian",
+      "Melone",
+      "Brotfrucht"
+    ],
+    "correctIndex": 0,
+    "image": "/img/pictures/jackfrucht.jpg",
+    "tags": [
+      "Bilderrätsel"
+    ],
+    "compatibleModes": [
+      "blindguess"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-10-04T19:38:20Z",
+    "updatedAt": "2026-10-04T19:38:20Z",
+    "explanation": "Die Jackfrucht ist die größte Baumfrucht der Welt und kann über 30 Kilogramm wiegen."
+  },
+  {
+    "id": "q-pic-feige",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "alltag-lifestyle",
+    "topic": "essen",
+    "difficulty": 2,
+    "question": "Welche Frucht ist das?",
+    "options": [
+      "Feige",
+      "Granatapfel",
+      "Passionsfrucht",
+      "Pflaume"
+    ],
+    "correctIndex": 0,
+    "image": "/img/pictures/feige.jpg",
+    "tags": [
+      "Bilderrätsel"
+    ],
+    "compatibleModes": [
+      "blindguess"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-10-04T19:38:20Z",
+    "updatedAt": "2026-10-04T19:38:20Z",
+    "explanation": "Botanisch ist die Feige ein Fruchtstand – die Blüten sitzen innen."
+  },
+  {
+    "id": "q-pic-protea",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "allgemeinbildung",
+    "topic": "pflanzen",
+    "difficulty": 4,
+    "question": "Welche Pflanze ist das?",
+    "options": [
+      "Königsprotea",
+      "Artischocke",
+      "Distel",
+      "Seerose"
+    ],
+    "correctIndex": 0,
+    "image": "/img/pictures/protea.jpg",
+    "tags": [
+      "Bilderrätsel"
+    ],
+    "compatibleModes": [
+      "blindguess"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-10-04T19:38:20Z",
+    "updatedAt": "2026-10-04T19:38:20Z",
+    "explanation": "Die Königsprotea ist die Nationalblume Südafrikas; ihre Blüte kann 30 Zentimeter groß werden."
+  },
+  {
+    "id": "q-pic-lotus",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "allgemeinbildung",
+    "topic": "pflanzen",
+    "difficulty": 2,
+    "question": "Welche Pflanze ist das?",
+    "options": [
+      "Lotusblume",
+      "Seerose",
+      "Magnolie",
+      "Tulpe"
+    ],
+    "correctIndex": 0,
+    "image": "/img/pictures/lotus.jpg",
+    "tags": [
+      "Bilderrätsel"
+    ],
+    "compatibleModes": [
+      "blindguess"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-10-04T19:38:20Z",
+    "updatedAt": "2026-10-04T19:38:20Z",
+    "explanation": "Lotusblätter sind wasser- und schmutzabweisend – das Prinzip heißt Lotuseffekt."
+  },
+  {
+    "id": "q-pic-grammophon",
+    "type": "multiple-choice",
+    "status": "approved",
+    "category": "allgemeinbildung",
+    "topic": "technik",
+    "difficulty": 2,
+    "question": "Was ist das?",
+    "options": [
+      "Grammophon",
+      "Plattenspieler",
+      "Megafon",
+      "Phonograph-Walze"
+    ],
+    "correctIndex": 0,
+    "image": "/img/pictures/grammophon.jpg",
+    "tags": [
+      "Bilderrätsel"
+    ],
+    "compatibleModes": [
+      "blindguess"
+    ],
+    "timeScope": "timeless",
+    "aiGenerated": true,
+    "createdAt": "2026-10-04T19:38:20Z",
+    "updatedAt": "2026-10-04T19:38:20Z",
+    "explanation": "Emil Berliner meldete das Grammophon 1887 zum Patent an – mit flachen Schallplatten statt Walzen."
   }
 ]
