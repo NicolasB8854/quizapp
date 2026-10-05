@@ -26,6 +26,9 @@ export type GameModeId =
   | 'sorting'          // Reihenfolge sortieren
   | 'blindguess'       // Media-Guess (Audio/Bild/Video)
   | 'geoguess'         // Wo liegt das? Nadel auf der Weltkarte
+  | 'geo-hints'        // Heißer Draht: Ort aus Hinweisen
+  | 'geo-shape'        // Länder-Umriss
+  | 'geo-history'      // Zeitreise: Ort eines Ereignisses
   | 'family-feud'      // Umfrage-Top-Antworten
   | 'duel-1v1'         // 1:1 Buzzer-Duell
   | 'elimination'      // Elimination-Runde

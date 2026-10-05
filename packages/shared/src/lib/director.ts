@@ -37,6 +37,9 @@ const MECHANIC: Partial<Record<GameModeId, Mechanic>> = {
   'points-ladder': 'stakes',
   blindguess: 'speed',
   geoguess: 'calm',
+  'geo-hints': 'speed',
+  'geo-shape': 'calm',
+  'geo-history': 'calm',
 }
 
 export function minutesOf(modes: readonly GameModeId[]): number {

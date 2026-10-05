@@ -1,0 +1,482 @@
+[
+ {
+  "id": "h-venedig",
+  "name": "Venedig",
+  "country": "Italien",
+  "lat": 45.441,
+  "lon": 12.316,
+  "difficulty": 2,
+  "hints": [
+   "Diese Stadt hat keine Autos – aber über 400 Brücken.",
+   "Jedes Jahr im Februar tragen hier Tausende Masken.",
+   "Der Markusplatz steht bei Hochwasser regelmäßig unter Wasser.",
+   "Gondolieri fahren durch den Canal Grande."
+  ],
+  "fact": "Venedig sinkt jedes Jahr um etwa einen bis zwei Millimeter."
+ },
+ {
+  "id": "h-amsterdam",
+  "name": "Amsterdam",
+  "country": "Niederlande",
+  "lat": 52.373,
+  "lon": 4.893,
+  "difficulty": 2,
+  "hints": [
+   "In dieser Stadt gibt es mehr Fahrräder als Einwohner.",
+   "Ein Mädchen schrieb hier im Versteck ein weltberühmtes Tagebuch.",
+   "Das Rijksmuseum zeigt hier Rembrandts „Nachtwache“.",
+   "Hauptstadt der Niederlande mit über 100 km Grachten."
+  ],
+  "fact": "Jedes Jahr werden in Amsterdam rund 12.000 Fahrräder aus den Grachten gefischt."
+ },
+ {
+  "id": "h-barcelona",
+  "name": "Barcelona",
+  "country": "Spanien",
+  "lat": 41.385,
+  "lon": 2.173,
+  "difficulty": 2,
+  "hints": [
+   "An einer Kirche dieser Stadt wird seit über 140 Jahren gebaut.",
+   "Der Architekt Antoni Gaudí prägte das Stadtbild.",
+   "Die Flaniermeile heißt La Rambla.",
+   "Zweitgrößte Stadt Spaniens, Hauptstadt Kataloniens."
+  ],
+  "fact": "Die Sagrada Família soll 2026 – zum 100. Todestag Gaudís – weitgehend fertig sein."
+ },
+ {
+  "id": "h-prag",
+  "name": "Prag",
+  "country": "Tschechien",
+  "lat": 50.076,
+  "lon": 14.438,
+  "difficulty": 2,
+  "hints": [
+   "Die „Goldene Stadt“ mit den hundert Türmen.",
+   "Seit über 600 Jahren schlägt hier eine astronomische Uhr.",
+   "Die Karlsbrücke führt über die Moldau.",
+   "Hauptstadt Tschechiens."
+  ],
+  "fact": "Die Prager Rathausuhr von 1410 ist die älteste noch funktionierende astronomische Uhr der Welt."
+ },
+ {
+  "id": "h-las-vegas",
+  "name": "Las Vegas",
+  "country": "USA",
+  "lat": 36.17,
+  "lon": -115.14,
+  "difficulty": 2,
+  "hints": [
+   "Diese Stadt liegt mitten in der Mojave-Wüste.",
+   "Hier stehen eine Pyramide, ein Eiffelturm und ein Venedig-Nachbau nebeneinander.",
+   "Elvis hatte hier über 600 ausverkaufte Shows.",
+   "„Sin City“ im Bundesstaat Nevada."
+  ],
+  "fact": "Der Luxor-Strahler auf der Pyramide in Las Vegas ist der hellste Lichtstrahl der Welt."
+ },
+ {
+  "id": "h-agra",
+  "name": "Agra",
+  "country": "Indien",
+  "lat": 27.177,
+  "lon": 78.008,
+  "difficulty": 3,
+  "hints": [
+   "Ein Kaiser ließ hier aus Trauer um seine Frau ein Grabmal bauen.",
+   "Das Bauwerk aus weißem Marmor wechselt je nach Tageszeit die Farbe.",
+   "Die Stadt liegt am Fluss Yamuna, rund 200 km von Delhi.",
+   "Heimat des Taj Mahal."
+  ],
+  "fact": "Am Taj Mahal arbeiteten über 20 Jahre lang rund 20.000 Handwerker."
+ },
+ {
+  "id": "h-salzburg",
+  "name": "Salzburg",
+  "country": "Österreich",
+  "lat": 47.81,
+  "lon": 13.055,
+  "difficulty": 3,
+  "hints": [
+   "Hier wurde ein Komponist geboren, nach dem eine Schokoladenkugel benannt ist.",
+   "Über der Altstadt thront eine der größten erhaltenen Burgen Europas.",
+   "Kulisse des Musicalfilms „The Sound of Music“.",
+   "Mozarts Geburtsstadt an der Salzach."
+  ],
+  "fact": "Die Festung Hohensalzburg wurde 1077 begonnen und nie eingenommen."
+ },
+ {
+  "id": "h-havanna",
+  "name": "Havanna",
+  "country": "Kuba",
+  "lat": 23.113,
+  "lon": -82.366,
+  "difficulty": 3,
+  "hints": [
+   "In dieser Hauptstadt fahren auffällig viele Autos aus den 1950ern.",
+   "Ernest Hemingway lebte hier viele Jahre und trank im „El Floridita“.",
+   "Die Uferpromenade heißt Malecón.",
+   "Hauptstadt Kubas."
+  ],
+  "fact": "Der Malecón in Havanna ist rund acht Kilometer lang."
+ },
+ {
+  "id": "h-kyoto",
+  "name": "Kyoto",
+  "country": "Japan",
+  "lat": 35.012,
+  "lon": 135.768,
+  "difficulty": 3,
+  "hints": [
+   "Diese Stadt war über 1000 Jahre lang Kaiserresidenz ihres Landes.",
+   "Hier gibt es rund 1600 buddhistische Tempel.",
+   "Ein goldener Pavillon spiegelt sich in einem Teich.",
+   "Ehemalige Hauptstadt Japans, Namensgeber eines Klimaprotokolls."
+  ],
+  "fact": "Das Kyoto-Protokoll zum Klimaschutz wurde hier 1997 verabschiedet."
+ },
+ {
+  "id": "h-st-petersburg",
+  "name": "Sankt Petersburg",
+  "country": "Russland",
+  "lat": 59.934,
+  "lon": 30.335,
+  "difficulty": 3,
+  "hints": [
+   "Diese Stadt hieß im 20. Jahrhundert zweimal anders.",
+   "Im Sommer wird es hier wochenlang nicht richtig dunkel.",
+   "Die Eremitage ist eines der größten Kunstmuseen der Welt.",
+   "Peter der Große gründete sie 1703 an der Newa."
+  ],
+  "fact": "Sankt Petersburg hieß von 1914 bis 1924 Petrograd und bis 1991 Leningrad."
+ },
+ {
+  "id": "h-jerusalem",
+  "name": "Jerusalem",
+  "country": "Israel/Palästina",
+  "lat": 31.778,
+  "lon": 35.235,
+  "difficulty": 3,
+  "hints": [
+   "Diese Stadt ist drei Weltreligionen heilig.",
+   "Hier steht eine Mauer, an der Menschen Zettel in die Ritzen stecken.",
+   "Der Felsendom mit seiner goldenen Kuppel prägt die Silhouette.",
+   "Die Altstadt ist in vier Viertel geteilt."
+  ],
+  "fact": "Die Altstadt von Jerusalem ist kleiner als ein Quadratkilometer."
+ },
+ {
+  "id": "h-hollywood",
+  "name": "Hollywood (Los Angeles)",
+  "country": "USA",
+  "lat": 34.098,
+  "lon": -118.327,
+  "difficulty": 2,
+  "hints": [
+   "Neun riesige weiße Buchstaben stehen hier an einem Hang.",
+   "Ursprünglich warb das Schild für eine Immobilien-Siedlung.",
+   "Auf dem Walk of Fame liegen über 2700 Sterne.",
+   "Stadtteil von Los Angeles, Zentrum der US-Filmindustrie."
+  ],
+  "fact": "Das Schild lautete bis 1949 „HOLLYWOODLAND“."
+ },
+ {
+  "id": "h-loch-ness",
+  "name": "Loch Ness",
+  "country": "Schottland",
+  "lat": 57.3,
+  "lon": -4.45,
+  "difficulty": 3,
+  "hints": [
+   "In diesem Gewässer soll seit dem 6. Jahrhundert ein Ungeheuer leben.",
+   "Es enthält mehr Süßwasser als alle Seen Englands und Wales’ zusammen.",
+   "Der See liegt in den schottischen Highlands.",
+   "Heimat von „Nessie“."
+  ],
+  "fact": "Loch Ness ist bis zu 230 m tief."
+ },
+ {
+  "id": "h-pisa",
+  "name": "Pisa",
+  "country": "Italien",
+  "lat": 43.723,
+  "lon": 10.396,
+  "difficulty": 2,
+  "hints": [
+   "Das berühmteste Bauwerk dieser Stadt ist eigentlich ein Baufehler.",
+   "Galileo Galilei wurde hier geboren.",
+   "Der Turm neigt sich um rund vier Grad.",
+   "Toskanische Stadt mit dem schiefen Turm."
+  ],
+  "fact": "Der Turm von Pisa begann sich schon während des Baus im 12. Jahrhundert zu neigen."
+ },
+ {
+  "id": "h-cusco",
+  "name": "Cusco",
+  "country": "Peru",
+  "lat": -13.532,
+  "lon": -71.968,
+  "difficulty": 4,
+  "hints": [
+   "Diese Stadt liegt auf rund 3400 m Höhe.",
+   "Sie war die Hauptstadt eines südamerikanischen Großreichs.",
+   "Ausgangspunkt für den Weg nach Machu Picchu.",
+   "Ehemalige Inka-Hauptstadt in Peru."
+  ],
+  "fact": "Cusco bedeutet in der Sprache Quechua etwa „Nabel der Welt“."
+ },
+ {
+  "id": "h-gizeh",
+  "name": "Gizeh",
+  "country": "Ägypten",
+  "lat": 29.979,
+  "lon": 31.134,
+  "difficulty": 2,
+  "hints": [
+   "Hier steht das einzige erhaltene der sieben Weltwunder der Antike.",
+   "Eine riesige Figur mit Löwenkörper und Menschenkopf bewacht den Ort.",
+   "Die größte Anlage wurde für Pharao Cheops gebaut.",
+   "Pyramiden am Stadtrand von Kairo."
+  ],
+  "fact": "Die Cheops-Pyramide war fast 4000 Jahre lang das höchste Bauwerk der Welt."
+ },
+ {
+  "id": "h-nashville",
+  "name": "Nashville",
+  "country": "USA",
+  "lat": 36.163,
+  "lon": -86.781,
+  "difficulty": 4,
+  "hints": [
+   "Diese Stadt nennt sich „Music City“.",
+   "Die Grand Ole Opry ist hier eine Radioshow seit 1925.",
+   "Hauptstadt des US-Bundesstaats Tennessee.",
+   "Zentrum der Country-Musik."
+  ],
+  "fact": "Die Grand Ole Opry ist die am längsten laufende Radiosendung der USA."
+ },
+ {
+  "id": "h-liverpool",
+  "name": "Liverpool",
+  "country": "England",
+  "lat": 53.408,
+  "lon": -2.991,
+  "difficulty": 3,
+  "hints": [
+   "Vier junge Männer aus dieser Hafenstadt veränderten die Popmusik.",
+   "Der Cavern Club war ihre Bühne.",
+   "Ein Fußballverein singt hier „You’ll Never Walk Alone“.",
+   "Heimatstadt der Beatles."
+  ],
+  "fact": "Die Beatles spielten fast 300-mal im Cavern Club."
+ },
+ {
+  "id": "h-salem",
+  "name": "Salem (Massachusetts)",
+  "country": "USA",
+  "lat": 42.519,
+  "lon": -70.897,
+  "difficulty": 5,
+  "hints": [
+   "1692 wurden in diesem Ort über 200 Menschen angeklagt.",
+   "19 von ihnen wurden gehängt.",
+   "Arthur Millers Drama „Hexenjagd“ spielt hier.",
+   "Kleinstadt nördlich von Boston, berühmt für ihre Hexenprozesse."
+  ],
+  "fact": "Salem vermarktet sich heute als „Witch City“ – zu Halloween kommen Hunderttausende."
+ },
+ {
+  "id": "h-roswell",
+  "name": "Roswell",
+  "country": "USA",
+  "lat": 33.394,
+  "lon": -104.523,
+  "difficulty": 5,
+  "hints": [
+   "1947 stürzte hier angeblich etwas vom Himmel.",
+   "Das Militär sprach zuerst von einer „fliegenden Scheibe“, dann von einem Wetterballon.",
+   "Heute gibt es hier ein UFO-Museum.",
+   "Kleinstadt in New Mexico."
+  ],
+  "fact": "In Roswell sind sogar die Straßenlaternen wie Alienköpfe geformt."
+ },
+ {
+  "id": "h-gibraltar",
+  "name": "Gibraltar",
+  "country": "Brit. Überseegebiet",
+  "lat": 36.14,
+  "lon": -5.353,
+  "difficulty": 3,
+  "hints": [
+   "Auf diesem Felsen leben die einzigen wilden Affen Europas.",
+   "Die Landebahn des Flughafens kreuzt eine Hauptstraße.",
+   "Ein britisches Gebiet an der Südspitze Spaniens.",
+   "Hier ist Afrika nur rund 14 km entfernt."
+  ],
+  "fact": "Der Legende nach bleibt Gibraltar britisch, solange dort Berberaffen leben."
+ },
+ {
+  "id": "h-dubai",
+  "name": "Dubai",
+  "country": "VAE",
+  "lat": 25.197,
+  "lon": 55.274,
+  "difficulty": 2,
+  "hints": [
+   "Diese Stadt hat künstliche Inseln in Form einer Palme.",
+   "Hier steht das höchste Gebäude der Welt.",
+   "In einer Shopping-Mall gibt es eine Skihalle mitten in der Wüste.",
+   "Größte Stadt der Vereinigten Arabischen Emirate."
+  ],
+  "fact": "Der Burj Khalifa ist 828 m hoch."
+ },
+ {
+  "id": "h-chamonix",
+  "name": "Chamonix",
+  "country": "Frankreich",
+  "lat": 45.924,
+  "lon": 6.869,
+  "difficulty": 4,
+  "hints": [
+   "1924 fanden hier die ersten Olympischen Winterspiele statt.",
+   "Eine Seilbahn führt auf über 3800 m Höhe.",
+   "Am Ortsrand beginnt der höchste Berg der Alpen.",
+   "Ort am Fuß des Mont Blanc."
+  ],
+  "fact": "Die Aiguille-du-Midi-Bahn in Chamonix überwindet rund 2800 Höhenmeter."
+ },
+ {
+  "id": "h-pompeji",
+  "name": "Pompeji",
+  "country": "Italien",
+  "lat": 40.749,
+  "lon": 14.485,
+  "difficulty": 3,
+  "hints": [
+   "Diese Stadt war über 1500 Jahre lang verschwunden.",
+   "Im Jahr 79 wurde sie unter Asche begraben.",
+   "Ausgrabungen zeigen Brotlaibe, Graffiti und Gipsabdrücke von Menschen.",
+   "Römische Stadt am Fuß des Vesuvs."
+  ],
+  "fact": "Pompeji wurde erst im 18. Jahrhundert systematisch ausgegraben."
+ },
+ {
+  "id": "h-stonehenge",
+  "name": "Stonehenge",
+  "country": "England",
+  "lat": 51.179,
+  "lon": -1.826,
+  "difficulty": 3,
+  "hints": [
+   "Hier stehen tonnenschwere Steine im Kreis – seit rund 5000 Jahren.",
+   "Manche Steine kamen aus über 200 km Entfernung aus Wales.",
+   "Zur Sommersonnenwende geht die Sonne genau über einem bestimmten Stein auf.",
+   "Steinkreis in der Grafschaft Wiltshire."
+  ],
+  "fact": "Wie die Blausteine von Stonehenge transportiert wurden, ist bis heute umstritten."
+ },
+ {
+  "id": "h-rovaniemi",
+  "name": "Rovaniemi",
+  "country": "Finnland",
+  "lat": 66.503,
+  "lon": 25.729,
+  "difficulty": 4,
+  "hints": [
+   "Hier überquert man eine berühmte Breitenlinie zu Fuß.",
+   "Jedes Jahr kommen Hunderttausende Briefe von Kindern an.",
+   "Im Winter sieht man oft Polarlichter.",
+   "Hauptstadt Lapplands, „offizielle Heimat des Weihnachtsmanns“."
+  ],
+  "fact": "Das Weihnachtsmanndorf in Rovaniemi liegt direkt auf dem Polarkreis."
+ },
+ {
+  "id": "h-darjeeling",
+  "name": "Darjeeling",
+  "country": "Indien",
+  "lat": 27.036,
+  "lon": 88.263,
+  "difficulty": 5,
+  "hints": [
+   "In dieser Stadt fährt eine Spielzeug-Eisenbahn seit 1881 den Berg hinauf.",
+   "Von hier sieht man den dritthöchsten Berg der Welt.",
+   "Sie liegt auf rund 2000 m im Himalaya-Vorland.",
+   "Namensgeberin eines berühmten Schwarztees."
+  ],
+  "fact": "Die Darjeeling-Himalaya-Bahn ist UNESCO-Welterbe."
+ },
+ {
+  "id": "h-matera",
+  "name": "Matera",
+  "country": "Italien",
+  "lat": 40.667,
+  "lon": 16.604,
+  "difficulty": 5,
+  "hints": [
+   "In den Höhlen dieser Stadt lebten Menschen noch bis in die 1950er.",
+   "Sie gilt als eine der ältesten durchgehend bewohnten Städte der Welt.",
+   "Hier wurde „Die Passion Christi“ und ein James-Bond-Film gedreht.",
+   "Stadt der „Sassi“ in der Basilikata."
+  ],
+  "fact": "Matera war 2019 Kulturhauptstadt Europas."
+ },
+ {
+  "id": "h-prypjat",
+  "name": "Prypjat",
+  "country": "Ukraine",
+  "lat": 51.405,
+  "lon": 30.054,
+  "difficulty": 4,
+  "hints": [
+   "In dieser Stadt lebten 1986 knapp 50.000 Menschen – heute niemand mehr.",
+   "Ein Riesenrad wurde hier nie in Betrieb genommen.",
+   "Sie wurde 36 Stunden nach einem Unglück geräumt.",
+   "Geisterstadt neben dem Kernkraftwerk Tschernobyl."
+  ],
+  "fact": "Das Riesenrad von Prypjat sollte am 1. Mai 1986 eröffnet werden."
+ },
+ {
+  "id": "h-timbuktu",
+  "name": "Timbuktu",
+  "country": "Mali",
+  "lat": 16.766,
+  "lon": -3.003,
+  "difficulty": 4,
+  "hints": [
+   "Der Name dieser Stadt steht sprichwörtlich für „am Ende der Welt“.",
+   "Hier lagern Hunderttausende alte Handschriften.",
+   "Sie liegt am Südrand der Sahara, nahe dem Niger.",
+   "Stadt in Mali mit Lehmmoscheen."
+  ],
+  "fact": "Die Djinguereber-Moschee in Timbuktu wurde 1327 aus Lehm gebaut."
+ },
+ {
+  "id": "h-ushuaia",
+  "name": "Ushuaia",
+  "country": "Argentinien",
+  "lat": -54.801,
+  "lon": -68.303,
+  "difficulty": 4,
+  "hints": [
+   "Hier beginnen viele Kreuzfahrten in die Antarktis.",
+   "Die Stadt war früher eine Strafkolonie.",
+   "Sie liegt auf der Insel Feuerland.",
+   "Nennt sich „südlichste Stadt der Welt“."
+  ],
+  "fact": "Ushuaias ehemaliges Gefängnis ist heute ein Museum."
+ },
+ {
+  "id": "h-svalbard",
+  "name": "Longyearbyen",
+  "country": "Norwegen",
+  "lat": 78.223,
+  "lon": 15.647,
+  "difficulty": 5,
+  "hints": [
+   "In der Nähe dieses Ortes liegt ein Tresor mit über einer Million Saatgutproben.",
+   "Hier sollte man das Dorf nur mit Gewehr verlassen – wegen Eisbären.",
+   "Im Winter geht die Sonne monatelang nicht auf.",
+   "Hauptort von Spitzbergen."
+  ],
+  "fact": "Der Svalbard Global Seed Vault soll Kulturpflanzen für Katastrophen sichern."
+ }
+]

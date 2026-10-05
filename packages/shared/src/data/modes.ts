@@ -156,6 +156,42 @@ export const MODES: GameMode[] = [
     accent: 'geo',
     status: 'ready',
   },
+  {
+    id: 'geo-hints',
+    name: 'Heißer Draht',
+    chipLabel: 'Weltkarte',
+    tagline: 'Wer früh die Nadel setzt, kassiert doppelt.',
+    description:
+      'Kein Ortsname, nur Hinweise — vom vagen „Hier gibt es keine Autos“ bis zum Volltreffer. Der Host deckt Hinweis für Hinweis auf. Je früher eure Nadel sitzt, desto mehr zählt sie (bis ×2).',
+    estimatedMinutes: 12,
+    scoresMatchPoint: true,
+    accent: 'geo',
+    status: 'ready',
+  },
+  {
+    id: 'geo-shape',
+    name: 'Länder-Umriss',
+    chipLabel: 'Weltkarte',
+    tagline: 'Nur die Silhouette — und die ist auch noch gedreht.',
+    description:
+      'Ihr seht den Umriss eines Landes, ohne Nachbarn und schräg gestellt. Setzt die Nadel dorthin, wo das Land liegt. Wer drinnen landet, bekommt volle Punkte.',
+    estimatedMinutes: 10,
+    scoresMatchPoint: true,
+    accent: 'geo',
+    status: 'ready',
+  },
+  {
+    id: 'geo-history',
+    name: 'Zeitreise',
+    chipLabel: 'Weltkarte',
+    tagline: 'Wo ist das passiert?',
+    description:
+      'Mauerfall, Titanic, Woodstock: Ein Ereignis wird genannt, ihr setzt die Nadel dorthin, wo es stattfand. Geschichte trifft Geografie.',
+    estimatedMinutes: 12,
+    scoresMatchPoint: true,
+    accent: 'geo',
+    status: 'ready',
+  },
 ]
 
 export const MODES_BY_ID: Record<string, GameMode> = Object.fromEntries(
