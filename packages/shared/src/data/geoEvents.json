@@ -1,0 +1,422 @@
+[
+ {
+  "id": "e-mauerfall",
+  "prompt": "Am 9. November 1989 fiel hier die Mauer.",
+  "name": "Berlin",
+  "country": "Deutschland",
+  "lat": 52.516,
+  "lon": 13.377,
+  "difficulty": 1,
+  "fact": "Schabowskis Satz „Das tritt nach meiner Kenntnis … sofort, unverzüglich“ löste den Ansturm aus."
+ },
+ {
+  "id": "e-titanic",
+  "prompt": "1912 sank hier die Titanic.",
+  "name": "Nordatlantik südöstlich von Neufundland",
+  "country": "Atlantik",
+  "lat": 41.726,
+  "lon": -49.948,
+  "difficulty": 3,
+  "fact": "Das Wrack wurde erst 1985 in rund 3800 m Tiefe entdeckt."
+ },
+ {
+  "id": "e-vesuv",
+  "prompt": "Im Jahr 79 begrub ein Vulkanausbruch eine römische Stadt.",
+  "name": "Pompeji",
+  "country": "Italien",
+  "lat": 40.749,
+  "lon": 14.485,
+  "difficulty": 2,
+  "fact": "Plinius der Jüngere beschrieb den Ausbruch als Augenzeuge."
+ },
+ {
+  "id": "e-mondstart",
+  "prompt": "Im Juli 1969 startete von hier die erste bemannte Mondlandung.",
+  "name": "Cape Canaveral (Kennedy Space Center)",
+  "country": "USA",
+  "lat": 28.573,
+  "lon": -80.649,
+  "difficulty": 3,
+  "fact": "Apollo 11 hob am 16. Juli 1969 von Startrampe 39A ab."
+ },
+ {
+  "id": "e-hiroshima",
+  "prompt": "Am 6. August 1945 fiel hier die erste im Krieg eingesetzte Atombombe.",
+  "name": "Hiroshima",
+  "country": "Japan",
+  "lat": 34.385,
+  "lon": 132.455,
+  "difficulty": 2,
+  "fact": "Die Kuppel des Atombombendoms blieb stehen und ist heute Mahnmal."
+ },
+ {
+  "id": "e-tschernobyl",
+  "prompt": "1986 explodierte hier ein Reaktor.",
+  "name": "Tschernobyl",
+  "country": "Ukraine",
+  "lat": 51.389,
+  "lon": 30.099,
+  "difficulty": 2,
+  "fact": "Die radioaktive Wolke wurde zuerst in Schweden bemerkt."
+ },
+ {
+  "id": "e-woodstock",
+  "prompt": "1969 feierten hier rund 400.000 Menschen drei Tage lang „Peace & Music“.",
+  "name": "Bethel (New York)",
+  "country": "USA",
+  "lat": 41.701,
+  "lon": -74.88,
+  "difficulty": 4,
+  "fact": "Jimi Hendrix spielte als Letzter – am Montagmorgen vor nur noch 30.000 Leuten."
+ },
+ {
+  "id": "e-waterloo",
+  "prompt": "1815 verlor Napoleon hier seine letzte Schlacht.",
+  "name": "Waterloo",
+  "country": "Belgien",
+  "lat": 50.715,
+  "lon": 4.399,
+  "difficulty": 3,
+  "fact": "Die eigentliche Schlacht fand einige Kilometer südlich von Waterloo statt."
+ },
+ {
+  "id": "e-dday",
+  "prompt": "Am 6. Juni 1944 landeten hier die Alliierten.",
+  "name": "Normandie (Omaha Beach)",
+  "country": "Frankreich",
+  "lat": 49.369,
+  "lon": -0.882,
+  "difficulty": 2,
+  "fact": "An der Landung waren rund 156.000 Soldaten beteiligt."
+ },
+ {
+  "id": "e-kolumbus",
+  "prompt": "1492 betrat Kolumbus hier erstmals amerikanischen Boden.",
+  "name": "Bahamas (San Salvador)",
+  "country": "Bahamas",
+  "lat": 24.05,
+  "lon": -74.53,
+  "difficulty": 4,
+  "fact": "Kolumbus glaubte bis zu seinem Tod, Asien erreicht zu haben."
+ },
+ {
+  "id": "e-wright",
+  "prompt": "1903 flogen hier die Brüder Wright das erste Motorflugzeug.",
+  "name": "Kitty Hawk",
+  "country": "USA",
+  "lat": 36.019,
+  "lon": -75.668,
+  "difficulty": 5,
+  "fact": "Der erste Flug dauerte 12 Sekunden und ging 37 Meter weit."
+ },
+ {
+  "id": "e-wembley",
+  "prompt": "1966 wurde England hier Fußball-Weltmeister – mit dem „Wembley-Tor“.",
+  "name": "London (Wembley)",
+  "country": "England",
+  "lat": 51.556,
+  "lon": -0.28,
+  "difficulty": 2,
+  "fact": "Ob der Ball von Geoff Hurst hinter der Linie war, ist bis heute umstritten."
+ },
+ {
+  "id": "e-wunder-bern",
+  "prompt": "1954 wurde Deutschland hier überraschend Weltmeister.",
+  "name": "Bern",
+  "country": "Schweiz",
+  "lat": 46.963,
+  "lon": 7.465,
+  "difficulty": 2,
+  "fact": "Das „Wunder von Bern“ fand im Wankdorfstadion statt."
+ },
+ {
+  "id": "e-mineiraozo",
+  "prompt": "2014 verlor Brasilien hier 1:7 gegen Deutschland.",
+  "name": "Belo Horizonte",
+  "country": "Brasilien",
+  "lat": -19.866,
+  "lon": -43.971,
+  "difficulty": 4,
+  "fact": "Das Spiel fand im Estádio Mineirão statt."
+ },
+ {
+  "id": "e-thesen",
+  "prompt": "1517 soll Luther hier seine 95 Thesen veröffentlicht haben.",
+  "name": "Wittenberg",
+  "country": "Deutschland",
+  "lat": 51.866,
+  "lon": 12.643,
+  "difficulty": 3,
+  "fact": "Ob er sie wirklich an die Tür der Schlosskirche schlug, ist umstritten."
+ },
+ {
+  "id": "e-bastille",
+  "prompt": "1789 stürmten Pariser hier ein Gefängnis – Beginn der Revolution.",
+  "name": "Paris (Bastille)",
+  "country": "Frankreich",
+  "lat": 48.853,
+  "lon": 2.369,
+  "difficulty": 1,
+  "fact": "In der Bastille saßen beim Sturm nur sieben Gefangene."
+ },
+ {
+  "id": "e-pearl-harbor",
+  "prompt": "Im Dezember 1941 griff Japan hier die US-Flotte an.",
+  "name": "Pearl Harbor",
+  "country": "USA (Hawaii)",
+  "lat": 21.365,
+  "lon": -157.95,
+  "difficulty": 3,
+  "fact": "Der Angriff führte zum Kriegseintritt der USA."
+ },
+ {
+  "id": "e-krakatau",
+  "prompt": "1883 explodierte hier ein Vulkan so laut, dass man es 4800 km weit hörte.",
+  "name": "Krakatau",
+  "country": "Indonesien",
+  "lat": -6.102,
+  "lon": 105.423,
+  "difficulty": 4,
+  "fact": "Der Knall gilt als lautestes Geräusch der überlieferten Geschichte."
+ },
+ {
+  "id": "e-mount-st-helens",
+  "prompt": "1980 riss ein Vulkanausbruch hier eine ganze Bergflanke weg.",
+  "name": "Mount St. Helens",
+  "country": "USA",
+  "lat": 46.191,
+  "lon": -122.195,
+  "difficulty": 5,
+  "fact": "Der Berg verlor rund 400 m an Höhe."
+ },
+ {
+  "id": "e-gettysburg",
+  "prompt": "1863 hielt Abraham Lincoln hier eine der berühmtesten Reden der Geschichte.",
+  "name": "Gettysburg",
+  "country": "USA",
+  "lat": 39.831,
+  "lon": -77.231,
+  "difficulty": 4,
+  "fact": "Die Rede dauerte nur etwa zwei Minuten."
+ },
+ {
+  "id": "e-dallas",
+  "prompt": "1963 wurde John F. Kennedy hier erschossen.",
+  "name": "Dallas",
+  "country": "USA",
+  "lat": 32.779,
+  "lon": -96.808,
+  "difficulty": 2,
+  "fact": "Die Schüsse fielen an der Dealey Plaza."
+ },
+ {
+  "id": "e-memphis",
+  "prompt": "1968 wurde Martin Luther King hier ermordet.",
+  "name": "Memphis",
+  "country": "USA",
+  "lat": 35.135,
+  "lon": -90.058,
+  "difficulty": 4,
+  "fact": "Das Lorraine Motel ist heute das National Civil Rights Museum."
+ },
+ {
+  "id": "e-tiananmen",
+  "prompt": "1989 stellte sich hier ein Mann allein vor eine Panzerkolonne.",
+  "name": "Peking",
+  "country": "China",
+  "lat": 39.905,
+  "lon": 116.397,
+  "difficulty": 3,
+  "fact": "Die Identität des „Tank Man“ ist bis heute unbekannt."
+ },
+ {
+  "id": "e-soweto",
+  "prompt": "Nelson Mandela lebte vor seiner Haft in dieser Township.",
+  "name": "Soweto (Johannesburg)",
+  "country": "Südafrika",
+  "lat": -26.238,
+  "lon": 27.909,
+  "difficulty": 4,
+  "fact": "In der Vilakazi Street wohnten mit Mandela und Tutu zwei Nobelpreisträger."
+ },
+ {
+  "id": "e-robben-island",
+  "prompt": "Hier saß Nelson Mandela 18 Jahre im Gefängnis.",
+  "name": "Robben Island",
+  "country": "Südafrika",
+  "lat": -33.807,
+  "lon": 18.371,
+  "difficulty": 4,
+  "fact": "Insgesamt war Mandela 27 Jahre inhaftiert."
+ },
+ {
+  "id": "e-marathon",
+  "prompt": "490 v. Chr. soll ein Bote von hier nach Athen gerannt sein.",
+  "name": "Marathon",
+  "country": "Griechenland",
+  "lat": 38.152,
+  "lon": 23.963,
+  "difficulty": 4,
+  "fact": "Die Marathon-Distanz von 42,195 km wurde erst 1921 festgelegt."
+ },
+ {
+  "id": "e-olympia",
+  "prompt": "Hier fanden die Olympischen Spiele der Antike statt.",
+  "name": "Olympia",
+  "country": "Griechenland",
+  "lat": 37.638,
+  "lon": 21.63,
+  "difficulty": 3,
+  "fact": "Das olympische Feuer wird bis heute in Olympia entzündet."
+ },
+ {
+  "id": "e-wiener-kongress",
+  "prompt": "1815 tagten hier Europas Mächte, um den Kontinent neu zu ordnen.",
+  "name": "Wien",
+  "country": "Österreich",
+  "lat": 48.208,
+  "lon": 16.373,
+  "difficulty": 3,
+  "fact": "Der Wiener Kongress „tanzte“ – berühmt für seine vielen Bälle."
+ },
+ {
+  "id": "e-versailles",
+  "prompt": "1919 wurde hier der Friedensvertrag nach dem Ersten Weltkrieg unterzeichnet.",
+  "name": "Versailles",
+  "country": "Frankreich",
+  "lat": 48.805,
+  "lon": 2.12,
+  "difficulty": 3,
+  "fact": "Unterzeichnet wurde im Spiegelsaal – dort, wo 1871 das Deutsche Kaiserreich ausgerufen worden war."
+ },
+ {
+  "id": "e-jalta",
+  "prompt": "1945 trafen sich Churchill, Roosevelt und Stalin hier, um Europa aufzuteilen.",
+  "name": "Jalta",
+  "country": "Krim",
+  "lat": 44.495,
+  "lon": 34.166,
+  "difficulty": 5,
+  "fact": "Die Konferenz fand im Liwadija-Palast statt."
+ },
+ {
+  "id": "e-roswell",
+  "prompt": "1947 wurde hier angeblich ein UFO geborgen.",
+  "name": "Roswell",
+  "country": "USA",
+  "lat": 33.394,
+  "lon": -104.523,
+  "difficulty": 4,
+  "fact": "Das US-Militär erklärte das Wrack später als Teil eines Spionageballons."
+ },
+ {
+  "id": "e-golden-spike",
+  "prompt": "1869 trafen sich hier die beiden Enden der ersten Eisenbahn quer durch die USA.",
+  "name": "Promontory Summit (Utah)",
+  "country": "USA",
+  "lat": 41.618,
+  "lon": -112.551,
+  "difficulty": 5,
+  "fact": "Der letzte Nagel war aus Gold."
+ },
+ {
+  "id": "e-sarajevo",
+  "prompt": "1914 wurde hier der österreichische Thronfolger erschossen.",
+  "name": "Sarajevo",
+  "country": "Bosnien und Herzegowina",
+  "lat": 43.858,
+  "lon": 18.428,
+  "difficulty": 3,
+  "fact": "Das Attentat löste den Ersten Weltkrieg aus."
+ },
+ {
+  "id": "e-gutenberg",
+  "prompt": "Um 1450 druckte hier Johannes Gutenberg mit beweglichen Lettern.",
+  "name": "Mainz",
+  "country": "Deutschland",
+  "lat": 49.999,
+  "lon": 8.274,
+  "difficulty": 3,
+  "fact": "Von der Gutenberg-Bibel existieren heute noch 49 Exemplare."
+ },
+ {
+  "id": "e-sputnik",
+  "prompt": "1957 startete von hier der erste künstliche Satellit.",
+  "name": "Baikonur",
+  "country": "Kasachstan",
+  "lat": 45.965,
+  "lon": 63.305,
+  "difficulty": 5,
+  "fact": "Baikonur ist der älteste und größte Weltraumbahnhof der Welt."
+ },
+ {
+  "id": "e-gagarin",
+  "prompt": "1961 landete Juri Gagarin nach dem ersten Weltraumflug hier auf einem Feld.",
+  "name": "bei Engels (Saratow)",
+  "country": "Russland",
+  "lat": 51.27,
+  "lon": 45.997,
+  "difficulty": 5,
+  "fact": "Gagarin stieg vor der Landung aus und landete am Fallschirm."
+ },
+ {
+  "id": "e-everest",
+  "prompt": "1953 standen Hillary und Norgay hier als Erste ganz oben.",
+  "name": "Mount Everest",
+  "country": "Nepal/China",
+  "lat": 27.988,
+  "lon": 86.925,
+  "difficulty": 2,
+  "fact": "Norgay hinterließ auf dem Gipfel Süßigkeiten, Hillary ein Kreuz."
+ },
+ {
+  "id": "e-suezkanal",
+  "prompt": "1869 wurde hier ein Kanal eröffnet, der zwei Meere verbindet.",
+  "name": "Suezkanal (Ismailia)",
+  "country": "Ägypten",
+  "lat": 30.6,
+  "lon": 32.3,
+  "difficulty": 3,
+  "fact": "Der Kanal erspart Schiffen den Umweg um Afrika."
+ },
+ {
+  "id": "e-panamakanal",
+  "prompt": "1914 fuhr hier das erste Schiff zwischen Atlantik und Pazifik durch einen Kanal.",
+  "name": "Panamakanal",
+  "country": "Panama",
+  "lat": 9.08,
+  "lon": -79.68,
+  "difficulty": 3,
+  "fact": "Schiffe werden in Schleusen rund 26 m angehoben."
+ },
+ {
+  "id": "e-tutanchamun",
+  "prompt": "1922 entdeckte Howard Carter hier ein fast unberührtes Pharaonengrab.",
+  "name": "Tal der Könige (Luxor)",
+  "country": "Ägypten",
+  "lat": 25.74,
+  "lon": 32.602,
+  "difficulty": 3,
+  "fact": "Im Grab lagen über 5000 Objekte."
+ },
+ {
+  "id": "e-darwin",
+  "prompt": "1835 sammelte Charles Darwin auf diesen Inseln Finken.",
+  "name": "Galápagos-Inseln",
+  "country": "Ecuador",
+  "lat": -0.954,
+  "lon": -90.966,
+  "difficulty": 3,
+  "fact": "Seine Beobachtungen führten zur Evolutionstheorie."
+ },
+ {
+  "id": "e-lindbergh",
+  "prompt": "1927 landete Charles Lindbergh hier nach dem ersten Alleinflug über den Atlantik.",
+  "name": "Paris (Le Bourget)",
+  "country": "Frankreich",
+  "lat": 48.969,
+  "lon": 2.441,
+  "difficulty": 4,
+  "fact": "Der Flug von New York dauerte 33,5 Stunden."
+ }
+]

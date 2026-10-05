@@ -52,7 +52,7 @@ import { generateRoomCode } from '../lib/roomCode'
 import { shuffleWithMapping } from '../lib/shuffle'
 import { getDefaultAvatar } from '../data/avatars'
 import { sanitizeAvatar } from '../data/avatarLook'
-import { PLACES, type Place } from '../data/places'
+import { geoPool, type GeoTarget, type GeoVariant } from '../data/places'
 import { GEO_CLOSEST_BONUS, clampLatLon, distanceKm, geoPoints, isValidLatLon, type LatLon } from '../lib/geo'
 import {
   MAX_TEAMS,
@@ -382,9 +382,15 @@ export interface PictureLive {
  */
 export interface GeoLive {
   kind: 'geoguess'
+  /** place = Ortsname, hints = Heißer Draht, shape = Länder-Umriss, history = Zeitreise. */
+  variant: GeoVariant
   totalRounds: number
   currentIndex: number
-  place: Place | null
+  place: GeoTarget | null
+  /** Heißer Draht: aufgedeckte Hinweise (1..hints.length). */
+  revealedHints: number
+  /** Heißer Draht: bei wie vielen Hinweisen das Team zuletzt gesetzt hat. */
+  pinHints: Record<string, number | null>
   /** teamId → gesetzte Nadel (null = noch keine). */
   pins: Record<string, LatLon | null>
   phase: 'answering' | 'revealed' | 'empty'
@@ -489,6 +495,7 @@ export type GameAction =
   | { type: 'GEO_SET_PIN'; teamId: string; lat: number; lon: number }
   | { type: 'GEO_REVEAL' }
   | { type: 'GEO_NEXT' }
+  | { type: 'GEO_HINT' }
   | { type: 'LADDER_REVEAL' }
   | { type: 'LADDER_NEXT' }
   | { type: 'BOARD_PICK_CELL'; topic: Topic; valueIndex: number }
@@ -1236,12 +1243,21 @@ function initPicture(teams: Team[], deps: ReducerDeps): PictureLive {
 }
 
 export const GEO_CURVE: readonly Difficulty[] = [1, 1, 2, 2, 3, 3, 4, 5]
+/** Heißer Draht dauert pro Ort länger → 6 Orte. */
+export const GEO_HINTS_CURVE: readonly Difficulty[] = [2, 2, 3, 3, 4, 5]
+/** Faktor auf die Entfernungspunkte, je nachdem bei wie vielen Hinweisen gesetzt wurde. */
+export const GEO_HINT_FACTORS: readonly number[] = [2, 1.5, 1.25, 1]
 
-function pickPlace(used: ReadonlySet<string>, step: number): Place | null {
-  if (PLACES.length === 0) return null
-  const fresh = PLACES.filter((p) => !used.has(p.id))
-  const pool = fresh.length > 0 ? fresh : PLACES
-  const target = GEO_CURVE[step] ?? 3
+export function geoCurve(variant: GeoVariant): readonly Difficulty[] {
+  return variant === 'hints' ? GEO_HINTS_CURVE : GEO_CURVE
+}
+
+function pickPlace(variant: GeoVariant, used: ReadonlySet<string>, step: number): GeoTarget | null {
+  const all = geoPool(variant)
+  if (all.length === 0) return null
+  const fresh = all.filter((p) => !used.has(p.id))
+  const pool = fresh.length > 0 ? fresh : all
+  const target = geoCurve(variant)[step] ?? 3
   for (let dist = 0; dist <= 4; dist++) {
     for (const d of dist === 0 ? [target] : [target - dist, target + dist]) {
       const bucket = pool.filter((p) => p.difficulty === d)
@@ -1252,24 +1268,29 @@ function pickPlace(used: ReadonlySet<string>, step: number): Place | null {
 }
 
 function loadGeoRound(base: GeoLive, teams: readonly Team[], index: number, used: Set<string>): GeoLive | null {
-  const place = pickPlace(used, index)
+  const place = pickPlace(base.variant, used, index)
   if (!place) return null
   return {
     ...base,
     currentIndex: index,
     place,
+    revealedHints: 1,
+    pinHints: Object.fromEntries(teams.map((t) => [t.id, null])),
     pins: Object.fromEntries(teams.map((t) => [t.id, null])),
     lastResult: Object.fromEntries(teams.map((t) => [t.id, null])),
     phase: 'answering',
   }
 }
 
-function initGeo(teams: Team[], deps: ReducerDeps): GeoLive {
+function initGeo(teams: Team[], deps: ReducerDeps, variant: GeoVariant = 'place'): GeoLive {
   const base: GeoLive = {
     kind: 'geoguess',
-    totalRounds: GEO_CURVE.length,
+    variant,
+    totalRounds: geoCurve(variant).length,
     currentIndex: 0,
     place: null,
+    revealedHints: 1,
+    pinHints: Object.fromEntries(teams.map((t) => [t.id, null])),
     pins: Object.fromEntries(teams.map((t) => [t.id, null])),
     phase: 'empty',
     scores: Object.fromEntries(teams.map((t) => [t.id, 0])),
@@ -1280,9 +1301,15 @@ function initGeo(teams: Team[], deps: ReducerDeps): GeoLive {
 }
 
 /** Wertet die Nadeln aus: Punkte nach Entfernung, Bonus fürs nächste Team (bei Gleichstand alle). */
-export function scoreGeo(place: LatLon, pins: Record<string, LatLon | null>): GeoLive['lastResult'] {
+export function scoreGeo(
+  place: LatLon,
+  pins: Record<string, LatLon | null>,
+  opts: { radiusKm?: number; factor?: Record<string, number> } = {},
+): GeoLive['lastResult'] {
+  // Länder-Umriss: wer im (angenäherten) Land landet, hat Entfernung 0.
+  const inner = (opts.radiusKm ?? 0) * 0.8
   const kms: Record<string, number> = {}
-  for (const [teamId, pin] of Object.entries(pins)) if (pin) kms[teamId] = distanceKm(pin, place)
+  for (const [teamId, pin] of Object.entries(pins)) if (pin) kms[teamId] = Math.max(0, distanceKm(pin, place) - inner)
   const best = Object.values(kms).length ? Math.min(...Object.values(kms)) : Infinity
   const result: GeoLive['lastResult'] = {}
   for (const teamId of Object.keys(pins)) {
@@ -1292,7 +1319,8 @@ export function scoreGeo(place: LatLon, pins: Record<string, LatLon | null>): Ge
       continue
     }
     const closest = Object.keys(kms).length > 1 && Math.abs(km - best) < 0.5
-    result[teamId] = { km, closest, points: geoPoints(km) + (closest ? GEO_CLOSEST_BONUS : 0) }
+    const base = Math.round((geoPoints(km) * (opts.factor?.[teamId] ?? 1)) / 10) * 10
+    result[teamId] = { km, closest, points: base + (closest ? GEO_CLOSEST_BONUS : 0) }
   }
   return result
 }
@@ -1455,6 +1483,12 @@ function initLiveFor(
       return initPicture(teams, deps)
     case 'geoguess':
       return initGeo(teams, deps)
+    case 'geo-hints':
+      return initGeo(teams, deps, 'hints')
+    case 'geo-shape':
+      return initGeo(teams, deps, 'shape')
+    case 'geo-history':
+      return initGeo(teams, deps, 'history')
     case 'category-board':
       return initCategoryBoard(teams, players)
     case 'duel-1v1':
@@ -2920,14 +2954,35 @@ export function createReducer(deps: ReducerDeps) {
       if (live.phase !== 'answering' || !(action.teamId in live.pins)) return state
       const pin = { lat: action.lat, lon: action.lon }
       if (!isValidLatLon(pin)) return state
-      return { ...state, live: { ...live, pins: { ...live.pins, [action.teamId]: clampLatLon(pin) } } }
+      return {
+        ...state,
+        live: {
+          ...live,
+          pins: { ...live.pins, [action.teamId]: clampLatLon(pin) },
+          pinHints: { ...live.pinHints, [action.teamId]: live.revealedHints },
+        },
+      }
+    }
+
+    case 'GEO_HINT': {
+      if (!state.live || state.live.kind !== 'geoguess') return state
+      const live = state.live
+      const max = live.place?.hints?.length ?? 0
+      if (live.phase !== 'answering' || live.revealedHints >= max) return state
+      return { ...state, live: { ...live, revealedHints: live.revealedHints + 1 } }
     }
 
     case 'GEO_REVEAL': {
       if (!state.live || state.live.kind !== 'geoguess') return state
       const live = state.live
       if (live.phase !== 'answering' || !live.place) return state
-      const lastResult = scoreGeo(live.place, live.pins)
+      const factor =
+        live.variant === 'hints'
+          ? Object.fromEntries(
+              Object.entries(live.pinHints).map(([t, h]) => [t, GEO_HINT_FACTORS[(h ?? GEO_HINT_FACTORS.length) - 1] ?? 1]),
+            )
+          : undefined
+      const lastResult = scoreGeo(live.place, live.pins, { radiusKm: live.place.radiusKm, factor })
       const scores = { ...live.scores }
       for (const [teamId, r] of Object.entries(lastResult)) if (r) scores[teamId] = (scores[teamId] ?? 0) + r.points
       return { ...state, live: { ...live, phase: 'revealed', scores, lastResult } }

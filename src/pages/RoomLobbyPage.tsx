@@ -54,6 +54,7 @@ import {
   formatKm,
 } from '@quizapp/shared'
 import { WorldMap, type MapPin } from '@/components/geo/WorldMap'
+import { GeoPrompt } from '@/components/geo/GeoPrompt'
 import { ScreenLayout } from '@/components/ScreenLayout'
 import { Card } from '@/components/Card'
 import { AvatarBadge } from '@/components/AvatarBadge'
@@ -3836,6 +3837,13 @@ function useScoreDelta(score: number): number | null {
  * „Wo liegt das?": Ort ansagen, Teams setzen ihre Nadel auf dem Handy (verschiebbar
  * bis zur Auflösung). Gegner-Nadeln bleiben bis dahin verborgen.
  */
+const GEO_TITLE: Record<GeoLive['variant'], string> = {
+  place: 'Wo liegt das?',
+  hints: 'Heißer Draht',
+  shape: 'Länder-Umriss',
+  history: 'Zeitreise',
+}
+
 function GeoRoomView({
   state,
   live,
@@ -3891,7 +3899,7 @@ function GeoRoomView({
     <div className="space-y-3">
       <Card className={cn('flex flex-wrap items-center gap-3', isMaster ? 'p-5' : 'p-3')}>
         <div className="min-w-0">
-          <div className="text-xs uppercase tracking-[0.32em] text-correct">Wo liegt das?</div>
+          <div className="text-xs uppercase tracking-[0.32em] text-correct">{GEO_TITLE[live.variant]}</div>
           <div className={cn('mt-1 font-mono text-white', isMaster ? 'text-2xl' : 'text-sm')}>
             Ort {live.currentIndex + 1} / {live.totalRounds}
           </div>
@@ -3903,13 +3911,7 @@ function GeoRoomView({
         </div>
       </Card>
 
-      <Card className={cn('text-center', isMaster ? 'p-6' : 'p-4')}>
-        <div className="text-xs uppercase tracking-[0.28em] text-ink-muted">Setz die Nadel</div>
-        <div className={cn('mt-1 font-display font-extrabold text-white', isMaster ? 'text-5xl' : 'text-3xl')}>
-          {place.name}
-        </div>
-        {revealed && <div className={cn('mt-1 text-ink-muted', isMaster ? 'text-lg' : 'text-sm')}>{place.country}</div>}
-      </Card>
+      <GeoPrompt live={live} isMaster={isMaster} myTeamId={myTeamId} />
 
       <WorldMap
         pins={pins}
@@ -3947,6 +3949,18 @@ function GeoRoomView({
               : 'Tippe auf die Karte, um eure Nadel zu setzen (zoomen mit zwei Fingern)'
             : `${placed} / ${teams.length} Teams haben ihre Nadel gesetzt`}
       </ShowStatus>
+
+      {(isHost || isMaster) && live.variant === 'hints' && !revealed && live.revealedHints < (place.hints?.length ?? 0) && (
+        <Button
+          size="lg"
+          variant="secondary"
+          className={cn('w-full', isMaster && 'h-16 text-lg')}
+          disabled={!canDispatch}
+          onClick={() => send({ type: 'GEO_HINT' })}
+        >
+          Nächster Hinweis ({live.revealedHints + 1} / {place.hints?.length ?? 0})
+        </Button>
+      )}
 
       {(isHost || isMaster) && (
         <Button
