@@ -144,6 +144,18 @@ export const MODES: GameMode[] = [
     accent: 'picture',
     status: 'ready',
   },
+  {
+    id: 'geoguess',
+    name: 'Wo liegt das?',
+    chipLabel: 'Weltkarte',
+    tagline: 'Setz die Nadel — wer liegt näher dran?',
+    description:
+      'Eine Stadt oder ein Ort wird genannt, jedes Team setzt auf der Weltkarte seine Nadel. Je näher dran, desto mehr Punkte — das nächste Team bekommt einen Bonus. Acht Orte, von Rom bis Timbuktu.',
+    estimatedMinutes: 12,
+    scoresMatchPoint: true,
+    accent: 'geo',
+    status: 'ready',
+  },
 ]
 
 export const MODES_BY_ID: Record<string, GameMode> = Object.fromEntries(
@@ -161,4 +173,5 @@ export const ACCENT_HEX: Record<GameMode['accent'], string> = {
   flash:     '#FF3D8B',
   spotlight: '#FFB84D',
   picture:   '#3FD0FF',
+  geo:       '#3FD98B',
 }

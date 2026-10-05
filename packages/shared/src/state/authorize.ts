@@ -27,7 +27,7 @@ export const HOST_ONLY_ACTIONS: ReadonlySet<GameAction['type']> = new Set<GameAc
   'ADD_PLAYER', 'ADD_PLAYER_FROM_LIBRARY', 'REPLACE_PLAYER_FROM_LIBRARY',
   'FINISH_MODE', 'BACK_TO_SETUP', 'RESTART_MATCH',
   'CD_NEXT_TURN', 'FLASH_REVEAL', 'FLASH_NEXT', 'SPOTLIGHT_NEXT', 'AC_REVEAL_SOLUTION', 'AC_NEXT',
-  'SPRINTER_START_NEXT_TEAM', 'LADDER_REVEAL', 'LADDER_NEXT', 'PICTURE_REVEAL', 'PICTURE_NEXT', 'BOARD_NEXT', 'DUEL_NEXT', 'ELIM_NEXT', 'EXPERTS_NEXT',
+  'SPRINTER_START_NEXT_TEAM', 'LADDER_REVEAL', 'LADDER_NEXT', 'PICTURE_REVEAL', 'PICTURE_NEXT', 'GEO_REVEAL', 'GEO_NEXT', 'BOARD_NEXT', 'DUEL_NEXT', 'ELIM_NEXT', 'EXPERTS_NEXT',
 ])
 
 export type AuthorizeResult = { ok: true } | { ok: false; reason: string }
@@ -90,6 +90,7 @@ export function authorizeAction(
     case 'FLASH_SET_ANSWER':
     case 'LADDER_SET_ANSWER':
     case 'PICTURE_SET_ANSWER':
+    case 'GEO_SET_PIN':
       return action.teamId === myTeam
         ? OK
         : { ok: false, reason: 'Nur für das eigene Team erlaubt' }

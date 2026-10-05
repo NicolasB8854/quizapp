@@ -25,6 +25,7 @@ export type GameModeId =
   | 'wordsnippets'     // Songzeilen / Zitate raten
   | 'sorting'          // Reihenfolge sortieren
   | 'blindguess'       // Media-Guess (Audio/Bild/Video)
+  | 'geoguess'         // Wo liegt das? Nadel auf der Weltkarte
   | 'family-feud'      // Umfrage-Top-Antworten
   | 'duel-1v1'         // 1:1 Buzzer-Duell
   | 'elimination'      // Elimination-Runde
@@ -32,7 +33,7 @@ export type GameModeId =
   | 'pantomime'        // Activity-Style
 
 export type ModeAccent =
-  | 'duel' | 'corner' | 'board' | 'experts' | 'sprinter' | 'ladder' | 'flash' | 'spotlight' | 'picture'
+  | 'duel' | 'corner' | 'board' | 'experts' | 'sprinter' | 'ladder' | 'flash' | 'spotlight' | 'picture' | 'geo'
 
 export interface GameMode {
   id: GameModeId

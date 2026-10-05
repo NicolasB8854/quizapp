@@ -32,6 +32,8 @@ export * from './lib/shuffle'
 export * from './lib/roomCode'
 export * from './lib/solo'
 export * from './lib/director'
+export * from './lib/geo'
+export * from './data/places'
 
 // Data / Konstanten
 export * from './data/modes'
