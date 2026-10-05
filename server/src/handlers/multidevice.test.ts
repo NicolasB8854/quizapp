@@ -144,4 +144,59 @@ describe('Multi-Device-Abend (simuliert)', () => {
     expect(s.phase).toBe('lobby')
     expect(s.round!.players.map((p) => p.name).sort()).toEqual(['Ana', 'Ben', 'Host'])
   })
+
+  describe('Geo-Modi über echte Geräte', () => {
+    /** Host + Ana (Team 1) + Ben (Team 2), Modus starten. */
+    async function startGeo(mode: string) {
+      const code = await setupNight()
+      await send('host', { type: 'DISPATCH', action: { type: 'SET_ROUND_MODES', modes: [mode] } })
+      const [t1, t2] = stateOf(code).round!.teams.map((t) => t.id)
+      const pid = (c: string) => sessions.get(c).playerId
+      await send('ana', { type: 'DISPATCH', action: { type: 'MOVE_PLAYER_TO_TEAM', playerId: pid('ana'), teamId: t1 } })
+      await send('ben', { type: 'DISPATCH', action: { type: 'MOVE_PLAYER_TO_TEAM', playerId: pid('ben'), teamId: t2 } })
+      await send('host', { type: 'DISPATCH', action: { type: 'MOVE_PLAYER_TO_TEAM', playerId: pid('host'), teamId: t1 } })
+      await send('host', { type: 'DISPATCH', action: { type: 'START_PLAYING' } })
+      const live = stateOf(code).live as any
+      expect(live?.kind).toBe('geoguess')
+      return { code, t1, t2 }
+    }
+    const geo = (code: string) => stateOf(code).live as any
+
+    for (const [mode, variant] of [['geoguess', 'place'], ['geo-hints', 'hints'], ['geo-shape', 'shape'], ['geo-history', 'history']] as const) {
+      it(`${mode}: Nadeln, Team-Bindung, Auflösung, Weiter`, async () => {
+        const { code, t1, t2 } = await startGeo(mode)
+        expect(geo(code).variant).toBe(variant)
+        const target = geo(code).place
+        // Ana setzt für ihr Team (erlaubt) und versucht es fürs Gegnerteam (verboten).
+        await send('ana', { type: 'DISPATCH', action: { type: 'GEO_SET_PIN', teamId: t1, lat: target.lat, lon: target.lon } })
+        await send('ana', { type: 'DISPATCH', action: { type: 'GEO_SET_PIN', teamId: t2, lat: 0, lon: 0 } })
+        expect(errors('ana').at(-1)).toMatchObject({ code: 'FORBIDDEN' })
+        await send('ben', { type: 'DISPATCH', action: { type: 'GEO_SET_PIN', teamId: t2, lat: target.lat - 20, lon: target.lon } })
+        // Nur der Host darf auflösen bzw. Hinweise aufdecken.
+        await send('ben', { type: 'DISPATCH', action: { type: 'GEO_REVEAL' } })
+        expect(errors('ben').at(-1)).toMatchObject({ code: 'FORBIDDEN' })
+        if (variant === 'hints') {
+          await send('ben', { type: 'DISPATCH', action: { type: 'GEO_HINT' } })
+          expect(geo(code).revealedHints).toBe(1)
+          await send('host', { type: 'DISPATCH', action: { type: 'GEO_HINT' } })
+          expect(geo(code).revealedHints).toBe(2)
+        }
+        await send('host', { type: 'DISPATCH', action: { type: 'GEO_REVEAL' } })
+        const live = geo(code)
+        expect(live.phase).toBe('revealed')
+        expect(live.lastResult[t1].closest).toBe(true)
+        expect(live.lastResult[t1].points).toBeGreaterThan(live.lastResult[t2].points)
+        expect(live.scores[t1]).toBe(live.lastResult[t1].points)
+        // Alle drei Geräte haben den neuen Stand bekommen.
+        for (const c of ['host', 'ana', 'ben']) expect(last(c)).toMatchObject({ type: 'STATE' })
+        // Nach der Auflösung ist die Nadel eingefroren.
+        await send('ben', { type: 'DISPATCH', action: { type: 'GEO_SET_PIN', teamId: t2, lat: target.lat, lon: target.lon } })
+        expect(geo(code).pins[t2].lat).toBeCloseTo(target.lat - 20, 1)
+        await send('host', { type: 'DISPATCH', action: { type: 'GEO_NEXT' } })
+        expect(geo(code).currentIndex).toBe(1)
+        expect(geo(code).place.id).not.toBe(target.id)
+        expect(geo(code).pins[t1]).toBeNull()
+      })
+    }
+  })
 })
