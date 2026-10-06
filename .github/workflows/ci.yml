@@ -35,3 +35,5 @@ jobs:
         run: npx vite build
       - name: Build Lambda
         run: npm run server:build
+      - name: E2E-Klicktest (3 Geräte, Chrome des Runners)
+        run: npm run e2e

@@ -63,3 +63,8 @@ crash.*.log
 .terraformrc
 terraform.rc
 .audit-work/
+
+# E2E
+dist-e2e/
+e2e/artifacts/
+server/dist-local/

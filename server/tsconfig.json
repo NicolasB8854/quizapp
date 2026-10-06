@@ -15,5 +15,5 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src/**/*", "build.mjs"]
+  "include": ["src/**/*", "build.mjs", "build-local.mjs"]
 }
