@@ -23,7 +23,8 @@
     "infra:validate": "terraform -chdir=infra validate",
     "infra:plan": "terraform -chdir=infra plan",
     "infra:apply": "terraform -chdir=infra apply",
-    "infra:destroy": "terraform -chdir=infra destroy"
+    "infra:destroy": "terraform -chdir=infra destroy",
+    "e2e": "npm --prefix server run build:local && VITE_WS_URL=ws://127.0.0.1:8787 vite build --outDir dist-e2e && playwright test -c e2e/playwright.config.ts"
   },
   "dependencies": {
     "@fontsource-variable/inter": "5.3.0",
@@ -35,6 +36,7 @@
     "react-router-dom": "^6.28.0"
   },
   "devDependencies": {
+    "@playwright/test": "1.63.0",
     "@types/node": "^26.6.2",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",

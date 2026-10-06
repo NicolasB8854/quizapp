@@ -433,7 +433,7 @@ describe('questions', () => {
         all.filter((q) => q.tags?.includes(someTag)).map((q) => q.id),
       )
       let hits = 0
-      const N = 400
+      const N = 3000 // hoch genug, damit der Zufallstest nicht flackert
       for (let i = 0; i < N; i++) {
         const picked = pickAnyMultipleChoice(new Set(), undefined, [someTag])
         if (picked && matchIds.has(picked.id)) hits++
