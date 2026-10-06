@@ -29,6 +29,8 @@ export type GameModeId =
   | 'geo-hints'        // Heißer Draht: Ort aus Hinweisen
   | 'geo-shape'        // Länder-Umriss
   | 'geo-history'      // Zeitreise: Ort eines Ereignisses
+  | 'hum-duel'         // Summ-Duell: Song summen, Team rät
+  | 'song-year'        // Welches Jahr? Erscheinungsjahr schätzen
   | 'family-feud'      // Umfrage-Top-Antworten
   | 'duel-1v1'         // 1:1 Buzzer-Duell
   | 'elimination'      // Elimination-Runde
@@ -36,7 +38,7 @@ export type GameModeId =
   | 'pantomime'        // Activity-Style
 
 export type ModeAccent =
-  | 'duel' | 'corner' | 'board' | 'experts' | 'sprinter' | 'ladder' | 'flash' | 'spotlight' | 'picture' | 'geo'
+  | 'duel' | 'corner' | 'board' | 'experts' | 'sprinter' | 'ladder' | 'flash' | 'spotlight' | 'picture' | 'geo' | 'music'
 
 export interface GameMode {
   id: GameModeId

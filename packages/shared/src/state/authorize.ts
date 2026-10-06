@@ -27,7 +27,7 @@ export const HOST_ONLY_ACTIONS: ReadonlySet<GameAction['type']> = new Set<GameAc
   'ADD_PLAYER', 'ADD_PLAYER_FROM_LIBRARY', 'REPLACE_PLAYER_FROM_LIBRARY',
   'FINISH_MODE', 'BACK_TO_SETUP', 'RESTART_MATCH',
   'CD_NEXT_TURN', 'FLASH_REVEAL', 'FLASH_NEXT', 'SPOTLIGHT_NEXT', 'AC_REVEAL_SOLUTION', 'AC_NEXT',
-  'SPRINTER_START_NEXT_TEAM', 'LADDER_REVEAL', 'LADDER_NEXT', 'PICTURE_REVEAL', 'PICTURE_NEXT', 'GEO_REVEAL', 'GEO_NEXT', 'GEO_HINT', 'BOARD_NEXT', 'DUEL_NEXT', 'ELIM_NEXT', 'EXPERTS_NEXT',
+  'SPRINTER_START_NEXT_TEAM', 'LADDER_REVEAL', 'LADDER_NEXT', 'PICTURE_REVEAL', 'PICTURE_NEXT', 'GEO_REVEAL', 'GEO_NEXT', 'GEO_HINT', 'HUM_STEAL', 'HUM_NEXT', 'YEAR_REVEAL', 'YEAR_NEXT', 'BOARD_NEXT', 'DUEL_NEXT', 'ELIM_NEXT', 'EXPERTS_NEXT',
 ])
 
 export type AuthorizeResult = { ok: true } | { ok: false; reason: string }
@@ -91,6 +91,7 @@ export function authorizeAction(
     case 'LADDER_SET_ANSWER':
     case 'PICTURE_SET_ANSWER':
     case 'GEO_SET_PIN':
+    case 'YEAR_SET_GUESS':
       return action.teamId === myTeam
         ? OK
         : { ok: false, reason: 'Nur für das eigene Team erlaubt' }
@@ -114,6 +115,13 @@ export function authorizeAction(
       if (!live || live.kind !== 'sprinter') return OK
       const team = action.type === 'SPRINTER_REBOUND_ANSWER' ? live.reboundTeamId : live.activeTeamId
       return team && team === myTeam ? OK : { ok: false, reason: 'Dein Team ist gerade nicht dran' }
+    }
+    case 'HUM_GUESSED':
+    case 'HUM_FAIL': {
+      // Bewerten darf die summende Person selbst oder der Host.
+      const live = state.live
+      const hummer = live && live.kind === 'hum-duel' ? live.hummerId : null
+      return isHost || hummer === me.id ? OK : { ok: false, reason: 'Nur wer summt (oder der Host) bewertet' }
     }
     case 'SPOTLIGHT_PRIMARY_ANSWER':
     case 'EXPERTS_PRIMARY_ANSWER': {

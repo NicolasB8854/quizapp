@@ -144,6 +144,11 @@ MODE_MOTIFS = {
     "flash": "a TV quiz show stage lit in two strong halves, intense cyan light on the left side and intense magenta-violet light on the right side, a bright white lightning flash in the middle of the stage, fast decision",
     "blindguess": "a TV quiz show studio with a huge LED wall showing one heavily blurred abstract photograph slowly coming into focus, two contestant podiums with glowing answer pads, cyan light",
     "geoguess": "a TV quiz show studio with a giant glowing world map on the LED wall, continents in emerald green neon outlines, several glowing location pins on the map, two contestant podiums facing it",
+    "geo-hints": "a TV quiz show studio, a giant LED wall showing a glowing world map with one pulsing emerald location marker and a row of four glowing hint cards next to it, cards without text, two contestant podiums",
+    "geo-shape": "a TV quiz show studio, a giant LED wall showing a single large glowing emerald green outline of a country floating and slightly rotated on a dark background, no other countries, two contestant podiums",
+    "geo-history": "a TV quiz show studio, a giant LED wall showing a glowing world map with a golden vintage pocket watch and a faint sepia film strip floating in front of it, nostalgic, two contestant podiums",
+    "hum-duel": "a TV quiz show stage, one empty contestant podium in a bright pink spotlight with a vintage studio microphone on a stand, glowing abstract sound waves and music notes floating in the air, no people",
+    "song-year": "a TV quiz show studio, a giant LED wall showing a glowing vinyl record next to a large retro flip-clock style year counter with blank tiles, pink and violet neon light, two contestant podiums",
     "player-spotlight": "an empty TV quiz show stage with a single golden spotlight cone falling on one empty contestant podium in the center, the rest of the studio in violet and cyan light, anticipation",
 }
 for mode_id, motif in MODE_MOTIFS.items():
