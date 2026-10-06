@@ -38,6 +38,8 @@ import type {
   GameAction,
   GameState,
   GeoLive,
+  HumLive,
+  YearLive,
   PictureLive,
   PointsLadderLive,
   SpotlightLive,
@@ -52,6 +54,11 @@ import {
   TOPICS_BY_ID,
   getTeamColorHex,
   formatKm,
+  HUM_SECONDS,
+  HUM_STEAL_POINTS,
+  HUM_TEAM_POINTS,
+  YEAR_MAX,
+  YEAR_MIN,
 } from '@quizapp/shared'
 import { WorldMap, type MapPin } from '@/components/geo/WorldMap'
 import { GeoPrompt } from '@/components/geo/GeoPrompt'
@@ -806,6 +813,12 @@ function PhaseView({
       }
       if (live?.kind === 'experts') {
         return <ExpertsRoomView state={state} live={live} playerId={playerId} isHost={isHost} canDispatch={canDispatch} send={send} />
+      }
+      if (live?.kind === 'hum-duel') {
+        return <HumRoomView state={state} live={live} playerId={playerId} isHost={isHost} canDispatch={canDispatch} send={send} />
+      }
+      if (live?.kind === 'song-year') {
+        return <YearRoomView state={state} live={live} playerId={playerId} isHost={isHost} canDispatch={canDispatch} send={send} />
       }
       if (live?.kind === 'geoguess') {
         return <GeoRoomView state={state} live={live} playerId={playerId} isHost={isHost} canDispatch={canDispatch} send={send} />
@@ -3837,6 +3850,291 @@ function useScoreDelta(score: number): number | null {
  * „Wo liegt das?": Ort ansagen, Teams setzen ihre Nadel auf dem Handy (verschiebbar
  * bis zur Auflösung). Gegner-Nadeln bleiben bis dahin verborgen.
  */
+/** Summ-Duell: nur die summende Person sieht den Song. */
+function HumRoomView({
+  state,
+  live,
+  playerId,
+  isHost,
+  canDispatch,
+  send,
+}: {
+  state: GameState
+  live: HumLive
+  playerId: string | null
+  isHost: boolean
+  canDispatch: boolean
+  send: (a: GameAction) => void
+}) {
+  const [now, setNow] = useState(() => Date.now())
+  useEffect(() => {
+    if (live.phase !== 'humming') return
+    const id = window.setInterval(() => setNow(Date.now()), 250)
+    return () => window.clearInterval(id)
+  }, [live.phase])
+  if (!state.round) return <LoadingCard label="Lade Runde …" />
+  const teams = state.round.teams
+  const myPlayer = playerId ? state.round.players.find((p) => p.id === playerId) : null
+  const isMaster = !myPlayer
+  const song = live.song
+  if (live.phase === 'empty' || !song) {
+    return (
+      <Card className="space-y-3 p-6 text-center">
+        <div className="text-white/80">Keine Songs im Katalog.</div>
+        <Button variant="primary" onClick={() => send({ type: 'FINISH_MODE' })} disabled={!canDispatch || !isHost} className="w-full">
+          Modus überspringen
+        </Button>
+      </Card>
+    )
+  }
+  const activeTeam = teams.find((t) => t.id === live.activeTeamId) ?? null
+  const hummer = state.round.players.find((p) => p.id === live.hummerId) ?? null
+  const iHum = !!myPlayer && myPlayer.id === live.hummerId
+  const myTeamActive = !!myPlayer && myPlayer.teamId === live.activeTeamId
+  const left = live.startedAt ? Math.max(0, HUM_SECONDS - Math.floor((now - live.startedAt) / 1000)) : HUM_SECONDS
+  const teamName = (id: string | null) => teams.find((t) => t.id === id)?.name ?? ''
+  const songCard = (
+    <div>
+      <div className={cn('font-display font-extrabold leading-tight text-white', isMaster ? 'text-5xl' : 'text-3xl')}>{song.title}</div>
+      <div className={cn('mt-1 text-ink-muted', isMaster ? 'text-2xl' : 'text-lg')}>{song.artist}</div>
+    </div>
+  )
+
+  return (
+    <div className="space-y-3">
+      <Card className={cn('flex flex-wrap items-center gap-3', isMaster ? 'p-5' : 'p-3')}>
+        <div className="min-w-0">
+          <div className="text-xs uppercase tracking-[0.32em] text-[#FF77B0]">Summ-Duell</div>
+          <div className={cn('mt-1 font-mono text-white', isMaster ? 'text-2xl' : 'text-sm')}>
+            Song {live.currentIndex + 1} / {live.totalTurns}
+          </div>
+        </div>
+        <div className="flex w-full flex-wrap gap-2 sm:ml-auto sm:w-auto">
+          {teams.map((team) => (
+            <TeamScoreChip key={team.id} team={team} score={live.scores[team.id] ?? 0} isMaster={isMaster} />
+          ))}
+        </div>
+      </Card>
+
+      {live.phase === 'humming' && (
+        <Card className={cn('space-y-4 text-center', isMaster ? 'p-8' : 'p-5')}>
+          {iHum ? (
+            <>
+              <div className="text-xs uppercase tracking-[0.28em] text-amber-200">Du summst — zeig das niemandem</div>
+              {songCard}
+              <div className="text-sm text-ink-muted">Nur summen, keine Wörter, kein Klatschen des Rhythmus mit Text.</div>
+            </>
+          ) : (
+            <>
+              <div className="text-xs uppercase tracking-[0.28em] text-ink-muted">{activeTeam?.name} ist dran</div>
+              <div className={cn('font-display font-extrabold text-white', isMaster ? 'text-5xl' : 'text-3xl')}>
+                {hummer?.name ?? 'Jemand'} summt
+              </div>
+              <div className={cn('text-ink-muted', isMaster ? 'text-xl' : 'text-base')}>
+                {myTeamActive ? 'Ratet laut, welcher Song das ist!' : isMaster ? 'Welcher Song ist das?' : 'Hört gut zu — vielleicht dürft ihr gleich stehlen.'}
+              </div>
+            </>
+          )}
+          <ShowTimer seconds={left} critical={left <= 10} stage={isMaster} label="Zeit" />
+          {(iHum || isHost) && (
+            <div className="grid grid-cols-2 gap-2">
+              <Button size="lg" variant="primary" disabled={!canDispatch} onClick={() => send({ type: 'HUM_GUESSED' })}>
+                Erraten ✓
+              </Button>
+              <Button size="lg" variant="secondary" disabled={!canDispatch} onClick={() => send({ type: 'HUM_FAIL' })}>
+                Nicht erraten
+              </Button>
+            </div>
+          )}
+        </Card>
+      )}
+
+      {live.phase === 'steal' && (
+        <Card className={cn('space-y-3 text-center', isMaster ? 'p-8' : 'p-5')}>
+          <div className="text-xs uppercase tracking-[0.28em] text-amber-200">Steal!</div>
+          <div className={cn('font-display font-extrabold text-white', isMaster ? 'text-4xl' : 'text-2xl')}>
+            Die anderen Teams dürfen einmal raten
+          </div>
+          {isHost && (
+            <div className="grid gap-2">
+              {teams
+                .filter((t) => t.id !== live.activeTeamId)
+                .map((t) => (
+                  <Button key={t.id} size="lg" variant="primary" disabled={!canDispatch} onClick={() => send({ type: 'HUM_STEAL', teamId: t.id })}>
+                    {t.name} hat’s erraten (+{HUM_STEAL_POINTS})
+                  </Button>
+                ))}
+              <Button size="lg" variant="secondary" disabled={!canDispatch} onClick={() => send({ type: 'HUM_STEAL', teamId: null })}>
+                Niemand
+              </Button>
+            </div>
+          )}
+        </Card>
+      )}
+
+      {live.phase === 'revealed' && (
+        <Card className={cn('space-y-3 text-center', isMaster ? 'p-8' : 'p-5')}>
+          <div className="text-xs uppercase tracking-[0.28em] text-ink-muted">Auflösung</div>
+          {songCard}
+          <div className={cn('font-mono text-amber-200', isMaster ? 'text-xl' : 'text-base')}>{song.year}</div>
+          <div className={cn('font-semibold', isMaster ? 'text-2xl' : 'text-lg', live.outcome?.kind === 'none' ? 'text-ink-muted' : 'text-correct')}>
+            {live.outcome?.kind === 'team'
+              ? `${teamName(live.outcome.teamId)} +${HUM_TEAM_POINTS}`
+              : live.outcome?.kind === 'steal'
+                ? `Gestohlen! ${teamName(live.outcome.teamId)} +${HUM_STEAL_POINTS}`
+                : 'Keine Punkte'}
+          </div>
+          <div className={cn('text-ink-muted', isMaster ? 'text-lg' : 'text-sm')}>{song.fact}</div>
+        </Card>
+      )}
+
+      {(isHost || isMaster) && live.phase === 'revealed' && (
+        <Button size="lg" variant="primary" className={cn('w-full', isMaster && 'h-16 text-lg')} disabled={!canDispatch} onClick={() => send({ type: 'HUM_NEXT' })}>
+          {live.currentIndex + 1 >= live.totalTurns ? 'Runde beenden' : 'Nächster Song'}
+        </Button>
+      )}
+    </div>
+  )
+}
+
+/** „Welches Jahr?": Song wird allen gezeigt, jedes Team stellt ein Jahr ein. */
+function YearRoomView({
+  state,
+  live,
+  playerId,
+  isHost,
+  canDispatch,
+  send,
+}: {
+  state: GameState
+  live: YearLive
+  playerId: string | null
+  isHost: boolean
+  canDispatch: boolean
+  send: (a: GameAction) => void
+}) {
+  const myPlayer = playerId ? state.round?.players.find((p) => p.id === playerId) : null
+  const myTeamId = myPlayer?.teamId ?? null
+  const serverGuess = myTeamId ? live.guesses[myTeamId] : null
+  const [draft, setDraft] = useState<number>(serverGuess ?? 1995)
+  useEffect(() => {
+    if (serverGuess !== null && serverGuess !== undefined) setDraft(serverGuess)
+  }, [serverGuess, live.currentIndex])
+  if (!state.round) return <LoadingCard label="Lade Runde …" />
+  const teams = state.round.teams
+  const isMaster = !myPlayer
+  const song = live.song
+  if (live.phase === 'empty' || !song) {
+    return (
+      <Card className="space-y-3 p-6 text-center">
+        <div className="text-white/80">Keine Songs im Katalog.</div>
+        <Button variant="primary" onClick={() => send({ type: 'FINISH_MODE' })} disabled={!canDispatch || !isHost} className="w-full">
+          Modus überspringen
+        </Button>
+      </Card>
+    )
+  }
+  const revealed = live.phase === 'revealed'
+  const placed = Object.values(live.guesses).filter((g) => g !== null).length
+  const canGuess = canDispatch && !revealed && !!myTeamId
+  const commit = (y: number) => {
+    const year = Math.min(YEAR_MAX, Math.max(YEAR_MIN, Math.round(y)))
+    setDraft(year)
+    if (myTeamId) send({ type: 'YEAR_SET_GUESS', teamId: myTeamId, year })
+  }
+  const step = (d: number) => commit(draft + d)
+  const stepBtn = 'h-12 rounded-xl border-2 border-white/15 bg-white/[0.04] font-display text-lg font-bold text-white hover:bg-white/10 disabled:opacity-40'
+
+  return (
+    <div className="space-y-3">
+      <Card className={cn('flex flex-wrap items-center gap-3', isMaster ? 'p-5' : 'p-3')}>
+        <div className="min-w-0">
+          <div className="text-xs uppercase tracking-[0.32em] text-[#FF77B0]">Welches Jahr?</div>
+          <div className={cn('mt-1 font-mono text-white', isMaster ? 'text-2xl' : 'text-sm')}>
+            Song {live.currentIndex + 1} / {live.totalRounds}
+          </div>
+        </div>
+        <div className="flex w-full flex-wrap gap-2 sm:ml-auto sm:w-auto">
+          {teams.map((team) => (
+            <TeamScoreChip key={team.id} team={team} score={live.scores[team.id] ?? 0} isMaster={isMaster} />
+          ))}
+        </div>
+      </Card>
+
+      <Card className={cn('text-center', isMaster ? 'p-8' : 'p-5')}>
+        <div className="text-xs uppercase tracking-[0.28em] text-ink-muted">Wann kam der Song raus?</div>
+        <div className={cn('mt-2 font-display font-extrabold leading-tight text-white', isMaster ? 'text-5xl' : 'text-3xl')}>{song.title}</div>
+        <div className={cn('mt-1 text-ink-muted', isMaster ? 'text-2xl' : 'text-lg')}>{song.artist}</div>
+        {revealed && (
+          <>
+            <div className={cn('mt-3 font-display font-extrabold text-amber-200', isMaster ? 'text-6xl' : 'text-5xl')}>{song.year}</div>
+            <div className={cn('mt-2 text-ink-muted', isMaster ? 'text-lg' : 'text-sm')}>{song.fact}</div>
+          </>
+        )}
+      </Card>
+
+      {myTeamId && !revealed && (
+        <Card className="space-y-3 p-4">
+          <div className="text-center font-display text-5xl font-extrabold tabular-nums text-white" aria-live="polite">
+            {draft}
+          </div>
+          <input
+            type="range"
+            min={YEAR_MIN}
+            max={YEAR_MAX - 5}
+            value={draft}
+            disabled={!canGuess}
+            aria-label="Jahr wählen"
+            onChange={(e) => setDraft(Number(e.target.value))}
+            onPointerUp={(e) => commit(Number((e.target as HTMLInputElement).value))}
+            onKeyUp={(e) => commit(Number((e.target as HTMLInputElement).value))}
+            className="w-full accent-[#FF77B0]"
+          />
+          <div className="grid grid-cols-4 gap-2">
+            {[-10, -1, 1, 10].map((d) => (
+              <button key={d} type="button" className={stepBtn} disabled={!canGuess} onClick={() => step(d)}>
+                {d > 0 ? `+${d}` : d}
+              </button>
+            ))}
+          </div>
+          <div className="text-center text-sm text-ink-muted">
+            {serverGuess !== null && serverGuess !== undefined ? `Euer Tipp: ${serverGuess} — ändern geht bis zur Auflösung` : 'Jahr einstellen — wird sofort gespeichert'}
+          </div>
+        </Card>
+      )}
+
+      {revealed && (
+        <Card className={cn('space-y-2', isMaster ? 'p-5' : 'p-3')}>
+          {teams.map((t) => {
+            const r = live.lastResult[t.id]
+            const hex = getTeamColorHex(t.color)
+            return (
+              <div key={t.id} className={cn('flex items-center gap-2', isMaster ? 'text-lg' : 'text-sm')}>
+                <span className="h-2.5 w-2.5 rounded-full" style={{ background: hex, boxShadow: `0 0 8px ${hex}` }} />
+                <span className="flex-1 text-white/85">{t.name}</span>
+                <span className="font-mono text-white/70">
+                  {live.guesses[t.id] ?? '—'}
+                  {r ? ` (${r.diff === 0 ? 'exakt' : `±${r.diff}`})` : ''}
+                </span>
+                {r?.closest && <span className="rounded-full bg-amber-300/15 px-2 text-xs font-semibold text-amber-200">am nächsten</span>}
+                <span className="w-14 text-right font-display font-extrabold text-correct">+{r?.points ?? 0}</span>
+              </div>
+            )
+          })}
+        </Card>
+      )}
+
+      {!revealed && <ShowStatus stage={isMaster}>{`${placed} / ${teams.length} Teams haben getippt`}</ShowStatus>}
+
+      {(isHost || isMaster) && (
+        <Button size="lg" variant="primary" className={cn('w-full', isMaster && 'h-16 text-lg')} disabled={!canDispatch} onClick={() => send({ type: revealed ? 'YEAR_NEXT' : 'YEAR_REVEAL' })}>
+          {!revealed ? 'Auflösen' : live.currentIndex + 1 >= live.totalRounds ? 'Runde beenden' : 'Nächster Song'}
+        </Button>
+      )}
+    </div>
+  )
+}
+
 const GEO_TITLE: Record<GeoLive['variant'], string> = {
   place: 'Wo liegt das?',
   hints: 'Heißer Draht',

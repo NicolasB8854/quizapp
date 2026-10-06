@@ -53,6 +53,7 @@ import { shuffleWithMapping } from '../lib/shuffle'
 import { getDefaultAvatar } from '../data/avatars'
 import { sanitizeAvatar } from '../data/avatarLook'
 import { geoPool, type GeoTarget, type GeoVariant } from '../data/places'
+import { SONGS, YEAR_MAX, YEAR_MIN, yearPoints, type Song } from '../data/songs'
 import { GEO_CLOSEST_BONUS, clampLatLon, distanceKm, geoPoints, isValidLatLon, type LatLon } from '../lib/geo'
 import {
   MAX_TEAMS,
@@ -400,7 +401,44 @@ export interface GeoLive {
   lastResult: Record<string, { km: number; points: number; closest: boolean } | null>
 }
 
+/**
+ * Summ-Duell: Eine Person des aktiven Teams sieht den Songtitel und summt. Das eigene
+ * Team rät (+HUM_TEAM_POINTS), sonst darf ein Gegnerteam einmal stehlen (+HUM_STEAL_POINTS).
+ */
+export interface HumLive {
+  kind: 'hum-duel'
+  totalTurns: number
+  currentIndex: number
+  /** Team-Reihenfolge der Züge (Länge = totalTurns). */
+  turnTeams: string[]
+  activeTeamId: string | null
+  /** Wer summt (Spieler des aktiven Teams, reihum). */
+  hummerId: string | null
+  song: Song | null
+  phase: 'humming' | 'steal' | 'revealed' | 'empty'
+  startedAt: number | null
+  /** Wer gepunktet hat: eigenes Team, Steal-Team oder niemand. */
+  outcome: { kind: 'team' | 'steal' | 'none'; teamId: string | null } | null
+  scores: Record<string, number>
+  usedQuestionIds: string[]
+}
+
+/** „Welches Jahr?": Song genannt, jedes Team schätzt das Erscheinungsjahr. */
+export interface YearLive {
+  kind: 'song-year'
+  totalRounds: number
+  currentIndex: number
+  song: Song | null
+  guesses: Record<string, number | null>
+  phase: 'answering' | 'revealed' | 'empty'
+  scores: Record<string, number>
+  usedQuestionIds: string[]
+  lastResult: Record<string, { diff: number; points: number; closest: boolean } | null>
+}
+
 export type LiveGame =
+  | HumLive
+  | YearLive
   | GeoLive
   | PictureLive
   | CategoryDuelLive
@@ -496,6 +534,13 @@ export type GameAction =
   | { type: 'GEO_REVEAL' }
   | { type: 'GEO_NEXT' }
   | { type: 'GEO_HINT' }
+  | { type: 'HUM_GUESSED' }
+  | { type: 'HUM_FAIL' }
+  | { type: 'HUM_STEAL'; teamId: string | null }
+  | { type: 'HUM_NEXT' }
+  | { type: 'YEAR_SET_GUESS'; teamId: string; year: number }
+  | { type: 'YEAR_REVEAL' }
+  | { type: 'YEAR_NEXT' }
   | { type: 'LADDER_REVEAL' }
   | { type: 'LADDER_NEXT' }
   | { type: 'BOARD_PICK_CELL'; topic: Topic; valueIndex: number }
@@ -1325,6 +1370,101 @@ export function scoreGeo(
   return result
 }
 
+export const HUM_TEAM_POINTS = 200
+export const HUM_STEAL_POINTS = 100
+export const HUM_SECONDS = 45
+export const YEAR_CURVE: readonly (1 | 2 | 3)[] = [1, 1, 1, 2, 2, 2, 3, 3]
+export const YEAR_CLOSEST_BONUS = 100
+
+function pickSong(used: ReadonlySet<string>, maxDifficulty: number, target?: number): Song | null {
+  const all = SONGS.filter((s) => s.difficulty <= maxDifficulty)
+  if (all.length === 0) return null
+  const fresh = all.filter((s) => !used.has(s.id))
+  const pool = fresh.length > 0 ? fresh : all
+  const bucket = target ? pool.filter((s) => s.difficulty === target) : pool
+  const from = bucket.length > 0 ? bucket : pool
+  return from[Math.floor(Math.random() * from.length)]
+}
+
+function loadHumTurn(base: HumLive, teams: readonly Team[], players: readonly Player[], index: number, used: Set<string>): HumLive | null {
+  const teamId = base.turnTeams[index]
+  if (!teamId) return null
+  const song = pickSong(used, 2)
+  if (!song) return null
+  // Pro Team reihum summen lassen: der n-te Zug dieses Teams → n-tes Teammitglied.
+  const members = players.filter((p) => p.teamId === teamId)
+  const nth = base.turnTeams.slice(0, index).filter((t) => t === teamId).length
+  const hummer = members.length > 0 ? members[nth % members.length].id : null
+  void teams
+  return { ...base, currentIndex: index, activeTeamId: teamId, hummerId: hummer, song, phase: 'humming', startedAt: Date.now(), outcome: null }
+}
+
+function initHum(teams: Team[], players: readonly Player[], deps: ReducerDeps): HumLive {
+  const rounds = teams.length <= 2 ? 3 : 2
+  const turnTeams = Array.from({ length: Math.min(8, teams.length * rounds) }, (_, i) => teams[i % teams.length].id)
+  const base: HumLive = {
+    kind: 'hum-duel',
+    totalTurns: turnTeams.length,
+    currentIndex: 0,
+    turnTeams,
+    activeTeamId: null,
+    hummerId: null,
+    song: null,
+    phase: 'empty',
+    startedAt: null,
+    outcome: null,
+    scores: Object.fromEntries(teams.map((t) => [t.id, 0])),
+    usedQuestionIds: [],
+  }
+  return loadHumTurn(base, teams, players, 0, new Set(deps.getAskedQuestionIds())) ?? base
+}
+
+function loadYearRound(base: YearLive, teams: readonly Team[], index: number, used: Set<string>): YearLive | null {
+  const song = pickSong(used, 3, YEAR_CURVE[index])
+  if (!song) return null
+  return {
+    ...base,
+    currentIndex: index,
+    song,
+    guesses: Object.fromEntries(teams.map((t) => [t.id, null])),
+    lastResult: Object.fromEntries(teams.map((t) => [t.id, null])),
+    phase: 'answering',
+  }
+}
+
+function initYear(teams: Team[], deps: ReducerDeps): YearLive {
+  const base: YearLive = {
+    kind: 'song-year',
+    totalRounds: YEAR_CURVE.length,
+    currentIndex: 0,
+    song: null,
+    guesses: Object.fromEntries(teams.map((t) => [t.id, null])),
+    phase: 'empty',
+    scores: Object.fromEntries(teams.map((t) => [t.id, 0])),
+    usedQuestionIds: [],
+    lastResult: Object.fromEntries(teams.map((t) => [t.id, null])),
+  }
+  return loadYearRound(base, teams, 0, new Set(deps.getAskedQuestionIds())) ?? base
+}
+
+/** Wertet Jahres-Tipps aus: Punkte nach Abstand, Bonus fürs nächste Team (Gleichstand: alle). */
+export function scoreYears(year: number, guesses: Record<string, number | null>): YearLive['lastResult'] {
+  const diffs: Record<string, number> = {}
+  for (const [t, g] of Object.entries(guesses)) if (g !== null) diffs[t] = Math.abs(g - year)
+  const best = Object.values(diffs).length ? Math.min(...Object.values(diffs)) : Infinity
+  const out: YearLive['lastResult'] = {}
+  for (const t of Object.keys(guesses)) {
+    const diff = diffs[t]
+    if (diff === undefined) {
+      out[t] = null
+      continue
+    }
+    const closest = Object.keys(diffs).length > 1 && diff === best && diff <= 10
+    out[t] = { diff, closest, points: yearPoints(diff) + (closest ? YEAR_CLOSEST_BONUS : 0) }
+  }
+  return out
+}
+
 function initPointsLadder(teams: Team[], deps: ReducerDeps): PointsLadderLive {
   const scores = Object.fromEntries(teams.map((t) => [t.id, 0]))
   const excluded = new Set<string>()
@@ -1489,6 +1629,10 @@ function initLiveFor(
       return initGeo(teams, deps, 'shape')
     case 'geo-history':
       return initGeo(teams, deps, 'history')
+    case 'hum-duel':
+      return initHum(teams, players, deps)
+    case 'song-year':
+      return initYear(teams, deps)
     case 'category-board':
       return initCategoryBoard(teams, players)
     case 'duel-1v1':
@@ -3000,6 +3144,85 @@ export function createReducer(deps: ReducerDeps) {
       const used = new Set(usedQuestionIds)
       for (const id of deps.getAskedQuestionIds()) used.add(id)
       const next = loadGeoRound(base, state.round.teams, nextIndex, used)
+      if (!next) return reducer({ ...state, live: base }, { type: 'FINISH_MODE' })
+      return { ...state, live: next }
+    }
+
+    case 'HUM_GUESSED': {
+      if (!state.live || state.live.kind !== 'hum-duel') return state
+      const live = state.live
+      if (live.phase !== 'humming' || !live.activeTeamId) return state
+      const scores = { ...live.scores, [live.activeTeamId]: (live.scores[live.activeTeamId] ?? 0) + HUM_TEAM_POINTS }
+      return { ...state, live: { ...live, phase: 'revealed', scores, outcome: { kind: 'team', teamId: live.activeTeamId } } }
+    }
+
+    case 'HUM_FAIL': {
+      if (!state.live || state.live.kind !== 'hum-duel') return state
+      const live = state.live
+      if (live.phase !== 'humming') return state
+      const others = Object.keys(live.scores).filter((t) => t !== live.activeTeamId)
+      if (others.length === 0) return { ...state, live: { ...live, phase: 'revealed', outcome: { kind: 'none', teamId: null } } }
+      return { ...state, live: { ...live, phase: 'steal' } }
+    }
+
+    case 'HUM_STEAL': {
+      if (!state.live || state.live.kind !== 'hum-duel') return state
+      const live = state.live
+      if (live.phase !== 'steal') return state
+      if (action.teamId === null || action.teamId === live.activeTeamId || !(action.teamId in live.scores)) {
+        return { ...state, live: { ...live, phase: 'revealed', outcome: { kind: 'none', teamId: null } } }
+      }
+      const scores = { ...live.scores, [action.teamId]: (live.scores[action.teamId] ?? 0) + HUM_STEAL_POINTS }
+      return { ...state, live: { ...live, phase: 'revealed', scores, outcome: { kind: 'steal', teamId: action.teamId } } }
+    }
+
+    case 'HUM_NEXT': {
+      if (!state.round || !state.live || state.live.kind !== 'hum-duel') return state
+      const live = state.live
+      if (live.phase === 'empty') return reducer(state, { type: 'FINISH_MODE' })
+      if (live.phase !== 'revealed') return state
+      const usedQuestionIds = live.song ? [...live.usedQuestionIds, live.song.id] : live.usedQuestionIds
+      const base: HumLive = { ...live, usedQuestionIds }
+      const nextIndex = live.currentIndex + 1
+      if (nextIndex >= live.totalTurns) return reducer({ ...state, live: base }, { type: 'FINISH_MODE' })
+      const used = new Set(usedQuestionIds)
+      for (const id of deps.getAskedQuestionIds()) used.add(id)
+      const next = loadHumTurn(base, state.round.teams, state.round.players, nextIndex, used)
+      if (!next) return reducer({ ...state, live: base }, { type: 'FINISH_MODE' })
+      return { ...state, live: next }
+    }
+
+    case 'YEAR_SET_GUESS': {
+      if (!state.live || state.live.kind !== 'song-year') return state
+      const live = state.live
+      if (live.phase !== 'answering' || !(action.teamId in live.guesses)) return state
+      const y = action.year
+      if (!Number.isInteger(y) || y < YEAR_MIN || y > YEAR_MAX) return state
+      return { ...state, live: { ...live, guesses: { ...live.guesses, [action.teamId]: y } } }
+    }
+
+    case 'YEAR_REVEAL': {
+      if (!state.live || state.live.kind !== 'song-year') return state
+      const live = state.live
+      if (live.phase !== 'answering' || !live.song) return state
+      const lastResult = scoreYears(live.song.year, live.guesses)
+      const scores = { ...live.scores }
+      for (const [t, r] of Object.entries(lastResult)) if (r) scores[t] = (scores[t] ?? 0) + r.points
+      return { ...state, live: { ...live, phase: 'revealed', scores, lastResult } }
+    }
+
+    case 'YEAR_NEXT': {
+      if (!state.round || !state.live || state.live.kind !== 'song-year') return state
+      const live = state.live
+      if (live.phase === 'empty') return reducer(state, { type: 'FINISH_MODE' })
+      if (live.phase !== 'revealed') return state
+      const usedQuestionIds = live.song ? [...live.usedQuestionIds, live.song.id] : live.usedQuestionIds
+      const base: YearLive = { ...live, usedQuestionIds }
+      const nextIndex = live.currentIndex + 1
+      if (nextIndex >= live.totalRounds) return reducer({ ...state, live: base }, { type: 'FINISH_MODE' })
+      const used = new Set(usedQuestionIds)
+      for (const id of deps.getAskedQuestionIds()) used.add(id)
+      const next = loadYearRound(base, state.round.teams, nextIndex, used)
       if (!next) return reducer({ ...state, live: base }, { type: 'FINISH_MODE' })
       return { ...state, live: next }
     }

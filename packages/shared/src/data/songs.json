@@ -1,0 +1,650 @@
+[
+ {
+  "id": "song-dancing-queen",
+  "title": "Dancing Queen",
+  "artist": "ABBA",
+  "year": 1976,
+  "difficulty": 1,
+  "fact": "ABBA gewann 1974 mit „Waterloo“ den Eurovision Song Contest."
+ },
+ {
+  "id": "song-bohemian-rhapsody",
+  "title": "Bohemian Rhapsody",
+  "artist": "Queen",
+  "year": 1975,
+  "difficulty": 1,
+  "fact": "Der Song hat keinen Refrain – und wurde trotzdem ein Welthit."
+ },
+ {
+  "id": "song-billie-jean",
+  "title": "Billie Jean",
+  "artist": "Michael Jackson",
+  "year": 1982,
+  "difficulty": 1,
+  "fact": "Bei einem TV-Auftritt zu diesem Song zeigte Jackson 1983 erstmals den Moonwalk."
+ },
+ {
+  "id": "song-teen-spirit",
+  "title": "Smells Like Teen Spirit",
+  "artist": "Nirvana",
+  "year": 1991,
+  "difficulty": 1,
+  "fact": "Der Titel stammt von einem Deo namens „Teen Spirit“."
+ },
+ {
+  "id": "song-always-love-you",
+  "title": "I Will Always Love You",
+  "artist": "Whitney Houston",
+  "year": 1992,
+  "difficulty": 1,
+  "fact": "Das Original schrieb und sang Dolly Parton schon 1974."
+ },
+ {
+  "id": "song-baby-one-more-time",
+  "title": "...Baby One More Time",
+  "artist": "Britney Spears",
+  "year": 1998,
+  "difficulty": 1,
+  "fact": "Britney war bei der Veröffentlichung 16 Jahre alt."
+ },
+ {
+  "id": "song-want-it-that-way",
+  "title": "I Want It That Way",
+  "artist": "Backstreet Boys",
+  "year": 1999,
+  "difficulty": 1,
+  "fact": "Der Songtext ergibt bei genauem Hinhören kaum Sinn – die Autoren sprachen kaum Englisch."
+ },
+ {
+  "id": "song-lose-yourself",
+  "title": "Lose Yourself",
+  "artist": "Eminem",
+  "year": 2002,
+  "difficulty": 2,
+  "fact": "Als erster Rap-Song gewann er den Oscar für den besten Filmsong."
+ },
+ {
+  "id": "song-crazy-in-love",
+  "title": "Crazy in Love",
+  "artist": "Beyoncé",
+  "year": 2003,
+  "difficulty": 2,
+  "fact": "Das Bläser-Sample stammt aus einem Song der Chi-Lites von 1970."
+ },
+ {
+  "id": "song-hey-ya",
+  "title": "Hey Ya!",
+  "artist": "OutKast",
+  "year": 2003,
+  "difficulty": 2,
+  "fact": "Der Song fordert dazu auf, „wie ein Polaroid-Foto“ zu schütteln."
+ },
+ {
+  "id": "song-mr-brightside",
+  "title": "Mr. Brightside",
+  "artist": "The Killers",
+  "year": 2003,
+  "difficulty": 2,
+  "fact": "Der Song ist seit Jahren fast durchgehend in den britischen Top 100."
+ },
+ {
+  "id": "song-poker-face",
+  "title": "Poker Face",
+  "artist": "Lady Gaga",
+  "year": 2008,
+  "difficulty": 1,
+  "fact": "Mit „Poker Face“ war Lady Gaga in über 20 Ländern auf Platz 1."
+ },
+ {
+  "id": "song-rolling-in-the-deep",
+  "title": "Rolling in the Deep",
+  "artist": "Adele",
+  "year": 2010,
+  "difficulty": 1,
+  "fact": "Adele schrieb den Song am Tag nach einer Trennung."
+ },
+ {
+  "id": "song-gangnam-style",
+  "title": "Gangnam Style",
+  "artist": "PSY",
+  "year": 2012,
+  "difficulty": 1,
+  "fact": "Als erstes Video überhaupt erreichte es eine Milliarde Aufrufe auf YouTube."
+ },
+ {
+  "id": "song-happy",
+  "title": "Happy",
+  "artist": "Pharrell Williams",
+  "year": 2013,
+  "difficulty": 1,
+  "fact": "Das Video ist 24 Stunden lang – es gibt eine Version für jede Stunde des Tages."
+ },
+ {
+  "id": "song-uptown-funk",
+  "title": "Uptown Funk",
+  "artist": "Mark Ronson feat. Bruno Mars",
+  "year": 2014,
+  "difficulty": 1,
+  "fact": "Der Song stand 14 Wochen auf Platz 1 der US-Charts."
+ },
+ {
+  "id": "song-shape-of-you",
+  "title": "Shape of You",
+  "artist": "Ed Sheeran",
+  "year": 2017,
+  "difficulty": 1,
+  "fact": "Der Song war ursprünglich für Rihanna gedacht."
+ },
+ {
+  "id": "song-despacito",
+  "title": "Despacito",
+  "artist": "Luis Fonsi feat. Daddy Yankee",
+  "year": 2017,
+  "difficulty": 1,
+  "fact": "Lange war das Video das meistgesehene auf YouTube."
+ },
+ {
+  "id": "song-blinding-lights",
+  "title": "Blinding Lights",
+  "artist": "The Weeknd",
+  "year": 2019,
+  "difficulty": 1,
+  "fact": "Der Song war über ein Jahr in den US-Top-10 – Rekord."
+ },
+ {
+  "id": "song-as-it-was",
+  "title": "As It Was",
+  "artist": "Harry Styles",
+  "year": 2022,
+  "difficulty": 2,
+  "fact": "Am Anfang des Songs hört man die Stimme von Styles’ Patenkind."
+ },
+ {
+  "id": "song-flowers",
+  "title": "Flowers",
+  "artist": "Miley Cyrus",
+  "year": 2023,
+  "difficulty": 1,
+  "fact": "„Flowers“ brach den Spotify-Rekord für die meisten Streams in einer Woche."
+ },
+ {
+  "id": "song-hey-jude",
+  "title": "Hey Jude",
+  "artist": "The Beatles",
+  "year": 1968,
+  "difficulty": 1,
+  "fact": "Paul McCartney schrieb den Song für John Lennons Sohn Julian."
+ },
+ {
+  "id": "song-yesterday",
+  "title": "Yesterday",
+  "artist": "The Beatles",
+  "year": 1965,
+  "difficulty": 1,
+  "fact": "Der Arbeitstitel von „Yesterday“ war „Scrambled Eggs“."
+ },
+ {
+  "id": "song-satisfaction",
+  "title": "(I Can't Get No) Satisfaction",
+  "artist": "The Rolling Stones",
+  "year": 1965,
+  "difficulty": 2,
+  "fact": "Keith Richards fiel das Riff angeblich im Halbschlaf ein."
+ },
+ {
+  "id": "song-jailhouse-rock",
+  "title": "Jailhouse Rock",
+  "artist": "Elvis Presley",
+  "year": 1957,
+  "difficulty": 2,
+  "fact": "Der Song stammt aus dem gleichnamigen Film mit Elvis in der Hauptrolle."
+ },
+ {
+  "id": "song-rock-around-the-clock",
+  "title": "Rock Around the Clock",
+  "artist": "Bill Haley & His Comets",
+  "year": 1954,
+  "difficulty": 2,
+  "fact": "Der Song gilt als einer der Startpunkte des Rock ’n’ Roll."
+ },
+ {
+  "id": "song-johnny-b-goode",
+  "title": "Johnny B. Goode",
+  "artist": "Chuck Berry",
+  "year": 1958,
+  "difficulty": 2,
+  "fact": "Der Song fliegt auf der Voyager-Raumsonde durchs All."
+ },
+ {
+  "id": "song-stairway",
+  "title": "Stairway to Heaven",
+  "artist": "Led Zeppelin",
+  "year": 1971,
+  "difficulty": 2,
+  "fact": "Der Song wurde nie als Single veröffentlicht."
+ },
+ {
+  "id": "song-hotel-california",
+  "title": "Hotel California",
+  "artist": "Eagles",
+  "year": 1976,
+  "difficulty": 1,
+  "fact": "Das Gitarrensolo am Ende dauert über zwei Minuten."
+ },
+ {
+  "id": "song-stayin-alive",
+  "title": "Stayin' Alive",
+  "artist": "Bee Gees",
+  "year": 1977,
+  "difficulty": 1,
+  "fact": "Das Tempo von rund 100 BPM eignet sich als Takt für Herzdruckmassage."
+ },
+ {
+  "id": "song-i-will-survive",
+  "title": "I Will Survive",
+  "artist": "Gloria Gaynor",
+  "year": 1978,
+  "difficulty": 1,
+  "fact": "Der Song war ursprünglich nur die B-Seite einer Single."
+ },
+ {
+  "id": "song-ymca",
+  "title": "Y.M.C.A.",
+  "artist": "Village People",
+  "year": 1978,
+  "difficulty": 1,
+  "fact": "Die berühmten Armbewegungen erfand das Publikum, nicht die Band."
+ },
+ {
+  "id": "song-highway-to-hell",
+  "title": "Highway to Hell",
+  "artist": "AC/DC",
+  "year": 1979,
+  "difficulty": 2,
+  "fact": "Es war das letzte Album mit Sänger Bon Scott."
+ },
+ {
+  "id": "song-another-brick",
+  "title": "Another Brick in the Wall (Part 2)",
+  "artist": "Pink Floyd",
+  "year": 1979,
+  "difficulty": 2,
+  "fact": "Im Song singt ein Schulchor aus London mit."
+ },
+ {
+  "id": "song-bites-the-dust",
+  "title": "Another One Bites the Dust",
+  "artist": "Queen",
+  "year": 1980,
+  "difficulty": 2,
+  "fact": "Michael Jackson riet Queen, den Song als Single zu veröffentlichen."
+ },
+ {
+  "id": "song-eye-of-the-tiger",
+  "title": "Eye of the Tiger",
+  "artist": "Survivor",
+  "year": 1982,
+  "difficulty": 1,
+  "fact": "Sylvester Stallone bestellte den Song für „Rocky III“."
+ },
+ {
+  "id": "song-africa",
+  "title": "Africa",
+  "artist": "Toto",
+  "year": 1982,
+  "difficulty": 1,
+  "fact": "In der namibischen Wüste spielt eine Solaranlage den Song in Dauerschleife."
+ },
+ {
+  "id": "song-girls-fun",
+  "title": "Girls Just Want to Have Fun",
+  "artist": "Cyndi Lauper",
+  "year": 1983,
+  "difficulty": 2,
+  "fact": "Das Original stammt von Robert Hazard und war aus Männersicht geschrieben."
+ },
+ {
+  "id": "song-last-christmas",
+  "title": "Last Christmas",
+  "artist": "Wham!",
+  "year": 1984,
+  "difficulty": 1,
+  "fact": "Platz 1 in Großbritannien erreichte der Song erst 2021."
+ },
+ {
+  "id": "song-livin-on-a-prayer",
+  "title": "Livin' on a Prayer",
+  "artist": "Bon Jovi",
+  "year": 1986,
+  "difficulty": 1,
+  "fact": "Jon Bon Jovi hielt den Song zunächst für zu schwach fürs Album."
+ },
+ {
+  "id": "song-final-countdown",
+  "title": "The Final Countdown",
+  "artist": "Europe",
+  "year": 1986,
+  "difficulty": 1,
+  "fact": "Das Keyboard-Riff schrieb Sänger Joey Tempest schon als Teenager."
+ },
+ {
+  "id": "song-sweet-child",
+  "title": "Sweet Child o' Mine",
+  "artist": "Guns N' Roses",
+  "year": 1987,
+  "difficulty": 2,
+  "fact": "Das Intro-Riff entstand als Fingerübung von Slash."
+ },
+ {
+  "id": "song-never-gonna-give",
+  "title": "Never Gonna Give You Up",
+  "artist": "Rick Astley",
+  "year": 1987,
+  "difficulty": 1,
+  "fact": "Der Song wurde als „Rickroll“ zum Internet-Streich."
+ },
+ {
+  "id": "song-like-a-prayer",
+  "title": "Like a Prayer",
+  "artist": "Madonna",
+  "year": 1989,
+  "difficulty": 2,
+  "fact": "Das Musikvideo sorgte im Vatikan für Empörung."
+ },
+ {
+  "id": "song-ice-ice-baby",
+  "title": "Ice Ice Baby",
+  "artist": "Vanilla Ice",
+  "year": 1990,
+  "difficulty": 2,
+  "fact": "Die Basslinie stammt aus „Under Pressure“ von Queen und David Bowie."
+ },
+ {
+  "id": "song-what-is-love",
+  "title": "What Is Love",
+  "artist": "Haddaway",
+  "year": 1993,
+  "difficulty": 1,
+  "fact": "Durch einen Sketch über Kopfnicker im Auto wurde der Song Kult."
+ },
+ {
+  "id": "song-wonderwall",
+  "title": "Wonderwall",
+  "artist": "Oasis",
+  "year": 1995,
+  "difficulty": 1,
+  "fact": "Der Titel ist von einem George-Harrison-Album von 1968 geliehen."
+ },
+ {
+  "id": "song-wannabe",
+  "title": "Wannabe",
+  "artist": "Spice Girls",
+  "year": 1996,
+  "difficulty": 1,
+  "fact": "Das Wort „zigazig-ah“ hat keine Bedeutung."
+ },
+ {
+  "id": "song-my-heart-will-go-on",
+  "title": "My Heart Will Go On",
+  "artist": "Celine Dion",
+  "year": 1997,
+  "difficulty": 1,
+  "fact": "Celine Dion nahm den Song in einem einzigen Durchgang auf."
+ },
+ {
+  "id": "song-barbie-girl",
+  "title": "Barbie Girl",
+  "artist": "Aqua",
+  "year": 1997,
+  "difficulty": 1,
+  "fact": "Mattel verklagte die Band – und verlor."
+ },
+ {
+  "id": "song-believe",
+  "title": "Believe",
+  "artist": "Cher",
+  "year": 1998,
+  "difficulty": 1,
+  "fact": "Der Roboter-Stimmeffekt machte Auto-Tune weltberühmt."
+ },
+ {
+  "id": "song-blue-da-ba-dee",
+  "title": "Blue (Da Ba Dee)",
+  "artist": "Eiffel 65",
+  "year": 1998,
+  "difficulty": 2,
+  "fact": "Die Band stammt aus Turin."
+ },
+ {
+  "id": "song-hips-dont-lie",
+  "title": "Hips Don't Lie",
+  "artist": "Shakira feat. Wyclef Jean",
+  "year": 2006,
+  "difficulty": 1,
+  "fact": "Der Song war 2006 in über 50 Ländern auf Platz 1."
+ },
+ {
+  "id": "song-umbrella",
+  "title": "Umbrella",
+  "artist": "Rihanna feat. Jay-Z",
+  "year": 2007,
+  "difficulty": 1,
+  "fact": "Der Song war ursprünglich für Britney Spears geschrieben."
+ },
+ {
+  "id": "song-i-gotta-feeling",
+  "title": "I Gotta Feeling",
+  "artist": "The Black Eyed Peas",
+  "year": 2009,
+  "difficulty": 1,
+  "fact": "Produziert wurde der Song unter anderem von David Guetta."
+ },
+ {
+  "id": "song-somebody-i-used-to-know",
+  "title": "Somebody That I Used to Know",
+  "artist": "Gotye feat. Kimbra",
+  "year": 2011,
+  "difficulty": 2,
+  "fact": "Gotye ist Belgier, aufgewachsen in Australien."
+ },
+ {
+  "id": "song-wake-me-up",
+  "title": "Wake Me Up",
+  "artist": "Avicii",
+  "year": 2013,
+  "difficulty": 1,
+  "fact": "Bei der Premiere auf einem Festival wurde der Country-Einschlag ausgebuht."
+ },
+ {
+  "id": "song-bad-guy",
+  "title": "Bad Guy",
+  "artist": "Billie Eilish",
+  "year": 2019,
+  "difficulty": 1,
+  "fact": "Billie Eilish nahm das Album mit ihrem Bruder in dessen Kinderzimmer auf."
+ },
+ {
+  "id": "song-99-luftballons",
+  "title": "99 Luftballons",
+  "artist": "Nena",
+  "year": 1983,
+  "difficulty": 1,
+  "fact": "Als einer der wenigen deutschsprachigen Songs erreichte er Platz 2 in den USA."
+ },
+ {
+  "id": "song-rock-me-amadeus",
+  "title": "Rock Me Amadeus",
+  "artist": "Falco",
+  "year": 1985,
+  "difficulty": 1,
+  "fact": "Falco war damit der erste deutschsprachige Künstler auf Platz 1 in den USA."
+ },
+ {
+  "id": "song-maenner",
+  "title": "Männer",
+  "artist": "Herbert Grönemeyer",
+  "year": 1984,
+  "difficulty": 1,
+  "fact": "Das Album „4630 Bochum“ trägt die alte Postleitzahl seiner Heimatstadt."
+ },
+ {
+  "id": "song-haus-am-see",
+  "title": "Haus am See",
+  "artist": "Peter Fox",
+  "year": 2008,
+  "difficulty": 1,
+  "fact": "Peter Fox ist sonst Sänger bei Seeed."
+ },
+ {
+  "id": "song-atemlos",
+  "title": "Atemlos durch die Nacht",
+  "artist": "Helene Fischer",
+  "year": 2013,
+  "difficulty": 1,
+  "fact": "Der Song stammt vom Album „Farbenspiel“."
+ },
+ {
+  "id": "song-tage-wie-diese",
+  "title": "Tage wie diese",
+  "artist": "Die Toten Hosen",
+  "year": 2012,
+  "difficulty": 1,
+  "fact": "Der Song wurde 2012 zur inoffiziellen Hymne der Fußball-EM."
+ },
+ {
+  "id": "song-wahnsinn",
+  "title": "Wahnsinn",
+  "artist": "Wolfgang Petry",
+  "year": 1983,
+  "difficulty": 1,
+  "fact": "Das „Hölle, Hölle, Hölle“ ist eine spätere Live-Ergänzung."
+ },
+ {
+  "id": "song-tausendmal-belogen",
+  "title": "Du hast mich tausendmal belogen",
+  "artist": "Andrea Berg",
+  "year": 2001,
+  "difficulty": 2,
+  "fact": "Andrea Bergs Best-of-Album gehört zu den am längsten platzierten Alben der deutschen Charts."
+ },
+ {
+  "id": "song-wind-of-change",
+  "title": "Wind of Change",
+  "artist": "Scorpions",
+  "year": 1990,
+  "difficulty": 1,
+  "fact": "Klaus Meine bekam die Idee bei einem Konzert in Moskau 1989."
+ },
+ {
+  "id": "song-du-hast",
+  "title": "Du hast",
+  "artist": "Rammstein",
+  "year": 1997,
+  "difficulty": 2,
+  "fact": "Der Song spielt mit dem Gleichklang von „du hast“ und „du hasst“."
+ },
+ {
+  "id": "song-youre-my-heart",
+  "title": "You're My Heart, You're My Soul",
+  "artist": "Modern Talking",
+  "year": 1984,
+  "difficulty": 1,
+  "fact": "Modern Talking – das waren Dieter Bohlen und Thomas Anders."
+ },
+ {
+  "id": "song-mambo-no-5",
+  "title": "Mambo No. 5",
+  "artist": "Lou Bega",
+  "year": 1999,
+  "difficulty": 1,
+  "fact": "Das Original ist ein Instrumental von Pérez Prado aus dem Jahr 1949."
+ },
+ {
+  "id": "song-ein-bisschen-frieden",
+  "title": "Ein bißchen Frieden",
+  "artist": "Nicole",
+  "year": 1982,
+  "difficulty": 2,
+  "fact": "Damit gewann Deutschland zum ersten Mal den Eurovision Song Contest."
+ },
+ {
+  "id": "song-griechischer-wein",
+  "title": "Griechischer Wein",
+  "artist": "Udo Jürgens",
+  "year": 1974,
+  "difficulty": 2,
+  "fact": "Der Song handelt von griechischen Gastarbeitern in Deutschland."
+ },
+ {
+  "id": "song-hey-baby",
+  "title": "Hey Baby (Uhh, Ahh)",
+  "artist": "DJ Ötzi",
+  "year": 2000,
+  "difficulty": 2,
+  "fact": "Das Original sang Bruce Channel schon 1961."
+ },
+ {
+  "id": "song-satellite",
+  "title": "Satellite",
+  "artist": "Lena",
+  "year": 2010,
+  "difficulty": 1,
+  "fact": "Lena gewann damit 2010 den Eurovision Song Contest in Oslo."
+ },
+ {
+  "id": "song-54-74-90",
+  "title": "’54, ’74, ’90, 2006",
+  "artist": "Sportfreunde Stiller",
+  "year": 2006,
+  "difficulty": 2,
+  "fact": "Die Zahlen im Titel sind WM-Jahre – 2006 wurde Deutschland aber nicht Weltmeister."
+ },
+ {
+  "id": "song-geile-zeit",
+  "title": "Geile Zeit",
+  "artist": "Juli",
+  "year": 2004,
+  "difficulty": 2,
+  "fact": "Die Band stammt aus Gießen."
+ },
+ {
+  "id": "song-guten-tag",
+  "title": "Guten Tag",
+  "artist": "Wir sind Helden",
+  "year": 2002,
+  "difficulty": 2,
+  "fact": "Sängerin der Band ist Judith Holofernes."
+ },
+ {
+  "id": "song-das-model",
+  "title": "Das Model",
+  "artist": "Kraftwerk",
+  "year": 1978,
+  "difficulty": 2,
+  "fact": "Die englische Version „The Model“ wurde 1982 Nummer 1 in Großbritannien."
+ },
+ {
+  "id": "song-koenig-von-deutschland",
+  "title": "König von Deutschland",
+  "artist": "Rio Reiser",
+  "year": 1986,
+  "difficulty": 2,
+  "fact": "Rio Reiser war vorher Sänger der Band Ton Steine Scherben."
+ },
+ {
+  "id": "song-sieben-bruecken",
+  "title": "Über sieben Brücken musst du gehn",
+  "artist": "Peter Maffay",
+  "year": 1980,
+  "difficulty": 2,
+  "fact": "Das Original stammt von der DDR-Band Karat."
+ },
+ {
+  "id": "song-1000-und-1-nacht",
+  "title": "1000 und 1 Nacht (Zoom!)",
+  "artist": "Klaus Lage",
+  "year": 1984,
+  "difficulty": 3,
+  "fact": "„1000 und 1 Nacht (Zoom!)“ war Klaus Lages größter Hit."
+ }
+]

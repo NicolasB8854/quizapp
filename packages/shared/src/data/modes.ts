@@ -192,6 +192,30 @@ export const MODES: GameMode[] = [
     accent: 'geo',
     status: 'ready',
   },
+  {
+    id: 'hum-duel',
+    name: 'Summ-Duell',
+    chipLabel: 'Musik',
+    tagline: 'Summ es — dein Team muss es erraten.',
+    description:
+      'Eine Person sieht auf ihrem Handy einen Songtitel und summt ihn, ohne Worte. Das eigene Team rät laut. Klappt es nicht, darf das Gegnerteam einmal stehlen. Reihum, bis jedes Team zweimal dran war.',
+    estimatedMinutes: 12,
+    scoresMatchPoint: true,
+    accent: 'music',
+    status: 'ready',
+  },
+  {
+    id: 'song-year',
+    name: 'Welches Jahr?',
+    chipLabel: 'Musik',
+    tagline: 'Wann kam dieser Song raus?',
+    description:
+      'Ein Song wird genannt, jedes Team schätzt das Erscheinungsjahr. Genau getroffen gibt 300 Punkte, ein Jahr daneben noch 200 — das nächste Team bekommt einen Bonus.',
+    estimatedMinutes: 8,
+    scoresMatchPoint: true,
+    accent: 'music',
+    status: 'ready',
+  },
 ]
 
 export const MODES_BY_ID: Record<string, GameMode> = Object.fromEntries(
@@ -210,4 +234,5 @@ export const ACCENT_HEX: Record<GameMode['accent'], string> = {
   spotlight: '#FFB84D',
   picture:   '#3FD0FF',
   geo:       '#3FD98B',
+  music:     '#FF77B0',
 }

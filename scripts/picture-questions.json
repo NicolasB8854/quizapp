@@ -553,5 +553,380 @@
   "correct": 0,
   "explanation": "Eine Stimmgabel schwingt meist mit 440 Hertz – dem Kammerton a.",
   "prompt": "a single shiny steel tuning fork standing on a wooden table, two long prongs and a handle, close up"
+ },
+ {
+  "slug": "sitar",
+  "topic": "musik",
+  "difficulty": 3,
+  "question": "Welches Instrument ist das?",
+  "options": [
+   "Sitar",
+   "Laute",
+   "Banjo",
+   "Oud"
+  ],
+  "correct": 0,
+  "explanation": "Die Sitar hat neben den Spielsaiten viele Resonanzsaiten; durch Ravi Shankar und die Beatles wurde sie im Westen bekannt.",
+  "prompt": "a single indian sitar lying on a dark carpet, long wooden neck with curved metal frets and a round gourd resonator"
+ },
+ {
+  "slug": "steeldrum",
+  "topic": "musik",
+  "difficulty": 3,
+  "question": "Welches Instrument ist das?",
+  "options": [
+   "Steel Drum",
+   "Gong",
+   "Tabla",
+   "Handpan"
+  ],
+  "correct": 0,
+  "explanation": "Die Steel Pan stammt aus Trinidad und Tobago und wurde ursprünglich aus Ölfässern gebaut.",
+  "prompt": "a single chrome caribbean steel pan drum with hammered note areas, two rubber tipped sticks beside it"
+ },
+ {
+  "slug": "drehleier",
+  "topic": "musik",
+  "difficulty": 5,
+  "question": "Welches Instrument ist das?",
+  "options": [
+   "Drehleier",
+   "Nyckelharpa",
+   "Hackbrett",
+   "Viola da Gamba"
+  ],
+  "correct": 0,
+  "explanation": "Bei der Drehleier streicht ein mit einer Kurbel gedrehtes Holzrad die Saiten – gespielt wird sie über Tasten.",
+  "prompt": "a single wooden hurdy gurdy instrument with crank handle and keybox, lying on dark velvet"
+ },
+ {
+  "slug": "nautilus",
+  "topic": "natur",
+  "difficulty": 4,
+  "question": "Welches Tier ist das?",
+  "options": [
+   "Nautilus",
+   "Ammonit",
+   "Tintenfisch",
+   "Weinbergschnecke"
+  ],
+  "correct": 0,
+  "explanation": "Der Nautilus gilt als „lebendes Fossil“: seine Bauweise hat sich seit rund 500 Millionen Jahren kaum verändert.",
+  "prompt": "a single chambered nautilus swimming in deep blue water, striped spiral shell and tentacles"
+ },
+ {
+  "slug": "kasuar",
+  "topic": "natur",
+  "difficulty": 4,
+  "question": "Welcher Vogel ist das?",
+  "options": [
+   "Kasuar",
+   "Emu",
+   "Strauß",
+   "Nandu"
+  ],
+  "correct": 0,
+  "explanation": "Der Kasuar trägt einen hornartigen Helm und gilt mit seinen dolchartigen Krallen als gefährlichster Vogel der Welt.",
+  "prompt": "a single southern cassowary standing in a rainforest, blue neck, red wattles, tall casque on its head, full body"
+ },
+ {
+  "slug": "schuhschnabel",
+  "topic": "natur",
+  "difficulty": 4,
+  "question": "Welcher Vogel ist das?",
+  "options": [
+   "Schuhschnabel",
+   "Marabu",
+   "Pelikan",
+   "Graureiher"
+  ],
+  "correct": 0,
+  "explanation": "Der Schuhschnabel lebt in ostafrikanischen Sümpfen und kann stundenlang regungslos auf Lungenfische lauern.",
+  "prompt": "a single shoebill stork standing in a papyrus swamp, huge shoe shaped bill, grey plumage, full body"
+ },
+ {
+  "slug": "rechenschieber",
+  "topic": "technik",
+  "difficulty": 4,
+  "question": "Was ist das?",
+  "options": [
+   "Rechenschieber",
+   "Lineal",
+   "Messschieber",
+   "Planimeter"
+  ],
+  "correct": 0,
+  "explanation": "Mit Rechenschiebern wurde noch die Mondlandung berechnet – bis der Taschenrechner sie in den 1970ern verdrängte.",
+  "prompt": "a vintage slide rule with sliding middle scale and transparent cursor, close shot on a drafting table"
+ },
+ {
+  "slug": "astrolabium",
+  "topic": "technik",
+  "difficulty": 5,
+  "question": "Was ist das?",
+  "options": [
+   "Astrolabium",
+   "Sextant",
+   "Armillarsphäre",
+   "Kompass"
+  ],
+  "correct": 0,
+  "explanation": "Das Astrolabium diente schon in der Antike zur Bestimmung von Sternpositionen und Uhrzeit.",
+  "prompt": "an antique brass astrolabe with engraved circular plates and a rotating pointer, on dark wood"
+ },
+ {
+  "slug": "okapi",
+  "topic": "natur",
+  "difficulty": 4,
+  "question": "Welches Tier ist das?",
+  "options": [
+   "Okapi",
+   "Zebra",
+   "Tapir",
+   "Bongo"
+  ],
+  "correct": 0,
+  "explanation": "Das Okapi sieht aus wie ein Zebra-Pferd, ist aber der einzige lebende Verwandte der Giraffe.",
+  "prompt": "an okapi standing in a dense rainforest, full body side view, striped legs"
+ },
+ {
+  "slug": "axolotl",
+  "topic": "natur",
+  "difficulty": 3,
+  "question": "Welches Tier ist das?",
+  "options": [
+   "Axolotl",
+   "Olm",
+   "Molch",
+   "Salamander"
+  ],
+  "correct": 0,
+  "explanation": "Der Axolotl kann verlorene Gliedmaßen und sogar Teile des Herzens nachwachsen lassen.",
+  "prompt": "a pink axolotl with feathery external gills in an aquarium, close-up"
+ },
+ {
+  "slug": "theremin",
+  "topic": "musik",
+  "difficulty": 5,
+  "question": "Welches Instrument ist das?",
+  "options": [
+   "Theremin",
+   "Synthesizer",
+   "Ondes Martenot",
+   "Vocoder"
+  ],
+  "correct": 0,
+  "explanation": "Das Theremin spielt man berührungslos — die Hände verändern elektrische Felder an zwei Antennen.",
+  "prompt": "a theremin electronic instrument, wooden box with one vertical antenna and one loop antenna, studio photo"
+ },
+ {
+  "slug": "sextant",
+  "topic": "geografie",
+  "difficulty": 5,
+  "question": "Was ist das?",
+  "options": [
+   "Sextant",
+   "Astrolabium",
+   "Kompass",
+   "Theodolit"
+  ],
+  "correct": 0,
+  "explanation": "Mit dem Sextanten misst man den Winkel eines Gestirns über dem Horizont, um die Position auf See zu bestimmen.",
+  "prompt": "a brass nautical sextant with mirrors and arc scale on a dark wooden table, studio photo, no letters"
+ },
+ {
+  "slug": "didgeridoo",
+  "topic": "musik",
+  "difficulty": 4,
+  "question": "Welches Instrument ist das?",
+  "options": [
+   "Didgeridoo",
+   "Alphorn",
+   "Fujara",
+   "Shakuhachi"
+  ],
+  "correct": 0,
+  "explanation": "Das Didgeridoo der Aborigines entsteht aus von Termiten ausgehöhlten Eukalyptusstämmen.",
+  "prompt": "a didgeridoo, long wooden wind instrument with painted dot patterns, lying diagonally on red sand"
+ },
+ {
+  "slug": "romanesco",
+  "topic": "pflanzen",
+  "difficulty": 4,
+  "question": "Welches Gemüse ist das?",
+  "options": [
+   "Romanesco",
+   "Brokkoli",
+   "Blumenkohl",
+   "Wirsing"
+  ],
+  "correct": 0,
+  "explanation": "Die Röschen des Romanesco bilden eine Fraktalstruktur entlang von Fibonacci-Spiralen.",
+  "prompt": "one romanesco broccoli head with green fractal spirals, macro photo, dark background"
+ },
+ {
+  "slug": "geige",
+  "topic": "musik",
+  "difficulty": 2,
+  "question": "Welches Instrument ist das?",
+  "options": [
+   "Geige",
+   "Gitarre",
+   "Cello",
+   "Mandoline"
+  ],
+  "correct": 0,
+  "explanation": "Die Geige ist das kleinste und höchste Instrument der Streicherfamilie.",
+  "prompt": "a classic wooden violin with bow lying on dark velvet, studio product photo"
+ },
+ {
+  "slug": "rotes-panda",
+  "topic": "natur",
+  "difficulty": 3,
+  "question": "Welches Tier ist das?",
+  "options": [
+   "Kleiner Panda",
+   "Waschbär",
+   "Rotfuchs",
+   "Marder"
+  ],
+  "correct": 0,
+  "explanation": "Der Kleine Panda ist nicht mit dem Großen Panda verwandt, sondern bildet eine eigene Familie.",
+  "prompt": ""
+ },
+ {
+  "slug": "pfeilgiftfrosch",
+  "topic": "natur",
+  "difficulty": 3,
+  "question": "Welches Tier ist das?",
+  "options": [
+   "Pfeilgiftfrosch",
+   "Laubfrosch",
+   "Unke",
+   "Feuersalamander"
+  ],
+  "correct": 0,
+  "explanation": "Die knalligen Farben warnen Fressfeinde: Manche Arten tragen genug Gift für zehn Menschen.",
+  "prompt": ""
+ },
+ {
+  "slug": "baobab",
+  "topic": "pflanzen",
+  "difficulty": 4,
+  "question": "Welcher Baum ist das?",
+  "options": [
+   "Affenbrotbaum",
+   "Mammutbaum",
+   "Drachenbaum",
+   "Feigenbaum"
+  ],
+  "correct": 0,
+  "explanation": "Baobabs speichern in ihrem Stamm bis zu 120.000 Liter Wasser.",
+  "prompt": ""
+ },
+ {
+  "slug": "tukan",
+  "topic": "natur",
+  "difficulty": 2,
+  "question": "Welcher Vogel ist das?",
+  "options": [
+   "Tukan",
+   "Papagei",
+   "Nashornvogel",
+   "Pelikan"
+  ],
+  "correct": 0,
+  "explanation": "Der riesige Schnabel des Tukans ist leicht und hilft ihm, Wärme abzugeben.",
+  "prompt": ""
+ },
+ {
+  "slug": "ameisenbaer",
+  "topic": "natur",
+  "difficulty": 3,
+  "question": "Welches Tier ist das?",
+  "options": [
+   "Großer Ameisenbär",
+   "Gürteltier",
+   "Tapir",
+   "Schuppentier"
+  ],
+  "correct": 0,
+  "explanation": "Ein Großer Ameisenbär frisst bis zu 30.000 Ameisen und Termiten am Tag.",
+  "prompt": ""
+ },
+ {
+  "slug": "seeotter",
+  "topic": "natur",
+  "difficulty": 3,
+  "question": "Welches Tier ist das?",
+  "options": [
+   "Seeotter",
+   "Seehund",
+   "Biber",
+   "Fischotter"
+  ],
+  "correct": 0,
+  "explanation": "Seeotter halten sich beim Schlafen an den Pfoten, damit sie nicht abtreiben.",
+  "prompt": ""
+ },
+ {
+  "slug": "durian",
+  "topic": "essen",
+  "difficulty": 4,
+  "question": "Welche Frucht ist das?",
+  "options": [
+   "Durian",
+   "Jackfrucht",
+   "Brotfrucht",
+   "Kiwano"
+  ],
+  "correct": 0,
+  "explanation": "Wegen ihres Geruchs ist die Durian in vielen Hotels und Bahnen Südostasiens verboten.",
+  "prompt": ""
+ },
+ {
+  "slug": "kakaofrucht",
+  "topic": "essen",
+  "difficulty": 4,
+  "question": "Was ist das?",
+  "options": [
+   "Kakaofrucht",
+   "Papaya",
+   "Mango",
+   "Avocado"
+  ],
+  "correct": 0,
+  "explanation": "In einer Kakaofrucht stecken 30 bis 50 Bohnen, umgeben von süßem Fruchtfleisch.",
+  "prompt": ""
+ },
+ {
+  "slug": "bandoneon",
+  "topic": "musik",
+  "difficulty": 5,
+  "question": "Welches Instrument ist das?",
+  "options": [
+   "Bandoneon",
+   "Akkordeon",
+   "Harmonium",
+   "Concertina"
+  ],
+  "correct": 0,
+  "explanation": "Das Bandoneon wurde in Deutschland erfunden und wurde in Argentinien zum Herz des Tangos.",
+  "prompt": ""
+ },
+ {
+  "slug": "hackbrett",
+  "topic": "musik",
+  "difficulty": 5,
+  "question": "Welches Instrument ist das?",
+  "options": [
+   "Hackbrett",
+   "Zither",
+   "Cembalo",
+   "Kantele"
+  ],
+  "correct": 0,
+  "explanation": "Beim Hackbrett werden die Saiten mit kleinen Klöppeln angeschlagen.",
+  "prompt": ""
  }
 ]

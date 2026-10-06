@@ -34,6 +34,7 @@ export * from './lib/solo'
 export * from './lib/director'
 export * from './lib/geo'
 export * from './data/places'
+export * from './data/songs'
 
 // Data / Konstanten
 export * from './data/modes'
