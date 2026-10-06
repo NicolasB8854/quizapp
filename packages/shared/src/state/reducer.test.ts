@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { createReducer, INITIAL_STATE, type GameState } from './reducer'
+import { createReducer, INITIAL_STATE, matchPointsForMode, type GameState } from './reducer'
 import { getMultipleChoiceByTopic, getTrueFalsePool } from '../lib/questions'
 import type { SkillLevel } from '../types/round'
 import { DEFAULT_AVATAR_LOOK } from '../data/avatarLook'
@@ -2569,5 +2569,34 @@ describe('reducer — SET_PLAYER_INTEREST_TAGS (Session AA)', () => {
     })
     const sport = s.round!.players[0].interests.find((i) => i.topic === 'sport')!
     expect(sport.tags).toEqual(['Tennis', 'Golf'])
+  })
+})
+
+describe('reducer — Finale zählt doppelt', () => {
+  function finishWithWinner(modeIndex: number, totalModes: number): GameState {
+    const base = bootIntoPlaying('flash')
+    const teams = base.round!.teams
+    const s: GameState = {
+      ...base,
+      round: { ...base.round!, gameModes: Array.from({ length: totalModes }, () => 'flash' as const) },
+      currentModeIndex: modeIndex,
+      live: { ...base.live!, scores: { [teams[0].id]: 300, [teams[1].id]: 100 } } as GameState['live'],
+    }
+    return reducer(s, { type: 'FINISH_MODE' })
+  }
+
+  it('matchPointsForMode: nur der letzte Modus ab 3 Modi gibt 2 Punkte', () => {
+    expect(matchPointsForMode(0, 3)).toBe(1)
+    expect(matchPointsForMode(1, 3)).toBe(1)
+    expect(matchPointsForMode(2, 3)).toBe(2)
+    expect(matchPointsForMode(1, 2)).toBe(1)
+    expect(matchPointsForMode(0, 1)).toBe(1)
+  })
+
+  it('Sieg im Finale bringt 2 Match-Punkte, davor 1', () => {
+    const teamA = bootIntoPlaying('flash').round!.teams[0].id
+    expect(finishWithWinner(2, 3).matchPoints[teamA]).toBe(2)
+    expect(finishWithWinner(1, 3).matchPoints[teamA]).toBe(1)
+    expect(finishWithWinner(1, 2).matchPoints[teamA]).toBe(1)
   })
 })

@@ -379,6 +379,30 @@ async function handleDispatch(
   )
 }
 
+/** Mindestabstand zwischen zwei Reaktionen einer Verbindung (best effort pro Lambda-Container). */
+const REACT_MIN_GAP_MS = 700
+const lastReactAt = new Map<string, number>()
+
+async function handleReact(
+  event: APIGatewayProxyWebsocketEventV2,
+  connectionId: string,
+  msg: Extract<ClientMessage, { type: 'REACT' }>,
+): Promise<void> {
+  const now = Date.now()
+  if (now - (lastReactAt.get(connectionId) ?? 0) < REACT_MIN_GAP_MS) return
+  lastReactAt.set(connectionId, now)
+  if (lastReactAt.size > 5000) lastReactAt.clear()
+  const session = await getSession(connectionId)
+  if (!session) return
+  // Flüchtig: kein putRoom, nur an alle im Room weiterreichen.
+  await broadcastToRoom(event, session.roomCode, {
+    type: 'REACTION',
+    playerId: session.playerId ?? null,
+    playerName: session.playerName,
+    emoji: msg.emoji,
+  })
+}
+
 async function handlePing(
   event: APIGatewayProxyWebsocketEventV2,
   connectionId: string,
@@ -414,6 +438,9 @@ export async function handleMessage(
         break
       case 'PING':
         await handlePing(event, connectionId)
+        break
+      case 'REACT':
+        await handleReact(event, connectionId, parsed)
         break
     }
   } catch (err) {

@@ -85,6 +85,21 @@ describe('Multi-Device-Abend (simuliert)', () => {
     expect(rooms.get(code).groupId).toBe('group-1234')
   })
 
+  it('Emoji-Reaktion geht an alle im Room, ändert den State nicht, nur Allowlist', async () => {
+    const code = await setupNight()
+    const before = stateOf(code)
+    await send('ana', { type: 'REACT', emoji: '🔥' })
+    for (const c of ['host', 'ana', 'ben']) expect(last(c)).toMatchObject({ type: 'REACTION', emoji: '🔥', playerName: 'Ana' })
+    expect(stateOf(code)).toEqual(before)
+    // Spam direkt hinterher wird gedrosselt, fremde Zeichen abgelehnt.
+    const count = () => (inbox.get('host') ?? []).filter((m) => m.type === 'REACTION').length
+    await send('ana', { type: 'REACT', emoji: '😂' })
+    expect(count()).toBe(1)
+    await send('ben', { type: 'REACT', emoji: '<script>' })
+    expect(errors('ben').at(-1)).toMatchObject({ code: 'INVALID_MESSAGE' })
+    expect(count()).toBe(1)
+  })
+
   it('Spieler können keine Host-Aktionen auslösen, der Host schon', async () => {
     const code = await setupNight()
     await send('ana', { type: 'DISPATCH', action: { type: 'SET_MODE_SELECTION', modeIds: ['flash'] } })

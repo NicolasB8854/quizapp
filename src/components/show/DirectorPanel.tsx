@@ -4,7 +4,7 @@
  */
 import { useState } from 'react'
 import { Wand2 } from 'lucide-react'
-import { directEvening, MODES_BY_ID, minutesOf, type GameModeId } from '@quizapp/shared'
+import { directEvening, FINALE_MIN_MODES, MODES_BY_ID, minutesOf, type GameModeId } from '@quizapp/shared'
 import { Button } from '@/components/Button'
 import { track } from '@/lib/insightsApi'
 import { cn } from '@/lib/classnames'
@@ -72,7 +72,9 @@ export function DirectorPanel({
               <span className="w-5 text-right font-mono text-xs text-ink-muted">{i + 1}.</span>
               {MODES_BY_ID[id]?.name}
               {i === 0 && <span className="text-xs text-brand-cyan-soft">Warm-up</span>}
-              {i === preview.length - 1 && <span className="text-xs text-amber-200">Finale</span>}
+              {i === preview.length - 1 && (
+                <span className="text-xs text-amber-200">{preview.length >= FINALE_MIN_MODES ? 'Finale · zählt doppelt' : 'Finale'}</span>
+              )}
             </li>
           ))}
           <li className="pt-1 text-xs text-ink-muted">≈ {minutesOf(preview)} Minuten · du kannst unten noch anpassen</li>

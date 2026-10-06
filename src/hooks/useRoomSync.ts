@@ -23,7 +23,7 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import type { GameAction, GameState, ServerMessage } from '@quizapp/shared'
+import type { GameAction, GameState, ReactionEmoji, ServerMessage } from '@quizapp/shared'
 import { getGroupId } from '@/lib/groupId'
 import { WSClient } from '@/lib/wsClient'
 
@@ -76,7 +76,24 @@ export interface UseRoomSyncResult {
    * Rückgabe: `true` wenn gesendet, `false` wenn (noch) nicht möglich.
    */
   dispatch: (action: GameAction) => boolean
+  /** Flüchtige Emoji-Reaktionen der letzten Sekunden (für das Overlay). */
+  reactions: LiveReaction[]
+  /** Schickt eine Emoji-Reaktion (clientseitig gedrosselt). */
+  react: (emoji: ReactionEmoji) => boolean
 }
+
+export interface LiveReaction {
+  id: number
+  playerId: string | null
+  playerName: string
+  emoji: ReactionEmoji
+}
+
+/** So lange bleibt eine Reaktion im Overlay. */
+export const REACTION_TTL_MS = 2600
+/** Clientseitige Drossel pro Gerät. */
+const REACT_THROTTLE_MS = 900
+let reactionSeq = 0
 
 export function useRoomSync(opts: UseRoomSyncOptions): UseRoomSyncResult {
   const enabled = opts.enabled !== false && !!opts.wsUrl
@@ -86,6 +103,8 @@ export function useRoomSync(opts: UseRoomSyncOptions): UseRoomSyncResult {
   const [effectiveRole, setEffectiveRole] = useState<'player' | 'host' | null>(null)
   const [effectiveStageOnly, setEffectiveStageOnly] = useState<boolean | null>(null)
   const [lastError, setLastError] = useState<string | null>(null)
+  const [reactions, setReactions] = useState<LiveReaction[]>([])
+  const lastReactRef = useRef(0)
 
   // Wir halten Referenzen auf mutierende Werte, damit der useEffect nicht
   // bei jeder Namens- oder Rollen-Änderung die Verbindung neu aufbaut.
@@ -153,6 +172,13 @@ export function useRoomSync(opts: UseRoomSyncOptions): UseRoomSyncResult {
         case 'PONG':
           // Keepalive — kein State-Effekt.
           break
+        case 'REACTION': {
+          const r: LiveReaction = { id: ++reactionSeq, playerId: msg.playerId, playerName: msg.playerName, emoji: msg.emoji }
+          // Höchstens 12 gleichzeitig, damit ein Spam-Moment den Screen nicht zumacht.
+          setReactions((cur) => [...cur.slice(-11), r])
+          window.setTimeout(() => setReactions((cur) => cur.filter((x) => x.id !== r.id)), REACTION_TTL_MS)
+          break
+        }
       }
     })
 
@@ -200,6 +226,14 @@ export function useRoomSync(opts: UseRoomSyncOptions): UseRoomSyncResult {
     return c.send({ type: 'DISPATCH', action })
   }, [])
 
+  const react = useCallback((emoji: ReactionEmoji) => {
+    const c = clientRef.current
+    const now = Date.now()
+    if (!c || now - lastReactRef.current < REACT_THROTTLE_MS) return false
+    lastReactRef.current = now
+    return c.send({ type: 'REACT', emoji })
+  }, [])
+
   return {
     status,
     state,
@@ -208,5 +242,7 @@ export function useRoomSync(opts: UseRoomSyncOptions): UseRoomSyncResult {
     stageOnly: effectiveStageOnly,
     lastError,
     dispatch,
+    reactions,
+    react,
   }
 }
