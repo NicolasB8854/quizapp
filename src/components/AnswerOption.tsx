@@ -60,6 +60,7 @@ export function AnswerOption({ letter, status = 'idle', className, children, ...
     <button
       type="button"
       aria-pressed={status === 'selected'}
+      data-status={status}
       className={cn(
         // Session U: rundere Pill-Form, angelehnt an das Studio-Mockup.
         // Padding größer, damit der Antworttext atmet.

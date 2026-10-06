@@ -50,6 +50,7 @@ import {
   answeringTeamId,
   MODES,
   MODES_BY_ID,
+  matchPointsForMode,
   TOPICS_ALPHABETICAL,
   TOPICS_BY_ID,
   getTeamColorHex,
@@ -66,7 +67,7 @@ import { ScreenLayout } from '@/components/ScreenLayout'
 import { Card } from '@/components/Card'
 import { AvatarBadge } from '@/components/AvatarBadge'
 import { LobbySteps, ModeTile, PlayerLine, ShowPanel, StickyCta, TeamCard } from '@/components/show/LobbyBlocks'
-import { BuzzerButton, ShowAnswers, ShowQuestion, ShowStatus, ShowTimer } from '@/components/show/ShowBlocks'
+import { BuzzerButton, ShowAnswers, ShowQuestion, ShowStatus, ShowTimer, useRevealHold } from '@/components/show/ShowBlocks'
 import { Button } from '@/components/Button'
 import { Badge } from '@/components/Badge'
 import { PlayerInterestsPanel } from '@/components/PlayerInterestsPanel'
@@ -83,6 +84,8 @@ import { DirectorPanel } from '@/components/show/DirectorPanel'
 import { useSoundEnabled } from '@/hooks/useSoundEnabled'
 import { playSound } from '@/lib/audio'
 import { haptic } from '@/lib/haptics'
+import { isSuspenseKind, REVEAL_SUSPENSE_MS } from '@/lib/reveal'
+import { ReactionBar, ReactionLayer } from '@/components/show/Reactions'
 import { useWakeLock } from '@/hooks/useWakeLock'
 import { readRoomIdentity, saveRoomIdentity } from '@/lib/roomIdentity'
 import { cn } from '@/lib/classnames'
@@ -224,6 +227,7 @@ export default function RoomLobbyPage() {
     const maxPoints = Math.max(...round.teams.map((t) => matchPoints[t.id] ?? 0))
     if (maxPoints <= 0) return // Ohne Punkte: kein Winner-Burst.
     const winners = round.teams.filter((t) => (matchPoints[t.id] ?? 0) === maxPoints)
+    playSound('fanfare')
     setBurst({
       colors: winners.map((t) => getTeamColorHex(t.color)),
       intensity: 'large',
@@ -244,7 +248,13 @@ export default function RoomLobbyPage() {
     phase: string
     scoresSum: number
     expertsPrimaryOutcome: string | null
+    lockedCount: number
   } | null>(null)
+  // Verzögerter Ergebnis-Sound nach dem Trommelwirbel.
+  const revealTimerRef = useRef<number | null>(null)
+  useEffect(() => () => {
+    if (revealTimerRef.current !== null) window.clearTimeout(revealTimerRef.current)
+  }, [])
 
   useEffect(() => {
     const live = room.state?.live
@@ -255,15 +265,38 @@ export default function RoomLobbyPage() {
     const scoresSum = Object.values(live.scores).reduce((s, n) => s + n, 0)
     const expertsPrimaryOutcome =
       live.kind === 'experts' ? (live as ExpertsLive).primaryOutcome ?? null : null
+    const teamAnswers = 'teamAnswers' in live ? (live.teamAnswers as Record<string, unknown>) : null
+    const lockedCount = teamAnswers
+      ? Object.values(teamAnswers).filter((a) => a !== null && a !== undefined).length
+      : 0
     const snapshot = {
       kind: live.kind,
       phase: live.phase,
       scoresSum,
       expertsPrimaryOutcome,
+      lockedCount,
     }
     const prev = prevSoundSnapshotRef.current
     prevSoundSnapshotRef.current = snapshot
     if (!prev || prev.kind !== snapshot.kind) return // erster Snapshot oder Modus-Wechsel
+
+    // 0. Auflösung mit Spannung (parallele Antwort-Modi): erst Trommelwirbel,
+    //    dann — synchron zum grünen Aufleuchten in ShowAnswers — das Ergebnis.
+    if (isSuspenseKind(snapshot.kind) && snapshot.phase === 'revealed' && prev.phase !== 'revealed') {
+      const gained = scoresSum > prev.scoresSum
+      playSound('drumroll')
+      if (revealTimerRef.current !== null) window.clearTimeout(revealTimerRef.current)
+      revealTimerRef.current = window.setTimeout(() => {
+        playSound(gained ? 'correct' : 'wrong')
+        haptic(gained ? 'correct' : 'wrong')
+      }, REVEAL_SUSPENSE_MS)
+      return
+    }
+    // 0b. Ein Team hat eingeloggt.
+    if (snapshot.phase === prev.phase && snapshot.lockedCount > prev.lockedCount) {
+      playSound('lockIn')
+      return
+    }
 
     // 1. Score-Anstieg — passt für alle Modi.
     if (scoresSum > prev.scoresSum) {
@@ -317,28 +350,40 @@ export default function RoomLobbyPage() {
     modeIndex: number
     totalModes: number
     token: number
+    lastWinnerId: string | null
+    lastAward: number
   } | null>(null)
   const prevLiveKindRef = useRef<string | null>(null)
   const currentLiveKind = room.state?.live?.kind ?? null
   const currentModeIndex = room.state?.currentModeIndex ?? 0
 
   useEffect(() => {
+    // Schlüssel aus Index + Art: zwei Geo-Varianten hintereinander teilen sich `kind`.
+    const key = currentLiveKind ? `${currentModeIndex}:${currentLiveKind}` : null
     const previous = prevLiveKindRef.current
-    prevLiveKindRef.current = currentLiveKind
+    prevLiveKindRef.current = key
     if (currentPhase !== 'playing' || !currentLiveKind) return
-    if (previous === currentLiveKind) return
+    if (previous === key) return
     // Modus für den Splash aus der Runden-Modes-Sequenz beziehen.
     const round = room.state?.round
     if (!round) return
     const modeId = round.gameModes[currentModeIndex]
     const mode = modeId ? MODES_BY_ID[modeId] : null
     if (!mode) return
+    // Sieger des gerade beendeten Modus fürs „+N" im Zwischenstand.
+    const lastResult = room.state?.results.at(-1)
+    const prevModeIndex = currentModeIndex - 1
+    const prevMode = prevModeIndex >= 0 ? MODES_BY_ID[round.gameModes[prevModeIndex]] : null
+    const lastAward = prevMode?.scoresMatchPoint ? matchPointsForMode(prevModeIndex, round.gameModes.length) : 0
     setSplash({
       mode,
       modeIndex: currentModeIndex,
       totalModes: round.gameModes.length,
       token: performance.now(),
+      lastWinnerId: lastAward > 0 ? lastResult?.winnerTeamId ?? null : null,
+      lastAward: lastAward || 1,
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentLiveKind, currentPhase, currentModeIndex, room.state?.round])
 
   return (
@@ -352,6 +397,10 @@ export default function RoomLobbyPage() {
             boxShadow: `0 0 12px ${myTeamColor}, 0 0 24px ${myTeamColor}80`,
           }}
         />
+      )}
+      <ReactionLayer reactions={room.reactions} stage={!!stageOnly} />
+      {!stageOnly && room.playerId && (currentPhase === 'playing' || currentPhase === 'scoreboard') && (
+        <ReactionBar onReact={room.react} />
       )}
       {burst && (
         <ConfettiBurst
@@ -367,6 +416,8 @@ export default function RoomLobbyPage() {
           modeIndex={splash.modeIndex}
           totalModes={splash.totalModes}
           token={splash.token}
+          lastWinnerId={splash.lastWinnerId}
+          lastAward={splash.lastAward}
           onDone={() => setSplash(null)}
           standings={room.state?.round?.teams.map((t) => ({
             id: t.id,
@@ -2278,6 +2329,7 @@ function LadderRoomView({
   canDispatch: boolean
   send: (a: GameAction) => void
 }) {
+  const { holding, shownScores } = useHeldReveal(live.phase === 'revealed', live.scores)
   if (!state.round) return <LoadingCard label="Lade Runde …" />
   const question = live.activeQuestion
   const myPlayer = playerId ? state.round.players.find((p) => p.id === playerId) : null
@@ -2357,7 +2409,7 @@ function LadderRoomView({
           </div>
           <div className={cn('flex flex-wrap gap-2', isMaster ? 'w-full pt-1' : 'ml-auto')}>
             {state.round.teams.map((team) => (
-              <TeamScoreChip key={team.id} team={team} score={live.scores[team.id] ?? 0} isMaster={isMaster} />
+              <TeamScoreChip key={team.id} team={team} score={shownScores[team.id] ?? 0} isMaster={isMaster} />
             ))}
           </div>
         </div>
@@ -2370,7 +2422,7 @@ function LadderRoomView({
         text={question.question}
         isMaster={isMaster}
         revealedTone={
-          live.phase === 'revealed'
+          live.phase === 'revealed' && !holding
             ? myTeamAnswer === live.correctRenderedIndex
               ? 'correct'
               : 'neutral'
@@ -2404,6 +2456,7 @@ function LadderRoomView({
         }
         isMaster={isMaster}
         highlightMyPick={myTeamAnswer ?? undefined}
+        suspense
       />
 
       {/* Team-Antworten-Panel */}
@@ -3793,6 +3846,7 @@ function OptionsGrid({
   isMaster,
   highlightMyPick,
   disabledIdx,
+  suspense,
 }: {
   options: string[]
   correctIdx: number | null
@@ -3803,9 +3857,12 @@ function OptionsGrid({
   isMaster: boolean
   highlightMyPick?: number
   disabledIdx?: number | null
+  /** Auflösung mit Spannungs-Pause (parallele Antwort-Modi). */
+  suspense?: boolean
 }) {
   return (
     <ShowAnswers
+      suspense={suspense}
       options={options}
       correctIdx={correctIdx}
       picksByIndex={selectedIdxByTeam}
@@ -3817,6 +3874,18 @@ function OptionsGrid({
       disabledIdx={disabledIdx}
     />
   )
+}
+
+/**
+ * Auflösung mit Spannung für ganze Views: solange die Pause läuft, zeigen die
+ * Score-Chips noch den Stand vor der Auflösung (sonst verrät der „+300"-Toast
+ * das Ergebnis vor dem grünen Aufleuchten).
+ */
+function useHeldReveal(revealed: boolean, scores: Record<string, number>) {
+  const holding = useRevealHold(true, revealed)
+  const beforeRef = useRef(scores)
+  if (!revealed) beforeRef.current = scores
+  return { holding, shownScores: holding ? beforeRef.current : scores }
 }
 
 function useScoreDelta(score: number): number | null {
@@ -4299,6 +4368,7 @@ function PictureRoomView({
   canDispatch: boolean
   send: (a: GameAction) => void
 }) {
+  const { holding, shownScores } = useHeldReveal(live.phase === 'revealed', live.scores)
   const [now, setNow] = useState(() => Date.now())
   useEffect(() => {
     if (live.phase !== 'answering') return
@@ -4355,7 +4425,7 @@ function PictureRoomView({
         </div>
         <div className="flex w-full flex-wrap gap-2">
           {state.round.teams.map((team) => (
-            <TeamScoreChip key={team.id} team={team} score={live.scores[team.id] ?? 0} isMaster={isMaster} />
+            <TeamScoreChip key={team.id} team={team} score={shownScores[team.id] ?? 0} isMaster={isMaster} />
           ))}
         </div>
       </Card>
@@ -4363,7 +4433,7 @@ function PictureRoomView({
       <div className="overflow-hidden rounded-card border-2 border-brand-cyan/40 bg-navy-900 shadow-[0_0_32px_-8px_rgba(63,208,255,0.6)]">
         <img
           src={q.image}
-          alt={live.phase === 'revealed' ? q.options[q.correctIndex] : 'Unscharfes Rätselbild'}
+          alt={live.phase === 'revealed' && !holding ? q.options[q.correctIndex] : 'Unscharfes Rätselbild'}
           className="aspect-[3/2] w-full object-cover transition-[filter,transform] duration-200"
           style={{ filter: `blur(${blurPx}px)`, transform: `scale(${zoom})`, transformOrigin: focus }}
         />
@@ -4372,7 +4442,7 @@ function PictureRoomView({
       <QuestionCard
         text={q.question}
         isMaster={isMaster}
-        revealedTone={live.phase === 'revealed' ? 'neutral' : null}
+        revealedTone={live.phase === 'revealed' && !holding ? 'neutral' : null}
         explanation={q.explanation}
         questionId={q.id}
       />
@@ -4386,10 +4456,13 @@ function PictureRoomView({
         canClick={canDispatch && live.phase === 'answering' && !!myTeamId && myAnswer === null}
         isMaster={isMaster}
         highlightMyPick={myAnswer ?? undefined}
+        suspense
       />
 
       <ShowStatus stage={isMaster} tone={myAnswer !== null && live.phase === 'answering' ? 'active' : 'neutral'}>
-        {live.phase === 'revealed'
+        {live.phase === 'revealed' && holding
+          ? 'Und die richtige Antwort ist …'
+          : live.phase === 'revealed'
           ? state.round.teams
               .map((t) => `${t.name}: ${live.lastPoints[t.id] ? `+${live.lastPoints[t.id]}` : '0'}`)
               .join(' · ')

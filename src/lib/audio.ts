@@ -2,12 +2,16 @@
  * Prozedurale Sound-Effekte via Web-Audio-API.
  *
  * Alle Sounds werden aus Oscillator + Gain synthetisiert — kein Asset-Load,
- * kein Extra-Bundle. Vier Grund-Typen:
+ * kein Extra-Bundle. Typen:
  *
  *  - `correct`  — zwei aufsteigende Sinus-Töne (C5 → G5), warmer Ping.
  *  - `wrong`    — zwei absteigende Triangle-Töne (E4 → C4), dumpfer Buzz.
  *  - `buzz`     — kurzer Sawtooth-Frequenz-Sweep (180 → 80 Hz), Buzzer-Klick.
  *  - `timeUp`   — vier absteigende Sawtooth-Töne, Talent-Show-Horn-Feel.
+ *  - `tick`     — kurzer Holzklick für die letzten Sekunden eines Timers.
+ *  - `lockIn`   — helles „Pling", wenn ein Team seine Antwort einloggt.
+ *  - `drumroll` — ~1.2 s gefiltertes Rauschen mit Crescendo vor der Auflösung.
+ *  - `fanfare`  — Dur-Fanfare (C-E-G-C) für den Sieger des Abends.
  *
  * Der `AudioContext` wird lazy beim ersten `play()` erzeugt und automatisch
  * per `resume()` aus dem Autoplay-Suspended-State geholt. Weil der erste
@@ -19,7 +23,10 @@
  * aus umgestellt (kann trotzdem manuell aktiviert werden).
  */
 
-export type SoundType = 'correct' | 'wrong' | 'buzz' | 'timeUp'
+export type SoundType = 'correct' | 'wrong' | 'buzz' | 'timeUp' | 'tick' | 'lockIn' | 'drumroll' | 'fanfare'
+
+/** Dauer des Trommelwirbels — so lange hält die Auflösung die Spannung. */
+export const DRUMROLL_MS = 1200
 
 const STORAGE_KEY = 'quizapp:sound-enabled'
 
@@ -108,6 +115,23 @@ class SoundManager {
         playTone(ctx, 523.25, t0 + 0.38, 0.18, 'sawtooth', 0.11) // C5
         playTone(ctx, 392.0, t0 + 0.57, 0.32, 'sawtooth', 0.11) // G4
         break
+      case 'tick':
+        playTone(ctx, 1567.98, t0, 0.035, 'square', 0.05) // G6, sehr kurz
+        break
+      case 'lockIn':
+        playTone(ctx, 1046.5, t0, 0.09, 'sine', 0.09) // C6
+        playTone(ctx, 1567.98, t0 + 0.05, 0.12, 'sine', 0.07) // G6
+        break
+      case 'drumroll':
+        playDrumroll(ctx, t0, DRUMROLL_MS / 1000)
+        break
+      case 'fanfare':
+        playTone(ctx, 523.25, t0, 0.16, 'square', 0.07) // C5
+        playTone(ctx, 659.25, t0 + 0.16, 0.16, 'square', 0.07) // E5
+        playTone(ctx, 783.99, t0 + 0.32, 0.16, 'square', 0.07) // G5
+        playTone(ctx, 1046.5, t0 + 0.5, 0.55, 'square', 0.08) // C6 gehalten
+        playTone(ctx, 523.25, t0 + 0.5, 0.55, 'triangle', 0.08) // C5 drunter
+        break
     }
   }
 }
@@ -161,6 +185,34 @@ function playBuzz(ctx: AudioContext, startAt: number): void {
   osc.connect(gain).connect(ctx.destination)
   osc.start(startAt)
   osc.stop(startAt + 0.16)
+}
+
+/**
+ * Trommelwirbel: weißes Rauschen durch einen Bandpass, mit ~28 Hz
+ * amplitudenmoduliert (die einzelnen Schläge) und linearem Crescendo.
+ */
+function playDrumroll(ctx: AudioContext, startAt: number, duration: number): void {
+  const length = Math.floor(ctx.sampleRate * duration)
+  const buffer = ctx.createBuffer(1, length, ctx.sampleRate)
+  const data = buffer.getChannelData(0)
+  for (let i = 0; i < length; i++) {
+    const t = i / ctx.sampleRate
+    const hits = 0.55 + 0.45 * Math.sin(2 * Math.PI * 28 * t)
+    data[i] = (Math.random() * 2 - 1) * hits
+  }
+  const src = ctx.createBufferSource()
+  src.buffer = buffer
+  const filter = ctx.createBiquadFilter()
+  filter.type = 'bandpass'
+  filter.frequency.setValueAtTime(900, startAt)
+  filter.Q.setValueAtTime(0.8, startAt)
+  const gain = ctx.createGain()
+  gain.gain.setValueAtTime(0.02, startAt)
+  gain.gain.linearRampToValueAtTime(0.16, startAt + duration * 0.92)
+  gain.gain.linearRampToValueAtTime(0, startAt + duration)
+  src.connect(filter).connect(gain).connect(ctx.destination)
+  src.start(startAt)
+  src.stop(startAt + duration + 0.02)
 }
 
 let instance: SoundManager | null = null

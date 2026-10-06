@@ -5,13 +5,15 @@
  * jeder Modus seine eigene Variante. `stage` = großer Master-Screen, sonst
  * Handy-Größe (mobile first).
  */
-import type { ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { Timer as TimerIcon, Zap } from 'lucide-react'
 import type { TeamColor } from '@quizapp/shared'
 import { getTeamColorHex } from '@quizapp/shared'
 import { AnswerOption, type AnswerStatus } from '@/components/AnswerOption'
 import { cn } from '@/lib/classnames'
 import { ReportQuestionButton } from '@/components/ReportQuestionButton'
+import { suspenseMs } from '@/lib/reveal'
+import { playSound } from '@/lib/audio'
 
 const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F']
 
@@ -105,6 +107,7 @@ export function ShowAnswers({
   stage = false,
   myPick,
   disabledIdx,
+  suspense = false,
 }: {
   options: string[]
   correctIdx: number | null
@@ -116,8 +119,14 @@ export function ShowAnswers({
   myPick?: number
   /** Gesperrte Option (z. B. beim Rebound die schon falsche Antwort). */
   disabledIdx?: number | null
+  /**
+   * Auflösung mit Spannung: beim Wechsel auf „aufgelöst" erst nur zeigen, wer
+   * was getippt hat, die Lösung leuchtet nach `suspenseMs()` auf.
+   */
+  suspense?: boolean
 }) {
-  const revealed = correctIdx !== null
+  const holding = useRevealHold(suspense, correctIdx !== null)
+  const revealed = correctIdx !== null && !holding
   return (
     <div className={cn('grid gap-2.5', stage ? 'md:grid-cols-2 md:gap-4' : 'sm:grid-cols-2')}>
       {options.map((option, idx) => {
@@ -125,6 +134,8 @@ export function ShowAnswers({
         let status: AnswerStatus = 'idle'
         if (revealed) {
           status = idx === correctIdx ? 'correct' : picks.length > 0 || idx === myPick ? 'wrong' : 'dimmed'
+        } else if (holding) {
+          status = picks.length > 0 || idx === myPick ? 'selected' : 'dimmed'
         } else if (idx === myPick) {
           status = 'selected'
         } else if (picks.length > 0 || idx === disabledIdx) {
@@ -139,22 +150,33 @@ export function ShowAnswers({
             status={status}
             disabled={!canClick || idx === disabledIdx}
             onClick={() => canClick && idx !== disabledIdx && onSelect(idx)}
-            className={cn(!canClick && !revealed && 'hover:border-brand-purple/40 hover:bg-navy-900/85')}
+            className={cn(
+              !canClick && !revealed && 'hover:border-brand-purple/40 hover:bg-navy-900/85',
+              holding && picks.length > 0 && 'animate-pulse',
+            )}
           >
-            <span className="flex items-center gap-2">
+            <span className="flex flex-wrap items-center gap-2">
               <span className="flex-1">{option}</span>
               {picks.length > 0 && (
-                <span className="flex gap-1" aria-label={`gewählt von ${picks.length} Team(s)`}>
+                <span className="flex flex-wrap gap-1" aria-label={`gewählt von ${picks.length} Team(s)`}>
                   {picks.map((teamId) => {
                     const team = teams.find((t) => t.id === teamId)
-                    return team ? (
+                    if (!team) return null
+                    const hex = getTeamColorHex(team.color)
+                    return (
                       <span
                         key={teamId}
                         title={team.name}
-                        className="h-2.5 w-2.5 rounded-full"
-                        style={{ background: getTeamColorHex(team.color) }}
-                      />
-                    ) : null
+                        className={cn(
+                          'inline-flex max-w-[9rem] items-center gap-1 truncate rounded-full border font-semibold text-white animate-titleIn',
+                          stage ? 'px-2.5 py-0.5 text-sm' : 'px-2 py-px text-[11px]',
+                        )}
+                        style={{ borderColor: hex, background: `${hex}33` }}
+                      >
+                        <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: hex }} />
+                        <span className="truncate">{team.name}</span>
+                      </span>
+                    )
                   })}
                 </span>
               )}
@@ -164,6 +186,32 @@ export function ShowAnswers({
       })}
     </div>
   )
+}
+
+/**
+ * `true`, solange nach dem Umschalten auf „aufgelöst" die Spannungs-Pause läuft.
+ * Nur der Übergang zählt: wer erst nach der Auflösung einsteigt (Reconnect),
+ * sieht die Lösung sofort.
+ */
+export function useRevealHold(enabled: boolean, revealed: boolean): boolean {
+  const [holding, setHolding] = useState(false)
+  const prevRef = useRef(revealed)
+  // Übergang erkennen (ohne Cleanup, damit StrictMode-Doppelläufe nichts verlieren).
+  useEffect(() => {
+    const was = prevRef.current
+    prevRef.current = revealed
+    if (!revealed) setHolding(false)
+    else if (enabled && !was && suspenseMs() > 0) setHolding(true)
+  }, [enabled, revealed])
+  // Pause beenden — eigener Effekt, damit der Timer bei jedem Mount neu steht.
+  useEffect(() => {
+    if (!holding) return
+    const t = window.setTimeout(() => setHolding(false), suspenseMs())
+    return () => window.clearTimeout(t)
+  }, [holding])
+  // Im ersten Render des Übergangs ist der Effekt noch nicht gelaufen —
+  // ohne diesen Check blitzte die Lösung einen Frame lang auf.
+  return holding || (enabled && revealed && !prevRef.current && suspenseMs() > 0)
 }
 
 // ---------- Buzzer -----------------------------------------------------------
@@ -212,13 +260,27 @@ export function ShowTimer({
   paused = false,
   stage = false,
   label,
+  tick = stage,
 }: {
   seconds: number
   critical?: boolean
   paused?: boolean
   stage?: boolean
   label?: string
+  /**
+   * Ticken in den letzten 5 Sekunden. Default nur auf der Bühne — sonst ticken
+   * fünf Handys leicht versetzt durcheinander.
+   */
+  tick?: boolean
 }) {
+  const whole = Math.max(0, Math.ceil(seconds))
+  const lastTickRef = useRef<number | null>(null)
+  useEffect(() => {
+    if (!tick || paused || whole < 1 || whole > 5) return
+    if (lastTickRef.current === whole) return
+    lastTickRef.current = whole
+    playSound('tick')
+  }, [tick, paused, whole])
   const isCritical = critical ?? seconds <= 5
   const hex = paused ? '#8A93B8' : isCritical ? '#FF5C7A' : '#B78BFF'
   return (
@@ -234,7 +296,7 @@ export function ShowTimer({
     >
       <TimerIcon className={cn(stage ? 'h-5 w-5' : 'h-4 w-4')} style={{ color: hex }} aria-hidden />
       <span className={cn('font-display font-extrabold', stage ? 'text-3xl' : 'text-xl')} style={{ color: hex }}>
-        {String(Math.max(0, Math.ceil(seconds))).padStart(2, '0')}
+        {String(whole).padStart(2, '0')}
         {paused && <span className="ml-1 text-sm">⏸</span>}
       </span>
     </div>

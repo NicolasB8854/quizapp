@@ -80,11 +80,29 @@ export interface PingMessage {
   type: 'PING'
 }
 
+/** Erlaubte Emoji-Reaktionen (Allowlist — der Server leitet nur diese weiter). */
+export const REACTION_EMOJIS = ['😂', '🔥', '😱', '👏', '🤯', '😤'] as const
+export type ReactionEmoji = (typeof REACTION_EMOJIS)[number]
+
+export function isReactionEmoji(value: unknown): value is ReactionEmoji {
+  return typeof value === 'string' && (REACTION_EMOJIS as readonly string[]).includes(value)
+}
+
+/**
+ * Emoji-Reaktion eines Spielers. Kein State-Effekt: der Server broadcastet sie
+ * nur als `REACTION` an den Room (flüchtig, nichts wird gespeichert).
+ */
+export interface ReactMessage {
+  type: 'REACT'
+  emoji: ReactionEmoji
+}
+
 export type ClientMessage =
   | JoinRoomMessage
   | DispatchMessage
   | LeaveRoomMessage
   | PingMessage
+  | ReactMessage
 
 // ---------- Server → Client -------------------------------------------------
 
@@ -138,11 +156,20 @@ export interface PongMessage {
   type: 'PONG'
 }
 
+/** Flüchtige Emoji-Reaktion, an alle Verbindungen im Room. */
+export interface ReactionMessage {
+  type: 'REACTION'
+  playerId: string | null
+  playerName: string
+  emoji: ReactionEmoji
+}
+
 export type ServerMessage =
   | JoinedMessage
   | StateMessage
   | ErrorMessage
   | PongMessage
+  | ReactionMessage
 
 // ---------- Helper ---------------------------------------------------------
 
@@ -162,6 +189,8 @@ export function parseClientMessage(raw: string): ClientMessage | null {
       case 'LEAVE_ROOM':
       case 'PING':
         return parsed as ClientMessage
+      case 'REACT':
+        return isReactionEmoji((parsed as { emoji?: unknown }).emoji) ? (parsed as ClientMessage) : null
       default:
         return null
     }

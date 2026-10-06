@@ -137,6 +137,15 @@
   }
   .animate-splash-fade    { animation: splash-fade 1.6s ease-in-out forwards; }
   .animate-splash-content { animation: splash-content 1.6s ease-out forwards; }
+  /* Emoji-Reaktion: steigt auf, wackelt leicht, blendet aus (Dauer = REACTION_TTL_MS). */
+  @keyframes reaction-float {
+    0%   { opacity: 0; transform: translateY(20px) scale(0.6); }
+    12%  { opacity: 1; transform: translateY(0) scale(1.1); }
+    30%  { transform: translateY(-12vh) translateX(-8px) scale(1); }
+    60%  { opacity: 1; transform: translateY(-30vh) translateX(8px); }
+    100% { opacity: 0; transform: translateY(-48vh) translateX(0); }
+  }
+  .animate-reaction-float { animation: reaction-float 2.6s ease-out forwards; }
   /* Verbindungs-Toast: slidet unter dem Team-Farb-Balken ein. */
   @keyframes toast-slide-in {
     0%   { opacity: 0; transform: translateY(-16px); }
@@ -144,6 +153,7 @@
   }
   .animate-toast-slide-in { animation: toast-slide-in 0.22s ease-out; }
   @media (prefers-reduced-motion: reduce) {
+    .animate-reaction-float { animation: splash-fade 2.6s linear forwards; }
     .animate-splash-fade,
     .animate-splash-content {
       animation-duration: 1.6s;

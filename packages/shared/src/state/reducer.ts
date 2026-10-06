@@ -1217,6 +1217,18 @@ const LADDER_VALUES = [200, 500, 1000, 2500, 5000] as const
  * Nutzt DIFFICULTY_WEIGHTS aus Session H über `pickAnyMultipleChoice(_, level)`.
  */
 /** Feste Schwierigkeit pro Ladder-Stufe: 1 → 5, wie beim Millionär. */
+/** Ab so vielen Modi gilt der letzte als Finale mit doppelten Match-Punkten. */
+export const FINALE_MIN_MODES = 3
+
+/**
+ * Match-Punkte für den Sieg im Modus `modeIndex` von `totalModes`.
+ * Aufholjagd: Im Finale (letzter Modus, ab 3 Modi) zählt der Sieg doppelt,
+ * damit der Abend bis zum Schluss offen bleibt.
+ */
+export function matchPointsForMode(modeIndex: number, totalModes: number): number {
+  return totalModes >= FINALE_MIN_MODES && modeIndex === totalModes - 1 ? 2 : 1
+}
+
 export const LADDER_DIFFICULTIES: readonly Difficulty[] = [1, 2, 3, 4, 5]
 
 function pickLadderQuestion(
@@ -3490,7 +3502,9 @@ export function createReducer(deps: ReducerDeps) {
       const mode = MODES_BY_ID[modeId]
       const nextMatchPoints = { ...state.matchPoints }
       if (winnerTeamId && mode?.scoresMatchPoint) {
-        nextMatchPoints[winnerTeamId] = (nextMatchPoints[winnerTeamId] ?? 0) + 1
+        nextMatchPoints[winnerTeamId] =
+          (nextMatchPoints[winnerTeamId] ?? 0) +
+          matchPointsForMode(state.currentModeIndex, state.round.gameModes.length)
       }
 
       const result: GameResult = {

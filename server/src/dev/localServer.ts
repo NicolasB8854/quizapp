@@ -12,6 +12,11 @@ import { handleConnect } from '../handlers/connect'
 import { handleDisconnect } from '../handlers/disconnect'
 import { handleMessage } from '../handlers/message'
 import { sockets } from './memory'
+import { setQuestionCatalog, type Question } from '@quizapp/shared'
+import bundledQuestions from '@quizapp/shared/data/questions.json'
+
+// Wie die Lambda ohne DDB-Tabelle: der gebündelte Katalog (sonst sind alle MC-Modi leer).
+setQuestionCatalog(bundledQuestions as unknown as Question[])
 
 const port = Number(process.argv[2] ?? process.env.PORT ?? 8787)
 const wss = new WebSocketServer({ host: '127.0.0.1', port })
