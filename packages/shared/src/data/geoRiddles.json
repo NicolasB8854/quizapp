@@ -478,5 +478,425 @@
    "Hauptort von Spitzbergen."
   ],
   "fact": "Der Svalbard Global Seed Vault soll Kulturpflanzen für Katastrophen sichern."
+ },
+ {
+  "id": "h-new-orleans",
+  "name": "New Orleans",
+  "country": "USA",
+  "lat": 29.951,
+  "lon": -90.072,
+  "difficulty": 3,
+  "hints": [
+   "In dieser Stadt liegen große Teile unter dem Meeresspiegel.",
+   "Jedes Jahr feiert man hier ausgelassen den Mardi Gras.",
+   "Louis Armstrong wurde hier geboren, die Stadt gilt als Wiege des Jazz.",
+   "Stadt am Mississippi-Delta in Louisiana."
+  ],
+  "fact": "2005 standen nach Hurrikan Katrina rund 80 % von New Orleans unter Wasser."
+ },
+ {
+  "id": "h-rio-cristo",
+  "name": "Rio de Janeiro",
+  "country": "Brasilien",
+  "lat": -22.907,
+  "lon": -43.173,
+  "difficulty": 2,
+  "hints": [
+   "Über dieser Stadt breitet eine riesige Statue die Arme aus.",
+   "Ein Berg sieht hier aus wie ein Zuckerhut.",
+   "Der Karneval dieser Stadt gilt als größter der Welt.",
+   "Strände Copacabana und Ipanema."
+  ],
+  "fact": "Die Christusstatue ist 30 m hoch – ohne Sockel."
+ },
+ {
+  "id": "h-sydney",
+  "name": "Sydney",
+  "country": "Australien",
+  "lat": -33.857,
+  "lon": 151.215,
+  "difficulty": 2,
+  "hints": [
+   "Das Dach eines Gebäudes dieser Stadt erinnert an Segel.",
+   "An Silvester startet hier eines der ersten großen Feuerwerke der Welt.",
+   "Die „Kleiderbügel“-Brücke überspannt den Hafen.",
+   "Größte Stadt Australiens – aber nicht die Hauptstadt."
+  ],
+  "fact": "Das Opernhaus von Sydney wurde 1973 eröffnet, zehn Jahre später als geplant."
+ },
+ {
+  "id": "h-reykjavik",
+  "name": "Reykjavík",
+  "country": "Island",
+  "lat": 64.147,
+  "lon": -21.943,
+  "difficulty": 4,
+  "hints": [
+   "Viele Häuser dieser Stadt werden mit Erdwärme beheizt.",
+   "Hier fand 1986 ein berühmtes Gipfeltreffen zwischen Reagan und Gorbatschow statt.",
+   "Sie ist die nördlichste Hauptstadt eines souveränen Staates.",
+   "Hauptstadt der Insel aus Feuer und Eis."
+  ],
+  "fact": "Fast 90 % aller Häuser Islands werden geothermisch beheizt."
+ },
+ {
+  "id": "h-marrakesch",
+  "name": "Marrakesch",
+  "country": "Marokko",
+  "lat": 31.629,
+  "lon": -7.981,
+  "difficulty": 3,
+  "hints": [
+   "Auf dem Hauptplatz dieser Stadt treten abends Schlangenbeschwörer auf.",
+   "Die Stadtmauern leuchten rötlich – man nennt sie „die Rote“.",
+   "Yves Saint Laurent liebte den Majorelle-Garten hier.",
+   "Königsstadt am Fuß des Atlasgebirges."
+  ],
+  "fact": "Der Platz Djemaa el Fna ist UNESCO-Kulturerbe – als mündliches Erbe."
+ },
+ {
+  "id": "h-santorini",
+  "name": "Santorin",
+  "country": "Griechenland",
+  "lat": 36.393,
+  "lon": 25.461,
+  "difficulty": 3,
+  "hints": [
+   "Diese Insel ist der Rand eines eingestürzten Vulkans.",
+   "Weiße Häuser mit blauen Kuppeln kleben hier an steilen Klippen.",
+   "Manche halten sie für das sagenhafte Atlantis.",
+   "Kykladeninsel in der Ägäis, berühmt für Sonnenuntergänge in Oia."
+  ],
+  "fact": "Der Vulkanausbruch um 1600 v. Chr. gehörte zu den größten der Menschheitsgeschichte."
+ },
+ {
+  "id": "h-istanbul",
+  "name": "Istanbul",
+  "country": "Türkei",
+  "lat": 41.008,
+  "lon": 28.978,
+  "difficulty": 2,
+  "hints": [
+   "Diese Stadt hieß schon Byzanz und Konstantinopel.",
+   "Hier kann man mit der Fähre von Europa nach Asien fahren.",
+   "Die Hagia Sophia war Kirche, Moschee, Museum und wieder Moschee.",
+   "Größte Stadt der Türkei am Bosporus."
+  ],
+  "fact": "Der Große Basar in Istanbul hat über 4000 Geschäfte."
+ },
+ {
+  "id": "h-tallinn",
+  "name": "Tallinn",
+  "country": "Estland",
+  "lat": 59.437,
+  "lon": 24.754,
+  "difficulty": 4,
+  "hints": [
+   "Die Altstadt dieser Hauptstadt ist eine der besterhaltenen Hansestädte.",
+   "Hier wurde die Software für Skype mitentwickelt.",
+   "Bis Helsinki sind es nur rund 80 km übers Meer.",
+   "Hauptstadt Estlands."
+  ],
+  "fact": "In Estland kann man seit 2005 online bei Wahlen abstimmen."
+ },
+ {
+  "id": "h-krakau",
+  "name": "Krakau",
+  "country": "Polen",
+  "lat": 50.065,
+  "lon": 19.945,
+  "difficulty": 3,
+  "hints": [
+   "Ein Drache soll einst in einer Höhle unter der Burg dieser Stadt gelebt haben.",
+   "Vom Turm der Marienkirche bricht jede Stunde ein Trompetensignal mittendrin ab.",
+   "Sie war bis 1596 Hauptstadt ihres Landes.",
+   "Polnische Stadt mit der Wawel-Burg."
+  ],
+  "fact": "Das Turmsignal bricht ab, weil der Legende nach ein Trompeter von einem Pfeil getroffen wurde."
+ },
+ {
+  "id": "h-bruegge",
+  "name": "Brügge",
+  "country": "Belgien",
+  "lat": 51.209,
+  "lon": 3.225,
+  "difficulty": 4,
+  "hints": [
+   "Diese Stadt wird wegen ihrer Kanäle „Venedig des Nordens“ genannt.",
+   "Im Mittelalter war sie eine der reichsten Handelsstädte Europas.",
+   "Ein Film mit Colin Farrell trägt ihren Namen im Titel.",
+   "Flämische Stadt bekannt für Spitze, Pralinen und Bier."
+  ],
+  "fact": "Die Altstadt von Brügge ist komplett UNESCO-Welterbe."
+ },
+ {
+  "id": "h-dubrovnik",
+  "name": "Dubrovnik",
+  "country": "Kroatien",
+  "lat": 42.65,
+  "lon": 18.094,
+  "difficulty": 3,
+  "hints": [
+   "Eine fast zwei Kilometer lange Mauer umschließt die Altstadt dieser Stadt.",
+   "Sie war Jahrhunderte lang eine eigene Republik.",
+   "In „Game of Thrones“ spielt sie die Hauptstadt Königsmund.",
+   "Perle der Adria im Süden Kroatiens."
+  ],
+  "fact": "Die Republik Ragusa – das heutige Dubrovnik – schaffte 1416 den Sklavenhandel ab."
+ },
+ {
+  "id": "h-oxford",
+  "name": "Oxford",
+  "country": "England",
+  "lat": 51.752,
+  "lon": -1.258,
+  "difficulty": 4,
+  "hints": [
+   "In dieser Stadt liegt die älteste Universität der englischsprachigen Welt.",
+   "Lewis Carroll erfand hier „Alice im Wunderland“.",
+   "Der Speisesaal von Christ Church diente als Vorbild für Hogwarts.",
+   "Universitätsstadt der „träumenden Türme“ an der Themse."
+  ],
+  "fact": "In Oxford wird schon seit mindestens 1096 gelehrt."
+ },
+ {
+  "id": "h-heidelberg",
+  "name": "Heidelberg",
+  "country": "Deutschland",
+  "lat": 49.399,
+  "lon": 8.672,
+  "difficulty": 3,
+  "hints": [
+   "Über dieser Stadt thront eine berühmte Schlossruine.",
+   "Im Schlosskeller steht eines der größten Weinfässer der Welt.",
+   "Hier liegt die älteste Universität Deutschlands.",
+   "Romantische Stadt am Neckar."
+  ],
+  "fact": "Das Große Fass im Heidelberger Schloss fasst rund 220.000 Liter."
+ },
+ {
+  "id": "h-hamburg",
+  "name": "Hamburg",
+  "country": "Deutschland",
+  "lat": 53.551,
+  "lon": 9.993,
+  "difficulty": 2,
+  "hints": [
+   "In dieser Stadt gibt es mehr Brücken als in Amsterdam und Venedig zusammen.",
+   "Die Beatles spielten hier vor ihrem Durchbruch in Clubs.",
+   "Ein Konzerthaus sitzt hier auf einem alten Speicher – die „Elphi“.",
+   "Hafenstadt an der Elbe."
+  ],
+  "fact": "Hamburg hat rund 2500 Brücken."
+ },
+ {
+  "id": "h-dresden",
+  "name": "Dresden",
+  "country": "Deutschland",
+  "lat": 51.051,
+  "lon": 13.738,
+  "difficulty": 3,
+  "hints": [
+   "Eine Kirche dieser Stadt wurde nach dem Krieg Stein für Stein wieder aufgebaut.",
+   "Sie trägt den Spitznamen „Elbflorenz“.",
+   "Hier steht der Zwinger mit der Sixtinischen Madonna.",
+   "Landeshauptstadt Sachsens."
+  ],
+  "fact": "Die Frauenkirche wurde 2005 nach elf Jahren Wiederaufbau geweiht."
+ },
+ {
+  "id": "h-bergen",
+  "name": "Bergen",
+  "country": "Norwegen",
+  "lat": 60.392,
+  "lon": 5.324,
+  "difficulty": 4,
+  "hints": [
+   "In dieser Stadt regnet es an über 200 Tagen im Jahr.",
+   "Bunte Holzhäuser der Hanse stehen hier am Kai, die „Bryggen“.",
+   "Sie gilt als Tor zu den Fjorden.",
+   "Zweitgrößte Stadt Norwegens."
+  ],
+  "fact": "Bryggen in Bergen war ein Kontor der Hanse und ist UNESCO-Welterbe."
+ },
+ {
+  "id": "h-montreal",
+  "name": "Montréal",
+  "country": "Kanada",
+  "lat": 45.502,
+  "lon": -73.567,
+  "difficulty": 3,
+  "hints": [
+   "In dieser Stadt spricht die Mehrheit Französisch – obwohl sie nicht in Frankreich liegt.",
+   "Unter der Innenstadt verläuft eine riesige unterirdische Stadt.",
+   "Hier fanden 1976 die Olympischen Sommerspiele statt.",
+   "Größte Stadt der Provinz Québec."
+  ],
+  "fact": "Die „Ville souterraine“ von Montréal hat über 30 km Gänge."
+ },
+ {
+  "id": "h-seattle",
+  "name": "Seattle",
+  "country": "USA",
+  "lat": 47.606,
+  "lon": -122.332,
+  "difficulty": 3,
+  "hints": [
+   "In dieser Stadt wurde die erste Filiale einer weltberühmten Kaffeekette eröffnet.",
+   "Microsoft und Amazon haben in ihrer Umgebung ihren Sitz.",
+   "Ein Turm mit Restaurant sieht hier aus wie ein Ufo.",
+   "Heimat von Grunge – Nirvana und Pearl Jam."
+  ],
+  "fact": "Die Space Needle wurde für die Weltausstellung 1962 gebaut."
+ },
+ {
+  "id": "h-chicago",
+  "name": "Chicago",
+  "country": "USA",
+  "lat": 41.878,
+  "lon": -87.63,
+  "difficulty": 3,
+  "hints": [
+   "Jedes Jahr am St. Patrick’s Day wird hier ein Fluss grün gefärbt.",
+   "Ein Kunstwerk in Form einer Bohne spiegelt hier die Skyline.",
+   "1871 brannte fast die halbe Stadt ab.",
+   "„Windy City“ am Michigansee."
+  ],
+  "fact": "Der Chicago River wird seit 1962 zum St. Patrick’s Day grün gefärbt."
+ },
+ {
+  "id": "h-kapstadt",
+  "name": "Kapstadt",
+  "country": "Südafrika",
+  "lat": -33.925,
+  "lon": 18.424,
+  "difficulty": 3,
+  "hints": [
+   "Über dieser Stadt liegt oft eine Wolke wie ein „Tischtuch“ auf einem Berg.",
+   "Vor ihrer Küste liegt die Gefängnisinsel Robben Island.",
+   "Wenige Kilometer entfernt watscheln Pinguine über einen Strand.",
+   "Stadt am Tafelberg an der Südspitze Afrikas."
+  ],
+  "fact": "Am Boulders Beach bei Kapstadt lebt eine Kolonie von Brillenpinguinen."
+ },
+ {
+  "id": "h-sansibar",
+  "name": "Sansibar",
+  "country": "Tansania",
+  "lat": -6.165,
+  "lon": 39.199,
+  "difficulty": 4,
+  "hints": [
+   "Diese Insel heißt auch „Gewürzinsel“ – Nelken machten sie reich.",
+   "Ein Rockstar wurde hier 1946 als Farrokh Bulsara geboren.",
+   "Die Altstadt heißt Stone Town.",
+   "Inselgruppe vor der Küste Tansanias."
+  ],
+  "fact": "Freddie Mercury wurde in Stone Town auf Sansibar geboren."
+ },
+ {
+  "id": "h-bali",
+  "name": "Bali",
+  "country": "Indonesien",
+  "lat": -8.409,
+  "lon": 115.189,
+  "difficulty": 3,
+  "hints": [
+   "Auf dieser Insel gibt es einen Tag im Jahr, an dem niemand das Haus verlässt.",
+   "Reisterrassen ziehen sich hier wie Treppen die Hügel hinauf.",
+   "Die Mehrheit der Bewohner ist hindu – anders als im Rest des Landes.",
+   "„Insel der Götter“ in Indonesien."
+  ],
+  "fact": "Am balinesischen Neujahrstag Nyepi ist sogar der Flughafen geschlossen."
+ },
+ {
+  "id": "h-hongkong",
+  "name": "Hongkong",
+  "country": "China",
+  "lat": 22.319,
+  "lon": 114.169,
+  "difficulty": 2,
+  "hints": [
+   "Diese Stadt hat mehr Hochhäuser als jede andere der Welt.",
+   "Sie war bis 1997 britische Kolonie.",
+   "Jeden Abend gibt es hier eine Lichtshow an der Skyline über dem Hafen.",
+   "Sonderverwaltungszone am Perlflussdelta."
+  ],
+  "fact": "Hongkong hat über 500 Gebäude mit mehr als 150 m Höhe."
+ },
+ {
+  "id": "h-kathmandu",
+  "name": "Kathmandu",
+  "country": "Nepal",
+  "lat": 27.717,
+  "lon": 85.324,
+  "difficulty": 4,
+  "hints": [
+   "In dieser Stadt verehrt man ein lebendes Mädchen als Göttin.",
+   "Für viele Bergsteiger beginnt hier die Reise zum höchsten Berg der Welt.",
+   "Gebetsfahnen flattern über der Stupa von Boudhanath.",
+   "Hauptstadt Nepals."
+  ],
+  "fact": "Die Kumari, die lebende Göttin von Kathmandu, wird schon als Kleinkind ausgewählt."
+ },
+ {
+  "id": "h-lhasa",
+  "name": "Lhasa",
+  "country": "China (Tibet)",
+  "lat": 29.652,
+  "lon": 91.172,
+  "difficulty": 5,
+  "hints": [
+   "Diese Stadt liegt auf rund 3650 m Höhe.",
+   "Ein Palast mit über 1000 Räumen war Sitz des Dalai Lama.",
+   "Ihr Name bedeutet „Ort der Götter“.",
+   "Hauptstadt Tibets."
+  ],
+  "fact": "Der Potala-Palast in Lhasa ist rund 117 m hoch."
+ },
+ {
+  "id": "h-petra",
+  "name": "Petra",
+  "country": "Jordanien",
+  "lat": 30.329,
+  "lon": 35.444,
+  "difficulty": 3,
+  "hints": [
+   "Diese Stadt wurde von den Nabatäern in rosaroten Fels gehauen.",
+   "Man erreicht sie durch eine enge Schlucht, den Siq.",
+   "Indiana Jones findet hier den Heiligen Gral.",
+   "Felsenstadt in Jordanien."
+  ],
+  "fact": "Petra ist seit 2007 eines der „neuen sieben Weltwunder“."
+ },
+ {
+  "id": "h-ulaanbaatar",
+  "name": "Ulaanbaatar",
+  "country": "Mongolei",
+  "lat": 47.886,
+  "lon": 106.906,
+  "difficulty": 5,
+  "hints": [
+   "Diese Hauptstadt ist die kälteste der Welt.",
+   "Fast die Hälfte der Einwohner des Landes lebt hier.",
+   "Am Stadtrand wohnen viele Menschen in Jurten.",
+   "Hauptstadt der Mongolei."
+  ],
+  "fact": "Im Januar liegt die Durchschnittstemperatur in Ulaanbaatar bei rund −20 °C."
+ },
+ {
+  "id": "h-galapagos",
+  "name": "Galápagos-Inseln",
+  "country": "Ecuador",
+  "lat": -0.954,
+  "lon": -90.966,
+  "difficulty": 4,
+  "hints": [
+   "Auf diesen Inseln leben Schildkröten, die über 150 Jahre alt werden.",
+   "Hier tauchen Leguane im Meer nach Algen.",
+   "Ein britischer Naturforscher entwickelte hier Ideen zur Evolution.",
+   "Inselgruppe im Pazifik, die zu Ecuador gehört."
+  ],
+  "fact": "Die Inseln liegen rund 1000 km vor der Küste Ecuadors."
  }
 ]
