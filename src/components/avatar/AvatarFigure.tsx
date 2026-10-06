@@ -396,7 +396,17 @@ export function AvatarFigure({ look, accentHex = '#7C5CFF', crop = 'bust', class
   // Konturen: halten Haar/Haut auch klein und bei ähnlichen Tönen auseinander.
   const skinLine = shade(skin, 0.38)
   const hair = against(HAIR_COLORS[look.hairColor] ?? HAIR_COLORS[2], SKIN_TONES[look.skin] ?? SKIN_TONES[2])
-  const beardColor = shade(hair, 0.12)
+  const skinTone = SKIN_TONES[look.skin] ?? SKIN_TONES[2]
+  // Bart klar von der Haut absetzen; bei sehr dunkler Haut zusätzlich helle Kontur.
+  // Helles Haar bleibt im Bart erkennbar hell (nur moderat abgedunkelt), nie „oliv-schwarz".
+  const beardBase = shade(hair, 0.12)
+  const beardColor =
+    Math.abs(luma(beardBase) - luma(skinTone)) >= 0.12
+      ? beardBase
+      : luma(skinTone) > 0.3
+        ? shade(hair, luma(hair) > 0.5 ? 0.3 : 0.5)
+        : mix(beardBase, '#ffffff', 0.22)
+  const darkSkin = luma(skinTone) < 0.22
   const hairBack = shade(hair, 0.1)
   const hairLine = look.hairColor >= 6 && look.hairColor <= 7 ? shade(hair, 0.45) : shade(hair, 0.5)
   const brow = look.hairColor >= 6 && look.hairColor <= 7 ? shade(hair, 0.35) : shade(hair, 0.15)
@@ -414,7 +424,8 @@ export function AvatarFigure({ look, accentHex = '#7C5CFF', crop = 'bust', class
     cs: hairBack,
     line: hairLine,
     shaved: mix(skin, hair, 0.75),
-    buzz: mix(skin, hair, 0.85),
+    buzz: against(mix(skin, hair, 0.85), skin),
+    rim: luma(hair) < 0.22 ? tint(accentHex, 0.25) : undefined,
   })
   const underHat = HAT.has(look.accessory) ? `url(#${ids.below})` : undefined
   const viewBox = crop === 'face' ? '31 17 138 138' : '16 10 168 168'
@@ -433,7 +444,7 @@ export function AvatarFigure({ look, accentHex = '#7C5CFF', crop = 'bust', class
         </clipPath>
         {/* Bartzone: Wangen ab Ohrhöhe, Bogen über der Oberlippe */}
         <clipPath id={ids.beard}>
-          <path d="M30 104 C58 114 80 116 100 115 C120 116 142 114 170 104 L170 200 L30 200 Z" />
+          <path d="M30 114 C58 118 80 117 100 116 C120 117 142 118 170 114 L170 200 L30 200 Z" />
         </clipPath>
         <clipPath id={ids.stubble}>
           <path d="M40 106 L66 104 Q78 116 88 122 Q100 126 112 122 Q122 116 134 104 L160 106 L170 200 L30 200 Z" />
@@ -502,13 +513,13 @@ export function AvatarFigure({ look, accentHex = '#7C5CFF', crop = 'bust', class
 
         {look.beard === 'stubble' && (
           <g clipPath={`url(#${ids.stubble})`}>
-            <path d={head.d} fill={mix(beardColor, '#5A6485', 0.3)} opacity={0.38} />
+            <path d={head.d} fill={darkSkin ? '#000000' : shade(beardColor, 0.2)} opacity={darkSkin ? 0.42 : 0.32} />
           </g>
         )}
         {look.beard === 'full' && (
           <>
             <g clipPath={`url(#${ids.beard})`}>
-              <path d={head.d} fill={beardColor} stroke={hairLine} strokeWidth={1.6} transform="translate(100 96) scale(1 1.16) translate(-100 -96)" />
+              <path d={head.d} fill={beardColor} stroke={darkSkin ? tint(skinTone, 0.35) : hairLine} strokeWidth={1.6} transform="translate(100 96) scale(1 1.16) translate(-100 -96)" />
             </g>
             <ellipse cx={100} cy={123} rx={13} ry={7} fill={skin} />
           </>
@@ -517,11 +528,11 @@ export function AvatarFigure({ look, accentHex = '#7C5CFF', crop = 'bust', class
         <Nose kind={look.nose} skin={skin} />
         <Mouth kind={look.mouth} lip={luma(skin) < 0.3 ? '#2A0E18' : LIP} />
         {(look.beard === 'mustache' || look.beard === 'goatee' || look.beard === 'full') && (
-          <path d={MUSTACHE} fill={beardColor} stroke={hairLine} strokeWidth={1} transform={`translate(100 115) scale(${1.3 * head.sx} 1.3) translate(-100 -115)`} />
+          <path d={MUSTACHE} fill={beardColor} stroke={darkSkin ? tint(skinTone, 0.35) : hairLine} strokeWidth={1} transform={`translate(100 115) scale(${1.3 * head.sx} 1.3) translate(-100 -115)`} />
         )}
         {look.beard === 'goatee' && (
           <g clipPath={`url(#${ids.head})`}>
-            <path d="M89 130 C89 146 111 146 111 130 C105 134 95 134 89 130 Z" fill={beardColor} stroke={hairLine} strokeWidth={1.2} />
+            <path d="M89 130 C89 146 111 146 111 130 C105 134 95 134 89 130 Z" fill={beardColor} stroke={darkSkin ? tint(skinTone, 0.35) : hairLine} strokeWidth={1.2} />
           </g>
         )}
 
