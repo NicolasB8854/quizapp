@@ -30,6 +30,8 @@ export interface HairCtx {
   shaved: string
   /** Buzzcut-Ton. */
   buzz: string
+  /** Lichtkante (Spielerfarbe) für dunkles Haar vor dunklem Hintergrund. */
+  rim?: string
 }
 
 export interface HairLayers {
@@ -54,7 +56,7 @@ const REGION = {
   curly: 'M0 0 H200 V102 H134 Q136 84 130 72 C116 66 84 66 70 72 Q64 84 66 102 H0 Z',
   afro: 'M0 0 H200 V100 H136 Q136 80 128 68 C114 63 86 63 72 68 Q64 80 64 100 H0 Z',
   // Pony gerade, Seiten bis Kinnlinie
-  bob: 'M0 0 H200 V136 H134 V98 Q134 84 130 76 C116 81 84 81 70 76 Q66 84 66 98 V136 H0 Z',
+  bob: 'M0 0 H200 V136 H134 V98 Q134 84 130 76 L127 86 L119 75 L113 90 L105 77 L98 92 L90 78 L83 90 L76 77 L70 76 Q66 84 66 98 V136 H0 Z',
   // Mittelscheitel, Seiten fallen über die Gesichtskante
   long: 'M0 0 H200 V150 H135 V102 Q134 80 124 68 C114 63 105 61 100 55 C95 61 86 63 76 68 Q66 80 65 102 V150 H0 Z',
 } as const
@@ -191,6 +193,11 @@ export function buildHair(style: AvatarLook['hair'], x: HairCtx): HairLayers {
   // Kontur-Durchgang (breite Linie) unter dem Füll-Durchgang → nur der Außenrand bleibt sichtbar.
   const twoPass = (shapes: ReactNode, fill: string) => (
     <>
+      {x.rim && (
+        <g fill="none" stroke={x.rim} strokeOpacity={1} strokeWidth={9} strokeLinejoin="round">
+          {shapes}
+        </g>
+      )}
       <g fill={fill} stroke={x.line} strokeWidth={3.2} strokeLinejoin="round">
         {shapes}
       </g>
