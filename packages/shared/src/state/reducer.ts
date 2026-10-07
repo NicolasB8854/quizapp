@@ -490,6 +490,19 @@ export interface GameState {
   currentModeIndex: number
   live: LiveGame | null
   lobbyStep: LobbyStep
+  /**
+   * Stechen: Nach dem letzten Modus Gleichstand an der Spitze → ein zufälliger
+   * Modus in Kurzform. Nur `teamIds` (die Gleichstands-Teams) können ihn gewinnen.
+   * Fehlt bei älteren States (= kein Stechen).
+   */
+  tiebreak?: TiebreakState | null
+}
+
+export interface TiebreakState {
+  modeId: GameModeId
+  teamIds: string[]
+  /** 1 = erstes Stechen; bei erneutem Gleichstand wird weitergestochen. */
+  round: number
 }
 
 // ---------- Actions -----------------------------------------------------------
@@ -1217,6 +1230,71 @@ const LADDER_VALUES = [200, 500, 1000, 2500, 5000] as const
  * Nutzt DIFFICULTY_WEIGHTS aus Session H über `pickAnyMultipleChoice(_, level)`.
  */
 /** Feste Schwierigkeit pro Ladder-Stufe: 1 → 5, wie beim Millionär. */
+/**
+ * Modi fürs Stechen: alle Teams tippen parallel, Länge über einen Zähler kürzbar.
+ * Wert = Anzahl Runden in der Kurzform.
+ */
+export const TIEBREAK_MODES: Partial<Record<GameModeId, number>> = {
+  flash: 4,
+  'points-ladder': 3,
+  blindguess: 3,
+  geoguess: 3,
+  'song-year': 3,
+}
+/** Nach so vielen Stechen ohne Entscheidung bleibt es beim Remis. */
+export const TIEBREAK_MAX_ROUNDS = 3
+
+/** Teams mit den meisten Match-Punkten, wenn es mehr als eins sind. */
+export function tiedLeaders(teamIds: readonly string[], matchPoints: Record<string, number>): string[] {
+  if (teamIds.length < 2) return []
+  const top = Math.max(...teamIds.map((id) => matchPoints[id] ?? 0))
+  // 0:0 (nur Modi ohne Wertung oder übersprungen) ist kein Grund für ein Stechen.
+  if (top <= 0) return []
+  const leaders = teamIds.filter((id) => (matchPoints[id] ?? 0) === top)
+  return leaders.length > 1 ? leaders : []
+}
+
+/** Kurzform eines Modus: den Rundenzähler auf `rounds` kappen. */
+function shortenLive(live: LiveGame, rounds: number): LiveGame {
+  const l = live as unknown as Record<string, unknown>
+  for (const key of ['totalStatements', 'totalQuestions', 'totalRounds']) {
+    if (typeof l[key] === 'number') return { ...live, [key]: Math.min(l[key] as number, rounds) } as LiveGame
+  }
+  return live
+}
+
+/**
+ * Startet ein Stechen (zufälliger Modus, der Inhalte hat) oder liefert null,
+ * wenn keiner spielbar ist.
+ */
+function startTiebreak(
+  state: GameState,
+  teamIds: string[],
+  round: number,
+  deps: ReducerDeps,
+  random: () => number = Math.random,
+): GameState | null {
+  if (!state.round) return null
+  const candidates = (Object.keys(TIEBREAK_MODES) as GameModeId[]).filter((id) => MODES_BY_ID[id])
+  // Zufällige Reihenfolge, der erste Modus mit Inhalt gewinnt.
+  const order = candidates
+    .map((id) => ({ id, r: random() }))
+    .sort((a, b) => a.r - b.r)
+    .map((x) => x.id)
+  for (const modeId of order) {
+    const live = initLiveFor(modeId, state.round.teams, state.round.players, deps)
+    if (!live || (live as { phase?: string }).phase === 'empty') continue
+    return {
+      ...state,
+      phase: 'playing',
+      live: shortenLive(live, TIEBREAK_MODES[modeId] ?? 3),
+      currentModeIndex: state.round.gameModes.length + round - 1,
+      tiebreak: { modeId, teamIds, round },
+    }
+  }
+  return null
+}
+
 /** Ab so vielen Modi gilt der letzte als Finale mit doppelten Match-Punkten. */
 export const FINALE_MIN_MODES = 3
 
@@ -3476,6 +3554,23 @@ export function createReducer(deps: ReducerDeps) {
 
     case 'FINISH_MODE': {
       if (!state.round || !state.live) return state
+      if (state.tiebreak) {
+        // Stechen: nur die Gleichstands-Teams zählen, Sieger bekommt +1.
+        const tb = state.tiebreak
+        const sc = state.live.scores
+        const top = Math.max(...tb.teamIds.map((id) => sc[id] ?? 0))
+        const best = tb.teamIds.filter((id) => (sc[id] ?? 0) === top)
+        const winner = best.length === 1 ? best[0] : undefined
+        const matchPoints = { ...state.matchPoints }
+        if (winner) matchPoints[winner] = (matchPoints[winner] ?? 0) + 1
+        const results = [
+          ...state.results,
+          { gameModeId: tb.modeId, scores: sc, winnerTeamId: winner, questionsUsed: state.live.usedQuestionIds, tiebreak: true },
+        ]
+        const done: GameState = { ...state, phase: 'scoreboard', results, matchPoints, live: null, tiebreak: null }
+        if (winner || tb.round >= TIEBREAK_MAX_ROUNDS) return done
+        return startTiebreak(done, best, tb.round + 1, deps) ?? done
+      }
       const modeId = state.round.gameModes[state.currentModeIndex]
       // Alle Live-Varianten haben `scores` und `usedQuestionIds` in der gleichen Form.
       const scores = state.live.scores
@@ -3518,13 +3613,17 @@ export function createReducer(deps: ReducerDeps) {
       const isMatchDone = nextIndex >= state.round.gameModes.length
 
       if (isMatchDone) {
-        return {
+        const done: GameState = {
           ...state,
           phase: 'scoreboard',
           results,
           matchPoints: nextMatchPoints,
           live: null,
+          tiebreak: null,
         }
+        const tied = tiedLeaders(state.round.teams.map((t) => t.id), nextMatchPoints)
+        if (tied.length > 0) return startTiebreak(done, tied, 1, deps) ?? done
+        return done
       }
 
       const nextModeId = state.round.gameModes[nextIndex]
@@ -3586,6 +3685,7 @@ export function createReducer(deps: ReducerDeps) {
         ),
         results: [],
         live: null,
+        tiebreak: null,
       }
     }
 

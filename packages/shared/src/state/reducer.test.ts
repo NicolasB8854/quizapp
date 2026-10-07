@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { createReducer, INITIAL_STATE, matchPointsForMode, type GameState } from './reducer'
+import { createReducer, INITIAL_STATE, matchPointsForMode, TIEBREAK_MAX_ROUNDS, TIEBREAK_MODES, tiedLeaders, type GameState } from './reducer'
 import { getMultipleChoiceByTopic, getTrueFalsePool } from '../lib/questions'
 import type { SkillLevel } from '../types/round'
 import { DEFAULT_AVATAR_LOOK } from '../data/avatarLook'
@@ -2598,5 +2598,74 @@ describe('reducer — Finale zählt doppelt', () => {
     expect(finishWithWinner(2, 3).matchPoints[teamA]).toBe(2)
     expect(finishWithWinner(1, 3).matchPoints[teamA]).toBe(1)
     expect(finishWithWinner(1, 2).matchPoints[teamA]).toBe(1)
+  })
+})
+
+describe('reducer — Stechen bei Gleichstand', () => {
+  /** Letzten Modus (Index totalModes-1) mit Modus-Scores beenden, Match-Punkte vorgegeben. */
+  function finishLast(matchPoints: [number, number], scores: [number, number], totalModes = 3): GameState {
+    const base = bootIntoPlaying('flash')
+    const [a, b] = base.round!.teams.map((t) => t.id)
+    const s: GameState = {
+      ...base,
+      round: { ...base.round!, gameModes: Array.from({ length: totalModes }, () => 'flash' as const) },
+      currentModeIndex: totalModes - 1,
+      matchPoints: { [a]: matchPoints[0], [b]: matchPoints[1] },
+      live: { ...base.live!, scores: { [a]: scores[0], [b]: scores[1] } } as GameState['live'],
+    }
+    return reducer(s, { type: 'FINISH_MODE' })
+  }
+
+  it('2:1 + Finale (×2) für das zweite Team → Stechen statt Remis, Kurzform', () => {
+    const s = finishLast([2, 0], [100, 300])
+    const [a, b] = s.round!.teams.map((t) => t.id)
+    expect(s.matchPoints).toEqual({ [a]: 2, [b]: 2 })
+    expect(s.phase).toBe('playing')
+    expect(s.tiebreak).toMatchObject({ teamIds: [a, b], round: 1 })
+    expect(Object.keys(TIEBREAK_MODES)).toContain(s.tiebreak!.modeId)
+    expect(s.live!.kind).toBeDefined()
+    const live = s.live as unknown as Record<string, number>
+    const total = live.totalStatements ?? live.totalQuestions ?? live.totalRounds
+    expect(total).toBeLessThanOrEqual(TIEBREAK_MODES[s.tiebreak!.modeId]!)
+    expect(s.currentModeIndex).toBe(3)
+  })
+
+  it('Klarer Sieger → kein Stechen', () => {
+    const s = finishLast([2, 0], [300, 100])
+    expect(s.phase).toBe('scoreboard')
+    expect(s.tiebreak ?? null).toBeNull()
+  })
+
+  it('Stechen-Sieger bekommt +1 und gewinnt; Ergebnis ist als Stechen markiert', () => {
+    const tb = finishLast([2, 0], [100, 300])
+    const [a, b] = tb.round!.teams.map((t) => t.id)
+    const s = reducer({ ...tb, live: { ...tb.live!, scores: { [a]: 0, [b]: 50 } } as GameState['live'] }, { type: 'FINISH_MODE' })
+    expect(s.phase).toBe('scoreboard')
+    expect(s.matchPoints).toEqual({ [a]: 2, [b]: 3 })
+    expect(s.results.at(-1)).toMatchObject({ tiebreak: true, winnerTeamId: b })
+    expect(s.tiebreak).toBeNull()
+  })
+
+  it('Erneuter Gleichstand → weiteres Stechen, nach dem Limit bleibt es Remis', () => {
+    let s = finishLast([2, 0], [100, 300])
+    for (let r = 1; r < TIEBREAK_MAX_ROUNDS; r++) {
+      s = reducer({ ...s, live: { ...s.live!, scores: Object.fromEntries(Object.keys(s.live!.scores).map((k) => [k, 0])) } as GameState['live'] }, { type: 'FINISH_MODE' })
+      expect(s.tiebreak?.round).toBe(r + 1)
+    }
+    s = reducer(s, { type: 'FINISH_MODE' })
+    expect(s.phase).toBe('scoreboard')
+    expect(s.tiebreak).toBeNull()
+  })
+
+  it('RESTART_MATCH räumt ein laufendes Stechen ab', () => {
+    const s = reducer(finishLast([2, 0], [100, 300]), { type: 'RESTART_MATCH' })
+    expect(s.tiebreak).toBeNull()
+  })
+})
+
+describe('reducer — Stechen, Randfall', () => {
+  it('0:0 nach dem letzten Modus → kein Stechen', () => {
+    expect(tiedLeaders(['a', 'b'], { a: 0, b: 0 })).toEqual([])
+    expect(tiedLeaders(['a', 'b', 'c'], { a: 2, b: 2, c: 1 })).toEqual(['a', 'b'])
   })
 })

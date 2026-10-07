@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { hostLine, rankStandings, splashDurationMs, STANDINGS_MS } from './ModeTransitionSplash'
+import { hostLine, rankStandings, splashDurationMs, STANDINGS_MS, tiebreakLine } from './ModeTransitionSplash'
 
 const t = (id: string, points: number) => ({ id, name: id, colorHex: '#fff', points })
 
@@ -26,5 +26,11 @@ describe('Zwischenstand im Modus-Splash', () => {
 
   it('Dauer: Zwischenstand verlängert nur ab dem zweiten Modus', () => {
     expect(splashDurationMs(true) - splashDurationMs(false)).toBe(STANDINGS_MS)
+  })
+
+  it('Stechen-Moderation nennt Modus und die Gleichstands-Teams', () => {
+    expect(tiebreakLine('Blitzrunde', ['Nova', 'Pulsar'])).toBe(
+      'Gleichstand! Stechen in Blitzrunde (Kurzform) — nur Nova und Pulsar können gewinnen.',
+    )
   })
 })

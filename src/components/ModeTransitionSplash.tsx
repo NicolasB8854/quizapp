@@ -43,6 +43,8 @@ interface Props {
   lastWinnerId?: string | null
   /** Match-Punkte, die der letzte Modus-Sieger bekommen hat. */
   lastAward?: number
+  /** Stechen: Namen der Gleichstands-Teams (nur sie können gewinnen). */
+  tiebreakTeams?: string[] | null
 }
 
 /** Dauer des Zwischenstand-Akts. */
@@ -54,6 +56,11 @@ const SHUFFLE_AT_MS = 650
 
 export function splashDurationMs(withStandings: boolean): number {
   return (withStandings ? STANDINGS_MS : 0) + INTRO_MS
+}
+
+/** Moderation fürs Stechen. */
+export function tiebreakLine(modeName: string, teams: readonly string[]): string {
+  return `Gleichstand! Stechen in ${modeName} (Kurzform) — nur ${teams.join(' und ')} können gewinnen.`
 }
 
 /** Moderations-Zeilen: ein Satz wie von einer Show-Moderation. */
@@ -103,7 +110,9 @@ export function ModeTransitionSplash({
   standings,
   lastWinnerId = null,
   lastAward = 1,
+  tiebreakTeams = null,
 }: Props) {
+  const isTiebreak = !!tiebreakTeams && tiebreakTeams.length > 0
   const withStandings = !!standings && standings.length > 1 && modeIndex > 0
   const [act, setAct] = useState<'standings' | 'intro'>(withStandings ? 'standings' : 'intro')
   const [shuffled, setShuffled] = useState(false)
@@ -164,17 +173,18 @@ export function ModeTransitionSplash({
           shuffled={shuffled}
           modeIndex={modeIndex}
           totalModes={totalModes}
+          isTiebreak={isTiebreak}
         />
       ) : (
         <div key="intro" className="relative max-w-3xl px-6 text-center animate-titleIn">
           <div className="text-xs md:text-sm uppercase tracking-[0.32em] text-white/40">
-            Modus {modeIndex + 1} / {totalModes}
+            {isTiebreak ? 'Stechen' : `Modus ${modeIndex + 1} / ${totalModes}`}
           </div>
           <div
             className="mt-3 text-sm md:text-base uppercase font-bold tracking-[0.4em]"
             style={{ color: accent, textShadow: `0 0 24px ${accent}80` }}
           >
-            {mode.chipLabel}
+            {isTiebreak ? '⚔️ Stechen' : mode.chipLabel}
           </div>
           <div
             className="mt-4 text-5xl md:text-7xl lg:text-8xl font-bold leading-tight text-white"
@@ -182,13 +192,13 @@ export function ModeTransitionSplash({
           >
             {mode.name}
           </div>
-          {totalModes >= FINALE_MIN_MODES && modeIndex === totalModes - 1 && (
+          {!isTiebreak && totalModes >= FINALE_MIN_MODES && modeIndex === totalModes - 1 && (
             <div className="mt-5 inline-flex items-center gap-2 rounded-full border-2 border-amber-300 bg-amber-300/15 px-5 py-1.5 font-display text-2xl md:text-3xl font-black text-amber-200 animate-pop">
               ×2 · Sieg zählt doppelt
             </div>
           )}
           <div className="mt-6 text-base md:text-xl text-white/80">
-            {hostLine(modeIndex, totalModes, mode.name)}
+            {isTiebreak ? tiebreakLine(mode.name, tiebreakTeams) : hostLine(modeIndex, totalModes, mode.name)}
           </div>
           <div className="mt-2 text-sm md:text-base text-white/55 italic">{mode.tagline}</div>
           <div
@@ -214,7 +224,9 @@ function StandingsBoard({
   shuffled,
   modeIndex,
   totalModes,
+  isTiebreak,
 }: {
+  isTiebreak: boolean
   standings: SplashStanding[]
   lastWinnerId: string | null
   lastAward: number
@@ -233,13 +245,18 @@ function StandingsBoard({
   return (
     <div className="relative w-full max-w-xl px-6 text-center animate-titleIn">
       <div className="text-xs md:text-sm uppercase tracking-[0.32em] text-white/40">
-        Nach Modus {modeIndex} / {totalModes}
+        {isTiebreak ? 'Nach dem letzten Modus' : `Nach Modus ${modeIndex} / ${totalModes}`}
       </div>
-      <div className="mt-2 font-display text-4xl md:text-6xl font-extrabold text-white">Zwischenstand</div>
+      <div className="mt-2 font-display text-4xl md:text-6xl font-extrabold text-white">
+        {isTiebreak ? 'Gleichstand!' : 'Zwischenstand'}
+      </div>
       <div className="mt-2 h-6 text-sm md:text-base text-white/70">
         {winner ? `${winner.name} holt den Modus!` : 'Unentschieden — kein Punkt vergeben.'}
       </div>
-      {totalModes >= FINALE_MIN_MODES && modeIndex === totalModes - 1 && (
+      {isTiebreak && (
+        <div className="mt-1 text-sm md:text-base font-semibold text-amber-200">Jetzt entscheidet ein Stechen!</div>
+      )}
+      {!isTiebreak && totalModes >= FINALE_MIN_MODES && modeIndex === totalModes - 1 && (
         <div className="mt-1 text-sm md:text-base font-semibold text-amber-200">
           Jetzt kommt das Finale — der Sieg zählt doppelt!
         </div>

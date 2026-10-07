@@ -143,6 +143,8 @@ export interface GameResult {
   scores: Record<string, number>  // teamId → score
   winnerTeamId?: string
   questionsUsed: string[]         // Question-IDs für Verwendungs-Tracking
+  /** true = Ergebnis eines Stechens (nicht Teil der gewählten Modi). */
+  tiebreak?: boolean
 }
 
 export interface RoundConfig {

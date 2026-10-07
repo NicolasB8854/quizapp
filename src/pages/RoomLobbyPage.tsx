@@ -353,6 +353,7 @@ export default function RoomLobbyPage() {
     token: number
     lastWinnerId: string | null
     lastAward: number
+    tiebreakTeams: string[] | null
   } | null>(null)
   const prevLiveKindRef = useRef<string | null>(null)
   const currentLiveKind = room.state?.live?.kind ?? null
@@ -368,7 +369,8 @@ export default function RoomLobbyPage() {
     // Modus für den Splash aus der Runden-Modes-Sequenz beziehen.
     const round = room.state?.round
     if (!round) return
-    const modeId = round.gameModes[currentModeIndex]
+    const tiebreak = room.state?.tiebreak ?? null
+    const modeId = tiebreak ? tiebreak.modeId : round.gameModes[currentModeIndex]
     const mode = modeId ? MODES_BY_ID[modeId] : null
     if (!mode) return
     // Sieger des gerade beendeten Modus fürs „+N" im Zwischenstand.
@@ -383,6 +385,9 @@ export default function RoomLobbyPage() {
       token: performance.now(),
       lastWinnerId: lastAward > 0 ? lastResult?.winnerTeamId ?? null : null,
       lastAward: lastAward || 1,
+      tiebreakTeams: tiebreak
+        ? round.teams.filter((t) => tiebreak.teamIds.includes(t.id)).map((t) => t.name)
+        : null,
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentLiveKind, currentPhase, currentModeIndex, room.state?.round])
@@ -419,6 +424,7 @@ export default function RoomLobbyPage() {
           token={splash.token}
           lastWinnerId={splash.lastWinnerId}
           lastAward={splash.lastAward}
+          tiebreakTeams={splash.tiebreakTeams}
           onDone={() => setSplash(null)}
           standings={room.state?.round?.teams.map((t) => ({
             id: t.id,
@@ -4697,15 +4703,16 @@ function ScoreboardPhaseView({
             {state.results.map((r, i) => {
               const mode = MODES_BY_ID[r.gameModeId]
               const w = state.round!.teams.find((t) => t.id === r.winnerTeamId)
-              const pts = mode?.scoresMatchPoint ? matchPointsForMode(i, state.round!.gameModes.length) : 0
+              const pts = r.tiebreak ? 1 : mode?.scoresMatchPoint ? matchPointsForMode(i, state.round!.gameModes.length) : 0
               return (
                 <div key={i} className="flex items-center gap-2">
                   <span className="flex-1 truncate">
-                    {i + 1}. {mode?.name ?? r.gameModeId}
+                    {r.tiebreak ? 'Stechen: ' : `${i + 1}. `}
+                    {mode?.name ?? r.gameModeId}
                     {pts === 2 && <span className="ml-1.5 font-semibold text-amber-200">Finale ×2</span>}
                   </span>
                   <span className="text-white/75">
-                    {!mode?.scoresMatchPoint ? 'ohne Wertung' : w ? `${w.name} +${pts}` : 'Gleichstand'}
+                    {!r.tiebreak && !mode?.scoresMatchPoint ? 'ohne Wertung' : w ? `${w.name} +${pts}` : 'Gleichstand'}
                   </span>
                 </div>
               )
