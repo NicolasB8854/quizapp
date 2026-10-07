@@ -98,5 +98,5 @@ test('Zwischenstand nach dem ersten Modus, Finale-Hinweis bei 3 Modi', async ({ 
   await expect(host.getByText(/holt den Modus!|Unentschieden/)).toBeVisible()
   await host.screenshot({ path: `${ART}/10-zwischenstand.png`, fullPage: true })
   // Danach das Intro des nächsten Modus.
-  await expect(host.getByText('Modus 2 / 3')).toBeVisible({ timeout: 5000 })
+  await expect(host.getByText('Modus 2 / 3').first()).toBeVisible({ timeout: 5000 })
 })
