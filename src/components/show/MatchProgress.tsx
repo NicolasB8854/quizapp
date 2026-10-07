@@ -18,19 +18,22 @@ export function MatchProgress({ state, stage }: { state: GameState; stage: boole
   if (!round || round.gameModes.length < 2) return null
   const total = round.gameModes.length
   const idx = state.currentModeIndex
-  const isFinale = matchPointsForMode(idx, total) === 2
-  const hint = finaleHint(idx, total)
+  const tb = state.tiebreak ?? null
+  const isFinale = !tb && matchPointsForMode(idx, total) === 2
+  const hint = tb
+    ? `Stechen — nur ${round.teams.filter((t) => tb.teamIds.includes(t.id)).map((t) => t.name).join(' & ')} können gewinnen`
+    : finaleHint(idx, total)
   return (
     <div
       className={cn(
         'flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-xl border px-3 py-2',
-        isFinale ? 'border-amber-300/60 bg-amber-300/10' : 'border-white/10 bg-white/[0.03]',
+        isFinale || tb ? 'border-amber-300/60 bg-amber-300/10' : 'border-white/10 bg-white/[0.03]',
         stage ? 'text-base' : 'text-xs',
       )}
       role="status"
     >
       <span className="font-semibold uppercase tracking-[0.2em] text-white/60">
-        Modus {idx + 1} / {total}
+        {tb ? `⚔️ Stechen${tb.round > 1 ? ` ${tb.round}` : ''}` : `Modus ${idx + 1} / ${total}`}
       </span>
       <span className="flex flex-wrap items-center gap-2">
         {round.teams.map((t) => (
@@ -41,7 +44,7 @@ export function MatchProgress({ state, stage }: { state: GameState; stage: boole
         ))}
       </span>
       {hint && (
-        <span className={cn('ml-auto font-semibold', isFinale ? 'text-amber-200' : 'text-white/55')}>
+        <span className={cn('ml-auto font-semibold', isFinale || tb ? 'text-amber-200' : 'text-white/55')}>
           {isFinale ? '×2 ' : ''}
           {hint}
         </span>
