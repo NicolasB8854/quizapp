@@ -182,6 +182,11 @@ export function ModeTransitionSplash({
           >
             {mode.name}
           </div>
+          {totalModes >= FINALE_MIN_MODES && modeIndex === totalModes - 1 && (
+            <div className="mt-5 inline-flex items-center gap-2 rounded-full border-2 border-amber-300 bg-amber-300/15 px-5 py-1.5 font-display text-2xl md:text-3xl font-black text-amber-200 animate-pop">
+              ×2 · Sieg zählt doppelt
+            </div>
+          )}
           <div className="mt-6 text-base md:text-xl text-white/80">
             {hostLine(modeIndex, totalModes, mode.name)}
           </div>
@@ -234,6 +239,11 @@ function StandingsBoard({
       <div className="mt-2 h-6 text-sm md:text-base text-white/70">
         {winner ? `${winner.name} holt den Modus!` : 'Unentschieden — kein Punkt vergeben.'}
       </div>
+      {totalModes >= FINALE_MIN_MODES && modeIndex === totalModes - 1 && (
+        <div className="mt-1 text-sm md:text-base font-semibold text-amber-200">
+          Jetzt kommt das Finale — der Sieg zählt doppelt!
+        </div>
+      )}
       <div className="relative mt-6" style={{ height: `${standings.length * ROW_REM}rem` }}>
         {standings.map((t) => {
           const rank = order.indexOf(t.id)
