@@ -81,6 +81,8 @@ test('Auflösung: erst Team-Tipps mit Spannung, dann Lösung; Emoji fliegt auf a
 
 test('Zwischenstand nach dem ersten Modus, Finale-Hinweis bei 3 Modi', async ({ browser }) => {
   const { host, ana } = await night(browser, 'E2EZ', ['Welches Jahr?', 'Bilderrätsel', 'Summ-Duell'])
+  // Finale-Hinweis ist von Anfang an auf jedem Gerät sichtbar.
+  await expect(ana.getByText('Finale (Modus 3) zählt doppelt')).toBeVisible()
   // „Welches Jahr?" zügig durchklicken: nur Ana tippt, Host löst auf.
   for (let i = 0; i < 12; i++) {
     const next = host.getByRole('button', { name: /Nächster Song|Runde beenden/ })

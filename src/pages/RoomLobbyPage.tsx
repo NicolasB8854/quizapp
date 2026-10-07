@@ -86,6 +86,7 @@ import { playSound } from '@/lib/audio'
 import { haptic } from '@/lib/haptics'
 import { isSuspenseKind, REVEAL_SUSPENSE_MS } from '@/lib/reveal'
 import { ReactionBar, ReactionLayer } from '@/components/show/Reactions'
+import { MatchProgress } from '@/components/show/MatchProgress'
 import { useWakeLock } from '@/hooks/useWakeLock'
 import { readRoomIdentity, saveRoomIdentity } from '@/lib/roomIdentity'
 import { cn } from '@/lib/classnames'
@@ -573,6 +574,10 @@ export default function RoomLobbyPage() {
         {/* Content nach Status. Bei reconnecting mit vorhandenem State
              behalten wir die letzte Bühne — Buttons sind über canDispatch
              ohnehin deaktiviert. */}
+        {currentPhase === 'playing' && room.state && (
+          <MatchProgress state={room.state} stage={!!stageOnly} />
+        )}
+
         {(room.status === 'joined' || room.status === 'reconnecting') && room.state ? (
           <PhaseView
             state={room.state}
@@ -4687,6 +4692,26 @@ function ScoreboardPhaseView({
             </div>
           ))}
         </div>
+        {state.round && state.results.length > 1 && (
+          <div className="space-y-1 border-t border-white/10 pt-3 text-xs text-ink-muted">
+            {state.results.map((r, i) => {
+              const mode = MODES_BY_ID[r.gameModeId]
+              const w = state.round!.teams.find((t) => t.id === r.winnerTeamId)
+              const pts = mode?.scoresMatchPoint ? matchPointsForMode(i, state.round!.gameModes.length) : 0
+              return (
+                <div key={i} className="flex items-center gap-2">
+                  <span className="flex-1 truncate">
+                    {i + 1}. {mode?.name ?? r.gameModeId}
+                    {pts === 2 && <span className="ml-1.5 font-semibold text-amber-200">Finale ×2</span>}
+                  </span>
+                  <span className="text-white/75">
+                    {!mode?.scoresMatchPoint ? 'ohne Wertung' : w ? `${w.name} +${pts}` : 'Gleichstand'}
+                  </span>
+                </div>
+              )
+            })}
+          </div>
+        )}
       </Card>
 
       {isHost ? (
